@@ -1,7 +1,7 @@
 <?php 
 session_start();
 
-if(!isset($_SESSION['eva_user_id']) || !isset($_SESSION['eva_tipo'])){
+if(!isset($_SESSION['neocaja_user_id']) || !isset($_SESSION['neocaja_tipo'])){
     session_destroy();
     header('Location: login.php');
     exit;
@@ -26,7 +26,7 @@ if($target_evaluation === false){
     exit;
 }
 else{
-    if($target_evaluation['cedula_evaluador'] !== $_SESSION['eva_cedula']){
+    if($target_evaluation['cedula_evaluador'] !== $_SESSION['neocaja_cedula']){
         header('Location: my_evaluations.php?error=3');
         exit;
     }
@@ -64,7 +64,7 @@ include_once 'common/header.php';
     <h2 class="col-12 text-center my-2 h2 mt-3">
         Evaluación realizada por 
         <strong style="text-transform:uppercase">
-            Prof. <?= $_SESSION['eva_name'] . ' ' . $_SESSION['eva_surname'] ?>
+            Prof. <?= $_SESSION['neocaja_name'] . ' ' . $_SESSION['neocaja_surname'] ?>
         </strong>
         a
         <strong>

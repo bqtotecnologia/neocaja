@@ -1,41 +1,60 @@
 <?php
-
-$error = false;
-$redirect = 'Location: /evadoc/views/login.php?error=0';
+include_once '../utils/base_url.php';
+$error = '';
+$redirect = 'Location: ' . $base_url . '/views/forms/login.php';
 
 if(empty($_POST))
-    $error = true;
+    $error = 'POST vacío';
 
-if(!isset($_POST['user']) || !isset($_POST['password']))
-    $error = true;
+if($error === ''){
+    if(!isset($_POST['user']) || !isset($_POST['password']))
+        $error = 'No se recibió ni un usuario ni una contraseña';
+}
 
-if($_POST['user'] === '' || $_POST['password'] === '')
-    $error = true;
+if($error === ''){    
+    if($_POST['user'] === '' || $_POST['password'] === '')
+        $error = 'Usuario o contraseña vacíos';
+}
 
-if($error){
-    header($redirect);
+if($error !== ''){
+    header($redirect . '?error=' . $error);
     exit;
 }
 
-$user = $_POST['user'];
-$password = sha1($_POST['password']);
+if($error === ''){
+    $user = $_POST['user'];
+    $password = sha1($_POST['password']);
+    
+    // < > / \\ ; " ( ) { } [ ] $ & | ¿ ? ¡ ! = -   
+    $regex = '/[<>\-\/;"\'(){}\[\]$\\\|&\?\¿\¡!=]/u';
+    if(preg_match($regex, $user)){
+        $error = 'El campo usuario contiene caracteres sospechosos';
+    }
+}
 
-// < > / \\ ; " ( ) { } [ ] $ & | ¿ ? ¡ ! = -   
-$regex = '/[<>\-\/;"\'(){}\[\]$\\\|&\?\¿\¡!=]/u';
-if(preg_match($regex, $user)){
-    header('Location: /evadoc/views/login.php?error=7');
-    exit;
+if($error === ''){
+    include_once '../models/dbusuarios_model.php';
+    $dbusuarios = new DbusuariosModel();
+    if(!$dbusuarios->UserExists($user)){
+        $error = 'Credenciales inválidas';
 }
 
 
-include_once '../models/dbusuarios_model.php';
-$dbusuarios = new DbusuariosModel();
-if(!$dbusuarios->UserExists($user)){
-    $redirect = 'Location: /evadoc/views/login.php?error=1';
-}
-else{
-    // Usuario existe
+if($error === ''){
     $usuario = $dbusuarios->TryLogin($user, $password);
+    if($usuario === false)
+        $error = 'Credenciales inválidas';
+}
+
+if($error === ''){
+// Usuario existe
+}
+
+}
+
+
+else{
+    
     if($usuario !== false){
         $names = explode(' ', $usuario['nombrecompleto']);
         $user_name = '';
@@ -106,11 +125,11 @@ else{
 
         if($loginOK){
             session_start();
-            $_SESSION['eva_user_id'] = $user_id;
-            $_SESSION['eva_name'] = strtoupper($user_name);
-            $_SESSION['eva_surname'] = strtoupper($user_surname);
-            $_SESSION['eva_tipo'] = $user_type;
-            $_SESSION['eva_cedula'] = $cedula;
+            $_SESSION['neocaja_user_id'] = $user_id;
+            $_SESSION['neocaja_name'] = strtoupper($user_name);
+            $_SESSION['neocaja_surname'] = strtoupper($user_surname);
+            $_SESSION['neocaja_tipo'] = $user_type;
+            $_SESSION['neocaja_cedula'] = $cedula;
         }
     }
     else{

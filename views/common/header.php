@@ -4,9 +4,9 @@
 if (session_status() === PHP_SESSION_NONE)
     session_start();
 
-// Si no existe la variable de sesión 'eva_user_id' o no está autorizado retornamos al index.php
-if (!isset($_SESSION['eva_user_id']) ||
-  !(in_array($_SESSION['eva_tipo'], ['teacher', 'admin', 'super', 'coord'])))
+// Si no existe la variable de sesión 'neocaja_user_id' o no está autorizado retornamos al index.php
+if (!isset($_SESSION['neocaja_user_id']) ||
+  !(in_array($_SESSION['neocaja_tipo'], ['teacher', 'admin', 'super', 'coord'])))
 {
     header('Location: ../index.php');
     exit;
@@ -73,10 +73,10 @@ if (!isset($_SESSION['eva_user_id']) ||
 
               <div class="menu_section">
                 <ul class="nav side-menu">
-                  <?php if(isset($_SESSION['eva_tipo'])){ ?>
+                  <?php if(isset($_SESSION['neocaja_tipo'])){ ?>
 
                     <!-- Admin -->
-                    <?php if(in_array($_SESSION['eva_tipo'], ['admin', 'super'])){ ?>
+                    <?php if(in_array($_SESSION['neocaja_tipo'], ['admin', 'super'])){ ?>
                       <li><a><i class="fa fa-bar-chart"></i> Estadísticas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="search_docente.php">Buscar docente</a></li>
@@ -100,7 +100,7 @@ if (!isset($_SESSION['eva_user_id']) ||
                     <?php } ?>
 
                     <!-- Super Admin -->
-                    <?php if($_SESSION['eva_tipo'] === 'super'){ ?>
+                    <?php if($_SESSION['neocaja_tipo'] === 'super'){ ?>
                       <li><a><i class="fa fa-user"></i> Admin <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="add_admin.php">Agregar administrador</a></li>
@@ -110,14 +110,14 @@ if (!isset($_SESSION['eva_user_id']) ||
                     <?php } ?>
 
                     <!-- Coordinador -->
-                    <?php if(in_array($_SESSION['eva_tipo'], ['coord'])){ ?>
+                    <?php if(in_array($_SESSION['neocaja_tipo'], ['coord'])){ ?>
                       <li><a><i class="fa  fa-check-square-o"></i> Evaluaciones <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="evaluar.php">Evaluar docente</a></li>
                           <li><a href="made_evaluations.php">Evaluaciones realizadas</a></li>
                           <li>
                             <form class="h-100" style="padding:9px;" action="search_docente.php" method="POST">
-                              <input name="docente" value="<?= $_SESSION['eva_user_id'] ?>" type="hidden">
+                              <input name="docente" value="<?= $_SESSION['neocaja_user_id'] ?>" type="hidden">
                               <button class="button-none" href="recieved_evaluations.php">Evaluaciones recibidas</button>
                             </form>
                           </li>
@@ -131,14 +131,14 @@ if (!isset($_SESSION['eva_user_id']) ||
                     <?php } ?>
 
                     <!-- Docente -->
-                    <?php if(in_array($_SESSION['eva_tipo'], ['teacher'])){ ?>
+                    <?php if(in_array($_SESSION['neocaja_tipo'], ['teacher'])){ ?>
                       <li><a><i class="fa fa-check-square-o"></i> Evaluaciones <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="evaluar.php">Evaluar coordinador</a></li>
                           <li><a href="made_evaluations.php">Evaluaciones realizadas</a></li>
                           <li>
                             <form class="h-100" style="padding:9px;" action="search_docente.php" method="POST">
-                              <input name="docente" value="<?= $_SESSION['eva_user_id'] ?>" type="hidden">
+                              <input name="docente" value="<?= $_SESSION['neocaja_user_id'] ?>" type="hidden">
                               <button class="button-none" href="recieved_evaluations.php">Evaluaciones recibidas</button>
                             </form>
                           </li>
@@ -170,7 +170,7 @@ if (!isset($_SESSION['eva_user_id']) ||
                   <a href="javascript:;" class="user-profile dropdown-toggle h6" aria-haspopup="true" id="navbarDropdown" data-toggle="dropdown" aria-expanded="false"
                   style="text-transform:uppercase"
                   >
-                    Bienvenido(a) <?= $_SESSION['eva_name'] . ' ' . $_SESSION['eva_surname'] ?>
+                    Bienvenido(a) <?= $_SESSION['neocaja_name'] . ' ' . $_SESSION['neocaja_surname'] ?>
                   </a>
                   <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item"  href="../controllers/logout.php"> Cerrar sesión</a>

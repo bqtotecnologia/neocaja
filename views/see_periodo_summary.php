@@ -1,6 +1,6 @@
 <?php 
 session_start();
-if(!in_array($_SESSION['eva_tipo'], ['admin', 'super'])) {
+if(!in_array($_SESSION['neocaja_tipo'], ['admin', 'super'])) {
     session_destroy();
     header('Location: login.php');
     exit;

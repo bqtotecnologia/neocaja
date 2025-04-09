@@ -7,7 +7,7 @@ esté correcto y se crea la evaluación si todo está bien
 */
 
 session_start();
-if (!isset($_SESSION['eva_name'])) {
+if (!isset($_SESSION['neocaja_name'])) {
     header('Location: ../views/login.php?error=9');
     exit;
 }
@@ -23,8 +23,8 @@ $siacad = new SiacadModel();
 $evaluador_model = new EvaluadorModel();
 $id_docente = $_POST['docente'];
 
-if($_SESSION['eva_tipo'] === 'student'){
-    $already_evaluate = $evaluador_model->EvaluadorYaEvaluo($_SESSION['eva_cedula']);
+if($_SESSION['neocaja_tipo'] === 'student'){
+    $already_evaluate = $evaluador_model->EvaluadorYaEvaluo($_SESSION['neocaja_cedula']);
     if($already_evaluate === true){
         // Ya evaluó del todo, no tiene nada más que evaluar
         session_destroy();
@@ -32,7 +32,7 @@ if($_SESSION['eva_tipo'] === 'student'){
         exit;
     }
 
-    $docente = $siacad->DocenteTeachToStudent($id_docente, $_SESSION['eva_cedula']);
+    $docente = $siacad->DocenteTeachToStudent($id_docente, $_SESSION['neocaja_cedula']);
     
     if($docente === false){
         // El docente no da clases a ese estudiante
@@ -110,11 +110,11 @@ if(strlen($observacion) > 300){
 }
 
 // Validamos que el usuario no haya evaluado ya en este corte
-$evaluador = $evaluador_model->EvaluadorExists($_SESSION['eva_cedula']);
+$evaluador = $evaluador_model->EvaluadorExists($_SESSION['neocaja_cedula']);
 
 if($evaluador === false){
     // El usuario no ha sido registrado, entonces lo creamos
-    $evaluador = $evaluador_model->CreateEvaluador($_SESSION['eva_cedula']);
+    $evaluador = $evaluador_model->CreateEvaluador($_SESSION['neocaja_cedula']);
 }
 
 $corte_to_vote = $siacad->GetCorteToVote();
@@ -137,13 +137,13 @@ include '../models/docentes_periodos_model.php';
 $evaluacion_model = new EvaluacionModel();
 $docentes_periodos = new DocentesPeriodosModel();
 $data = [
-    'cedula' => $_SESSION['eva_cedula'],
+    'cedula' => $_SESSION['neocaja_cedula'],
     'docente' => $docente['iddocente'],
     'observacion' => $observacion,
     'criterios' => $real_criterios,
     'enunciados' => $enunciados,
     'enunciados_ids' => $enunciados_ids,
-    'user_type' => $_SESSION['eva_tipo']
+    'user_type' => $_SESSION['neocaja_tipo']
 ];
 
 $result = $evaluacion_model->CreateEvaluacion($data);
@@ -155,18 +155,18 @@ if($result === false){
 }
 
 $redirect = 'Location: ../views/evaluar.php?message=0';
-if($_SESSION['eva_tipo'] === 'student'){
+if($_SESSION['neocaja_tipo'] === 'student'){
     // Una vez creada la evaluación, verificamos si le quedan docentes por evaluar, 
     // Si no tiene ya terminó de evaluar en el corte
-    $remainings_teachers = $docentes_periodos->EstudianteHaveRemainingDocentes($_SESSION['eva_cedula']);
+    $remainings_teachers = $docentes_periodos->EstudianteHaveRemainingDocentes($_SESSION['neocaja_cedula']);
     if($remainings_teachers === false){
         // el estudiante ya evaluó a todos los docentes
-        $evaluador_model->UpdateEvaluatedCorte($_SESSION['eva_cedula'], $corte_largo);
+        $evaluador_model->UpdateEvaluatedCorte($_SESSION['neocaja_cedula'], $corte_largo);
         session_destroy();
         $redirect = 'Location: ../views/login.php?message=0';
     }
 }
-else if ($_SESSION['eva_tipo'] === 'teacher')
+else if ($_SESSION['neocaja_tipo'] === 'teacher')
     $redirect = 'Location: ../views/evaluar.php?message=1';
 
 header($redirect);

@@ -3,8 +3,8 @@ session_start();
 
 // En esta sección se les muestra a los usuarios un listado de los docentes/coordinadores que pueden evaluar
 
-// Si no existe la variable de sesión 'eva_user_id' devolvemos al usuario al index.php
-if(!isset($_SESSION['eva_user_id'])){
+// Si no existe la variable de sesión 'neocaja_user_id' devolvemos al usuario al index.php
+if(!isset($_SESSION['neocaja_user_id'])){
     session_destroy();
     header('Location: /evadoc/index.php');
     exit;
@@ -15,21 +15,21 @@ include '../models/siacad_model.php';
 $evaluacion_model = new EvaluacionModel();
 $siacad = new SiacadModel();
 
-if($_SESSION['eva_tipo'] === 'student')
-    $my_docentes = $evaluacion_model->GetDocentesLeftOfEstudiante($_SESSION['eva_cedula']);
-else if($_SESSION['eva_tipo'] === 'teacher')
-    $my_docentes = $evaluacion_model->GetCoordinadoresLeftOfDocente($_SESSION['eva_cedula']);
-else if($_SESSION['eva_tipo'] === 'coord')
-    $my_docentes = $evaluacion_model->GetDocentesLeftOfCoordinador($_SESSION['eva_cedula']);
+if($_SESSION['neocaja_tipo'] === 'student')
+    $my_docentes = $evaluacion_model->GetDocentesLeftOfEstudiante($_SESSION['neocaja_cedula']);
+else if($_SESSION['neocaja_tipo'] === 'teacher')
+    $my_docentes = $evaluacion_model->GetCoordinadoresLeftOfDocente($_SESSION['neocaja_cedula']);
+else if($_SESSION['neocaja_tipo'] === 'coord')
+    $my_docentes = $evaluacion_model->GetDocentesLeftOfCoordinador($_SESSION['neocaja_cedula']);
 
 // Si es un docente/coordinador lo añadimos a él mismo a la lista si no se ha autoevaluado ya
-if(in_array($_SESSION['eva_tipo'], ['teacher', 'coord'])){
-    $autoevaluated = $evaluacion_model->GetAutoevaluacionOf($_SESSION['eva_user_id'], $_SESSION['eva_cedula']);
+if(in_array($_SESSION['neocaja_tipo'], ['teacher', 'coord'])){
+    $autoevaluated = $evaluacion_model->GetAutoevaluacionOf($_SESSION['neocaja_user_id'], $_SESSION['neocaja_cedula']);
     if(!$autoevaluated){
         $current_docente = array(
-            'iddocente' => $_SESSION['eva_user_id'],
-            'nombres' => $_SESSION['eva_name'],
-            'apellidos' => $_SESSION['eva_surname']
+            'iddocente' => $_SESSION['neocaja_user_id'],
+            'nombres' => $_SESSION['neocaja_name'],
+            'apellidos' => $_SESSION['neocaja_surname']
         );
         array_push($my_docentes, $current_docente);
     }
@@ -37,9 +37,9 @@ if(in_array($_SESSION['eva_tipo'], ['teacher', 'coord'])){
 
     if($my_docentes === false || $my_docentes === []){
     $redirect = '';
-    if($_SESSION['eva_tipo'] === 'teacher')
+    if($_SESSION['neocaja_tipo'] === 'teacher')
         $redirect = 'Location: panel.php?message=1';
-    else if($_SESSION['eva_tipo'] === 'coord')
+    else if($_SESSION['neocaja_tipo'] === 'coord')
         $redirect = 'Location: panel.php?message=0';
     else
         $redirect = 'Location: login.php?message=0';
@@ -100,7 +100,7 @@ $messages = array(
     <section class="row m-0 p-0 x_panel shadowed justify-content-center px-1">
         <div class="col-12 text-right pt-2">
             <button class="btn btn-info m-1">
-                <?php if (in_array($_SESSION['eva_tipo'], ['coord', 'teacher'])) { ?>
+                <?php if (in_array($_SESSION['neocaja_tipo'], ['coord', 'teacher'])) { ?>
                     <a class=" text-white text-center text-decoration-none p-0" href="panel.php">
                         Regresar
                 <?php } else { ?>
@@ -113,7 +113,7 @@ $messages = array(
 
         <div class="col-12 row justify-content-center m-0 p-0">
             <h1 class="text-center col-12 mb-4 x_title" style="text-transform:uppercase">
-                <?= "Bienvenido(a) " . $_SESSION['eva_name'] . ' ' . $_SESSION['eva_surname'] ?>
+                <?= "Bienvenido(a) " . $_SESSION['neocaja_name'] . ' ' . $_SESSION['neocaja_surname'] ?>
             </h1>
         </div>
 
@@ -130,7 +130,7 @@ $messages = array(
 
         <?php 
         // Colocamos la explicación correspondiente
-        if($_SESSION['eva_tipo'] === 'student')
+        if($_SESSION['neocaja_tipo'] === 'student')
             include_once 'common/student_explanation.php';
         else
             include_once 'common/personal_explanation.php';            
@@ -142,7 +142,7 @@ $messages = array(
                     <h2 class="text-center">
                         Por favor, escoja a su 
                         <?php 
-                        if(in_array($_SESSION['eva_tipo'], ['student', 'coord'])) echo 'docente';
+                        if(in_array($_SESSION['neocaja_tipo'], ['student', 'coord'])) echo 'docente';
                         else echo 'coordinador';
                         ?>
                         y haga click en evaluar para comenzar la evaluación
@@ -175,7 +175,7 @@ $messages = array(
                     <div class="row col-12 justify-content-center py-3 m-0">
                         <?php 
                         // Colocamos el formulario correspondiente
-                            if($_SESSION['eva_tipo'] === 'student')
+                            if($_SESSION['neocaja_tipo'] === 'student')
                             include_once './common/student_validator.php';
                         else
                             include_once 'common/personal_validator.php'; 

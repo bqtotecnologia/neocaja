@@ -36,8 +36,8 @@ if($docente === false){
 }
 
 $autoevaluation = false;
-if($docente['iddocente'] === $_SESSION['eva_user_id'] &&
-    $_SESSION['eva_tipo'] === $_GET['tipo'])
+if($docente['iddocente'] === $_SESSION['neocaja_user_id'] &&
+    $_SESSION['neocaja_tipo'] === $_GET['tipo'])
     $autoevaluation = true;
 
 $corte = isset($_GET['corte']) ? $_GET['corte'] : null;

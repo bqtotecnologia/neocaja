@@ -1,28 +1,11 @@
 <?php 
 session_start();
-if(isset($_SESSION['eva_user_id']) && isset($_SESSION['eva_tipo'])){
-  if(in_array($_SESSION['eva_tipo'], ['Admin', 'Super', 'Administración'])){
+if(isset($_SESSION['neocaja_user_id']) && isset($_SESSION['neocaja_tipo'])){
+  if(in_array($_SESSION['neocaja_tipo'], ['Admin', 'Super', 'Administración'])){
     header('Location: views/panel.php');
     exit;
   }
 }
-
-$errors = [
-  'Por favor, rellene todos los campos',
-  'Credenciales inválidas',
-  'Usted no puede evaluar aún',
-  'Usted ya ha evaluado a todos sus docentes',
-  'Inicio de sesión requerido',
-  'No le quedan docentes por evaluar',
-  'Usted intenta evaluar en una periodo y/o fecha inválida',
-  'El usuario contiene caracteres sospechosos',
-  'Usted no es un usuario activo en este periodo',
-  'Sesión perdida. Utilice solo un sistema del IUJO a la vez.'
-];
-
-$messages = [
-  'Muchas gracias por evaluar a sus docentes'
-];
 
 ?>
 
@@ -69,24 +52,24 @@ $messages = [
       <div class="login_wrapper">
         <div class="animate form login_form">
           <section class="login_content">
-            <form method="POST" id="loginForm" action="../controllers/login.php">
+            <form method="POST" id="loginForm" action="../../controllers/login.php">
               <?php if(isset($_GET['error'])) { ?>
                 <div>
-                  <span class="h5 text-danger"><?= $errors[$_GET['error']] ?></span>
+                  <span class="h5 text-danger"><?= $_GET['error'] ?></span>
                 </div>
               <?php } ?>
   
               <?php if(isset($_GET['message'])) { ?>
                 <div>
-                  <span class="h5 text-success"><?= $messages[$_GET['message']] ?></span>
+                  <span class="h5 text-success"><?= $_GET['message'] ?></span>
                 </div>
               <?php } ?>
-              <span class="h5">Sistema de evaluación docente</span>
+              <span class="h5">Sistema de caja</span>
               <div class="mt-3">
-                <input type="text" name="user" class="form-control" placeholder="Usuario" required="" />
+                <input type="text" name="user" class="form-control" placeholder="Usuario" required= />
               </div>
               <div>
-                <input type="password" name="password" class="form-control" placeholder="Contraseña" required="" />
+                <input type="password" name="password" class="form-control" placeholder="Contraseña" required />
               </div>
               <div class="text-danger my-2" id="error-displayer">
               </div>
@@ -103,7 +86,7 @@ $messages = [
                 <a class="no-hover" href="https://www.iujobarquisimeto.edu.ve/" target="_blank">
                   <span class="h3">IUJO Barquisimeto</span>
                 </a>
-                  <p>©2023 All Rights Reserved.</p>
+                  <p>©<?= date('Y') ?> All Rights Reserved.</p>
                 </div>
               </div>
             </form>
@@ -125,7 +108,7 @@ $messages = [
 
           if (suspiciousRegex.test(myForm['user'].value)){
                 error = true
-                PrintError('Alguno de los campos contiene caracteres sospechosos: < > / \\ ; " ( ) { } [ ] $ & | ¿ ? ¡ ! = - ' + "'")
+                PrintError('El campo usuario contiene caracteres sospechosos: < > / \\ ; " ( ) { } [ ] $ & | ¿ ? ¡ ! = - ' + "'")
           }
           if(error === false) myForm.submit()
       });

@@ -3,13 +3,13 @@ include_once '../models/criterio_model.php';
 $criterio_model = new CriterioModel();
 
 // Si el docente/coordinador se está autoevaluando, buscamos los criterios de evaluación a ellos mismos
-if($docente['iddocente'] === $_SESSION['eva_user_id']){
-    if($_SESSION['eva_tipo'] === 'teacher')
+if($docente['iddocente'] === $_SESSION['neocaja_user_id']){
+    if($_SESSION['neocaja_tipo'] === 'teacher')
         $categorias = $criterio_model->GetCategoriasOf('coord');
     else
         $categorias = $criterio_model->GetCategoriasOf('teacher');
 }else
-    $categorias = $criterio_model->GetCategoriasOf($_SESSION['eva_tipo']);
+    $categorias = $criterio_model->GetCategoriasOf($_SESSION['neocaja_tipo']);
 
 $materias = $siacad->GetMateriasByCedulaDocente($docente['cedula']);
 ?>

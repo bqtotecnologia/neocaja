@@ -14,7 +14,7 @@
         </h3>
     <?php } else { ?>
         <?php 
-        $coordinacionMatchs = $siacad->CoordinacionMatch($_SESSION['eva_user_id'], $docente['iddocente']);
+        $coordinacionMatchs = $siacad->CoordinacionMatch($_SESSION['neocaja_user_id'], $docente['iddocente']);
         if($coordinacionMatchs === false) { // Las coordinaciones no coinciden ?>
             <h3 class="text-danger h3">
                 Su coordinación no corresponde
@@ -24,7 +24,7 @@
                 // Validamos que no lo haya evaluado ya
                 include_once '../models/evaluacion_model.php';
                 $evaluacion_model = new EvaluacionModel();
-                $canEvaluate = $evaluacion_model->UserCanEvaluate($_SESSION['eva_cedula'], $id_docente);
+                $canEvaluate = $evaluacion_model->UserCanEvaluate($_SESSION['neocaja_cedula'], $id_docente);
             ?>
             <?php if($canEvaluate === false) { ?>
                 <h3 class="text-danger h3">

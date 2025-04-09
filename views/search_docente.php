@@ -1,7 +1,7 @@
 <?php
     include_once 'common/header.php';
 
-    if(!in_array($_SESSION['eva_tipo'], ['super', 'teacher', 'coord', 'admin'])){
+    if(!in_array($_SESSION['neocaja_tipo'], ['super', 'teacher', 'coord', 'admin'])){
         session_destroy();
         header('Location:../index.php');
         exit;
@@ -9,13 +9,13 @@
 
     include_once '../models/docentes_periodos_model.php';
     $docentes_periodos = new DocentesPeriodosModel();
-    if($_SESSION['eva_tipo'] === 'coord')
-        $docentes = $docentes_periodos->GetAllEvaluatedDocentesOfCoordinador($_SESSION['eva_user_id']);
+    if($_SESSION['neocaja_tipo'] === 'coord')
+        $docentes = $docentes_periodos->GetAllEvaluatedDocentesOfCoordinador($_SESSION['neocaja_user_id']);
     else
         $docentes = $docentes_periodos->GetAllEvaluatedDocentes();
     $self_docente = false;
     if(isset($_POST['docente'])){
-        $self_docente = intval($_POST['docente']) === $_SESSION['eva_user_id'];
+        $self_docente = intval($_POST['docente']) === $_SESSION['neocaja_user_id'];
     }
 ?>
 

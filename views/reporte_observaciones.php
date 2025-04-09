@@ -3,7 +3,7 @@
     exit;
     include_once 'common/header.php';
 
-    if(!in_array($_SESSION['eva_tipo'], ['super', 'admin'])){
+    if(!in_array($_SESSION['neocaja_tipo'], ['super', 'admin'])){
         session_destroy();
         header('Location:../index.php');
         exit;

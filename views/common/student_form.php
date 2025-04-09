@@ -2,8 +2,8 @@
 include_once '../models/criterio_model.php';
 $criterio_model = new CriterioModel();
 
-$materias = $siacad->GetMateriasOfDocenteAndEstudiante($_SESSION['eva_cedula'], $docente['cedula']);
-$categorias = $criterio_model->GetCategoriasOf($_SESSION['eva_tipo']);
+$materias = $siacad->GetMateriasOfDocenteAndEstudiante($_SESSION['neocaja_cedula'], $docente['cedula']);
+$categorias = $criterio_model->GetCategoriasOf($_SESSION['neocaja_tipo']);
 
 include_once 'docente_displayer.php';
 ?>

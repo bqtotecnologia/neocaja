@@ -3,7 +3,7 @@ include 'common/header.php';
 
 include_once '../models/evaluacion_model.php';
 $evaluacion_model = new EvaluacionModel();
-$my_evaluations = $evaluacion_model->GetMyEvaluations($_SESSION['eva_user_id']);
+$my_evaluations = $evaluacion_model->GetMyEvaluations($_SESSION['neocaja_user_id']);
 
 $errors = [
     'GET vacío',

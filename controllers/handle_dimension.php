@@ -2,7 +2,7 @@
 session_start();
 $error = '';
 // Si el usuario NO es del tipo correcto, lo mandamos al index y cerramos la sesión
-if(!in_array($_SESSION['eva_tipo'], ['super', 'admin'])){
+if(!in_array($_SESSION['neocaja_tipo'], ['super', 'admin'])){
     session_destroy();
     header('Location:../index.php');
     exit;
