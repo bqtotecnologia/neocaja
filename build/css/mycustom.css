@@ -1,0 +1,104 @@
+td, th {
+    border: 1px black solid;
+}
+
+.no-hover:hover{
+    text-decoration: none !important;
+}
+
+.text-black {
+    color: #2D2D2D !important;
+}
+
+.border-black{
+    border: black 1px solid !important;
+}
+
+.fw-bold{
+    font-weight: bold !important;
+}
+
+.shadowed{
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 10px 1px;
+}
+
+.dataTables_wrapper{
+    width:100%;
+    padding: 2% 5%;
+}
+
+.dataTables_filter{
+    margin-bottom:5px;
+    border: none !important;
+}
+
+.dataTables_paginate{
+    display:flex;
+    margin-top:20px;
+    justify-content: space-between;
+}
+
+.dataTables_info{
+    text-align: center;
+}
+
+.dataTables_paginate span{
+    display: flex;
+    align-items: center;
+}
+
+.next, .previous, .dt-button{
+    padding:8px;
+    background-color: #293f61;
+    color:white;
+    border-radius: 5%;
+    border:gray 1px solid;
+    text-align: center;
+    margin: 10px 5px;
+}
+
+.dataTables_filter{
+    border-bottom:1px black solid;
+}
+
+.dataTables_filter input{
+    margin:0 10px;
+}
+
+.select2-selection__arrow{
+    right:15px !important;
+}
+
+.select2-selection__rendered{
+    color: black !important;
+    font-size: 1rem !important;
+}
+
+.select2-results__option{
+    color: rgb(49, 49, 49) !important;
+    font-size: 1rem !important;
+}
+
+.evaluar_page{
+    background-color: #d8d8d8;
+}
+
+.highcharts-credits{
+    display:none;
+}
+
+.print-hidden {
+    display: none;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.button-none{
+    background:none;
+    border:none;
+    margin:0;
+    color: rgba(255,255,255,0.75);
+    font-size: 12px;
+    padding:0;
+    font-weight: 100;
+}
