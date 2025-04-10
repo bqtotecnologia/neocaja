@@ -1,18 +1,5 @@
-<?php include 'common/header.php'; ?>
-
 <?php 
-$errors = [
-    'El docente no llega por POST',
-    'Usted ya ha evaluado a ese coordinador',
-    'Usted ya ha evaluado a ese docente',
-    'Datos recibidos inválidos',
-    'Docente no encontrado'
-];
-
-$messages = [
-    'Usted ha evaluado a todos sus docentes',
-    'Usted ha evaluado a todos sus coordinadores'
-];
+include '../common/header.php';
 
 include_once '../models/siacad_model.php';
 $siacad = new SiacadModel();

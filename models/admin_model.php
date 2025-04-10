@@ -18,10 +18,10 @@ class AdminModel extends PGSQLModel
         if($result !== false) 
             return 'Cédula ya registrada';
 
-        $sql = "INSERT INTO admin (cedula, nivel) VALUES ('$cedula', '$admin_level')";        
+        $sql = "INSERT INTO admin (cedula, type) VALUES ('$cedula', '$admin_level')";        
         parent::DoQuery($sql);
 
-        $sql = "SELECT * FROM admin WHERE cedula = '$cedula' AND nivel = '$admin_level'";
+        $sql = "SELECT * FROM admin WHERE cedula = '$cedula' AND type = '$admin_level'";
         $new_admin = parent::GetRow($sql);
         if($new_admin === false)
             return 'Hubo un problema al insertar el administrador en la base de datos';
@@ -75,7 +75,7 @@ class AdminModel extends PGSQLModel
             *
             FROM admin
             WHERE
-            nivel = 'coord'";
+            type = 'coord'";
         $coordinadores = parent::GetRows($sql);
         if($as_list === true) 
             return $coordinadores;
@@ -92,8 +92,8 @@ class AdminModel extends PGSQLModel
         }
     }
 
-    public function UpdateAdmin($id, $new_cedula, $new_nivel){
-        $sql = "UPDATE admin SET cedula='$new_cedula', nivel='$new_nivel' WHERE id=$id";
+    public function UpdateAdmin($id, $new_cedula, $newType){
+        $sql = "UPDATE admin SET cedula='$new_cedula', type='$newType' WHERE id=$id";
         return parent::DoQuery($sql);
     }
 

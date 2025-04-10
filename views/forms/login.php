@@ -1,8 +1,9 @@
 <?php 
+include_once '../../utils/base_url.php';
 session_start();
-if(isset($_SESSION['neocaja_user_id']) && isset($_SESSION['neocaja_tipo'])){
-  if(in_array($_SESSION['neocaja_tipo'], ['Admin', 'Super', 'Administración'])){
-    header('Location: views/panel.php');
+if(isset($_SESSION['neocaja_cedula']) && isset($_SESSION['neocaja_tipo'])){
+  if(in_array($_SESSION['neocaja_tipo'], ['Cajero', 'Supervisor', 'Super', 'Estudiante'])){
+    header('Location: ' . $base_url . '/views/panel.php');
     exit;
   }
 }
@@ -18,24 +19,24 @@ if(isset($_SESSION['neocaja_user_id']) && isset($_SESSION['neocaja_tipo'])){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Sistema de evaluación docente</title>
+    <title>Sistema de caja</title>
 
     <!-- Bootstrap -->
-    <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- NProgress -->
-    <link href="../vendors/nprogress/nprogress.css" rel="stylesheet">
+    <link href="../../vendors/nprogress/nprogress.css" rel="stylesheet">
     <!-- Animate.css -->
-    <link href="../vendors/animate.css/animate.min.css" rel="stylesheet">
+    <link href="../../vendors/animate.css/animate.min.css" rel="stylesheet">
 
     <!-- Title icon -->
-    <link rel="apple-touch-icon" href="../images/iujo.ico">
-    <link rel="shortcut icon" href="../images/iujo.ico">
+    <link rel="apple-touch-icon" href="../../images/iujo.ico">
+    <link rel="shortcut icon" href="../../images/iujo.ico">
 
     <!-- Custom Theme Style -->
-    <link href="../build/css/custom.min.css" rel="stylesheet">
-    <link href="../build/css/mycustom.css" rel="stylesheet">
+    <link href="../../build/css/custom.min.css" rel="stylesheet">
+    <link href="../../build/css/mycustom.css" rel="stylesheet">
   </head>
 
   <body class="login">
@@ -45,7 +46,7 @@ if(isset($_SESSION['neocaja_user_id']) && isset($_SESSION['neocaja_tipo'])){
 
       <div class="row justify-content-center m-0">
         <figure class="row col-12 justify-content-center m-0">
-          <img class="col-12 col-md-4" src="../images/iujo-transparent.png" alt="iujo_logo">
+          <img class="col-12 col-md-4" src="../../images/iujo-transparent.png" alt="iujo_logo">
         </figure>
 
       </div>
@@ -66,10 +67,10 @@ if(isset($_SESSION['neocaja_user_id']) && isset($_SESSION['neocaja_tipo'])){
               <?php } ?>
               <span class="h5">Sistema de caja</span>
               <div class="mt-3">
-                <input type="text" name="user" class="form-control" placeholder="Usuario" required= />
+                <input type="text" name="neocaja_user" class="form-control" placeholder="Usuario" required= />
               </div>
               <div>
-                <input type="password" name="password" class="form-control" placeholder="Contraseña" required />
+                <input type="password" name="neocaja_password" class="form-control" placeholder="Contraseña" required />
               </div>
               <div class="text-danger my-2" id="error-displayer">
               </div>
@@ -101,12 +102,12 @@ if(isset($_SESSION['neocaja_user_id']) && isset($_SESSION['neocaja_tipo'])){
           const suspiciousRegex = /[<>/;\"'\-(){}\[\]$\\|&\?\=\¿\¡!]/;
           var error = false
 
-          if(myForm['user'].value === '' || myForm['password'].value === ''){
+          if(myForm['neocaja_user'].value === '' || myForm['neocaja_password'].value === ''){
             error = true
             PrintError('Rellene todos los campos')
           }
 
-          if (suspiciousRegex.test(myForm['user'].value)){
+          if (suspiciousRegex.test(myForm['neocaja_user'].value)){
                 error = true
                 PrintError('El campo usuario contiene caracteres sospechosos: < > / \\ ; " ( ) { } [ ] $ & | ¿ ? ¡ ! = - ' + "'")
           }

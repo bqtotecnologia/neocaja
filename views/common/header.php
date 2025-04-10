@@ -4,13 +4,8 @@
 if (session_status() === PHP_SESSION_NONE)
     session_start();
 
-// Si no existe la variable de sesión 'neocaja_user_id' o no está autorizado retornamos al index.php
-if (!isset($_SESSION['neocaja_user_id']) ||
-  !(in_array($_SESSION['neocaja_tipo'], ['teacher', 'admin', 'super', 'coord'])))
-{
-    header('Location: ../index.php');
-    exit;
-}
+$admitted_user_types = ['Cajero', 'Supervisor', 'Estudiante', 'Super'];
+include_once '../../utils/validate_user_type.php';
 
 ?>
 
@@ -23,7 +18,7 @@ if (!isset($_SESSION['neocaja_user_id']) ||
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>IUJO | Sistema de evaluación docente</title>
+    <title>IUJO | Sistema de caja</title>
 
     <!-- Bootstrap -->
     <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
