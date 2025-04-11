@@ -317,8 +317,11 @@ class SiacadModel extends PGSQLModel
             participantes.cedula,
             participantes.nombre1,
             participantes.nombre2,
+            CONCAT(nombre1, ' ', nombre2) as nombres,
+            CONCAT(apellido1, ' ', apellido2) as apellidos,
             participantes.apellido1,
             participantes.apellido2,
+            participantes.direccion,
             carreras.nombrecarrera as carrera,
             secciones.nombreseccion as seccion,
             semestres.abreviado as semestre

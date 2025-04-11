@@ -1,9 +1,8 @@
 <?php 
-include '../common/header.php';
+$admitted_user_types = ['Cajero', 'Supervisor', 'Estudiante', 'Super'];
+include_once '../utils/validate_user_type.php';
 
-include_once '../models/siacad_model.php';
-$siacad = new SiacadModel();
-$current_periodo = $siacad->GetCurrentPeriodo();
+include 'common/header.php';
 
 ?>
 
@@ -17,16 +16,7 @@ $current_periodo = $siacad->GetCurrentPeriodo();
         <div class="col-12 mb-5">
             <h2 class="col-12 h3 text-center text-success"><?= $messages[$_GET['message']] ?></h2>
         </div>
-    <?php } ?>
-    
-    <div class="row col-12 my-3 p-0">
-        <div class="col-12">
-            <h1 class="w-100 text-center h1">
-                Resumen del periodo <?= $current_periodo['nombreperiodo'] ?>
-            </h1>
-        </div>
-    </div>
-    <?php $target_periodo = $current_periodo['idperiodo']; include_once 'common/periodo_summary.php'; ?>
+    <?php } ?>   
 </div>
 
 <?php include 'common/footer.php'; ?>

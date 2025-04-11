@@ -66,11 +66,36 @@ if($error === ''){
     if(isset($usuario['super_admin'])){
         // Es un super administrador
         $user_id = '-1';
-        $user_type = 'super';
+        $user_type = 'Super';
     }
     else{
         $my_user = $siacad->GetUserTypeByCedula($cedula);
         $user_type = $my_user['type'];
+    }
+
+    if($user_type === 'Estudiante'){
+        // Si es un estudiante, vamos a verificar que tenga cuenta, si no la tiene, la creamos
+        include_once '../models/account_model.php';
+        $account_model = new AccountModel();
+    
+        $account = $account_model->GetAccountByCedula($cedula);
+        if($account === false){
+            $student = $my_user['data'];
+            $data = [
+                'names' => $student['nombres'],
+                'surnames' => $student['apellidos'],
+                'cedula' => $cedula,
+                'address' => $student['direccion'],
+                'is_student' => 1,
+                'scholarship' => 'NULL',
+                'scholarship_coverage' => 'NULL',
+                'company' => 'NULL'
+            ];
+
+            $created = $account_model->CreateAccount($data);
+            if($created === false)
+                $error = 'Hubo un error al crear tu cuenta';
+        }
     }
 }
 
@@ -83,20 +108,19 @@ if($error === ''){
 }
 
 // Descomentar para verificar los datos 
-/*
-var_dump($user_name); echo '<br>';
-var_dump($user_surname); echo '<br>';
-var_dump($cedula); echo '<br>';
-var_dump($user_type); echo '<br>';
-var_dump($user_id); echo '<br>';
-exit;
-*/
+
+// var_dump($user_name); echo '<br>';
+// var_dump($user_surname); echo '<br>';
+// var_dump($cedula); echo '<br>';
+// var_dump($user_type); echo '<br>';
+// exit;
+
 
 if($error === ''){
     header('Location: ' . $base_url . '/views/panel.php');
 }
 else{
-    header('Location: ' . $redirect . '?error=' . $error);
+    header('Location: ' . $base_url . '/views/forms/login.php?error=' . $error);
 }
 
 exit;

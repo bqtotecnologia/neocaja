@@ -4,9 +4,7 @@
 if (session_status() === PHP_SESSION_NONE)
     session_start();
 
-$admitted_user_types = ['Cajero', 'Supervisor', 'Estudiante', 'Super'];
-include_once '../../utils/validate_user_type.php';
-
+    $my_url = 'http://localhost/neocaja';
 ?>
 
 <!DOCTYPE html>
@@ -21,28 +19,28 @@ include_once '../../utils/validate_user_type.php';
     <title>IUJO | Sistema de caja</title>
 
     <!-- Bootstrap -->
-    <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= $my_url ?>/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="<?= $my_url ?>/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- NProgress -->
-    <link href="../vendors/nprogress/nprogress.css" rel="stylesheet">
+    <link href="<?= $my_url ?>/vendors/nprogress/nprogress.css" rel="stylesheet">
     <!-- iCheck -->
-    <link href="../vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+    <link href="<?= $my_url ?>/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
     <!-- jQuery custom content scroller -->
-    <link href="../vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>
+    <link href="<?= $my_url ?>/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>
     <!-- select2 -->
-    <link href="../vendors/select2/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="<?= $my_url ?>/vendors/select2/dist/css/select2.min.css" rel="stylesheet" />
 
     <link rel="apple-touch-icon" href="../images/iujo.ico">
     <link rel="shortcut icon" href="../images/iujo.ico">
 
-    <link href="../vendors/select2/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="../vendors/datatable/css/jquery.dataTables.min.css" rel="stylesheet" />
-    <link href="../vendors/datatable/css/jquery.dataTables.css" rel="stylesheet" />
+    <link href="<?= $my_url ?>/vendors/select2/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="<?= $my_url ?>/vendors/datatable/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="<?= $my_url ?>/vendors/datatable/css/jquery.dataTables.css" rel="stylesheet" />
 
     <!-- Custom Theme Style -->
-    <link href="../build/css/custom.min.css" rel="stylesheet">
-    <link href="../build/css/mycustom.css" rel="stylesheet">
+    <link href="<?= $my_url ?>/build/css/custom.min.css" rel="stylesheet">
+    <link href="<?= $my_url ?>/build/css/mycustom.css" rel="stylesheet">
 
   </head>
 
@@ -54,7 +52,7 @@ include_once '../../utils/validate_user_type.php';
             <div class="navbar nav_title" style="border: 0;">
             <figure class="rounded bg-white w-100 m-2 text-center">
                   <a href="panel.php" class="site_title text-center p-0 m-0">
-                    <img class="w-100" src="../images/iujo-transparent.png" alt="iujo logo png">
+                    <img class="w-100" src="<?= $my_url ?>/images/iujo-transparent.png" alt="iujo logo png">
                 </a>
             </figure>
             </div>
@@ -70,36 +68,29 @@ include_once '../../utils/validate_user_type.php';
                 <ul class="nav side-menu">
                   <?php if(isset($_SESSION['neocaja_tipo'])){ ?>
 
-                    <!-- Admin -->
-                    <?php if(in_array($_SESSION['neocaja_tipo'], ['admin', 'super'])){ ?>
-                      <li><a><i class="fa fa-bar-chart"></i> Estadísticas <span class="fa fa-chevron-down"></span></a>
+                    <!-- Estudiantes -->
+                    <?php if(in_array($_SESSION['neocaja_tipo'], ['Estudiante', 'Super'])){ ?>
+                      <li><a><i class="fa fa-fax"></i> Pagos <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="search_docente.php">Buscar docente</a></li>
-                          <li><a href="see_periodo_summary.php">Resumen de periodos</a></li>
-                        </ul>
-                      </li>
-
-                      <!--
-                      <li><a><i class="fa fa-file"></i> Reportes <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a href="reporte_observaciones.php">Observaciones</a></li>
-                        </ul>
-                      </li>
-                      -->
-
-                      <li><a><i class="fa fa-wrench"></i> Criterios <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a href="manage_criterios.php">Gestionar criterios</a></li>
+                          <li><a href="<?= $my_url ?>/views/confirm_payment.php">Conciliar pago</a></li>
+                          <li><a href="<?= $my_url ?>/views/my_payments.php">Historial de pagos</a></li>
                         </ul>
                       </li>
                     <?php } ?>
 
-                    <!-- Super Admin -->
-                    <?php if($_SESSION['neocaja_tipo'] === 'super'){ ?>
-                      <li><a><i class="fa fa-user"></i> Admin <span class="fa fa-chevron-down"></span></a>
+                    <!-- Cajero -->
+                    <?php if(in_array($_SESSION['neocaja_tipo'], ['Cajero', 'Super'])){ ?>
+                      <li><a><i class="fa fa-fax"></i> Facturas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="add_admin.php">Agregar administrador</a></li>
-                          <li><a href="search_admin.php">Buscar administradores</a></li>
+                          <li><a href="<?= $my_url ?>/views/forms/invoice_form.php">Crear factura</a></li>
+                          <li><a href="<?= $my_url ?>/views/searchers/search_invoice.php">Buscar factura</a></li>
+                        </ul>
+                      </li>
+
+                      <li><a><i class="fa fa-cubes"></i> Productos <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $my_url ?>/views/forms/product_form.php">Crear producto</a></li>
+                          <li><a href="<?= $my_url ?>/views/tables/search_products.php">Ver productos</a></li>
                         </ul>
                       </li>
                     <?php } ?>

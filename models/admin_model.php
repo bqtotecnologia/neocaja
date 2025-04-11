@@ -1,27 +1,27 @@
 <?php
-include_once 'PGSQL_model.php';
+include_once 'SQL_model.php';
 
-class AdminModel extends PGSQLModel
+class AdminModel extends SQLModel
 { 
     // Obtiene una cédula y retorna el registro que coincida
     public function CheckAdmin($cedula)
     {
-        $sql = "SELECT * FROM admin WHERE cedula='$cedula'";
+        $sql = "SELECT * FROM admins WHERE cedula='$cedula'";
         return parent::GetRow($sql);
     }
 
     //Función para añadir adminsitradores único del super administrador
     public function AddAdmin($cedula, $admin_level){
-        $sql = "SELECT * FROM admin WHERE cedula='$cedula'";
+        $sql = "SELECT * FROM admins WHERE cedula='$cedula'";
         $result = parent::GetRow($sql);
 
         if($result !== false) 
             return 'Cédula ya registrada';
 
-        $sql = "INSERT INTO admin (cedula, type) VALUES ('$cedula', '$admin_level')";        
+        $sql = "INSERT INTO admins (cedula, type) VALUES ('$cedula', '$admin_level')";        
         parent::DoQuery($sql);
 
-        $sql = "SELECT * FROM admin WHERE cedula = '$cedula' AND type = '$admin_level'";
+        $sql = "SELECT * FROM admins WHERE cedula = '$cedula' AND type = '$admin_level'";
         $new_admin = parent::GetRow($sql);
         if($new_admin === false)
             return 'Hubo un problema al insertar el administrador en la base de datos';
@@ -30,17 +30,17 @@ class AdminModel extends PGSQLModel
     }
 
     public function GetAdmins(){
-        $sql = "SELECT * FROM admin";
+        $sql = "SELECT * FROM admins";
         return parent::GetRows($sql);
     }
 
     public function GetAdminById($id){
-        $sql = "SELECT * FROM admin WHERE id = '$id'";
+        $sql = "SELECT * FROM admins WHERE id = '$id'";
         return parent::GetRow($sql);
     }
 
     public function GetAdminByCedula($cedula){
-        $sql = "SELECT * FROM admin WHERE cedula = '$cedula'";
+        $sql = "SELECT * FROM admins WHERE cedula = '$cedula'";
         return parent::GetRow($sql);
     }
 
@@ -48,7 +48,7 @@ class AdminModel extends PGSQLModel
     public function CheckSuperAdminUser($user){
         $sql = "SELECT * FROM super_admin 
             WHERE
-            usuario = '$user'";
+            user = '$user'";
 
         $result = parent::GetRow($sql);
         if($result === false) return false;
@@ -59,8 +59,8 @@ class AdminModel extends PGSQLModel
     public function CheckSuperAdminLogin($user, $password){
         $sql = "SELECT * FROM super_admin 
             WHERE
-            usuario = '$user' AND
-            contrasena = '$password'";
+            user = '$user' AND
+            password = '$password'";
 
         $result = parent::GetRow($sql);
         if($result === false) return false;
@@ -73,7 +73,7 @@ class AdminModel extends PGSQLModel
     public function GetCoordinadores($as_list = false){
         $sql = "SELECT
             *
-            FROM admin
+            FROM admins
             WHERE
             type = 'coord'";
         $coordinadores = parent::GetRows($sql);
@@ -93,12 +93,12 @@ class AdminModel extends PGSQLModel
     }
 
     public function UpdateAdmin($id, $new_cedula, $newType){
-        $sql = "UPDATE admin SET cedula='$new_cedula', type='$newType' WHERE id=$id";
+        $sql = "UPDATE admins SET cedula='$new_cedula', type='$newType' WHERE id=$id";
         return parent::DoQuery($sql);
     }
 
     public function DeleteAdmin($id){
-        $sql = "DELETE FROM admin WHERE id = $id";
+        $sql = "DELETE FROM admins WHERE id = $id";
         return parent::DoQuery($sql);
     }
 }
