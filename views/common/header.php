@@ -31,8 +31,8 @@ if (session_status() === PHP_SESSION_NONE)
     <!-- select2 -->
     <link href="<?= $my_url ?>/vendors/select2/dist/css/select2.min.css" rel="stylesheet" />
 
-    <link rel="apple-touch-icon" href="../images/iujo.ico">
-    <link rel="shortcut icon" href="../images/iujo.ico">
+    <link rel="apple-touch-icon" href="<?= $my_url ?>/images/iujo.ico">
+    <link rel="shortcut icon" href="<?= $my_url ?>/images/iujo.ico">
 
     <link href="<?= $my_url ?>/vendors/select2/dist/css/select2.min.css" rel="stylesheet" />
     <link href="<?= $my_url ?>/vendors/datatable/css/jquery.dataTables.min.css" rel="stylesheet" />
@@ -51,7 +51,7 @@ if (session_status() === PHP_SESSION_NONE)
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
             <figure class="rounded bg-white w-100 m-2 text-center">
-                  <a href="panel.php" class="site_title text-center p-0 m-0">
+                  <a href="<?= $my_url ?>/views/panel.php" class="site_title text-center p-0 m-0">
                     <img class="w-100" src="<?= $my_url ?>/images/iujo-transparent.png" alt="iujo logo png">
                 </a>
             </figure>
@@ -90,7 +90,7 @@ if (session_status() === PHP_SESSION_NONE)
                       <li><a><i class="fa fa-cubes"></i> Productos <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $my_url ?>/views/forms/product_form.php">Crear producto</a></li>
-                          <li><a href="<?= $my_url ?>/views/tables/search_products.php">Ver productos</a></li>
+                          <li><a href="<?= $my_url ?>/views/tables/search_product.php">Ver productos</a></li>
                         </ul>
                       </li>
                     <?php } ?>

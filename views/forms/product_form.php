@@ -55,7 +55,7 @@ if(isset($_GET['id'])){
 
             <div class="row col-8 my-2 justify-content-start">
                 <div class="col-12 col-lg-3 d-flex align-items-center justify-content-center justify-content-lg-end fw-bold">
-                    <label for="name">Nombre</label>
+                    <label class="m-0" for="name">Nombre</label>
                 </div>
                 <div class="col-12 col-lg-9">
                     <input class="col-12 col-lg-8 form-control" name="name" id="name" type="text" placeholder="Nombre" value="<?php $edit ? $target_product['name'] : '' ?>">
@@ -64,7 +64,7 @@ if(isset($_GET['id'])){
 
             <div class="row col-8 my-2 justify-content-start">
                 <div class="col-12 col-lg-3 d-flex align-items-center justify-content-center justify-content-lg-end fw-bold">
-                    <label for="price">Precio</label>
+                    <label class="m-0" for="price">Precio</label>
                 </div>
                 <div class="col-12 col-lg-4">
                     <input class="col-12 col-lg-6 form-control" name="price" id="price" type="number" placeholder="Precio ($)" value="<?php $edit ? $target_product['price'] : '' ?>" step="0.1">
