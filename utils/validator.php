@@ -4,10 +4,12 @@ class Validator
     /**
      * Valida los campos recibidos de un formulario POST
      * 
+     * Verifica que los campos númericos integer y float estén correctos, igual con las fechas, caracteres sospechosos y ids de elementos en las bases de datos
+     * 
      * @param array $fields_config Array ordenado con la configuración de los campos
      * @return array|string Un array con la información limpia o un string con un mensaje de error
      */
-    public function ValidatePOSTFields(array $fields_config):array|string{
+    public function ValidatePOSTFields(array $fields_config){
         $cleanData = [];
         $error = '';
         foreach($fields_config as $field => $currentField){

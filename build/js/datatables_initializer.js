@@ -22,9 +22,15 @@ $('my-datatable-buttons').DataTable({
     responsive: true
 }); 
 
-$('#products-table').DataTable({
-    
+$('#products-table').DataTable({    
     language: spanish,
+    dom: "Blfrtip",
+        buttons: [
+            {
+                extend: "excel",
+                className: "btn-sm"
+            },
+        ],
     columnDefs: [{
         targets: [3,4],
         render: $.fn.dataTable.render.moment('YYYY-MM-DD HH:mm:ss', 'DD/MM/YYYY HH:mm:ss')
@@ -32,3 +38,21 @@ $('#products-table').DataTable({
     responsive: true
     
 }); 
+
+$('#products-history-table').DataTable({    
+    language: spanish,
+    dom: "Blfrtip",
+        buttons: [
+            {
+                extend: "excel",
+                className: "btn-sm"
+            },
+        ],
+    columnDefs: [{
+        targets: [3],
+        render: $.fn.dataTable.render.moment('YYYY-MM-DD HH:mm:ss', 'DD/MM/YYYY HH:mm:ss')
+      }],
+    responsive: true
+    
+}); 
+

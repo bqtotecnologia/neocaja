@@ -5,9 +5,12 @@ include_once '../../utils/validate_user_type.php';
 include '../common/header.php';
 include_once '../../utils/base_url.php';
 
-$edit = false;
-if(isset($_GET['id'])){
-    $edit = true;
+$edit = isset($_GET['id']);
+if($edit){
+    if(!is_numeric($_GET['id'])){
+        header('Location: ' . $base_url . '/views/tables/search_product.php?error=Id inválido');
+        exit;
+    }   
 
     include_once '../../models/product_model.php';
     $product_model = new ProductModel();
@@ -58,7 +61,7 @@ if(isset($_GET['id'])){
                     <label class="m-0" for="name">Nombre</label>
                 </div>
                 <div class="col-12 col-lg-9">
-                    <input class="col-12 col-lg-8 form-control" name="name" id="name" type="text" placeholder="Nombre" value="<?php $edit ? $target_product['name'] : '' ?>">
+                    <input class="col-12 col-lg-8 form-control" name="name" id="name" type="text" placeholder="Nombre" value="<?php if($edit) echo $target_product['name']; ?>">
                 </div>
             </div>
 
@@ -67,7 +70,7 @@ if(isset($_GET['id'])){
                     <label class="m-0" for="price">Precio</label>
                 </div>
                 <div class="col-12 col-lg-4">
-                    <input class="col-12 col-lg-6 form-control" name="price" id="price" type="number" placeholder="Precio ($)" value="<?php $edit ? $target_product['price'] : '' ?>" step="0.1">
+                    <input class="col-12 col-lg-6 form-control" name="price" id="price" type="number" placeholder="Precio ($)" value="<?php if($edit) echo $target_product['price']; ?>" step="0.1">
                 </div>                    
             </div>
 

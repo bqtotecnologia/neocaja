@@ -31,11 +31,7 @@ $admins = $admin_model->GetAdmins();
     
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <div class="col-12  x_title">
-                <a href="add_admin.php" class="btn btn-app">
-                    <i class="fa fa-plus" style="color:green"></i> Agregar
-                </a>
-            </div>
+            <?php $btn_url = 'add_admin.php'; include_once '../../utils/partials/addButton.php' ?>
             <?php include 'common/admins_table.php'; ?>
         </div>
     </div>

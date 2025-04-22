@@ -37,14 +37,14 @@
     <script src="<?= $my_url ?>/vendors/select2/dist/js/select2.min.js" rel="stylesheet"></script>
 
     <!-- DataTable -->
-    <script src="<?= $my_url ?>/vendors/datatable/js/jquery.datatables.min.js"></script>
+    <script src="<?= $my_url ?>/vendors/datatable/js/jquery.dataTables.min.js"></script>
     <script src="<?= $my_url ?>/vendors/datatable/js/spanish.js"></script>
     <script src="<?= $my_url ?>/vendors/datatable/js/moment.min.js"></script>
     <script src="<?= $my_url ?>/vendors/datatable/js/datetime.js"></script>
-    <script src="<?= $my_url ?>/vendors/datatable/js/dataTables.buttons.js"></script>
+    <script src="<?= $my_url ?>/vendors/datatable/js/dataTables.buttons.min.js"></script>
     <script src="<?= $my_url ?>/vendors/datatable/js/jszip.min.js"></script>
-    <script src="<?= $my_url ?>/vendors/datatable/js/buttons.html5.js"></script>
-    <!-- <script src="<?= $my_url ?>/vendors/datatable/js/buttons.print.min.js"></script> -->
+    <script src="<?= $my_url ?>/vendors/datatable/js/buttons.html5.min.js"></script>
+    <script src="<?= $my_url ?>/vendors/datatable/js/buttons.print.min.js"></script>
 
     <!-- Pdfmake -->
     <script src="<?= $my_url ?>/vendors/pdfmake/build/pdfmake.js"></script>

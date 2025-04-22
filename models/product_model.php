@@ -34,13 +34,17 @@ class ProductModel extends SQLModel
     }
 
     public function GetProduct($id){
-        $sql = "SELECT * FROM products WHERE id = '$id'";
+        $sql = $this->SELECT_TEMPLATE . " WHERE pr.id = '$id'";
         return parent::GetRow($sql);
     }
 
     public function GetProductByName($name){
-        $sql = "SELECT * FROM products WHERE name = '$name'";
+        $sql = $this->SELECT_TEMPLATE . " WHERE pr.name = '$name'";
         return parent::GetRow($sql);
+    }
+
+    public function GetProductHistory($productId){
+        return parent::GetRows("SELECT * FROM product_history WHERE product = $productId ORDER BY created_at DESC", true);
     }
 
     public function UpdateProduct($data, $id){

@@ -56,7 +56,7 @@ if($error === ''){
 if($error === ''){
     if($edit){
         $same_name = $product_model->GetProductByName($cleanData['name']);
-        if($same_name['name'] === $target_product['name'] && $target_product['id'] !== $cleanData['id'])
+        if($same_name['name'] === $target_product['name'] && intval($target_product['id']) !== $cleanData['id'])
             $error = 'El nombre del producto está repetido';
     }    
 }    
