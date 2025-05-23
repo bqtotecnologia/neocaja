@@ -4,7 +4,7 @@ include_once '../utils/validate_user_type.php';
 
 include_once '../utils/base_url.php';
 include_once '../utils/validator.php';
-include_once '../utils/base_url.php';
+
 $validator = new Validator();
 
 $error = '';

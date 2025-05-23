@@ -39,13 +39,11 @@ if($error === ''){
         $error = 'Credenciales inválidas';
 }
 
-
 if($error === ''){
     $target_user = $dbusuarios->TryLogin($user, $password);
     if($target_user === false)
         $error = 'Credenciales inválidas';
 }
-
 
 if($error === ''){
     // Login exitoso
@@ -63,17 +61,17 @@ if($error === ''){
 
     include_once '../models/siacad_model.php';
     $siacad = new SiacadModel();
-    if(isset($usuario['super_admin'])){
+    if(isset($target_user['super_admin'])){
         // Es un super administrador
         $user_id = '-1';
-        $user_type = 'Super';
+        $user_role = 'Super';
     }
     else{
         $my_user = $siacad->GetUserTypeByCedula($cedula);
-        $user_type = $my_user['type'];
+        $user_role = $my_user['role'];
     }
 
-    if($user_type === 'Estudiante'){
+    if($user_role === 'Estudiante'){
         // Si es un estudiante, vamos a verificar que tenga cuenta, si no la tiene, la creamos
         include_once '../models/account_model.php';
         $account_model = new AccountModel();
@@ -81,6 +79,7 @@ if($error === ''){
         $account = $account_model->GetAccountByCedula($cedula);
         if($account === false){
             $student = $my_user['data'];
+            
             $data = [
                 'names' => $student['nombres'],
                 'surnames' => $student['apellidos'],
@@ -103,24 +102,25 @@ if($error === ''){
     session_start();
     $_SESSION['neocaja_name'] = strtoupper($user_name);
     $_SESSION['neocaja_surname'] = strtoupper($user_surname);
-    $_SESSION['neocaja_tipo'] = $user_type;
+    $_SESSION['neocaja_fullname'] = $_SESSION['neocaja_name'] . ' ' . $_SESSION['neocaja_surname'];
+    $_SESSION['neocaja_tipo'] = $user_role;
     $_SESSION['neocaja_cedula'] = $cedula;
 }
 
 // Descomentar para verificar los datos 
 
-// var_dump($user_name); echo '<br>';
-// var_dump($user_surname); echo '<br>';
-// var_dump($cedula); echo '<br>';
-// var_dump($user_type); echo '<br>';
-// exit;
+/*
+var_dump($user_name); echo '<br>';
+var_dump($user_surname); echo '<br>';
+var_dump($cedula); echo '<br>';
+var_dump($user_role); echo '<br>';
+echo "Error: " . $error;
+exit;
+*/
 
 
-if($error === ''){
+if($error === '')
     header('Location: ' . $base_url . '/views/panel.php');
-}
-else{
+else
     header('Location: ' . $base_url . '/views/forms/login.php?error=' . $error);
-}
-
 exit;

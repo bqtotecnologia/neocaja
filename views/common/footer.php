@@ -50,6 +50,9 @@
     <script src="<?= $my_url ?>/vendors/pdfmake/build/pdfmake.js"></script>
     <script src="<?= $my_url ?>/vendors/pdfmake/build/vfs_fonts.js"></script>
 
+    <!-- Sweetalert2 -->
+    <script src="<?= $my_url ?>/vendors/sweetalert2/sweetalert2.min.js"></script>
+
     <!-- Custom Theme Scripts -->
     <script src="<?= $my_url ?>/build/js/custom.min.js"></script>
     <script src="<?= $my_url ?>/build/js/mycustom.js"></script>

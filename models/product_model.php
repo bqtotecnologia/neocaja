@@ -8,24 +8,23 @@ class ProductModel extends SQLModel
         pr.name,
         pr.active,
         pr.created_at as product_created_at,
-        product_history.price,
-        product_history.created_at as price_created_at
+        ph.price,
+        ph.created_at as price_created_at
         FROM
         products pr
-        INNER JOIN product_history
-            ON product_history.product = pr.id
-            AND product_history.created_at = (
-                SELECT MAX(created_at)
-                FROM product_history
-                WHERE product = pr.id
-        ) ";
+        LEFT JOIN product_history ph ON ph.product = pr.id AND ph.current = 1 ";
+
     public function CreateProduct($data){
         $name = $data['name'];
         $sql = "INSERT INTO products (name) VALUES ('$name')";
         $created = parent::DoQuery($sql);
 
-        if($created === false) return $created;
-        return $this->GetProductByName($name);
+        if($created === false) 
+            $result = false;
+        else
+            $result = $this->GetProductByName($name);
+
+        return $result;
     }
 
     public function GetAllProducts(){

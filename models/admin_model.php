@@ -6,7 +6,16 @@ class AdminModel extends SQLModel
     // Obtiene una cédula y retorna el registro que coincida
     public function CheckAdmin($cedula)
     {
-        $sql = "SELECT * FROM admins WHERE cedula='$cedula'";
+        $sql = "SELECT
+            roles.name as role,
+            roles.id as role_id,
+            admins.cedula,
+            admins.id as admin_id
+            FROM
+            admins
+            INNER JOIN roles ON roles.id = admins.role
+            WHERE
+            cedula = '$cedula'";
         return parent::GetRow($sql);
     }
 
@@ -46,9 +55,10 @@ class AdminModel extends SQLModel
 
     // Retorna true si el usuario coincide con el del super admin
     public function CheckSuperAdminUser($user){
+        $encrypted_user = sha1($user);
         $sql = "SELECT * FROM super_admin 
             WHERE
-            user = '$user'";
+            user = '$encrypted_user'";
 
         $result = parent::GetRow($sql);
         if($result === false) return false;
@@ -57,9 +67,10 @@ class AdminModel extends SQLModel
 
     // Retorna true si las credenciales recibidas son del super admin
     public function CheckSuperAdminLogin($user, $password){
+        $encrypted_user = sha1($user);
         $sql = "SELECT * FROM super_admin 
             WHERE
-            user = '$user' AND
+            user = '$encrypted_user' AND
             password = '$password'";
 
         $result = parent::GetRow($sql);

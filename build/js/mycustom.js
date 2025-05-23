@@ -1,16 +1,26 @@
 var confirm_forms = document.getElementsByClassName("confirm-form");
 
-Array.from(confirm_forms).forEach(function(form){
+Array.from(confirm_forms).forEach(function(form){  
     form.addEventListener("submit", (event) => {
         event.preventDefault()
-        if (confirm("¿Estás seguro de borrar este usuario?"))
+
+        Swal.fire({
+          title: "¿Desea realizar esta acción?",
+          icon:'question',
+          showDenyButton: true,
+          confirmButtonText: "Sí",
+          denyButtonText: "No"
+        }).then((result) => {
+          if (result.isConfirmed) {
             form.submit()
+          }
+        });
     })
 });
 
 $(document).ready(function () {
-      $(".select2").select2({width:'100%'});
-  });
+    $(".select2").select2({width:'100%'});
+});
 
   
 function ExportToPDF(){

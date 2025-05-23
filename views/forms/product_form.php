@@ -51,7 +51,7 @@ if($edit){
         method="POST" 
         id="criterio-form" 
         data-parsley-validate 
-        class="form-horizontal form-label-left d-flex justify-content-center align-items-center flex-column x_panel">
+        class="form-horizontal form-label-left d-flex justify-content-center align-items-center flex-column x_panel confirm-form">
             <?php if($edit === true) { ?>
                 <input type="hidden" name="id" value="<?= $target_product['id'] ?>">
             <?php } ?>

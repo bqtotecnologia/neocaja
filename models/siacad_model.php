@@ -564,7 +564,7 @@ class SiacadModel extends PGSQLModel
         $student = $this->GetEstudianteByCedula($cedula);
         if($student !== false){
             $data = array(
-                'type' => 'Estudiante',
+                'role' => 'Estudiante',
                 'data' => $student
             );
         }        
@@ -574,7 +574,7 @@ class SiacadModel extends PGSQLModel
         $admin = $admin_model->CheckAdmin($cedula);
         if($admin !== false){
             $data = array(
-                'type' => $admin['type'],
+                'role' => $admin['role'],
                 'data' => $admin,
             );
         }
