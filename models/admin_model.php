@@ -58,7 +58,7 @@ class AdminModel extends SQLModel
         $encrypted_user = sha1($user);
         $sql = "SELECT * FROM super_admin 
             WHERE
-            user = '$encrypted_user'";
+            username = '$encrypted_user'";
 
         $result = parent::GetRow($sql);
         if($result === false) return false;
@@ -70,7 +70,7 @@ class AdminModel extends SQLModel
         $encrypted_user = sha1($user);
         $sql = "SELECT * FROM super_admin 
             WHERE
-            user = '$encrypted_user' AND
+            username = '$encrypted_user' AND
             password = '$password'";
 
         $result = parent::GetRow($sql);

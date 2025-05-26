@@ -36,9 +36,6 @@ $product_history = $product_model->GetProductHistory($target_product['id']);
         <h1 class="h1 text-black">Historial de precios del producto "<?= $target_product['name'] ?>"</h1>
     </div>
 
-    <?php include_once '../../utils/message_displayer.php'; ?>
-
-    
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
             <?php $btn_url = 'search_product.php'; include_once '../../utils/partials/backButton.php'; ?>

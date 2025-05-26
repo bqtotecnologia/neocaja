@@ -1,4 +1,7 @@
 <?php
+/**
+ * Clase que contiene diversas validaciones al momento de chequear información recibida por formularios
+ */
 class Validator
 {
     /**
@@ -12,8 +15,7 @@ class Validator
     public function ValidatePOSTFields(array $fields_config){
         $cleanData = [];
         $error = '';
-        foreach($fields_config as $field => $currentField){
-            
+        foreach($fields_config as $field => $currentField){            
             if(!isset($_POST[$field])){
                 $error = 'El campo ' . $field . ' no existe';
                 break;

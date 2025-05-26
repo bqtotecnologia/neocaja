@@ -57,5 +57,26 @@
     <script src="<?= $my_url ?>/build/js/custom.min.js"></script>
     <script src="<?= $my_url ?>/build/js/mycustom.js"></script>
     <script src="<?= $my_url ?>/build/js/datatables_initializer.js"></script>
+    
+    <!-- Showing messages -->
+    <?php if (isset($_GET['error'])) { ?>
+        <script>
+            Swal.fire({
+              title: "Error",
+              icon:'error',
+              text: "<?= $_GET['error'] ?>",
+            })
+        </script>
+    <?php } ?>
+
+    <?php if (isset($_GET['message'])) { ?>
+        <script>
+            Swal.fire({
+              title: "Mensaje",
+              icon:'success',
+              text: "<?= $_GET['message'] ?>",
+            })
+        </script>
+    <?php } ?>
   </body>
 </html>
