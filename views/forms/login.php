@@ -1,8 +1,8 @@
 <?php 
 include_once '../../utils/base_url.php';
 session_start();
-if(isset($_SESSION['neocaja_cedula']) && isset($_SESSION['neocaja_tipo'])){
-  if(in_array($_SESSION['neocaja_tipo'], ['Cajero', 'Supervisor', 'Super', 'Estudiante'])){
+if(isset($_SESSION['neocaja_cedula']) && isset($_SESSION['neocaja_rol'])){
+  if(in_array($_SESSION['neocaja_rol'], ['Cajero', 'Supervisor', 'Super', 'Estudiante'])){
     header('Location: ' . $base_url . '/views/panel.php');
     exit;
   }

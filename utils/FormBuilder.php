@@ -26,7 +26,8 @@ class FormBuilder
     const LABEL_CLASS = " h6 m-0 fw-bold px-2 ";
     const INPUT_CONTAINER_CLASS = " row col-12 col-md-8 m-0 p-0 justify-content-center justify-content-md-start ";
     const INPUT_CLASS = " form-control ";
-    const MULTI_LABEL_CLASS = " text-left ";
+    const MULTI_INPUT_CONTAINER_CLASS = "row col-12 m-0 p-0 mx-2";
+    const MULTI_LABEL_CLASS = " text-left mx-2 h6 ";
     const SUBMIT_CONTAINER_CLASS = "";
     const SUBMIT_CLASS = "";
 
@@ -83,10 +84,14 @@ class FormBuilder
     
                     echo '<div class="' . self::INPUT_CONTAINER_CLASS . '">';
                         $id = 'id="' . $field['id'] . '" ';
-                        $name = 'name="' . $field['name'] . '" ';
                         $class = 'class="' . self::INPUT_CLASS . ' col-10 col-md-' . $field['size'] . self::INPUTS_TYPE_CLASSES[$field['type']] . '"' ;
                         $placeholder = 'placeholder="' . $field['placeholder'] . '"';
                         $required = $field['required'] === true ? 'required ' : '';
+
+                        if($field['type'] === 'checkbox')
+                            $name = 'name="' . $field['name'] . '[]" ';
+                        else
+                            $name = 'name="' . $field['name'] . '" ';
 
                         if(in_array($field['type'], ['integer', 'decimal', 'text'])){
                             $input = '<input ' . $id . $name . $class . $placeholder . $required . ' value="' . $field['value'] . '" ';
@@ -110,32 +115,34 @@ class FormBuilder
                             echo $input;
                         }
                         else if($field['type'] === 'textarea'){
-                            echo '<textarea ' . $id . $name . $class . $required . ' rows="50 columns="4" "value="' . $field['value'] . '"';
-                            echo '></textarea> ';
+                            echo '<textarea ' . $id . $name . $class . $required . ' rows="3" columns="50" "value="' . $field['value'] . '"';
+                            echo '>' . $field['value'] . '</textarea> ';
                         }
                         else if($field['type'] === 'select'){
-                            echo '<select ' . $id . $name . $class . $required . ' >';
-                                echo '<option value="">&nbsp;</option>';
-                                foreach($field['elements'] as $option){
-                                    echo '<option value="' . $option['value'] . '">' . $option['display'] . '</option>';
-                                }
-                            echo '</select>';
+                            echo '<div class="row m-0 p-0 col-12 col-md-' . $field['size'] . '">';
+                                echo '<select ' . $id . $name . $class . $required . ' >';
+                                    echo '<option value="">&nbsp;</option>';
+                                    foreach($field['elements'] as $option){
+                                        echo '<option value="' . $option['value'] . '"';
+                                        if($field['value'] === $option['value'])
+                                            echo ' selected ';
+                                        echo '>';
+                                        echo $option['display'] . '</option>';
+                                    }
+                                echo '</select>';
+                            echo '</div>';
                         }
-                        else if($field['type'] === 'radio'){
+                        else if(in_array($field['type'], ['radio', 'checkbox'])){
                             foreach($field['elements'] as $element){
-                                echo '<div class="row col-12 m-0 p-0">';
-                                    echo '<input type="radio" ' . $name . '" ' . ' value="' . $element['value'] . '" ' . $class . '>';
-                                    echo '<label class="' . self::MULTI_LABEL_CLASS . '">' . $element['display'] . '</label>';
+                                echo '<div class="' . self::MULTI_INPUT_CONTAINER_CLASS . '">';
+                                    echo '<input id="' . $field['name'] . '-' . $element['value'] . '" type="' . $field['type'] . '" ' . $name . ' value="' . $element['value'] . '" ' . $class;
+                                    if(in_array($element['value'], $field['value']))
+                                        echo ' checked ';
+                                    echo '>';
+                                    echo '<label for="' . $field['name'] . '-' . $element['value'] . '" class="' . self::MULTI_LABEL_CLASS . '">' . $element['display'] . '</label>';
                                 echo '</div>';
                             }
-                        }
-                        else if($field['type'] === 'checkbox'){
-                            foreach($field['elements'] as $element){
-                                echo '<input type="radio" ' . $name . '[]" ' . ' value="' . $element['value'] . '" ' . $class . '>';
-                                echo '<label class="' . self::MULTI_LABEL_CLASS . '">' . $element['display'] . '</label>';
-                            }
-                        }
-                        
+                        }                        
 
                     echo '</div>';
                 echo '</div>';
@@ -155,3 +162,80 @@ class FormBuilder
         echo '</form>';
     }
 }
+
+/*
+Here is an example for que fields
+
+$fields = [
+    [
+        'name' => 'name',
+        'display' => 'Nombre',
+        'placeholder' => 'Nombre del producto',
+        'id' => 'name',
+        'type' => 'text',
+        'size' => 8,
+        'max' => 255,
+        'min' => 1,
+        'required' => true,
+        'value' => $edit ? $target_product['name'] : ''
+    ],
+    [
+        'name' => 'price',
+        'display' => 'Precio',
+        'placeholder' => 'Precio ($)',
+        'id' => 'price',
+        'type' => 'decimal',
+        'size' => 4,
+        'required' => true,
+        'value' => $edit ? $target_product['price'] : ''
+    ],
+    [
+        'name' => 'category',
+        'display' => 'Categorías',
+        'placeholder' => '',
+        'id' => 'category',
+        'type' => 'checkbox',
+        'size' => 6,
+        'required' => true,
+        'value' => ['ids', 'of', 'product', 'categories'],
+        'elements' => [
+            [
+                'display' => 'Belleza',
+                'value' => '1'
+            ],
+            [
+                'display' => 'Papelería',
+                'value' => '2'
+            ],
+            [
+                'display' => 'Comida',
+                'value' => '3'
+            ],
+        ]
+    ],
+    [
+        'name' => 'type',
+        'display' => 'Tipo',
+        'placeholder' => '',
+        'id' => 'type',
+        'type' => 'select',
+        'size' => 6,
+        'required' => true,
+        'value' => '',
+        'elements' => [
+            [
+                'display' => 'Físico',
+                'value' => '1'
+            ],
+            [
+                'display' => 'Líquido',
+                'value' => '2'
+            ],
+            [
+                'display' => 'Gaseoso',
+                'value' => '3'
+            ],
+        ]
+    ],
+];
+*/

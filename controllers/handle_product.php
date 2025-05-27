@@ -82,16 +82,22 @@ if($error === ''){
             $updated = $product_model->UpdateProductPrice($cleanData['price'], $cleanData['id']);
             if($updated === false)
                 $error = 'Ocurrió un error al intentar actualizar el precio del producto';
-            else
+            else{
                 $message = 'Producto actualizado correctamente';
+                $action = 'Actualizó el producto ' . $cleanData['name'];
+                $product_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
+            }
         }
     }
     else{
         $updated = $product_model->UpdateProductPrice($cleanData['price'], $created['id']);
         if($updated === false)
             $error = 'Ocurrió un error al intentar establecer el precio del producto';
-        else
+        else{
             $message = 'Producto registrado correctamente';
+            $action = 'Creo el producto ' . $cleanData['name'];
+            $product_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
+        }
     }
 }
 

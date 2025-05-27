@@ -19,7 +19,7 @@ Array.from(confirm_forms).forEach(function(form){
 });
 
 $(document).ready(function () {
-    $(".select2").select2({width:'70%'});
+    $(".select2").select2({width:'100%'});
 });
 
   

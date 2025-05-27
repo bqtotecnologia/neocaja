@@ -1,117 +1,113 @@
 <?php
+$admitted_user_types = ['Super'];
+include_once '../utils/validate_user_type.php';
 
-session_start();
+include_once '../utils/base_url.php';
+include_once '../utils/Validator.php';
+
+$validator = new Validator();
+
 $error = '';
-// Si el usuario NO es del tipo correcto, lo mandamos al index y cerramos la sesión
-if($_SESSION['neocaja_tipo'] !== 'super'){
-    session_destroy();
-    header('Location:../index.php');
-    exit;
-}
-
 if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-if($error === ''){
-    if(!isset($_POST['cedula']) || !isset($_POST['nivel']))
-        $error = 'Información recibida errónea';
-}
+$fields_config = [
+    'cedula' => [
+        'min' => 7,
+        'max' => 11,
+        'required' => true,
+        'type' => 'string',
+        'suspicious' => true,
+    ],
+    'name' => [
+        'min' => 5,
+        'max' => 50,
+        'required' => true,
+        'type' => 'string',
+        'suspicious' => true,
+    ],
+    'role' => [
+        'min' => 1,
+        'max' => 11,
+        'required' => true,
+        'type' => 'numberic',
+        'suspicious' => true,
+    ],
+];
+
+$result = $validator->ValidatePOSTFields($fields_config);
+if(is_string($result))
+    $error = $result;
+else
+    $cleanData = $result;
+
+$edit = isset($cleanData['id']);
 
 if($error === ''){
-    if($_POST['cedula'] === '' || $_POST['nivel'] === '')
-        $error = 'Información recibida vacía';
-}
+    include_once '../models/admin_model.php';
+    $admin_model = new AdminModel();
 
-if($error === ''){
-    if(is_numeric($_POST['cedula']) !== true)
-        $error = 'La cédula debe ser de un valor numérico';
-}
-    
-if($error === ''){
-    if(strlen($_POST['cedula']) > 10 || strlen($_POST['cedula']) < 6)
-        $error = 'La cédula debe tener entre 6 a 10 caracteres';
-}
-
-if($error === ''){
-    // < > / \\ ; " { } [ ] $ & | ¿ ? ! = -   
-    $regex = '/[<>\-\/;"\'{}\[\]$\\\|&\?\¿!=]/u';
-    if (preg_match($regex, $_POST['cedula'])){
-        // El texto puede ser malicioso
-        $error = 'La cédula contiene caracteres sospechosos';
+    if($edit){
+        $target_admin = $admin_model->GetAdminById($cleanData['id']);
+        if($target_admin === false)
+            $error = 'Admin no encontrado';
     }
+    else{
+        $target_admin = $admin_model->GetAdminByCedula($cleanData['cedula']);
+        if($target_admin !== false)
+            $error = 'La cédula ya está registrada';
+    }   
 }
-
-if($error === '' && !in_array($_POST['nivel'], ['admin', 'coord'])){
-    $error = 'Tipo de usuario inválido';
-}
-
-
-$edit = isset($_POST['edit']) ? $_POST['edit'] : false;
-$delete = isset($_POST['delete']) ? $_POST['delete'] : false;
-$target_id = null;
-
-include_once '../models/admin_model.php';
-$admin_model = new AdminModel();
-$admin_exists = null;    
-
-if($error === '' && ($edit === '1' || $delete === '1')){
-    $admin_exists = $admin_model->GetAdminById($_POST['id']);
-    if($admin_exists === false)
-        $error = 'Administrador no encontrado';
-    else
-        $target_id = $admin_exists['id'];
-}
-
-if($error === '' && $edit !== '1' && $delete !== '1'){
-    $admin_exists = $admin_model->GetAdminByCedula($_POST['cedula']);
-    if($admin_exists !== false)
-        $error = 'Cédula repetida';
-}
-
-
 
 if($error === ''){
-    $result = null;
-    if($edit === '1'){
-        // Editamos al admin
-        $result = $admin_model->UpdateAdmin($target_id, $_POST['cedula'], $_POST['nivel']);
-        if($result === true){
-            header('Location: ../views/search_admin.php?message=Admin actualizado correctamente');
-            exit;
+    if($edit){
+        $same_cedula = $admin_model->GetAdminByCedula($cleanData['cedula']);
+        if($same_cedula['cedula'] === $target_admin['cedula'] && intval($target_admin['admin_id']) !== $cleanData['id'])
+            $error = 'La cédula ya está registrada';
+    }    
+}    
+
+if($error === ''){
+    $target_role = $admin_model->GetRoleById($cleanData['role']);
+    if($target_role === false)
+        $error = 'Rol no encontrado';
+}
+
+// Creating the admin
+if($error === ''){
+    if($edit){
+        $updated = $admin_model->UpdateAdmin($cleanData['id'], $cleanData);
+        if($updated === false)
+            $error = 'Hubo un error al intentar actualizar el admin';
+        else{
+            $message = 'Admin modificado exitosamente';            
+            $action = 'Modificó al admin ' . $target_admin['name'];
+            $admin_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
         }
     }
-
-    if($delete === '1'){
-        // Eliminamos el admin
-        $result = $admin_model->DeleteAdmin($target_id);
-        if($result === true){
-            header('Location: ../views/search_admin.php?message=Admin eliminado correctamente');
-            exit;
+    else{
+        $created = $admin_model->CreateAdmin($cleanData);
+        if($created === false)
+            $error = 'Hubo un error al intentar registrar el admin';
+        else{
+            $message = 'Admin creado exitosamente';
+            $action = 'Creó al admin ' . $cleanData['name'];
+            $admin_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
         }
     }
+}
 
-    if($delete === false && $edit === false){
-        // Agregamos al admin
-        $result = $admin_model->AddAdmin($_POST['cedula'], $_POST['nivel']);
-        if($result === true){
-            header('Location: ../views/search_admin.php?message=Admin agregado correctamente');
-            exit;
-        }
+if($error !== ''){
+    if($edit){
+        header("Location: $base_url/views/forms/admin_form.php?error=$error&id=" . $cleanData['id']);
     }
-    if($result === null)
-        header("Location: ../views/add_admin.php?edit=1&id=$target_id&error=Ocurrió un error extraño");
-    else if($result !== true)
-        header("Location: ../views/add_admin.php?edit=1&id=$target_id&error=$result");
-    else
-        header('Location: ../views/search_admin.php?error=Ocurrió un error');
+    else{
+        header("Location: $base_url/views/forms/admin_form.php?error=$error");
+    }
     exit;
 }
 else{
-    // Hubo algún error
-    if(isset($_POST['id']))
-        header("Location: ../views/add_admin.php?error=$error&id=" . $_POST['id'] . "&edit=1");
-    else 
-        header("Location: ../views/add_admin.php?error=$error");
+    header("Location: $base_url/views/tables/search_admin.php?message=$message&id=" . $created['admin_id']);
     exit;
 }

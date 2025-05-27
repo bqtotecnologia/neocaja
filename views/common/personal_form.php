@@ -4,12 +4,12 @@ $criterio_model = new CriterioModel();
 
 // Si el docente/coordinador se está autoevaluando, buscamos los criterios de evaluación a ellos mismos
 if($docente['iddocente'] === $_SESSION['neocaja_user_id']){
-    if($_SESSION['neocaja_tipo'] === 'teacher')
+    if($_SESSION['neocaja_rol'] === 'teacher')
         $categorias = $criterio_model->GetCategoriasOf('coord');
     else
         $categorias = $criterio_model->GetCategoriasOf('teacher');
 }else
-    $categorias = $criterio_model->GetCategoriasOf($_SESSION['neocaja_tipo']);
+    $categorias = $criterio_model->GetCategoriasOf($_SESSION['neocaja_rol']);
 
 $materias = $siacad->GetMateriasByCedulaDocente($docente['cedula']);
 ?>

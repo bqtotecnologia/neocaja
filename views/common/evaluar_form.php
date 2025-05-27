@@ -1,5 +1,5 @@
 <?php
-if($_SESSION['neocaja_tipo'] === 'student'){
+if($_SESSION['neocaja_rol'] === 'student'){
     include_once 'student_form.php';
 }
 else{

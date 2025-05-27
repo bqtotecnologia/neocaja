@@ -1,13 +1,5 @@
-var datatables_ids = [
-    'my-datatable',
-    'my-datatable-buttons',
-]
-
-$('my-datatable').DataTable({    
-    responsive: true
-}); 
-
-$('my-datatable-buttons').DataTable({
+$('.my-datatable-buttons').DataTable({
+    language: spanish,
     dom: "Blfrtip",
     buttons: [
         {
@@ -22,7 +14,7 @@ $('my-datatable-buttons').DataTable({
     responsive: true
 }); 
 
-$('#products-table').DataTable({    
+$('.datatable-date-3-4').DataTable({    
     language: spanish,
     dom: "Blfrtip",
         buttons: [
@@ -39,7 +31,7 @@ $('#products-table').DataTable({
     
 }); 
 
-$('#products-history-table').DataTable({    
+$('.datatable-date-3').DataTable({    
     language: spanish,
     dom: "Blfrtip",
         buttons: [
@@ -55,4 +47,3 @@ $('#products-history-table').DataTable({
     responsive: true
     
 }); 
-

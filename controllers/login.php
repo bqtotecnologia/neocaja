@@ -103,8 +103,12 @@ if($error === ''){
     $_SESSION['neocaja_name'] = strtoupper($user_name);
     $_SESSION['neocaja_surname'] = strtoupper($user_surname);
     $_SESSION['neocaja_fullname'] = $_SESSION['neocaja_name'] . ' ' . $_SESSION['neocaja_surname'];
-    $_SESSION['neocaja_tipo'] = $user_role;
+    $_SESSION['neocaja_rol'] = $user_role;
     $_SESSION['neocaja_cedula'] = $cedula;
+
+    if($my_user['role'] !== 'Estudiante'){
+        $_SESSION['neocaja_id'] = $my_user['admin_id'];
+    }
 }
 
 // Descomentar para verificar los datos 

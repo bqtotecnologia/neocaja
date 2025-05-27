@@ -1,21 +1,22 @@
 <?php
-$admitted_user_types = ['Cajero', 'Super'];
+$admitted_user_types = ['Super'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
+
 
 
 $edit = isset($_GET['id']);
 if($edit){
     if(!is_numeric($_GET['id'])){
-        header("Location: $base_url/views/tables/search_product.php?error=Id inválido");
+        header("Location: $base_url/views/tables/search_bank.php?error=Id inválido");
         exit;
     }   
 
-    include_once '../../models/product_model.php';
-    $product_model = new ProductModel();
-    $target_product = $product_model->GetProduct($_GET['id']);
-    if($target_product === false){
-        header("Location: $base_url/views/tables/search_product.php?error=Producto no encontrado");
+    include_once '../../models/bank_model.php';
+    $bank_model = new BankModel();
+    $target_bank = $bank_model->GetBankById($_GET['id']);
+    if($target_bank === false){
+        header("Location: $base_url/views/tables/search_bank.php?error=Banco no encontrado");
         exit;
     }
 }
@@ -27,39 +28,41 @@ $fields = [
     [
         'name' => 'name',
         'display' => 'Nombre',
-        'placeholder' => 'Nombre del producto',
+        'placeholder' => 'Nombre del banco',
         'id' => 'name',
         'type' => 'text',
         'size' => 8,
         'max' => 255,
-        'min' => 1,
+        'min' => 5,
         'required' => true,
-        'value' => $edit ? $target_product['name'] : ''
+        'value' => $edit ? $target_bank['name'] : ''
     ],
     [
-        'name' => 'price',
-        'display' => 'Precio',
-        'placeholder' => 'Precio ($)',
-        'id' => 'price',
-        'type' => 'decimal',
-        'size' => 4,
+        'name' => 'code',
+        'display' => 'Codigo',
+        'placeholder' => 'Código del banco',
+        'id' => 'name',
+        'type' => 'text',
+        'size' => 8,
+        'max' => 4,
+        'min' => 4,
         'required' => true,
-        'value' => $edit ? $target_product['price'] : ''
+        'value' => $edit ? $target_bank['code'] : ''
     ],
 ];
 
 if($edit){
     $id_field = [
         'name' => 'id',
-        'value' => $target_product['id']
+        'value' => $target_bank['id']
     ];
     array_push($fields, $id_field);
 }
 
 $formBuilder = new FormBuilder(
-    '../../controllers/handle_product.php',    
+    '../../controllers/handle_bank.php',    
     'POST',
-    ($edit ? 'Editar' : 'Registrar nuevo') . ' producto',
+    ($edit ? 'Editar' : 'Registrar nuevo') . ' banco',
     ($edit ? 'Editar' : 'Registrar'),
     '',
     $fields
@@ -69,7 +72,7 @@ $formBuilder = new FormBuilder(
 
 <div class="row justify-content-center">
     <div class="col-12 row justify-content-center x_panel">
-        <?php $btn_url = '../tables/search_product.php'; include_once '../layouts/backButton.php'; ?>
+        <?php $btn_url = '../tables/search_bank.php'; include_once '../layouts/backButton.php'; ?>
     </div>
     
     <div class="col-12 justify-content-center px-5 mt-4">            

@@ -1,7 +1,7 @@
 <?php
 session_start();
 // Si el usuario NO es un super administrador, lo mandamos al index y cerramos la sesión
-if($_SESSION['neocaja_tipo'] !== 'super'){
+if($_SESSION['neocaja_rol'] !== 'super'){
     session_destroy();
     header('Location:../index.php');
     exit;

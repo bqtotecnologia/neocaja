@@ -5,6 +5,13 @@ if (session_status() === PHP_SESSION_NONE)
     session_start();
 
     $my_url = 'http://localhost/neocaja';
+
+/**
+ * Chequea que el rol del usuario esté entre los recibidos
+*/
+function CheckAdminLevel(array $roles){
+  return in_array($_SESSION['neocaja_rol'], $roles);
+}
 ?>
 
 <!DOCTYPE html>
@@ -66,10 +73,10 @@ if (session_status() === PHP_SESSION_NONE)
 
               <div class="menu_section">
                 <ul class="nav side-menu">
-                  <?php if(isset($_SESSION['neocaja_tipo'])){ ?>
+                  <?php if(isset($_SESSION['neocaja_rol'])){ ?>
 
-                    <!-- Estudiantes -->
-                    <?php if(in_array($_SESSION['neocaja_tipo'], ['Estudiante', 'Super'])){ ?>
+                    <!-- Student -->
+                    <?php if(CheckAdminLevel(['Estudiante', 'Super'])){ ?>
                       <li><a><i class="fa fa-fax"></i> Pagos <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $my_url ?>/views/confirm_payment.php">Conciliar pago</a></li>
@@ -78,8 +85,8 @@ if (session_status() === PHP_SESSION_NONE)
                       </li>
                     <?php } ?>
 
-                    <!-- Cajero -->
-                    <?php if(in_array($_SESSION['neocaja_tipo'], ['Cajero', 'Super'])){ ?>
+                    <!-- Cashier -->
+                    <?php if(CheckAdminLevel(['Cajero', 'Super'])){ ?>
                       <li><a><i class="fa fa-fax"></i> Facturas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $my_url ?>/views/forms/invoice_form.php">Crear factura</a></li>
@@ -95,39 +102,22 @@ if (session_status() === PHP_SESSION_NONE)
                       </li>
                     <?php } ?>
 
-                    <!-- Coordinador -->
-                    <?php if(in_array($_SESSION['neocaja_tipo'], ['coord'])){ ?>
-                      <li><a><i class="fa  fa-check-square-o"></i> Evaluaciones <span class="fa fa-chevron-down"></span></a>
+                    <!-- Supervisor -->
+                    <?php if(CheckAdminLevel(['Supervisor', 'Cajero', 'Super'])){ ?>
+                      <li><a><i class="fa fa-code"></i> Bitácora <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="evaluar.php">Evaluar docente</a></li>
-                          <li><a href="made_evaluations.php">Evaluaciones realizadas</a></li>
-                          <li>
-                            <form class="h-100" style="padding:9px;" action="search_docente.php" method="POST">
-                              <input name="docente" value="<?= $_SESSION['neocaja_user_id'] ?>" type="hidden">
-                              <button class="button-none" href="recieved_evaluations.php">Evaluaciones recibidas</button>
-                            </form>
-                          </li>
-                        </ul>
-                      </li>
-                      <li><a><i class="fa fa-bar-chart"></i> Estadísticas <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a href="search_docente.php">Docentes de la carrera</a></li>
+                          <li><a href="<?= $my_url ?>/views/forms/binnacle_by_date_range.php">Buscar por rango de fechas</a></li>
+                          <li><a href="<?= $my_url ?>/views/searchers/binnacle_by_admin.php">Buscar por usuario</a></li>
                         </ul>
                       </li>
                     <?php } ?>
 
-                    <!-- Docente -->
-                    <?php if(in_array($_SESSION['neocaja_tipo'], ['teacher'])){ ?>
-                      <li><a><i class="fa fa-check-square-o"></i> Evaluaciones <span class="fa fa-chevron-down"></span></a>
+                    <!-- Super Admin -->
+                    <?php if(CheckAdminLevel(['Super'])){ ?>
+                      <li><a><i class="fa fa-user"></i> Admins <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="evaluar.php">Evaluar coordinador</a></li>
-                          <li><a href="made_evaluations.php">Evaluaciones realizadas</a></li>
-                          <li>
-                            <form class="h-100" style="padding:9px;" action="search_docente.php" method="POST">
-                              <input name="docente" value="<?= $_SESSION['neocaja_user_id'] ?>" type="hidden">
-                              <button class="button-none" href="recieved_evaluations.php">Evaluaciones recibidas</button>
-                            </form>
-                          </li>
+                          <li><a href="<?= $my_url ?>/views/forms/admin_form.php">Agragar admin</a></li>
+                          <li><a href="<?= $my_url ?>/views/tables/search_admin.php">Ver admins</a></li>
                         </ul>
                       </li>
                     <?php } ?>

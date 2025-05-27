@@ -3,39 +3,37 @@ include_once 'SQL_model.php';
 
 class AdminModel extends SQLModel
 { 
-    // Obtiene una cédula y retorna el registro que coincida
-    public function CheckAdmin($cedula)
-    {
-        $sql = "SELECT
+    private $ADMIN_SELECT = "SELECT
             roles.name as role,
             roles.id as role_id,
             admins.cedula,
+            admins.name as name,
             admins.id as admin_id
             FROM
             admins
-            INNER JOIN roles ON roles.id = admins.role
-            WHERE
-            cedula = '$cedula'";
+            INNER JOIN roles ON roles.id = admins.role ";
+    // Obtiene una cédula y retorna el registro que coincida
+    public function CheckAdmin($cedula)
+    {
+        $sql = $this->ADMIN_SELECT . " WHERE admins.cedula = '$cedula'";
         return parent::GetRow($sql);
     }
 
-    //Función para añadir adminsitradores único del super administrador
-    public function AddAdmin($cedula, $admin_level){
-        $sql = "SELECT * FROM admins WHERE cedula='$cedula'";
-        $result = parent::GetRow($sql);
+    /**
+     * Crea un administrador y lo retorna
+     */
+    public function CreateAdmin(array $data){
+        $cedula = $data['cedula'];
+        $name = $data['name'];
+        $role = $data['role'];
 
-        if($result !== false) 
-            return 'Cédula ya registrada';
+        $sql = "INSERT INTO admins (cedula, name, role) VALUES ('$cedula', '$name', '$role')";        
+        $result = parent::DoQuery($sql);
+        if($result === true){
+            $result = $this->GetAdminByCedula($cedula);
+        }
 
-        $sql = "INSERT INTO admins (cedula, type) VALUES ('$cedula', '$admin_level')";        
-        parent::DoQuery($sql);
-
-        $sql = "SELECT * FROM admins WHERE cedula = '$cedula' AND type = '$admin_level'";
-        $new_admin = parent::GetRow($sql);
-        if($new_admin === false)
-            return 'Hubo un problema al insertar el administrador en la base de datos';
-        else
-            return true;
+        return $result;
     }
 
     public function GetAdmins(){
@@ -43,8 +41,17 @@ class AdminModel extends SQLModel
         return parent::GetRows($sql);
     }
 
+    public function GetRoles(){
+        $sql = "SELECT * FROM roles";
+        return parent::GetRows($sql);
+    }
+
+    public function GetRoleById($id){
+        return parent::DoQuery("SELECT * FROM roles WHERE id = $id");
+    }
+
     public function GetAdminById($id){
-        $sql = "SELECT * FROM admins WHERE id = '$id'";
+        $sql = $this->ADMIN_SELECT . " WHERE admins.id = '$id'";
         return parent::GetRow($sql);
     }
 
@@ -103,8 +110,12 @@ class AdminModel extends SQLModel
         }
     }
 
-    public function UpdateAdmin($id, $new_cedula, $newType){
-        $sql = "UPDATE admins SET cedula='$new_cedula', type='$newType' WHERE id=$id";
+    public function UpdateAdmin($id, $data){
+        $cedula = $data['cedula'];
+        $name = $data['name'];
+        $role = $data['role'];
+
+        $sql = "UPDATE admins SET cedula = '$cedula', name = '$name', role = '$role' WHERE id = $id";
         return parent::DoQuery($sql);
     }
 
