@@ -1,4 +1,4 @@
-<!-- Evadoc system Made by Atlantox https://atlantox.pythonanywhere.com/ -->
+<!-- Neocaja system Made by Atlantox https://atlantox.pythonanywhere.com/ -->
 <?php
 // Para evitar errores, si la sesión no está iniciada, la iniciamos
 if (session_status() === PHP_SESSION_NONE)

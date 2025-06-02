@@ -17,8 +17,11 @@ $admins = $admin_model->GetAdmins();
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <?php $btn_url = '../forms/admin_form.php'; include_once '../layouts/addButton.php' ?>
-            <?php include '../common/tables/admins_table.php'; ?>
+            <?php 
+            $btn_url = '../forms/admin_form.php'; 
+            include_once '../layouts/addButton.php';
+            include '../common/tables/admins_table.php';
+            ?>
         </div>
     </div>
 </div>

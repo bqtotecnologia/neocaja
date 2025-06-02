@@ -1,6 +1,6 @@
-<!-- Evadoc system Made by Atlantox https://atlantox.pythonanywhere.com/ -->
+<!-- Neocaja system Made by Atlantox https://atlantox.pythonanywhere.com/ -->
+  </div>
 </div>
-        </div>
         <!-- /page content -->
 
         <!-- footer content -->

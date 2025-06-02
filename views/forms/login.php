@@ -72,9 +72,9 @@ if(isset($_SESSION['neocaja_cedula']) && isset($_SESSION['neocaja_rol'])){
               <div>
                 <input type="password" name="neocaja_password" class="form-control" placeholder="Contraseña" required />
               </div>
+
               <div class="text-danger my-2" id="error-displayer">
-              </div>
-              
+              </div>              
 
               <div>
                 <button type="submit" class="btn btn-primary">Ingresar</a>
