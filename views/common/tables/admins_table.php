@@ -23,13 +23,13 @@
                 <td class="">
                     <div class="row justify-content-around">
                         <div class="col-3 text-center">
-                            <a href="<?= $my_url ?>/views/forms/admin_form.php?id=<?= $admin['id'] ?>" class="btn btn-success" title="Editar">
+                            <a href="<?= $base_url ?>/views/forms/admin_form.php?id=<?= $admin['id'] ?>" class="btn btn-success" title="Editar">
                                 <i class="fa fa-pencil"></i>
                             </a>
                         </div>
 
                         <div class="col-3 text-center">
-                            <a href="<?= $my_url ?>/views/tables/product_history.php?id=<?= $admin['id'] ?>" class="btn btn-info" title="Ver historial de precios">
+                            <a href="<?= $base_url ?>/views/tables/product_history.php?id=<?= $admin['id'] ?>" class="btn btn-info" title="Ver historial de precios">
                                 <i class="fa fa-list"></i>
                             </a>
                         </div>                        

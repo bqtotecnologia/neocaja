@@ -13,9 +13,10 @@ class FormBuilder
     public $title;
     public $submitText;
     public $id;
+    public $confirm;
 
 
-    const FORM_CLASS = "d-flex justify-content-center align-items-center flex-column x_panel confirm-form";
+    const FORM_CLASS = "d-flex justify-content-center align-items-center flex-column x_panel";
 
     const TITLE_CONTAINER_CLASS = "col-12 text-center";
     const TITLE_CLASS = "h1 text-black";
@@ -38,7 +39,8 @@ class FormBuilder
         'decimal' => '',
         'select' => ' select2 ',
         'checkbox' => ' flat ',
-        'radio' => ' flat  '
+        'radio' => ' flat  ',
+        'date' => '',
     ];
 
     public function __construct(
@@ -47,15 +49,17 @@ class FormBuilder
         string $title, 
         string $submitText,
         string $id,
-        array $fields
+        array $fields,
+        bool $confirm = true
         )
     {
         $this->action = $action;
-        $this->fields = $fields;
         $this->method = $method;
         $this->title = $title;
         $this->submitText = $submitText;
         $this->id = $id;
+        $this->fields = $fields;
+        $this->confirm = $confirm;
     }
 
     /**
@@ -63,7 +67,7 @@ class FormBuilder
      */
     public function DrawForm()
     {
-        echo '<form action="' . $this->action . '" method="' . $this->method . '" id="' . $this->id . '" class="' . self::FORM_CLASS . '">';
+        echo '<form action="' . $this->action . '" method="' . $this->method . '" id="' . $this->id . '" class="' . self::FORM_CLASS . ($this->confirm ? ' confirm-form ' : '') . '">';
 
             echo '<div class="' . self::TITLE_CONTAINER_CLASS . '">';
                 echo '<h1 class="' . self::TITLE_CLASS . '">';
@@ -93,7 +97,7 @@ class FormBuilder
                         else
                             $name = 'name="' . $field['name'] . '" ';
 
-                        if(in_array($field['type'], ['integer', 'decimal', 'text'])){
+                        if(in_array($field['type'], ['integer', 'decimal', 'text', 'date'])){
                             $input = '<input ' . $id . $name . $class . $placeholder . $required . ' value="' . $field['value'] . '" ';
                             if($field['type'] === 'integer')
                                 $input .= ' type="number" ';
@@ -105,11 +109,20 @@ class FormBuilder
                             if(in_array($field['type'], ['integer', 'decimal']))
                                 $input .= ' onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46)" ';
 
-                            if(isset($field['max']))
-                                $input .= ' maxlength="' . $field['max'] . '" ';
+                            if(isset($field['max'])){
+                                if($field['type'] === 'date')
+                                    $input .= ' max="' . $field['max'] . '" ';
+                                else
+                                    $input .= ' maxlength="' . $field['max'] . '" ';
+                            }
 
-                            if(isset($field['min']))
-                                $input .= ' minlength="' . $field['min'] . '" ';
+                            if(isset($field['min'])){
+                                if($field['type'] === 'date')
+                                    $input .= ' min="' . $field['min'] . '" ';
+                                else
+                                    $input .= ' minlength="' . $field['min'] . '" ';
+
+                            }
 
                             $input .= '>';
                             echo $input;

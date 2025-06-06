@@ -6,14 +6,17 @@ include_once '../../utils/base_url.php';
 
 $edit = isset($_GET['id']);
 if($edit){
-    if(!is_numeric($_GET['id'])){
-        header("Location: $base_url/views/tables/search_product.php?error=Id inválido");
+    include_once '../../utils/Validator.php';
+    $id = Validator::ValidateRecievedId();
+
+    if(is_string($id)){
+        header("Location: $base_url/views/tables/search_product.php?error=$id");
         exit;
     }   
 
     include_once '../../models/product_model.php';
     $product_model = new ProductModel();
-    $target_product = $product_model->GetProduct($_GET['id']);
+    $target_product = $product_model->GetProduct($id);
     if($target_product === false){
         header("Location: $base_url/views/tables/search_product.php?error=Producto no encontrado");
         exit;

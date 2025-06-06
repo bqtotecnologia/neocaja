@@ -37,7 +37,7 @@ class AdminModel extends SQLModel
     }
 
     public function GetAdmins(){
-        $sql = "SELECT * FROM admins";
+        $sql = $this->ADMIN_SELECT;
         return parent::GetRows($sql);
     }
 

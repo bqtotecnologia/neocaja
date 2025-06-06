@@ -5,9 +5,9 @@ include_once '../utils/validate_user_type.php';
 include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
-$validator = new Validator();
-
 $error = '';
+$target_product = false;
+
 if(empty($_POST)){
     $error = 'POST vacío';
 }
@@ -29,13 +29,13 @@ $fields_config = [
     ],
 ];
 
-$result = $validator->ValidatePOSTFields($fields_config);
+$result = Validator::ValidatePOSTFields($fields_config);
 if(is_string($result))
     $error = $result;
 else
     $cleanData = $result;
 
-$edit = isset($cleanData['id']);
+$edit = isset($_POST['id']);
 
 if($error === ''){
     include_once '../models/product_model.php';
@@ -61,7 +61,7 @@ if($error === ''){
     }    
 }    
 
-// Creating the product
+// Creating / updating the product
 if($error === ''){
     if($edit){
         $updated = $product_model->UpdateProduct($cleanData, $cleanData['id']);
@@ -82,35 +82,43 @@ if($error === ''){
             $updated = $product_model->UpdateProductPrice($cleanData['price'], $cleanData['id']);
             if($updated === false)
                 $error = 'Ocurrió un error al intentar actualizar el precio del producto';
-            else{
-                $message = 'Producto actualizado correctamente';
-                $action = 'Actualizó el producto ' . $cleanData['name'];
-                $product_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
-            }
         }
     }
     else{
         $updated = $product_model->UpdateProductPrice($cleanData['price'], $created['id']);
         if($updated === false)
             $error = 'Ocurrió un error al intentar establecer el precio del producto';
-        else{
-            $message = 'Producto registrado correctamente';
-            $action = 'Creo el producto ' . $cleanData['name'];
-            $product_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
-        }
     }
 }
 
-if($error !== ''){
+if($error === ''){
     if($edit){
-        header("Location: $base_url/views/forms/product_form.php?error=$error&id=" . $cleanData['id']);
+        $message = 'Producto actualizado correctamente';
+        $action = 'Actualizó el producto ' . $cleanData['name'];
     }
     else{
-        header("Location: $base_url/views/forms/product_form.php?error=$error");
+        $message = 'Producto registrado correctamente';
+        $action = 'Creo el producto ' . $cleanData['name'];
     }
-    exit;
+}
+
+
+if($error === ''){
+    $product_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
+    if($edit)
+        header("Location: $base_url/views/forms/product_form.php?message=$message&id=" . $cleanData['id']);
+    else
+        header("Location: $base_url/views/forms/product_form.php?message=$message&id=" . $created['id']);
 }
 else{
-    header("Location: $base_url/views/tables/search_product.php?message=$message&id=" . $created['id']);
-    exit;
+    if($edit){
+        if($target_product === false)
+            header("Location: $base_url/views/tables/search_product.php?error=$error");
+        else
+            header("Location: $base_url/views/forms/product_form.php?error=$error&id=" . $target_product['id']);
+    }
+    else
+        header("Location: $base_url/views/forms/product_form.php?error=$error");
 }
+
+exit;

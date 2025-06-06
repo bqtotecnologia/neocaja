@@ -63,7 +63,7 @@ if($error === ''){
     $siacad = new SiacadModel();
     if(isset($target_user['super_admin'])){
         // Es un super administrador
-        $user_id = '-1';
+        $admin_id = '1';
         $user_role = 'Super';
     }
     else{
@@ -107,17 +107,19 @@ if($error === ''){
     $_SESSION['neocaja_cedula'] = $cedula;
 
     if($my_user['role'] !== 'Estudiante'){
-        $_SESSION['neocaja_id'] = $my_user['admin_id'];
+        if(isset($my_user['data']['admin_id']))
+            $admin_id = $my_user['data']['admin_id'];
+
+        $_SESSION['neocaja_id'] = $admin_id;
     }
 }
 
 // Descomentar para verificar los datos 
-
 /*
-var_dump($user_name); echo '<br>';
-var_dump($user_surname); echo '<br>';
-var_dump($cedula); echo '<br>';
-var_dump($user_role); echo '<br>';
+echo 'Nombre Completo: ' . $_SESSION['neocaja_fullname'] . '<br>';
+echo 'Rol: ' . $_SESSION['neocaja_rol'] . '<br>';
+echo 'Cédula: ' . $_SESSION['neocaja_cedula'] . '<br>';
+echo 'Id: ' . $_SESSION['neocaja_id'] . '<br>';
 echo "Error: " . $error;
 exit;
 */

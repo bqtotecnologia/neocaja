@@ -1,4 +1,4 @@
-<table class="table table-striped table-bordered datatable-date-3" style="width:100%">
+<table class="table table-striped table-bordered datatable-date-3-4" style="width:100%">
     <thead>
         <tr>
             <th class="text-center" style="padding-right:15px !important;">Nº</th>
@@ -25,13 +25,13 @@
                 <td class="">
                     <div class="row justify-content-around">
                         <div class="col-3 text-center">
-                            <a href="<?= $my_url ?>/views/forms/product_form.php?id=<?= $product['id'] ?>" class="btn btn-success" title="Editar">
+                            <a href="<?= $base_url ?>/views/forms/product_form.php?id=<?= $product['id'] ?>" class="btn btn-success" title="Editar">
                                 <i class="fa fa-pencil"></i>
                             </a>
                         </div>
 
                         <div class="col-3 text-center">
-                            <a href="<?= $my_url ?>/views/tables/product_history.php?id=<?= $product['id'] ?>" class="btn btn-info" title="Ver historial de precios">
+                            <a href="<?= $base_url ?>/views/tables/product_history.php?id=<?= $product['id'] ?>" class="btn btn-info" title="Ver historial de precios">
                                 <i class="fa fa-list"></i>
                             </a>
                         </div>                        

@@ -5,8 +5,6 @@ include_once '../utils/validate_user_type.php';
 include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
-$validator = new Validator();
-
 $error = '';
 if(empty($_POST)){
     $error = 'POST vacío';
@@ -36,7 +34,7 @@ $fields_config = [
     ],
 ];
 
-$result = $validator->ValidatePOSTFields($fields_config);
+$result = Validator::ValidatePOSTFields($fields_config);
 if(is_string($result))
     $error = $result;
 else

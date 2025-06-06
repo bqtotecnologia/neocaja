@@ -1,27 +1,19 @@
 <?php 
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
+include_once '../../utils/Validator.php';
 
 include '../../views/common/header.php';
 
-if(empty($_GET)){
-    header('Location: ' . $base_url . '/views/tables/search_product.php?error=GET vacío');
-    exit;
-}
-
-if(!isset($_GET['id'])){
-    header('Location: ' . $base_url . '/views/tables/search_product.php?error=Id no recibido');
-    exit;
-}
-
-if(!is_numeric($_GET['id'])){
-    header('Location: ' . $base_url . '/views/tables/search_product.php?error=Id inválido');
+$id = Validator::ValidateRecievedId();
+if(is_string($id)){
+    header("Location: " . $base_url . "/views/tables/search_product.php?error=$id");
     exit;
 }
 
 include_once '../../models/product_model.php';
 $product_model = new ProductModel();
-$target_product = $product_model->GetProduct($_GET['id']);
+$target_product = $product_model->GetProduct($id);
 
 if($target_product === false){
     header('Location: ' . $base_url . '/views/tables/search_product.php?error=Producto no encontrado');
@@ -40,7 +32,7 @@ $product_history = $product_model->GetProductHistory($target_product['id']);
         <div class="col-12 row justify-content-center x_panel">
             <?php 
             $btn_url = 'search_product.php'; 
-            include_once '../../utils/partials/backButton.php';
+            include_once '../layouts//backButton.php';
             include '../common/tables/product_history_table.php'; 
             ?>
         </div>

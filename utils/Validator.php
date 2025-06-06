@@ -12,7 +12,7 @@ class Validator
      * @param array $fields_config Array ordenado con la configuración de los campos
      * @return array|string Un array con la información limpia o un string con un mensaje de error
      */
-    public function ValidatePOSTFields(array $fields_config){
+    public static function ValidatePOSTFields(array $fields_config){
         $cleanData = [];
         $error = '';
         foreach($fields_config as $field => $currentField){            
@@ -39,7 +39,7 @@ class Validator
             }
 
             if($currentField['suspicious']){
-                if($this->HasSuspiciousCharacters($recievedData)){
+                if(Validator::HasSuspiciousCharacters($recievedData)){
                     $error = 'El campo ' . $field . ' contiene caracteres sospechosos: < > / \\ ; " { } [ ] $ & | ¿ ? ! = -   ';
                     break;
                 }
@@ -73,11 +73,10 @@ class Validator
         }
 
         if(isset($_POST['id'])){
-            $id = $_POST['id'];
-            if(is_numeric($id) === false){
-                $error = 'El id recibido debe ser numérico';
-                exit;
-            }
+            $id = Validator::ValidateRecievedId('id', 'POST');
+            if(is_string($id))
+            $error = $id;
+        
             $cleanData['id'] = intval($id);
         }
 
@@ -95,9 +94,41 @@ class Validator
      * @param string $field el campo a revisar
      * @return bool true si es sospechoso, false si no
      */
-    public function HasSuspiciousCharacters(string $field):bool{
+    public static function HasSuspiciousCharacters(string $field):bool{
         // < > / \\ ; " { } [ ] $ & | ¿ ? ! = -   
         $regex = '/[<>\-\/;"\'(){}\[\]$\\\|&\?\¿\¡!=]/u';
         return preg_match($regex, $field);
+    }
+    
+    /**
+     * Verifica si existe un valor 'id' en el método HTTP escogido
+     * @param string $key_name El nombre del key que contiene el id a validar
+     * @param string $method El nombre del método "GET"/"POST"
+     * @return string|int
+     */
+    public static function ValidateRecievedId(string $key_name = 'id', string $method = 'GET'){
+        $data = [
+            'GET' => $_GET,
+            'POST' => $_POST
+        ];
+
+        $result = true;
+        if(empty($data[$method]))
+            $result = "$method vacío";        
+
+        if($result === true){
+            if(!isset($data[$method][$key_name]))
+                $result = "Id no recibido ($key_name)";
+        }
+
+        if($result === true){
+            if(!is_numeric($data[$method][$key_name]))
+                $result = "Id inválido ($key_name)";
+        }
+
+        if($result === true)
+            $result = intval($data[$method][$key_name]);
+
+        return $result;
     }
 }

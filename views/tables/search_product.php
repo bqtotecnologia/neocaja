@@ -16,7 +16,8 @@ $products = $product_model->GetAllProducts();
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <?php $btn_url = '../forms/product_form.php'; 
+            <?php 
+            $btn_url = '../forms/product_form.php'; 
             include_once '../layouts/addButton.php';
             include '../common/tables/products_table.php'; 
             ?>
