@@ -45,7 +45,7 @@ class Validator
                 }
             }
 
-            if(in_array($currentField['type'], ['numeric', 'float'])){
+            if(in_array($currentField['type'], ['integer', 'float'])){
                 if(is_numeric($recievedData) === false){
                     $error = 'El campo ' . $field . ' debe ser numérico';
                     break;
@@ -63,7 +63,7 @@ class Validator
                 }
             }
 
-            if($currentField['type'] === 'numeric')
+            if($currentField['type'] === 'integer')
                 $recievedData = intval($recievedData);
 
             if($currentField['type'] === 'float')

@@ -3,23 +3,23 @@ $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
 
 include '../../views/common/header.php';
-include_once '../../models/product_model.php';
-$product_model = new ProductModel();
+include_once '../../models/coin_model.php';
+$coin_model = new CoinModel();
 
-$products = $product_model->GetAllProducts();
+$coins = $coin_model->GetAllCoins();
 ?>
 
 <div class="row justify-content-center">
     <div class="col-12 text-center">
-        <h1 class="h1 text-black">Lista de los productos</h1>
+        <h1 class="h1 text-black">Lista de las monedas</h1>
     </div>
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
             <?php 
-            $btn_url = '../forms/product_form.php'; 
+            $btn_url = '../forms/coin_form.php'; 
             include_once '../layouts/addButton.php';
-            include '../common/tables/product_table.php'; 
+            include '../common/tables/coin_table.php'; 
             ?>
         </div>
     </div>

@@ -114,52 +114,6 @@ class SiacadModel extends PGSQLModel
         return parent::GetRows($sql);
     }
 
-    // Retorna los coordinadores a evaluar por un docente
-    public function GetCoordinadoresOfDocenteNotInList($cedula_docente, $ids_evaluados){
-        include 'admin_model.php';
-        $admin_model = new AdminModel();
-        $cedulas_coordinadores = $admin_model->GetCoordinadores();
-        $sql = "SELECT
-            iddocente
-            FROM
-            docentes
-            WHERE
-            cedula IN ($cedulas_coordinadores)";
-
-        // Obtenemos a todos los coordinadores registrados localmente
-        $coordinadores = parent::GetRows($sql);
-        
-        $ids_coordinadores = '';
-        if($coordinadores !== false){
-            // Buscamos sus iddocente y lo guardamos en un string separado por comas
-            foreach($coordinadores as $coordinador){
-                $ids_coordinadores .= "'" . $coordinador['iddocente'] . "', ";
-            }
-            $ids_coordinadores = trim($ids_coordinadores, ', ');
-        }
-        $id_docente = $this->GetDocenteByCedula($cedula_docente)['iddocente'];
-        $my_coordinaciones = $this->GetCoordinacionesOfPersonal($id_docente, false, false);
-
-        // Obtenemos los coordinadores no evaluados de la coordinación del docente
-        $sql = "SELECT 
-            DISTINCT ON (docentescoordinaciones.iddocente)
-            docentescoordinaciones.iddocente,
-            docentes.nombres,
-            docentes.apellidos
-            FROM 
-            docentescoordinaciones
-            INNER JOIN coordinaciones ON coordinaciones.idcoordinacion = docentescoordinaciones.idcoordinacion
-            INNER JOIN docentes ON docentes.iddocente = docentescoordinaciones.iddocente
-            WHERE
-            coordinaciones.nombrecoordinacion IN ($my_coordinaciones) AND
-            docentes.iddocente NOT IN ($ids_evaluados) AND
-            docentes.iddocente IN ($ids_coordinadores) 
-            ORDER BY 
-            docentescoordinaciones.iddocente";
-        
-        return parent::GetRows($sql);
-    }
-
     // Obtiene el id de un evaluador y el id del que será evaluado
     // Retorna true si las coordinaciones de ambos coinciden
     public function CoordinacionMatch($id_evaluador, $id_evaluado){
@@ -385,6 +339,37 @@ class SiacadModel extends PGSQLModel
             inscripciones.inscrita = TRUE AND
             materiasperiodos.idperiodo = $target_periodo";
         return parent::GetRows($sql);
+    }
+
+    /**
+     * Recibe un string con las cédulas de la siguiente forma "'123', '456', '789'"
+     */
+    public function GetStudentsByCedulaList(string $cedulas){
+        $sql = "SELECT
+            participantes.cedula,
+            CONCAT(nombre1, ' ', nombre2) as nombres,
+            CONCAT(apellido1, ' ', apellido2) as apellidos,
+            carreras.nombrecarrera as carrera,
+            secciones.nombreseccion as seccion,
+            semestres.abreviado as semestre
+            FROM 
+            participantes
+            INNER JOIN participantescarreras ON participantescarreras.cedula = participantes.cedula
+            INNER JOIN matriculas ON matriculas.idparticipantescarrera = participantescarreras.idparticipantescarrera
+            INNER JOIN inscripciones ON inscripciones.idmatricula = matriculas.idmatricula
+            INNER JOIN secciones ON secciones.idseccion = inscripciones.idseccion
+            INNER JOIN materiasperiodos ON materiasperiodos.idmateriaperiodo = secciones.idmateriaperiodo
+            INNER JOIN materias ON materias.idmateria = materiasperiodos.idmateria
+            INNER JOIN semestres ON semestres.idsemestre = materias.idsemestre
+            INNER JOIN pensums ON pensums.idpensum = semestres.idpensum
+            INNER JOIN carreras ON carreras.idcarrera = pensums.idcarrera
+            WHERE
+            participantes.cedula in ($cedulas)
+            ORDER BY
+            participantes.apellidos,
+            participantes.nombres";
+
+        return parent::GetRows($sql, true);
     }
 
 

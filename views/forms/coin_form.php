@@ -10,15 +10,15 @@ if($edit){
     $id = Validator::ValidateRecievedId();
 
     if(is_string($id)){
-        header("Location: $base_url/views/tables/search_product.php?error=$id");
+        header("Location: $base_url/views/tables/search_coin.php?error=$id");
         exit;
     }   
 
-    include_once '../../models/product_model.php';
-    $product_model = new ProductModel();
-    $target_product = $product_model->GetProduct($id);
-    if($target_product === false){
-        header("Location: $base_url/views/tables/search_product.php?error=Producto no encontrado");
+    include_once '../../models/coin_model.php';
+    $coin_model = new CoinModel();
+    $target_coin = $coin_model->GetCoin($id);
+    if($target_coin === false){
+        header("Location: $base_url/views/tables/search_coin.php?error=Moneda no encontrada");
         exit;
     }
 }
@@ -30,24 +30,36 @@ $fields = [
     [
         'name' => 'name',
         'display' => 'Nombre',
-        'placeholder' => 'Nombre del producto',
+        'placeholder' => 'Nombre de la moneda',
         'id' => 'name',
         'type' => 'text',
         'size' => 8,
-        'max' => 255,
-        'min' => 1,
+        'max' => 50,
+        'min' => 3,
         'required' => true,
-        'value' => $edit ? $target_product['name'] : ''
+        'value' => $edit ? $target_coin['name'] : ''
     ],
     [
         'name' => 'price',
-        'display' => 'Precio',
-        'placeholder' => 'Precio ($)',
+        'display' => 'Tasa',
+        'placeholder' => '',
         'id' => 'price',
         'type' => 'decimal',
         'size' => 4,
+        'required' => false,
+        'value' => $edit ? $target_coin['price'] : '',
+        'disabled' => !$edit,
+        'hidden' => !$edit
+    ],
+    [
+        'name' => 'url',
+        'display' => 'URL',
+        'placeholder' => 'URL que da como respuesta JSON la tasa actual de la moneda',
+        'id' => 'url',
+        'type' => 'text',
+        'size' => 12,
         'required' => true,
-        'value' => $edit ? $target_product['price'] : ''
+        'value' => $edit ? $target_coin['url'] : ''
     ],
     [
         'name' => 'active',
@@ -57,7 +69,7 @@ $fields = [
         'type' => 'checkbox',
         'size' => 4,
         'required' => false,
-        'value' => $edit ? [$target_product['active']] : ['1'],
+        'value' => $edit ? [$target_coin['active']] : ['1'],
         'elements' => [
             [
                 'display' => 'Activo',
@@ -70,15 +82,15 @@ $fields = [
 if($edit){
     $id_field = [
         'name' => 'id',
-        'value' => $target_product['id']
+        'value' => $target_coin['id']
     ];
     array_push($fields, $id_field);
 }
 
 $formBuilder = new FormBuilder(
-    '../../controllers/handle_product.php',    
+    '../../controllers/handle_coin.php',    
     'POST',
-    ($edit ? 'Editar' : 'Registrar nuevo') . ' producto',
+    ($edit ? 'Editar' : 'Registrar nueva') . ' moneda',
     ($edit ? 'Editar' : 'Registrar'),
     '',
     $fields
@@ -88,7 +100,7 @@ $formBuilder = new FormBuilder(
 
 <div class="row justify-content-center">
     <div class="col-12 row justify-content-center x_panel">
-        <?php $btn_url = '../tables/search_product.php'; include_once '../layouts/backButton.php'; ?>
+        <?php $btn_url = '../tables/search_coin.php'; include_once '../layouts/backButton.php'; ?>
     </div>
     
     <div class="col-12 justify-content-center px-5 mt-4">            

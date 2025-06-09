@@ -1,4 +1,6 @@
 <?php
+var_dump($_POST);
+exit;
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
 
@@ -6,7 +8,7 @@ include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
 $error = '';
-$target_product = false;
+$target_coin = false;
 
 if(empty($_POST)){
     $error = 'POST vacío';
@@ -15,7 +17,7 @@ if(empty($_POST)){
 $fields_config = [
     'name' => [
         'min' => 1,
-        'max' => 255,
+        'max' => 50,
         'required' => true,
         'type' => 'string',
         'suspicious' => true,
@@ -23,9 +25,16 @@ $fields_config = [
     'price' => [
         'min' => 1,
         'max' => 12,
-        'required' => true,
+        'required' => false,
         'type' => 'float',
         'suspicious' => true,
+    ],
+    'url' => [
+        'min' => 1,
+        'max' => 255,
+        'required' => true,
+        'type' => 'text',
+        'suspicious' => false,
     ],
 ];
 
@@ -38,24 +47,24 @@ else
 $edit = isset($_POST['id']);
 
 if($error === ''){
-    include_once '../models/product_model.php';
-    $product_model = new ProductModel();
+    include_once '../models/coin_model.php';
+    $coin_model = new CoinModel();
 
     if($edit){
-        $target_product = $product_model->GetProduct($cleanData['id']);
-        if($target_product === false)
-            $error = 'Producto no encontrado';
+        $target_coin = $coin_model->GetCoin($cleanData['id']);
+        if($target_coin === false)
+            $error = 'Moneda no encontrada';
     }
     else{
-        $target_product = $product_model->GetProductByName($cleanData['name']);
-        if($target_product !== false)
-            $error = 'El nombre del producto está repetido';
+        $target_coin = $coin_model->GetCoinByName($cleanData['name']);
+        if($target_coin !== false)
+            $error = 'El nombre de la moneda está repetido';
     }   
 }
 
 if($error === ''){
     if($edit){
-        if($cleanData['name'] === $target_product['name'] && intval($target_product['id']) !== $cleanData['id'])
+        if($cleanData['name'] === $target_coin['name'] && intval($target_coin['id']) !== $cleanData['id'])
             $error = 'El nombre del producto está repetido';
     }    
 }    
@@ -65,12 +74,12 @@ if($error === ''){
     $cleanData['active'] = isset($_POST['active']) ? '1' : '0';
 
     if($edit){
-        $updated = $product_model->UpdateProduct($cleanData['id'], $cleanData);
+        $updated = $coin_model->UpdateProduct($cleanData['id'], $cleanData);
         if($updated === false)
             $error = 'Hubo un error al intentar actualizar el producto';
     }
     else{
-        $created = $product_model->CreateProduct($cleanData);
+        $created = $coin_model->CreateProduct($cleanData);
         if($created === false)
             $error = 'Hubo un error al intentar registrar el producto';
     }
@@ -80,16 +89,16 @@ if($error === ''){
 if($error === ''){
     $priceChanged = false;
     if($edit){
-        if($cleanData['price'] !== floatval($target_product['price'])){
+        if($cleanData['price'] !== floatval($target_coin['price'])){
             $priceChanged = true;
 
-            $updated = $product_model->UpdateProductPrice($cleanData['price'], $cleanData['id']);
+            $updated = $coin_model->UpdateProductPrice($cleanData['price'], $cleanData['id']);
             if($updated === false)
                 $error = 'Ocurrió un error al intentar actualizar el precio del producto';
         }
     }
     else{
-        $updated = $product_model->UpdateProductPrice($cleanData['price'], $created['id']);
+        $updated = $coin_model->UpdateProductPrice($cleanData['price'], $created['id']);
         if($updated === false)
             $error = 'Ocurrió un error al intentar establecer el precio del producto';
     }
@@ -100,10 +109,10 @@ if($error === ''){
     if($edit){        
         $message = 'Producto actualizado correctamente';
 
-        $activeChanged = $cleanData['active'] !== $target_product['active'];
-        $nameChanged = $cleanData['name'] !== $target_product['name'];
+        $activeChanged = $cleanData['active'] !== $target_coin['active'];
+        $nameChanged = $cleanData['name'] !== $target_coin['name'];
 
-        $action = 'Actualizó el producto ' . $target_product['name'];
+        $action = 'Actualizó el producto ' . $target_coin['name'];
         if($nameChanged)
             $action .= '. Al nombre ' . $cleanData['name'];
 
@@ -117,7 +126,7 @@ if($error === ''){
         $message = 'Producto registrado correctamente';
         $action = 'Creo el producto ' . $cleanData['name'] . ' con el precio ' . $cleanData['price'];
     }
-    $product_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
+    $coin_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
 }
 
 if($error === ''){    
@@ -128,10 +137,10 @@ if($error === ''){
 }
 else{
     if($edit){
-        if($target_product === false)
+        if($target_coin === false)
             header("Location: $base_url/views/tables/search_product.php?error=$error");
         else
-            header("Location: $base_url/views/forms/product_form.php?error=$error&id=" . $target_product['id']);
+            header("Location: $base_url/views/forms/product_form.php?error=$error&id=" . $target_coin['id']);
     }
     else
         header("Location: $base_url/views/forms/product_form.php?error=$error");

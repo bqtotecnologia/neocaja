@@ -65,6 +65,22 @@ $fields = [
         'value' => $edit ? $target_admin['role_id'] : '',
         'elements' => $display_roles
     ],
+    [
+        'name' => 'active',
+        'display' => 'Activo',
+        'placeholder' => '',
+        'id' => 'active',
+        'type' => 'checkbox',
+        'size' => 4,
+        'required' => false,
+        'value' => $edit ? [$target_admin['active']] : ['1'],
+        'elements' => [
+            [
+                'display' => 'Activo',
+                'value' => '1'
+            ]
+        ]
+    ],
 ];
 
 if($edit){

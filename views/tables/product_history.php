@@ -32,7 +32,7 @@ $product_history = $product_model->GetProductHistory($target_product['id']);
         <div class="col-12 row justify-content-center x_panel">
             <?php 
             $btn_url = 'search_product.php'; 
-            include_once '../layouts//backButton.php';
+            include_once '../layouts/backButton.php';
             include '../common/tables/product_history_table.php'; 
             ?>
         </div>

@@ -6,6 +6,7 @@
             <th class="text-center">Precio($)</th>
             <th class="text-center">Fecha de creación</th>
             <th class="text-center">Fecha del precio</th>
+            <th class="text-center">Activo</th>
             <th class="text-center">Acción</th>
         </tr>
     </thead>
@@ -21,7 +22,9 @@
                 <td class="align-middle text-center"><?= $product['price'] ?></td>
                 <td class="align-middle text-center"><?= $product['product_created_at'] ?></td>
                 <td class="align-middle text-center"><?= $product['price_created_at'] ?></td>
-
+                <td class="align-middle text-center">
+                    <i class="fa fa-circle text-<?= $product['active'] ? 'success' : 'danger' ?>"></i>                    
+                </td>
                 <td class="">
                     <div class="row justify-content-around">
                         <div class="col-3 text-center">

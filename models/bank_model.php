@@ -7,14 +7,29 @@ class BankModel extends SQLModel
     public function CreateBank(array $data){
         $name = $data['name'];
         $code = $data['code'];
-        return parent::DoQuery("INSERT INTO banks (code, name) VALUES ('$code', '$name')");
+        $active = $data['active'];
+
+        return parent::DoQuery("INSERT INTO banks (code, name, active) VALUES ('$code', '$name', $active)");
     }
 
-    public function Getbanks(){
+    public function GetAllbanks(){
         $sql = "SELECT 
             *
             FROM
             banks
+            ORDER BY
+            name";
+
+        return parent::GetRows($sql, true);
+    }
+
+    public function GetActivebanks(){
+        $sql = "SELECT 
+            *
+            FROM
+            banks
+            WHERE
+            active = 1
             ORDER BY
             name";
 
@@ -32,22 +47,9 @@ class BankModel extends SQLModel
     public function UpdateBank(string $id, array $data){
         $name = $data['name'];
         $code = $data['code'];
-        $sql = "UPDATE banks SET name = '$name', code = '$code' WHERE id = $id";
-        return parent::DoQuery($sql);
-    }
+        $active = $data['active'];
 
-    /**
-     * Alterna entre activar y desactivar un bando
-     */
-    public function ToggleActiveBank(string $id){
-        $targetBank = $this->GetBankById($id);
-        $sql = "UPDATE banks SET active = ";
-        if($targetBank['active'] === '1')
-            $sql .= '0 ';
-        else
-            $sql .= '1 ';
-
-        $sql .= "WHERE id = $id";
+        $sql = "UPDATE banks SET name = '$name', code = '$code', active = $active WHERE id = $id";
         return parent::DoQuery($sql);
     }
 }

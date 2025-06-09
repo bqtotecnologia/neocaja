@@ -12,11 +12,13 @@ class ProductModel extends SQLModel
         ph.created_at as price_created_at
         FROM
         products pr
-        LEFT JOIN product_history ph ON ph.product = pr.id AND ph.current = 1 ";
+        INNER JOIN product_history ph ON ph.product = pr.id AND ph.current = 1 ";
 
     public function CreateProduct($data){
         $name = $data['name'];
-        $sql = "INSERT INTO products (name) VALUES ('$name')";
+        $active = $data['active'];
+
+        $sql = "INSERT INTO products (name, active) VALUES ('$name', $active)";
         $created = parent::DoQuery($sql);
 
         if($created === false) 
@@ -46,10 +48,13 @@ class ProductModel extends SQLModel
         return parent::GetRows("SELECT * FROM product_history WHERE product = $productId ORDER BY created_at DESC", true);
     }
 
-    public function UpdateProduct($data, $id){
+    public function UpdateProduct($id, $data){
         $name = $data['name'];
+        $active = $data['active'];
+
         $sql = "UPDATE products SET
-            name = '$name'
+            name = '$name',
+            active = $active
             WHERE
             id = $id";
         
@@ -57,7 +62,19 @@ class ProductModel extends SQLModel
     }
 
     public function UpdateProductPrice($price, $id){
-        $sql = "INSERT INTO product_history (product, price) VALUES ($id, '$price')";
+        $disabled = $this->DisableAllPricesOfProduct($id);
+        if($disabled === false)
+            $result = false;
+        else{
+            $sql = "INSERT INTO product_history (product, price) VALUES ($id, '$price')";
+            $result = parent::DoQuery($sql);
+        }
+
+        return $result;
+    }
+
+    public function DisableAllPricesOfProduct($id){
+        $sql = "UPDATE product_history SET current = 0 WHERE product = $id";
         return parent::DoQuery($sql);
     }
 }

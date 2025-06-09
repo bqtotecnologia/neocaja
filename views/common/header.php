@@ -72,14 +72,35 @@
                           <li><a href="<?= $base_url ?>/views/tables/search_product.php">Ver productos</a></li>
                         </ul>
                       </li>
+
+                      <li><a><i class="fa fa-building"></i> Empresas <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/forms/company_form.php">Crear empresa</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_company.php">Ver empresas</a></li>
+                        </ul>
+                      </li>
+
+                      <li><a><i class="fa fa-bank"></i> Bancos <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/forms/bank_form.php">Crear banco</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_bank.php">Ver bancos</a></li>
+                        </ul>
+                      </li>
                     <?php } ?>
 
-                    <!-- Supervisor -->
-                    <?php if(Auth::UserLevelIn(['Supervisor', 'Cajero', 'Super'])){ ?>
+                    <!-- Tecnología -->
+                    <?php if(Auth::UserLevelIn(['Tecnología', 'Super'])){ ?>
                       <li><a><i class="fa fa-code"></i> Bitácora <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/forms/binnacle_by_date_range.php">Buscar por rango de fechas</a></li>
                           <li><a href="<?= $base_url ?>/views/forms/binnacle_by_admin.php">Buscar por usuario</a></li>
+                        </ul>
+                      </li>
+
+                      <li><a><i class="fa fa-usd"></i> Monedas <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/forms/coin_form.php">Crear moneda</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_coin.php">Ver monedas</a></li>
                         </ul>
                       </li>
                     <?php } ?>

@@ -5,6 +5,7 @@
             <th class="text-center">Cédula</th>
             <th class="text-center">Nombre</th>
             <th class="text-center">Fecha de creación</th>
+            <th class="text-center">Activo</th>
             <th class="text-center">Acción</th>
         </tr>
     </thead>
@@ -19,20 +20,16 @@
                 <td class="align-middle text-center"><?= $admin['cedula'] ?></td>
                 <td class="align-middle text-center"><?= $admin['name'] ?></td>
                 <td class="align-middle text-center"><?= $admin['created_at'] ?></td>
-
+                <td class="align-middle text-center">
+                    <i class="fa fa-circle text-<?= $admin['active'] ? 'success' : 'danger' ?>"></i>                    
+                </td>
                 <td class="">
                     <div class="row justify-content-around">
                         <div class="col-3 text-center">
-                            <a href="<?= $base_url ?>/views/forms/admin_form.php?id=<?= $admin['id'] ?>" class="btn btn-success" title="Editar">
+                            <a href="<?= $base_url ?>/views/forms/admin_form.php?id=<?= $admin['admin_id'] ?>" class="btn btn-success" title="Editar">
                                 <i class="fa fa-pencil"></i>
                             </a>
                         </div>
-
-                        <div class="col-3 text-center">
-                            <a href="<?= $base_url ?>/views/tables/product_history.php?id=<?= $admin['id'] ?>" class="btn btn-info" title="Ver historial de precios">
-                                <i class="fa fa-list"></i>
-                            </a>
-                        </div>                        
                     </div>
                 </td>
             </tr>

@@ -29,7 +29,7 @@ $fields_config = [
         'min' => 1,
         'max' => 11,
         'required' => true,
-        'type' => 'numberic',
+        'type' => 'integer',
         'suspicious' => true,
     ],
 ];
@@ -74,38 +74,71 @@ if($error === ''){
 
 // Creating the admin
 if($error === ''){
+    $cleanData['active'] = isset($_POST['active']) ? '1' : '0';
+
     if($edit){
+        $nameChanged = false;
+        $activeChanged = false;
+        $roleChanged = false;
+
         $updated = $admin_model->UpdateAdmin($cleanData['id'], $cleanData);
         if($updated === false)
             $error = 'Hubo un error al intentar actualizar el admin';
-        else{
-            $message = 'Admin modificado exitosamente';            
-            $action = 'Modificó al admin ' . $target_admin['name'];
-            $admin_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
-        }
     }
     else{
         $created = $admin_model->CreateAdmin($cleanData);
         if($created === false)
             $error = 'Hubo un error al intentar registrar el admin';
-        else{
-            $message = 'Admin creado exitosamente';
-            $action = 'Creó al admin ' . $cleanData['name'];
-            $admin_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
-        }
     }
 }
 
-if($error !== ''){
+// Managing feedback message and binnacle
+if($error === ''){
     if($edit){
-        header("Location: $base_url/views/forms/admin_form.php?error=$error&id=" . $cleanData['id']);
+        $message = 'Admin modificado exitosamente';  
+        $action = 'Modificó al admin ' . $target_admin['name'];
+        
+
+        $nameChanged = $cleanData['name'] !== $target_admin['name'];
+        $activeChanged = $cleanData['active'] !== $target_admin['active'];
+        $roleChanged = $cleanData['role'] !== $target_admin['role_id'];
+        $cedulaChanged = $cleanData['cedula'] !== $target_admin['cedula'];
+        
+        if($nameChanged)
+            $action .= '. Al nombre ' . $cleanData['name'];
+
+        if($activeChanged)
+            $action .= '. Al estado activo ' . ($cleanData['active'] === '1' ? 'Si' : 'No');
+
+        if($priceChanged)
+            $action .= '. Al rol ' . $target_role['name'];
+
+        if($cedulaChanged)
+            $action .= '. A la cédula ' . $cleanData['cedula'];
     }
     else{
-        header("Location: $base_url/views/forms/admin_form.php?error=$error");
+        $message = 'Admin creado exitosamente';
+        $action = 'Creo al admin ' . $cleanData['name'] . ' cedula ' . $cleanData['cedula'] . ' rol ' . $target_role['name'] . ' activo ' . ($cleanData['active'] === '1' ? 'Si' : 'No');
     }
-    exit;
+    
+    $admin_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
+}
+
+if($error === ''){    
+    if($edit)
+        header("Location: $base_url/views/forms/admin_form.php?message=$message&id=" . $cleanData['id']);
+    else
+        header("Location: $base_url/views/forms/admin_form.php?message=$message&id=" . $created['id']);
 }
 else{
-    header("Location: $base_url/views/tables/search_admin.php?message=$message&id=" . $created['admin_id']);
-    exit;
+    if($edit){
+        if($target_product === false)
+            header("Location: $base_url/views/tables/search_admin.php?error=$error");
+        else
+            header("Location: $base_url/views/forms/admin_form.php?error=$error&id=" . $target_product['id']);
+    }
+    else
+        header("Location: $base_url/views/forms/admin_form.php?error=$error");
 }
+
+exit;

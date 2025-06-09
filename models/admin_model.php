@@ -8,7 +8,9 @@ class AdminModel extends SQLModel
             roles.id as role_id,
             admins.cedula,
             admins.name as name,
-            admins.id as admin_id
+            admins.id as admin_id,
+            admins.created_at,
+            admins.active
             FROM
             admins
             INNER JOIN roles ON roles.id = admins.role ";
@@ -26,8 +28,9 @@ class AdminModel extends SQLModel
         $cedula = $data['cedula'];
         $name = $data['name'];
         $role = $data['role'];
+        $active = $data['active'];
 
-        $sql = "INSERT INTO admins (cedula, name, role) VALUES ('$cedula', '$name', '$role')";        
+        $sql = "INSERT INTO admins (cedula, name, role, active) VALUES ('$cedula', '$name', '$role', $active)";
         $result = parent::DoQuery($sql);
         if($result === true){
             $result = $this->GetAdminByCedula($cedula);
@@ -42,7 +45,7 @@ class AdminModel extends SQLModel
     }
 
     public function GetRoles(){
-        $sql = "SELECT * FROM roles";
+        $sql = "SELECT * FROM roles WHERE name != 'Super'";
         return parent::GetRows($sql);
     }
 
@@ -68,7 +71,9 @@ class AdminModel extends SQLModel
             username = '$encrypted_user'";
 
         $result = parent::GetRow($sql);
-        if($result === false) return false;
+        if($result === false)
+            return false;
+
         return true;
     }
 
@@ -86,36 +91,13 @@ class AdminModel extends SQLModel
 
     }
 
-    // Retorna los coordinadores
-    // si $as_list es false, los retorna como un string separado por comas
-    public function GetCoordinadores($as_list = false){
-        $sql = "SELECT
-            *
-            FROM admins
-            WHERE
-            type = 'coord'";
-        $coordinadores = parent::GetRows($sql);
-        if($as_list === true) 
-            return $coordinadores;
-        else{
-            $ordered_cedulas = '-1';
-            if($coordinadores !== false){
-                $ordered_cedulas = '';
-                foreach($coordinadores as $coordinador){
-                    $ordered_cedulas .= "'" .$coordinador['cedula'] . "', ";
-                }
-                $ordered_cedulas = trim($ordered_cedulas, ', ');
-            }
-            return $ordered_cedulas;
-        }
-    }
-
     public function UpdateAdmin($id, $data){
         $cedula = $data['cedula'];
         $name = $data['name'];
         $role = $data['role'];
+        $active = $data['active'];
 
-        $sql = "UPDATE admins SET cedula = '$cedula', name = '$name', role = '$role' WHERE id = $id";
+        $sql = "UPDATE admins SET cedula = '$cedula', name = '$name', role = '$role', active = $active WHERE id = $id";
         return parent::DoQuery($sql);
     }
 

@@ -76,10 +76,15 @@ class FormBuilder
             echo '</div>';
 
             foreach($this->fields as $field){
-                if($field['name'] === 'id'){
-                    echo '<input type="hidden" value="' . $field['value'] . '" name="id">';
-                    continue;
+                $hidden = false;
+                if(isset($field['hidden'])){
+                    $hidden = $field['hidden'];
                 }
+
+                if($field['name'] === 'id' || $hidden){
+                    echo '<input type="hidden" value="' . $field['value'] . '" name="' . $field['name'] . '">';
+                    continue;
+                }                
 
                 echo '<div class="' . self::FIELD_CONTAINER_CLASS . '">';
                     echo '<div class="' . self::LABEL_CONTAINER_CLASS . '">';
@@ -109,27 +114,16 @@ class FormBuilder
                             if(in_array($field['type'], ['integer', 'decimal']))
                                 $input .= ' onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46)" ';
 
-                            if(isset($field['max'])){
-                                if($field['type'] === 'date')
-                                    $input .= ' max="' . $field['max'] . '" ';
-                                else
-                                    $input .= ' maxlength="' . $field['max'] . '" ';
-                            }
-
-                            if(isset($field['min'])){
-                                if($field['type'] === 'date')
-                                    $input .= ' min="' . $field['min'] . '" ';
-                                else
-                                    $input .= ' minlength="' . $field['min'] . '" ';
-
-                            }
+                            $input .= $this->GetHTMLProperties($field);
 
                             $input .= '>';
                             echo $input;
                         }
                         else if($field['type'] === 'textarea'){
-                            echo '<textarea ' . $id . $name . $class . $required . ' rows="3" columns="50" "value="' . $field['value'] . '"';
-                            echo '>' . $field['value'] . '</textarea> ';
+                            $textarea = '<textarea ' . $id . $name . $class . $required . ' rows="3" columns="50" "value="' . $field['value'] . '"';
+                            $textarea .= $this->GetHTMLProperties($field);                           
+
+                            echo $textarea . '>' . $field['value'] . '</textarea> ';
                         }
                         else if($field['type'] === 'select'){
                             echo '<div class="row m-0 p-0 col-12 col-md-' . $field['size'] . '">';
@@ -173,6 +167,30 @@ class FormBuilder
 
 
         echo '</form>';
+    }
+
+    private function GetHTMLProperties($field){
+        $htmlProperties = '';
+        if(isset($field['max'])){
+            if($field['type'] === 'date')
+                $htmlProperties .= ' max="' . $field['max'] . '" ';
+            else
+                $htmlProperties .= ' maxlength="' . $field['max'] . '" ';
+        }
+
+        if(isset($field['min'])){
+            if($field['type'] === 'date')
+                $htmlProperties .= ' min="' . $field['min'] . '" ';
+            else
+                $htmlProperties .= ' minlength="' . $field['min'] . '" ';
+        }
+        
+        if(isset($field['disabled'])){
+            if($field['disabled'] === true)
+                $htmlProperties .= ' disabled ';
+        }
+
+        return $htmlProperties;
     }
 }
 

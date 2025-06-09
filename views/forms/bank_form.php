@@ -40,14 +40,30 @@ $fields = [
     [
         'name' => 'code',
         'display' => 'Codigo',
-        'placeholder' => 'Código del banco',
+        'placeholder' => '4 primeros dígitos',
         'id' => 'name',
         'type' => 'text',
-        'size' => 8,
+        'size' => 4,
         'max' => 4,
         'min' => 4,
         'required' => true,
         'value' => $edit ? $target_bank['code'] : ''
+    ],
+    [
+        'name' => 'active',
+        'display' => 'Activo',
+        'placeholder' => '',
+        'id' => 'active',
+        'type' => 'checkbox',
+        'size' => 4,
+        'required' => false,
+        'value' => $edit ? [$target_bank['active']] : ['1'],
+        'elements' => [
+            [
+                'display' => 'Activo',
+                'value' => '1'
+            ]
+        ]
     ],
 ];
 
