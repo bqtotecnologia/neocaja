@@ -1,0 +1,26 @@
+Crear una aplicación vacía en python
+Una vez creada, vamos ainstalar las librerías necesarias, para ello debemos ir a configuration files en CPanel en la aplicación de python
+Escribimos requirements.txt y añadimos, luego de ello damos run pip install seleccionando requirements.txt
+
+Una vez configurada, vamos a la carpeta que creó en la raiz del servidor /nombre_de_aplicaion, allí debe haber un archivo wsgi
+Ábrelo, borra todo su contenido y pega lo siguiente
+
+import imp
+import os
+import sys
+
+
+sys.path.insert(0, os.path.dirname(__file__))
+
+wsgi = imp.load_source('wsgi', 'run.py')
+application = wsgi.app
+
+
+Luego de eso sube toda la carpeta de backend a excepción de la carpeta __pycache__ y venv
+Vamos a la misma carpeta donde está el archivo wsgi, subimos los archivos del backend y listo
+IMPORTANTE
+En el archivo config.py debes cambiar la propiedad DEBUG a False y verificar las credenciales de bases de datos
+
+
+Si hay problemas, asegúrate de que en la configuración del a aplicación, en el campo Application Entry Point dice "app" o "application"
+Otro posible problema es revisar las credenciales de base de datos del archivo config.py

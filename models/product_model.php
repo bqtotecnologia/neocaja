@@ -12,7 +12,7 @@ class ProductModel extends SQLModel
         ph.created_at as price_created_at
         FROM
         products pr
-        INNER JOIN product_history ph ON ph.product = pr.id AND ph.current = 1 ";
+        LEFT JOIN product_history ph ON ph.product = pr.id AND ph.current = 1 ";
 
     public function CreateProduct($data){
         $name = $data['name'];

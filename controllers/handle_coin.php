@@ -1,6 +1,11 @@
 <?php
-var_dump($_POST);
+
+$url = 'http://127.0.0.1:5000/usd';
+$response = file_get_contents($url);
+var_dump(json_decode($response, true));
 exit;
+
+
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
 
@@ -58,30 +63,32 @@ if($error === ''){
     else{
         $target_coin = $coin_model->GetCoinByName($cleanData['name']);
         if($target_coin !== false)
-            $error = 'El nombre de la moneda está repetido';
+            //$error = 'El nombre de la moneda está repetido';
+            $error = '';
     }   
 }
 
 if($error === ''){
     if($edit){
         if($cleanData['name'] === $target_coin['name'] && intval($target_coin['id']) !== $cleanData['id'])
-            $error = 'El nombre del producto está repetido';
+            $error = 'El nombre de la moneda está repetido';
     }    
 }    
 
-// Creating / updating the product
+// Creating / updating the coin
 if($error === ''){    
     $cleanData['active'] = isset($_POST['active']) ? '1' : '0';
 
     if($edit){
-        $updated = $coin_model->UpdateProduct($cleanData['id'], $cleanData);
+        $updated = $coin_model->UpdateCoin($cleanData['id'], $cleanData);
         if($updated === false)
-            $error = 'Hubo un error al intentar actualizar el producto';
+            $error = 'Hubo un error al intentar actualizar la moneda';
     }
     else{
-        $created = $coin_model->CreateProduct($cleanData);
+        //$created = $coin_model->CreateCoin($cleanData);
+        $created = true;
         if($created === false)
-            $error = 'Hubo un error al intentar registrar el producto';
+            $error = 'Hubo un error al intentar registrar la moneda';
     }
 }
 
@@ -92,13 +99,13 @@ if($error === ''){
         if($cleanData['price'] !== floatval($target_coin['price'])){
             $priceChanged = true;
 
-            $updated = $coin_model->UpdateProductPrice($cleanData['price'], $cleanData['id']);
+            $updated = $coin_model->UpdateCoinPrice($cleanData['price'], $cleanData['id']);
             if($updated === false)
                 $error = 'Ocurrió un error al intentar actualizar el precio del producto';
         }
     }
     else{
-        $updated = $coin_model->UpdateProductPrice($cleanData['price'], $created['id']);
+        $updated = $coin_model->UpdateCoinPrice($cleanData['price'], $created['id']);
         if($updated === false)
             $error = 'Ocurrió un error al intentar establecer el precio del producto';
     }
@@ -107,12 +114,13 @@ if($error === ''){
 // Managing feedback message and binnacle
 if($error === ''){
     if($edit){        
-        $message = 'Producto actualizado correctamente';
+        $message = 'Moneda actualizada correctamente';
 
         $activeChanged = $cleanData['active'] !== $target_coin['active'];
         $nameChanged = $cleanData['name'] !== $target_coin['name'];
+        $urlChanced = $cleandata['url'] !== $target_coin['url'];
 
-        $action = 'Actualizó el producto ' . $target_coin['name'];
+        $action = 'Actualizó la moneda ' . $target_coin['name'];
         if($nameChanged)
             $action .= '. Al nombre ' . $cleanData['name'];
 
@@ -121,6 +129,9 @@ if($error === ''){
 
         if($priceChanged)
             $action .= '. Al precio ' . $cleanData['price'];
+
+        if($urlChanced)
+            $action .= '. A la url ' . $cleanData['url'];
     }
     else{
         $message = 'Producto registrado correctamente';
@@ -128,6 +139,10 @@ if($error === ''){
     }
     $coin_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
 }
+
+
+var_dump($error);
+exit;
 
 if($error === ''){    
     if($edit)

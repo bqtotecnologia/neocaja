@@ -13,7 +13,7 @@ class CoinModel extends SQLModel
         ch.created_at as price_created_at
         FROM
         coins
-        INNER JOIN coin_history ch ON ch.coin = coins.id AND ch.current = 1 ";
+        LEFT JOIN coin_history ch ON ch.coin = coins.id AND ch.current = 1 ";
 
     public function CreateCoin($data){
         $name = $data['name'];
@@ -21,7 +21,8 @@ class CoinModel extends SQLModel
         $active = $data['active'];
 
         $sql = "INSERT INTO coins (name, url, active) VALUES ('$name', '$url', $active)";
-        $created = parent::DoQuery($sql);
+        
+        $created = parent::DoQuery($sql);        
 
         if($created === false) 
             $result = false;
@@ -42,12 +43,12 @@ class CoinModel extends SQLModel
     }
 
     public function GetCoin($id){
-        $sql = $this->SELECT_TEMPLATE . " WHERE coin.id = '$id'";
+        $sql = $this->SELECT_TEMPLATE . " WHERE coins.id = '$id'";
         return parent::GetRow($sql);
     }
 
     public function GetCoinByName($name){
-        $sql = $this->SELECT_TEMPLATE . " WHERE coin.name = '$name'";
+        $sql = $this->SELECT_TEMPLATE . " WHERE coins.name = '$name'";
         return parent::GetRow($sql);
     }
 
