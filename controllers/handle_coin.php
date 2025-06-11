@@ -1,11 +1,10 @@
 <?php
 
-$url = 'http://127.0.0.1:5000/usd';
-$response = file_get_contents($url);
-var_dump(json_decode($response, true));
-exit;
-
-
+/**
+ * For register a new coin you need a API service that returns 2 values 'success' and 'result'
+ * The 'success' are True or False
+ * The 'result' if 'success' is True, will be the coin price, otherwise will be a error message
+ */
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
 
@@ -75,6 +74,93 @@ if($error === ''){
     }    
 }    
 
+if($error === ''){
+    $urlChanged = false;
+    if($edit){
+        if($cleanData['url'] !== $target_coin['url'])
+            $urlChanced = true;
+    }
+}
+
+// Checking if the url API works
+$checkAPI = false;
+if($error === ''){    
+    // If you change the URL or create a new coin, check the API
+    if(!$edit || $urlChanced){
+        $checkAPI = true;
+        $url = $cleanData['url'];
+        try {
+            $response = file_get_contents($url);
+            $json = json_decode($response, true);
+        } catch (Exception $e) {
+            //var_dump($e);
+            //exit;
+            $error = 'Ocurrió un error al intentar consultar la API';
+        }        
+    }
+}
+
+
+
+if($error === '' && $checkAPI){
+    if(!isset($json['success']))
+        $error = 'La API no retorna un valor "success"';
+    else{
+        if($json['success'] !== false && $json['success'] !== true)
+            $error = 'El valor success de la API no retorna un valor true o false';
+        else{
+            $coinResponse = $json['success'];
+        }
+    }
+}
+
+if($error === '' && $checkAPI){
+    if(!isset($json['result']))
+        $error = 'La API no retorna un valor "result"';
+    else{
+        if(!is_numeric($json['result'])){
+            if($coinResponse === true)
+                $error = 'El valor result arrojado por la API no es numérico';
+            else
+                $error = $json['result'];
+        }
+        else{
+            $coinValue = $json['result'];
+            $decimalCount = Validator::GetDecimalCountOfFloat($coinValue);
+            if($decimalCount !== 4)
+                $error = 'La parte decimal de la moneda debe tener 4 decimales. Valor obtenido: ' . $coinValue;
+        }
+    }
+}
+
+if($error === '' && $checkAPI){
+    if($coinResponse === false)
+        $error = $json['result'];
+}
+
+var_dump($cleanData);
+// TODO: Pensar en si se debe priorizar actualizar el precio desde la API o permitir que el usuario la pueda cambiar manualmente
+
+if($error === ''){
+    if($edit){
+        $decimalCount = Validator::GetDecimalCountOfFloat($cleandata['price']);
+        if($decimalCount !== 4)
+            $error = 'La parte decimal de la moneda debe tener 4 decimales. Valor obtenido: ' . $cleandata['price'];
+    }
+}
+
+
+if($error === ''){
+    var_dump($coinResponse); echo '<br>';
+    var_dump($coinValue); echo '<br>';
+
+}
+else{
+    var_dump($error); echo '<br>';
+}
+
+exit;
+
 // Creating / updating the coin
 if($error === ''){    
     $cleanData['active'] = isset($_POST['active']) ? '1' : '0';
@@ -105,7 +191,7 @@ if($error === ''){
         }
     }
     else{
-        $updated = $coin_model->UpdateCoinPrice($cleanData['price'], $created['id']);
+        $updated = $coin_model->UpdateCoinPrice($coinValue, $created['id']);
         if($updated === false)
             $error = 'Ocurrió un error al intentar establecer el precio del producto';
     }

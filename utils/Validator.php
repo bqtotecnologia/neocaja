@@ -131,4 +131,13 @@ class Validator
 
         return $result;
     }
+
+    /**
+     * Retorna la cantidad de decimales que tiene un número flotante
+     */
+    public static function GetDecimalCountOfFloat(float $number){
+        $int = floor($number);
+        $decimal = $number - $int;
+        return strlen(strval($decimal)) - 2; // Substracting "0."
+    }
 }

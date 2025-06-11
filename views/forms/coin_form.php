@@ -48,7 +48,6 @@ $fields = [
         'size' => 4,
         'required' => false,
         'value' => $edit ? $target_coin['price'] : '0',
-        'disabled' => !$edit,
         'hidden' => !$edit
     ],
     [
