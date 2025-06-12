@@ -1,5 +1,5 @@
 <?php
-$admitted_user_types = ['Cajero', 'Super'];
+$admitted_user_types = ['Tecnología', 'Super'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 
@@ -48,7 +48,8 @@ $fields = [
         'size' => 4,
         'required' => false,
         'value' => $edit ? $target_coin['price'] : '0',
-        'hidden' => !$edit
+        'hidden' => !$edit,
+        'disabled' => $edit
     ],
     [
         'name' => 'url',

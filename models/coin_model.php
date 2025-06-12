@@ -37,6 +37,28 @@ class CoinModel extends SQLModel
         return parent::GetRows($sql, true);
     }
 
+    /**
+     * Returns all coins whose value aren't updated to the current date
+     */
+    public function GetNotUpdatedCoins(){
+        $sql = $this->SELECT_TEMPLATE . " WHERE DATE(ch.created_at) = DATE(NOW())";        
+        $updated_coins = parent::GetRows($sql, true);
+
+        $ids = '';
+        foreach($updated_coins as $coin){
+            $ids .= $coin['id'] . ', ';
+        }
+
+        if($ids === '')
+            $not_updated_coins = [];
+        else{
+            $ids = trim($ids, ', ');
+            $sql = $this->SELECT_TEMPLATE . " WHERE coins.id NOT IN ($ids)";
+            $not_updated_coins = parent::GetRows($sql, true);
+        }
+        return $not_updated_coins;
+    }
+
     public function GetActiveCoins(){
         $sql = $this->SELECT_TEMPLATE . " WHERE coin.active = 1 ORDER BY coin.name";
         return parent::GetRows($sql, true);

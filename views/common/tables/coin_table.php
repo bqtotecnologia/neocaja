@@ -37,7 +37,7 @@
                             <a href="<?= $base_url ?>/views/tables/coin_history.php?id=<?= $coin['id'] ?>" class="btn btn-info" title="Ver historial de tasas">
                                 <i class="fa fa-list"></i>
                             </a>
-                        </div>                        
+                        </div>               
                     </div>
                 </td>
             </tr>

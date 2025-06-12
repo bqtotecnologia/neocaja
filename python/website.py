@@ -35,11 +35,26 @@ def create_app():
             response = requests.get("https://pydolarve.org/api/v2/tipo-cambio", params=params)        
             json = response.json()
             result = json['price']
+            result = FloatConvert(str(result))
+
         except Exception as e:
             result = str(e)
             state = False
 
         return {'success': state, 'result': result}
+    
+    def FloatConvert(value:str):
+        stripped = value.strip().replace(',', '.')
+        splits = stripped.split('.')
+        intPart = splits[0]
+        floatPart = '0'
+
+        if len(splits) > 1:
+            floatPart = splits[1]
+
+        floatPart = floatPart[0:4]
+
+        return f'{intPart}.{floatPart}'
 
     app.register_error_handler(404, NotFound)
 

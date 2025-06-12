@@ -140,4 +140,65 @@ class Validator
         $decimal = $number - $int;
         return strlen(strval($decimal)) - 2; // Substracting "0."
     }
+
+    /**
+     * Checks if the coin API returns the appropiate values
+     * @return string|array Retorna un string con el error o un array con la información recibida de la API
+     */
+    public static function ValidateCoinAPI($url){
+        $error = '';
+        try {
+            $response = file_get_contents($url);
+            $json = json_decode($response, true);
+            if($json === NULL)
+                $error = 'La API escrita no existe';
+        } catch (Exception $e) {
+            //var_dump($e);
+            //exit;
+            $error = 'Ocurrió un error al intentar consultar la API';
+        } 
+
+        if($error === ''){
+            if(!isset($json['success']))
+                $error = 'La API no retorna un valor "success"';
+            else{
+                if($json['success'] !== false && $json['success'] !== true)
+                    $error = 'El valor success de la API no retorna un valor true o false';
+                else{
+                    $coinResponse = $json['success'];
+                }
+            }
+        }
+
+        if($error === ''){
+            if(!isset($json['result']))
+                $error = 'La API no retorna un valor "result"';
+            else{
+                if(!is_numeric($json['result'])){
+                    if($coinResponse === true)
+                        $error = 'El valor result arrojado por la API no es numérico';
+                    else
+                        $error = $json['result'];
+                }
+                else{
+                    $coinValue = $json['result'];
+                    $decimalCount = Validator::GetDecimalCountOfFloat($coinValue);
+                    if($decimalCount !== 4)
+                        $error = 'La parte decimal de la moneda debe tener 4 decimales. Valor obtenido: ' . $coinValue;
+                }
+            }
+        }
+
+        if($error === ''){
+            if($coinResponse === false)
+                $error = $json['result'];
+        }
+
+        if($error === '')
+            $result = ['success' => $coinResponse, 'value' => $coinValue];
+        else
+            $result = $error;
+
+        return $result;
+    }
 }
