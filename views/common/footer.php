@@ -22,7 +22,7 @@
             Swal.fire({
               title: "Error",
               icon:'error',
-              text: '<?= $_GET['error'] ?>',
+              html: '<?= $_GET['error'] ?>',
             })
         </script>
     <?php } ?>
@@ -32,7 +32,7 @@
             Swal.fire({
               title: "Mensaje",
               icon:'success',
-              text: '<?= $_GET['message'] ?>',
+              html: '<?= $_GET['message'] ?>',
             })
         </script>
     <?php } ?>

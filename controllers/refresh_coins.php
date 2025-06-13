@@ -1,10 +1,19 @@
 <?php
-if(!isset($s)){
-    
-}
-$admitted_user_types = ['Cajero', 'Tecnología', 'Super'];
-include_once '../utils/validate_user_type.php';
+/**
+ * Este archivo actualiza las tasas de todas las monedas, sin embargo para ello se debe llamar a este archivo
+ * habiendo declarado previamente una variable $allow_refresh.
+ * 
+ * Este contiene una variable $coins_refreshed que empieza en false y termina en true si todo el script se ejecuta.
+ * También al final crea uan variable $message con los mensajes de error o éxito de la operación
+ */
 include_once '../utils/base_url.php';
+
+$coins_refreshed = false;
+if(!isset($allow_refresh)){
+    header("Location: $base_url/views/forms/login.php");
+    return;
+}
+
 include_once '../utils/Validator.php';
 
 include_once '../models/coin_model.php';
@@ -13,14 +22,16 @@ $coin_model = new CoinModel();
 $not_updated_coins = $coin_model->GetNotUpdatedCoins();
 
 if($not_updated_coins === []){
-    header("Location: $base_url/views/forms/refresh_coins.php");
-    exit;
+    return;
 }
 
 $error = '';
 $message = '';
 $data = [];
 foreach($not_updated_coins as $coin){
+    if($coin['auto_update'] === '0') 
+        continue;
+
     $result = Validator::ValidateCoinAPI($coin['url']);
     if(is_string($result)){
         $error .= $result . ' en la moneda ' . $coin['name'] . '<br>';
@@ -44,18 +55,9 @@ foreach($data as $d){
 }
 
 if($error === '')
-    $message = 'Todas las monedas han sido actualizadas correctamente';
+    $refresh_message = 'Todas las monedas han sido actualizadas correctamente';
 else{
-    $message = $message . $error;
+    $refresh_message = $message . $error;
 }
 
-$redirect = "Location: $base_url/views/panel.php?a=1&";
-if($error === '')
-    $redirect .= 'message=';
-else
-    $redirect .= 'error=';
-
-$redirect .= $message;
-
-header($redirect);
-exit;
+$coins_refreshed = true;

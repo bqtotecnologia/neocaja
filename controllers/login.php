@@ -121,14 +121,25 @@ echo 'Rol: ' . $_SESSION['neocaja_rol'] . '<br>';
 echo 'Cédula: ' . $_SESSION['neocaja_cedula'] . '<br>';
 echo 'Id: ' . $_SESSION['neocaja_id'] . '<br>';
 echo "Error: " . $error;
-exit;
 */
 
 
 if($error === ''){
-    
-    header('Location: ' . $base_url . '/views/panel.php');
+    $allow_refresh = true;
+    include_once 'refresh_coins.php';
+
+    if($_SESSION['neocaja_rol'] !== 'Estudiante'){
+        if($coins_refreshed)
+            $redirect = "Location: $base_url/views/panel.php?message=$refresh_message";
+        else
+            $redirect = "Location: $base_url/views/panel.php";
+    }
+    else{
+        $redirect = "Location: $base_url/views/panel.php";
+    }
 }
 else
-    header('Location: ' . $base_url . '/views/forms/login.php?error=' . $error);
+   $redirect = "Location: $base_url/views/forms/login.php?error=$error";
+
+header($redirect);
 exit;

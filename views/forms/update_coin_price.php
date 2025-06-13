@@ -28,7 +28,7 @@ $fields = [
         'max' => 11,
         'min' => 1,
         'required' => true,
-        'value' => '',
+        'value' => isset($_GET['id']) ? $_GET['id'] : '',
         'elements' => $display_coins
     ],
     [
