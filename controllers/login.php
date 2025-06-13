@@ -125,8 +125,10 @@ exit;
 */
 
 
-if($error === '')
+if($error === ''){
+    
     header('Location: ' . $base_url . '/views/panel.php');
+}
 else
     header('Location: ' . $base_url . '/views/forms/login.php?error=' . $error);
 exit;

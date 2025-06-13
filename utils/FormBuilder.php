@@ -107,7 +107,7 @@ class FormBuilder
                             if($field['type'] === 'integer')
                                 $input .= ' type="number" ';
                             else if($field['type'] === 'decimal')
-                                $input .= ' type="number" step="0.1" ';
+                                $input .= ' type="number" step="0.00001" ';
                             else
                                 $input .= ' type= "' . $field['type'] . '" ';
                             

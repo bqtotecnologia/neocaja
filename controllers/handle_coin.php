@@ -1,9 +1,9 @@
 <?php
 
 /**
- * For register a new coin you need a API service that returns 2 values 'success' and 'result'
+ * For register a new coin you need a API service that returns 2 values 'success' and 'value'
  * The 'success' are True or False
- * The 'result' if 'success' is True, will be the coin price, otherwise will be a error message
+ * The 'value' if 'success' is True, will be the coin price, otherwise will be a error message
  */
 $admitted_user_types = ['Tecnología', 'Super'];
 include_once '../utils/validate_user_type.php';
@@ -82,17 +82,25 @@ if($error === ''){
 
 // Checking if the url API works
 if($error === ''){
-    if($checkAPI){
+    $cleanData['auto_update'] = isset($_POST['auto_update']) ? '1' : '0';
+    if($checkAPI && $cleanData['auto_update'] === '1'){
         $url = $cleanData['url'];
-        $result = Validator::ValidateCoinAPI($url);
-        if(is_string($result))
-            $error = $result;
+        $API_result = Validator::ValidateCoinAPI($url);
+        if(is_string($API_result))
+            $error = $API_result;
     }
 }
 
+if($error === ''){
+    if(isset($API_result))
+        $coinValue = $API_result['value'];
+    else
+        $coinValue = "0.0000";
+}
+
 // Creating / updating the coin
-if($error === ''){    
-    $cleanData['active'] = isset($_POST['active']) ? '1' : '0';
+if($error === ''){        
+    $cleanData['active'] = isset($_POST['active']) ? '1' : '0';    
 
     if($edit){
         $updated = $coin_model->UpdateCoin($cleanData['id'], $cleanData);

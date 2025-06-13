@@ -77,6 +77,22 @@ $fields = [
             ]
         ]
     ],
+    [
+        'name' => 'auto_update',
+        'display' => 'Actualizar automáticamente',
+        'placeholder' => '',
+        'id' => 'auto_update',
+        'type' => 'checkbox',
+        'size' => 4,
+        'required' => false,
+        'value' => $edit ? [$target_coin['auto_update']] : ['1'],
+        'elements' => [
+            [
+                'display' => 'Actualizar al ingresar al sistema',
+                'value' => '1'
+            ]
+        ]
+    ],
 ];
 
 if($edit){

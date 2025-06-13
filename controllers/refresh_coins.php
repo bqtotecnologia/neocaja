@@ -1,4 +1,7 @@
 <?php
+if(!isset($s)){
+    
+}
 $admitted_user_types = ['Cajero', 'Tecnología', 'Super'];
 include_once '../utils/validate_user_type.php';
 include_once '../utils/base_url.php';

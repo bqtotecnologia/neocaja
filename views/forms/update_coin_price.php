@@ -49,12 +49,13 @@ $fields = [
         'type' => 'date',
         'size' => 4,
         'required' => true,
-        'value' => date('Y-m-d')
+        'value' => date('Y-m-d'),
+        'max' => date('Y-m-d'),
     ],
 ];
 
 $formBuilder = new FormBuilder(
-    '../../controllers/update_coin_value.php',    
+    '../../controllers/update_coin_price.php',    
     'POST',
     'Actualizar la tasa de una moneda manualmente',
     'Actualizar',

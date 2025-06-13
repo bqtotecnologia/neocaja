@@ -25,6 +25,11 @@ def create_app():
         response = Pydolarve('eur')
         return jsonify(response), 200
     
+    # Getting the Ves value
+    @app.route('/ves')
+    def GetVesValue():        
+        return jsonify({'success':True, 'value': '1.0000'}), 200
+    
     def Pydolarve(coin):
         state = True
         params = {
