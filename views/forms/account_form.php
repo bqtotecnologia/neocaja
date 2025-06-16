@@ -10,26 +10,44 @@ if($edit){
     $id = Validator::ValidateRecievedId();
 
     if(is_string($id)){
-        header("Location: $base_url/views/tables/search_company.php?error=$id");
+        header("Location: $base_url/views/tables/search_account.php?error=$id");
         exit;
     }   
 
-    include_once '../../models/company_model.php';
-    $company_model = new CompanyModel();
-    $target_company = $company_model->GetCompany($id);
-    if($target_company === false){
-        header("Location: $base_url/views/tables/search_company.php?error=Empresa no encontrada");
+    include_once '../../models/account_model.php';
+    $account_model = new AccountModel();
+    $target_account = $account_model->GetAccount($id);
+    if($target_account === false){
+        header("Location: $base_url/views/tables/search_account.php?error=Cliente no encontrado");
         exit;
     }
 }
 
-$rif_letters = ['V', 'J', 'E', 'P', 'G'];
-$display_rif_letters = [];
-foreach($rif_letters as $letter){
-    array_push($display_rif_letters,
+include_once '../../models/scholarship_model.php';
+include_once '../../models/company_model.php';
+
+$scholarship_model = new ScholarshipModel();
+$company_model = new CompanyModel();
+
+$scholarships = $scholarship_model->GetScholarships();
+$companies = $company_model->GetCompanies();
+
+$display_scholarships = [];
+$display_companies = [];
+
+foreach($scholarships as $scholarship){
+    array_push($display_scholarships,
     [
-        'display' => $letter,
-        'value' => $letter
+        'display' => $scholarship['name'],
+        'value' => $scholarship['id']
+    ]);
+}
+
+foreach($companies as $company){
+    array_push($display_companies,
+    [
+        'display' => $company['name'],
+        'value' => $company['id']
     ]);
 }
 
@@ -38,66 +56,108 @@ include_once '../../utils/FormBuilder.php';
 
 $fields = [
     [
-        'name' => 'name',
-        'display' => 'Nombre',
-        'placeholder' => 'Nombre de la compañía',
-        'id' => 'name',
+        'name' => 'cedula',
+        'display' => 'Cédula',
+        'placeholder' => '',
+        'id' => 'cedula',
+        'type' => 'integer',
+        'size' => 5,
+        'max' => 10,
+        'min' => 7,
+        'required' => true,
+        'value' => $edit ? $target_account['cedula'] : ''
+    ],
+    [
+        'name' => 'names',
+        'display' => 'Nombres',
+        'placeholder' => 'Ambos nombres',
+        'id' => 'names',
         'type' => 'text',
         'size' => 8,
-        'max' => 255,
-        'min' => 1,
+        'min' => 5,
+        'max' => 100,
         'required' => true,
-        'value' => $edit ? $target_company['name'] : ''
+        'value' => $edit ? $target_account['names'] : '',
     ],
     [
-        'name' => 'rif_letter',
-        'display' => 'Letra del rif',
-        'placeholder' => '',
-        'id' => 'rif_letter',
-        'type' => 'select',
-        'min' => 1,
-        'max' => 1,
-        'size' => 3,
-        'required' => true,
-        'value' => $edit ? $target_company['rif_letter'] : 'V',
-        'elements' => $display_rif_letters
-    ],
-    [
-        'name' => 'rif_number',
-        'display' => 'Rif',
-        'placeholder' => '9 dígitos',
-        'id' => 'rif_number',
+        'name' => 'surnames',
+        'display' => 'Apellidos',
+        'placeholder' => 'Ambos apellidos',
+        'id' => 'surnames',
         'type' => 'text',
-        'min' => 9,
-        'max' => 9,
-        'size' => 5,
-        'required' => false,
-        'value' => $edit ? $target_company['rif_number'] : '',
+        'size' => 8,
+        'min' => 5,
+        'max' => 100,
+        'required' => true,
+        'value' => $edit ? $target_account['surnames'] : '',
     ],
     [
         'name' => 'address',
         'display' => 'Dirección',
-        'placeholder' => 'Dirección de la empresa',
+        'placeholder' => 'Dirección del cliente',
         'id' => 'address',
         'type' => 'textarea',
         'size' => 8,
+        'required' => true,
+        'value' => $edit ? $target_account['address'] : '',
+    ],
+    [
+        'name' => 'is_student',
+        'display' => 'Es estudiante',
+        'placeholder' => '',
+        'id' => 'is_student',
+        'type' => 'checkbox',
+        'size' => 5,
         'required' => false,
-        'value' => $edit ? $target_company['address'] : '',
+        'value' => $edit ? [$target_account['is_student']] : ['0'],
+        'elements' => [['display' => 'Es estudiante', 'value' => '1']],
+    ],
+    [
+        'name' => 'scholarship',
+        'display' => 'Beca',
+        'placeholder' => '',
+        'id' => 'scholarship',
+        'type' => 'select',
+        'size' => 6,
+        'required' => false,
+        'value' => $edit ? $target_account['scholarship_id'] : '',
+        'elements' => $display_scholarships,
+    ],
+    [
+        'name' => 'scholarship_coverage',
+        'display' => '% Cobertura de la beca',
+        'placeholder' => 'Ejemplo, 30, 50, 100',
+        'id' => 'scholarship_coverage',
+        'type' => 'integer',
+        'size' => 6,
+        'required' => false,
+        'value' => $edit ? ($target_account['scholarship_coverage'] === NULL ? '0' : $target_account['scholarship_coverage'] ) : '0',
+    ],
+    [
+        'name' => 'company',
+        'display' => 'Empresa',
+        'placeholder' => '',
+        'id' => 'company',
+        'type' => 'select',
+        'size' => 8,
+        'required' => false,
+        'value' => $edit ? $target_account['company_id'] : '',
+        'elements' => $display_companies
     ],
 ];
 
 if($edit){
     $id_field = [
         'name' => 'id',
-        'value' => $target_company['id']
+        'value' => $target_account['id']
     ];
     array_push($fields, $id_field);
 }
 
 $formBuilder = new FormBuilder(
-    '../../controllers/handle_company.php',    
+    '../../controllers/handle_account.php',
     'POST',
-    ($edit ? 'Editar' : 'Registrar nueva') . ' empresa',
+    ($edit ? 'Editar' : 'Registrar nuevo') . ' cliente',
     ($edit ? 'Editar' : 'Registrar'),
     '',
     $fields
@@ -107,7 +167,7 @@ $formBuilder = new FormBuilder(
 
 <div class="row justify-content-center">
     <div class="col-12 row justify-content-center x_panel">
-        <?php $btn_url = '../tables/search_company.php'; include_once '../layouts/backButton.php'; ?>
+        <?php $btn_url = '../tables/search_account.php'; include_once '../layouts/backButton.php'; ?>
     </div>
     
     <div class="col-12 justify-content-center px-5 mt-4">            

@@ -13,26 +13,33 @@ if(empty($_POST)){
 }
 
 $fields_config = [
-    'name' => [
+    'cedula' => [
+        'min' => 7,
+        'max' => 10,
+        'required' => true,
+        'type' => 'integer',
+        'suspicious' => true,
+    ],
+    'names' => [
         'min' => 1,
+        'max' => 100,
+        'required' => true,
+        'type' => 'string',
+        'suspicious' => true,
+    ],
+    'surnames' => [
+        'min' => 1,
+        'max' => 100,
+        'required' => true,
+        'type' => 'string',
+        'suspicious' => true,
+    ],
+    'address' => [
+        'min' => 10,
         'max' => 255,
         'required' => true,
         'type' => 'string',
-        'suspicious' => true,
-    ],
-    'rif_letter' => [
-        'min' => 1,
-        'max' => 1,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'rif_number' => [
-        'min' => 9,
-        'max' => 9,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
+        'suspicious' => false,
     ],
     'address' => [
         'min' => 1,
@@ -40,6 +47,27 @@ $fields_config = [
         'required' => true,
         'type' => 'string',
         'suspicious' => false,
+    ],
+    'scholarship' => [
+        'min' => 0,
+        'max' => 11,
+        'required' => false,
+        'type' => 'integer',
+        'suspicious' => true,
+    ],
+    'scholarship_coverage' => [
+        'min' => 1,
+        'max' => 11,
+        'required' => true,
+        'type' => 'integer',
+        'suspicious' => true,
+    ],
+    'company' => [
+        'min' => 0,
+        'max' => 11,
+        'required' => false,
+        'type' => 'integer',
+        'suspicious' => true,
     ],
 ];
 
@@ -52,91 +80,143 @@ else
 $edit = isset($_POST['id']);
 
 if($error === ''){
-    include_once '../models/company_model.php';
-    $company_model = new CompanyModel();
+    include_once '../models/account_model.php';
+    $account_model = new AccountModel();
 
     if($edit){
-        $target_company = $company_model->GetCompany($cleanData['id']);
+        $target_account = $account_model->GetAccount($cleanData['id']);
+        if($target_account === false)
+            $error = 'Cliente no encontrado';
+    }
+    else{
+        $target_account = $account_model->GetAccountByCedula($cleanData['cedula']);
+        if($target_account !== false)
+            $error = 'La cédula del cliente está repetida';
+    }  
+}
+
+if($error === ''){
+    if($cleanData['company'] !== 0){
+        include_once '../models/company_model.php';
+        $company_model = new CompanyModel();
+    
+        $target_company = $company_model->GetCompany($cleanData['company']);
         if($target_company === false)
             $error = 'Empresa no encontrada';
     }
-    else{
-        $target_company = $company_model->GetCompanyByRif($cleanData['rif_letter'], $cleanData['rif_number']);
-        if($target_company !== false)
-            $error = 'El rif de la empresa está repetido';
-    }   
+}
+
+if($error === ''){
+    if($cleanData['scholarship'] !== 0){
+        include_once '../models/scholarship_model.php';
+        $scholarship_model = new ScholarshipModel();
+    
+        $target_scholarship = $scholarship_model->GetScholarship($cleanData['scholarship']);
+        if($target_scholarship === false)
+            $error = 'Tipo de beca no encontrada';
+    }
 }
 
 if($error === ''){
     if($edit){
-        if(
-        $target_company['rif_letter'] === $cleanData['rif_letter'] && 
-        $target_company['rif_number'] === $cleanData['rif_number'] && 
-        intval($target_company['id']) !== $cleanData['id']
-        )
-            $error = 'El rif de la empresa está repetido';
-    }    
-}    
+        if($target_account['id'] !== $cleanData['id'] && $target_account['cedula'] === $cleanData['cedula'])
+            $error = 'La cédula ingresada ya está repetida';
+    }
+}
 
-// Creating / updating the company
+// Creating / updating the account
 if($error === ''){    
+    $cleanData['is_student'] = isset($_POST['is_student']) ? '1' : '0';
+    $cleanData['scholarship'] = ($cleanData['scholarship'] === 0 ? 'NULL' : $target_scholarship['id']);
+    $cleanData['scholarship_coverage'] = ($cleanData['scholarship_coverage'] === 0 ? 'NULL' : $cleanData['scholarship_coverage']);
+
+    if($cleanData['scholarship'] === 'NULL')
+        $cleanData['scholarship_coverage'] = 'NULL';
+
+    $cleanData['company'] = ($cleanData['company'] === 0 ? 'NULL' : $target_company['id']);
+
+    if($cleanData['scholarship'] === 0)
+        $cleanData['scholarship_coverage'] = 0;
+
     if($edit){
-        $updated = $company_model->UpdateCompany($cleanData['id'], $cleanData);
+        $updated = $account_model->UpdateAccount($cleanData['id'], $cleanData);
         if($updated === false)
-            $error = 'Hubo un error al intentar actualizar la empresa';
+            $error = 'Hubo un error al intentar actualizar el cliente';
     }
     else{
-        $created = $company_model->CreateCompany($cleanData);
+        $created = $account_model->CreateAccount($cleanData);
         if($created === false)
-            $error = 'Hubo un error al intentar registrar la empresa';
+            $error = 'Hubo un error al intentar registrar el cliente';
     }
 }
 
 // Managing feedback message and binnacle
 if($error === ''){
     if($edit){        
-        $message = 'Empresa actualizada correctamente';
+        $message = 'Cliente actualizado correctamente';
 
-        $nameChanged = $cleanData['name'] !== $target_company['name'];
-        $letterChanged = $cleanData['rif_letter'] !== $target_company['rif_letter'];
-        $numberChanged = $cleanData['rif_number'] !== $target_company['rif_number'];
-        $addressChanged = $cleanData['address'] !== $target_company['address'];
+        $cedulaChanged = $cleanData['changed'] !== $target_account['changed'];
+        $namesChanged = $cleanData['names'] !== $target_account['names'];
+        $surnamesChanged = $cleanData['surnames'] !== $target_account['surnames'];
+        $addressChanged = $cleanData['address'] !== $target_account['address'];
+        $is_studentChanged = intval($cleanData['is_student']) !== intval($target_account['is_student']);
+        $scholarshipChanged = intval($cleanData['scholarship']) !== intval($target_account['scholarship_id']);
+        $scholarshipCoverageChanged = intval($cleanData['scholarship_coverage']) !== intval($target_account['scholarship_coverage']);
+        $companyChanged = intval($cleanData['company']) !== intval($target_account['company_id']);
 
-        $action = 'Actualizó la empresa ' . $target_company['name'];
-        if($nameChanged)
-            $action .= '. Al nombre ' . $cleanData['name'];
+        $action = 'Actualizó el cliente ' . $target_account['names'] . ' ' . $target_account['surnames'];
 
-        if($letterChanged)
-            $action .= '. A la letra de rif ' . $cleanData['rif_letter'];
+        if($cedulaChanged)
+            $action .= '. A la cédula ' . $cleanData['cedula'];
 
-        if($numberChanged)
-            $action .= '. Al número de rif ' . $cleanData['rif_number'];
+        if($namesChanged)
+            $action .= '. Al nombre ' . $cleanData['names'];
+
+        if($surnamesChanged)
+            $action .= '. Al apellido ' . $cleanData['surnames'];
 
         if($addressChanged)
-            $action .= '. Al la dirección ' . $cleanData['address'];
+            $action .= '. A la dirección ' . $cleanData['address'];
+
+        if($is_studentChanged){
+            if($cleanData['is_student'] === '1')
+                $action .= '. Ahora es un estudiante';
+            else
+                $action .= '. Ya no es un estudiante';
+        }
+
+        if($scholarshipChanged)
+            $action .= '. A la beca ' . $target_scholarship['name'];
+
+        if($scholarshipCoverageChanged)
+            $action .= '. Al porcentaje de beca ' . $cleanData['scholarship_coverage'] . '%';
+
+        if($companyChanged)
+            $action .= '. A la empresa ' . $target_company['name'];
+
     }
     else{
-        $message = 'Empresa registrada correctamente';
-        $action = 'Creo la empresa ' . $cleanData['name'] . ' con el rif ' . $cleanData['rif_letter'] . '-' . $cleanData['rif_number'] . ' dirección: ' . $cleanData['address'];
+        $message = 'Cliente registrado correctamente';
+        $action = 'Creo el cliente ' . $cleanData['names'] . ' ' . $cleanData['surnames'] . ' con la cédula ' . $cleanData['cedula'];
     }
-    $company_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
+    $account_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
 }
 
 if($error === ''){    
     if($edit)
-        header("Location: $base_url/views/forms/company_form.php?message=$message&id=" . $cleanData['id']);
+        header("Location: $base_url/views/forms/account_form.php?message=$message&id=" . $cleanData['id']);
     else
-        header("Location: $base_url/views/forms/company_form.php?message=$message&id=" . $created['id']);
+        header("Location: $base_url/views/forms/account_form.php?message=$message&id=" . $created['id']);
 }
 else{
     if($edit){
-        if($target_company === false)
-            header("Location: $base_url/views/tables/search_company.php?error=$error");
+        if($target_account === false)
+            header("Location: $base_url/views/tables/search_account.php?error=$error");
         else
-            header("Location: $base_url/views/forms/company_form.php?error=$error&id=" . $target_company['id']);
+            header("Location: $base_url/views/forms/account_form.php?error=$error&id=" . $target_account['id']);
     }
     else
-        header("Location: $base_url/views/forms/company_form.php?error=$error");
+        header("Location: $base_url/views/forms/account_form.php?error=$error");
 }
 
 exit;

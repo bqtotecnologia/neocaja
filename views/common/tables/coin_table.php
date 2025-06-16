@@ -23,7 +23,7 @@
                 <td class="align-middle text-center"><?= $coin['coin_created_at'] ?></td>
                 <td class="align-middle text-center"><?= $coin['price_created_at'] ?></td>
                 <td class="align-middle text-center">
-                    <i class="fa fa-circle text-<?= $coin['active'] ? 'success' : 'danger' ?>"></i>                    
+                    <i class="fa fa-circle text-<?= $coin['active'] ? 'success' : 'danger' ?>"></i>
                 </td>
                 <td class="">
                     <div class="row justify-content-around">
@@ -34,7 +34,7 @@
                         </div>
 
                         <div class="col-3 text-center">
-                            <a href="<?= $base_url ?>/views/forms/update_coin_price.php?id=<?= $coin['id'] ?>" class="btn btn-warning" title="Ver historial de tasas">
+                            <a href="<?= $base_url ?>/views/forms/update_coin_price.php?id=<?= $coin['id'] ?>" class="btn btn-warning" title="Cambiar tasa manualmente">
                                 <i class="fa fa-refresh"></i>
                             </a>
                         </div>  

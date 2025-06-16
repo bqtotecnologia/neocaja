@@ -6,7 +6,7 @@ include '../../views/common/header.php';
 include_once '../../models/coin_model.php';
 $coin_model = new CoinModel();
 
-$coins = $coin_model->GetNotUpdatedCoins();
+$coins = $coin_model->GetNotUpdatedCoins(false);
 ?>
 
 <div class="row justify-content-center">

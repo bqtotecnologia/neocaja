@@ -4,7 +4,7 @@
  * habiendo declarado previamente una variable $allow_refresh.
  * 
  * Este contiene una variable $coins_refreshed que empieza en false y termina en true si todo el script se ejecuta.
- * También al final crea uan variable $message con los mensajes de error o éxito de la operación
+ * También al final crea una variable $message con los mensajes de error o éxito de la operación
  */
 include_once '../utils/base_url.php';
 
@@ -19,7 +19,7 @@ include_once '../utils/Validator.php';
 include_once '../models/coin_model.php';
 $coin_model = new CoinModel();
 
-$not_updated_coins = $coin_model->GetNotUpdatedCoins();
+$not_updated_coins = $coin_model->GetNotUpdatedCoins(false);
 
 if($not_updated_coins === []){
     return;

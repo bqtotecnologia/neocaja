@@ -66,7 +66,7 @@
                         </ul>
                       </li>
 
-                      <li><a><i class="fa fa-cubes"></i> Clientes <span class="fa fa-chevron-down"></span></a>
+                      <li><a><i class="fa fa-users"></i> Clientes <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/forms/account_form.php">Crear cliente</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_account.php">Ver clientes</a></li>
@@ -91,6 +91,14 @@
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/forms/bank_form.php">Crear banco</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_bank.php">Ver bancos</a></li>
+                        </ul>
+                      </li>
+
+                      <li><a><i class="fa fa-leaf"></i> Becas <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/forms/scholarship_form.php">Crear beca</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_scholarship.php">Ver becas</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_scholarship_students.php">Estudiantes becados</a></li>
                         </ul>
                       </li>
                     <?php } ?>

@@ -52,7 +52,13 @@ if($error === ''){
             $error = 'El código del banco está repetido';
     }   
 }
-  
+
+if($error === ''){
+    if($edit){
+        if($target_bank['id'] !== $cleanData['id'] && $target_account['code'] === $cleanData['code'])
+            $error = 'El código ingresado ya está registrado';
+    }
+}  
 
 // Creating / updating the bank
 if($error === ''){    

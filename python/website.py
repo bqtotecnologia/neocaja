@@ -28,7 +28,7 @@ def create_app():
     # Getting the Ves value
     @app.route('/ves')
     def GetVesValue():        
-        return jsonify({'success':True, 'value': '1.0000'}), 200
+        return jsonify({'success':True, 'result': '1.0000'}), 200
     
     def Pydolarve(coin):
         state = True
@@ -58,6 +58,8 @@ def create_app():
             floatPart = splits[1]
 
         floatPart = floatPart[0:4]
+        while len(floatPart) < 4:
+            floatPart += '0'
 
         return f'{intPart}.{floatPart}'
 

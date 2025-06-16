@@ -3,8 +3,6 @@ $admitted_user_types = ['Super', 'Cajero'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 
-
-
 $edit = isset($_GET['id']);
 if($edit){
     if(!is_numeric($_GET['id'])){

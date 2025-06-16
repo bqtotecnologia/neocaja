@@ -69,6 +69,12 @@ $formBuilder = new FormBuilder(
     <div class="col-12 row justify-content-center x_panel">
         <?php $btn_url = '../tables/search_coin.php'; include_once '../layouts/backButton.php'; ?>
     </div>
+
+    <div class="col-12 row m-0 p-0 justify-content-center mt-5">
+        <h4 class="text-danger">
+            Si la tasa ya existe en la fecha dada se actualizará, sino, se creará la tasa de ese día.
+        </h4>
+    </div>
     
     <div class="col-12 justify-content-center px-5 mt-4">            
         <?php $formBuilder->DrawForm(); ?>

@@ -46,7 +46,7 @@ class Validator
             }
 
             if(in_array($currentField['type'], ['integer', 'float'])){
-                if(is_numeric($recievedData) === false){
+                if(is_numeric($recievedData) === false && $recievedData !== ''){
                     $error = 'El campo ' . $field . ' debe ser numérico';
                     break;
                 }                
@@ -75,7 +75,7 @@ class Validator
         if(isset($_POST['id'])){
             $id = Validator::ValidateRecievedId('id', 'POST');
             if(is_string($id))
-            $error = $id;
+                $error = $id;
         
             $cleanData['id'] = intval($id);
         }

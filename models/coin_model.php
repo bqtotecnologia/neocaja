@@ -64,9 +64,10 @@ class CoinModel extends SQLModel
     }
 
     /**
-     * Returns all coins whose value aren't updated to the current date
+     * Retorna todas las monedas cuya tasa no esté actualizada al día de hoy
+     * @param bool $include_not_auto_updated Si recibe true incluye las monedas que tengan auto_update, sino, las omite
      */
-    public function GetNotUpdatedCoins(){
+    public function GetNotUpdatedCoins(bool $include_not_auto_updated = true){
         $sql = $this->SELECT_TEMPLATE . " WHERE coins.id NOT IN (
             SELECT
             coins.id
@@ -75,7 +76,10 @@ class CoinModel extends SQLModel
             INNER JOIN coin_history ON coin_history.coin = coins.id AND coin_history.current = 1
             WHERE
             DATE(coin_history.created_at) = DATE(NOW())
-        )";
+            )";
+
+        if($include_not_auto_updated === false)
+            $sql .= " AND coins.auto_update = 1";
 
         $not_updated_coins = parent::GetRows($sql, true);
         return $not_updated_coins;
