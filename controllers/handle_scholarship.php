@@ -48,7 +48,7 @@ if($error === ''){
 
 if($error === ''){
     if($edit){
-        if($target_scholarship['id'] !== $cleanData['id'] && $target_account['name'] === $cleanData['name'])
+        if($target_scholarship['id'] !== $cleanData['id'] && $target_scholarship['name'] === $cleanData['name'])
             $error = 'El nombre ingresado ya está registrado';
     }
 }  

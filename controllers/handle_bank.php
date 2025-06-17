@@ -55,7 +55,7 @@ if($error === ''){
 
 if($error === ''){
     if($edit){
-        if($target_bank['id'] !== $cleanData['id'] && $target_account['code'] === $cleanData['code'])
+        if($target_bank['id'] !== $cleanData['id'] && $target_bank['code'] === $cleanData['code'])
             $error = 'El código ingresado ya está registrado';
     }
 }  

@@ -87,6 +87,13 @@
                         </ul>
                       </li>
 
+                      <li><a><i class="fa fa-fax"></i> Puntos de venta <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/forms/sale_point_form.php">Crear punto de venta</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_sale_point.php">Ver puntos de venta</a></li>
+                        </ul>
+                      </li>
+
                       <li><a><i class="fa fa-bank"></i> Bancos <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/forms/bank_form.php">Crear banco</a></li>
@@ -94,11 +101,17 @@
                         </ul>
                       </li>
 
+                      <li><a><i class="fa fa-sitemap"></i> Métodos de pago <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/forms/payment_method_form.php">Crear método de pago</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_payment_method.php">Ver métodos de pago</a></li>
+                        </ul>
+                      </li>
+
                       <li><a><i class="fa fa-leaf"></i> Becas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/forms/scholarship_form.php">Crear beca</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_scholarship.php">Ver becas</a></li>
-                          <li><a href="<?= $base_url ?>/views/tables/search_scholarship_students.php">Estudiantes becados</a></li>
                         </ul>
                       </li>
                     <?php } ?>
