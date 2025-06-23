@@ -86,7 +86,7 @@ class CoinModel extends SQLModel
     }
 
     public function GetActiveCoins(){
-        $sql = $this->SELECT_TEMPLATE . " WHERE coin.active = 1 ORDER BY coin.name";
+        $sql = $this->SELECT_TEMPLATE . " WHERE coins.active = 1 ORDER BY coins.name";
         return parent::GetRows($sql, true);
     }
 

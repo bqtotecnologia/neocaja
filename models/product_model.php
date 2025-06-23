@@ -34,6 +34,11 @@ class ProductModel extends SQLModel
         return parent::GetRows($sql, true);
     }
 
+    public function GetActiveProducts(){
+        $sql = $this->SELECT_TEMPLATE . " WHERE pr.active = 1 ORDER BY pr.name";
+        return parent::GetRows($sql, true);
+    }
+
     public function GetProduct($id){
         $sql = $this->SELECT_TEMPLATE . " WHERE pr.id = '$id'";
         return parent::GetRow($sql);

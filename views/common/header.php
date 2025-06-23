@@ -59,10 +59,11 @@
 
                     <!-- Cashier -->
                     <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
-                      <li><a><i class="fa fa-fax"></i> Facturas <span class="fa fa-chevron-down"></span></a>
+                      <li><a><i class="fa fa-book"></i> Facturas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/forms/invoice_form.php">Crear factura</a></li>
-                          <li><a href="<?= $base_url ?>/views/searchers/search_invoice.php">Buscar factura</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_invoices_of_today.php">Facturas de hoy</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_invoice.php">Ver todas</a></li>
                         </ul>
                       </li>
 
@@ -94,17 +95,17 @@
                         </ul>
                       </li>
 
-                      <li><a><i class="fa fa-bank"></i> Bancos <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/forms/bank_form.php">Crear banco</a></li>
-                          <li><a href="<?= $base_url ?>/views/tables/search_bank.php">Ver bancos</a></li>
-                        </ul>
-                      </li>
-
                       <li><a><i class="fa fa-sitemap"></i> Métodos de pago <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/forms/payment_method_form.php">Crear método de pago</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_payment_method.php">Ver métodos de pago</a></li>
+                        </ul>
+                      </li>
+
+                      <li><a><i class="fa fa-bank"></i> Bancos <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/forms/bank_form.php">Crear banco</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_bank.php">Ver bancos</a></li>
                         </ul>
                       </li>
 

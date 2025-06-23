@@ -120,7 +120,7 @@ class FormBuilder
                             echo $input;
                         }
                         else if($field['type'] === 'textarea'){
-                            $textarea = '<textarea ' . $id . $name . $class . $required . ' rows="3" columns="50" "value="' . $field['value'] . '"';
+                            $textarea = '<textarea ' . $id . $name . $class . $required . ' rows="3" columns="50" value="' . $field['value'] . '"';
                             $textarea .= $this->GetHTMLProperties($field);                           
 
                             echo $textarea . '>' . $field['value'] . '</textarea> ';
