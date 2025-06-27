@@ -51,6 +51,11 @@ class InvoiceModel extends SQLModel
         return parent::GetRow("SELECT * FROM payment_method_types WHERE name = '$name'"); 
     }
 
+    public function GetInvoiceOfAccountOfPeriod(string $account, string $period){
+        $sql = $this->SINGLE_SELECT_TEMPLATE . " WHERE accounts.id = $account AND invoices.period = $period";
+        return parent::GetRows($sql, true);
+    }
+
     public function UpdatePaymentMethodType(string $id, array $data){
         $name = $data['name'];
 
