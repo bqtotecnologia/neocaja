@@ -53,3 +53,36 @@ function ExportToPDF(){
   function PrintError(error){
     document.getElementById('error-displayer').innerHTML = error
   }
+
+  async function TryFetch(url, fetchConfig){
+    let result = await GoFetch(url, fetchConfig)
+    
+
+    if(typeof result === "string" ){
+      Swal.fire({
+        title: "Ha ocurrido un error inesperado, contacte con el personal de tecnología.",
+        icon:'error',
+        confirmButtonText: "Ok",
+        text: result
+      })
+    }
+
+    return result
+  }
+
+  async function GoFetch(url, fetchConfig) {
+    try {
+      const response = await fetch(url, fetchConfig);
+      const json = await response.json();
+      result = json
+      console.log('recieved data:')
+      console.log(result)
+
+      if(result.status === false)
+        result = result.message
+
+    } catch (error) {      
+      result = error.message
+    }
+    return result
+  }

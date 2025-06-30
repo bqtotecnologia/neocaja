@@ -51,8 +51,29 @@ class InvoiceModel extends SQLModel
         return parent::GetRow("SELECT * FROM payment_method_types WHERE name = '$name'"); 
     }
 
-    public function GetInvoiceOfAccountOfPeriod(string $account, string $period){
-        $sql = $this->SINGLE_SELECT_TEMPLATE . " WHERE accounts.id = $account AND invoices.period = $period";
+    public function GetInvoicesOfAccountOfPeriod(string $account, string $period){
+        $sql = "SELECT 
+            inv.id,
+            inv.created_at,
+            inv.reason,
+            SUM(ipm.total) as total
+            FROM
+            invoices inv
+            INNER JOIN accounts ON accounts.id = inv.account 
+            INNER JOIN (
+                SELECT
+                invoice_payment_method.invoice,
+                invoice_payment_method.price * invoice_payment_method.rate as total
+                FROM
+                invoice_payment_method
+            ) as ipm ON ipm.invoice = inv.id
+            WHERE 
+            accounts.id = $account AND 
+            inv.period = $period AND
+            inv.active = 1 AND
+            inv.id IS NOT NULL";
+
+
         return parent::GetRows($sql, true);
     }
 
