@@ -42,8 +42,6 @@ if($error === ''){
     include_once '../models/invoice_model.php';
     $invoice_model = new InvoiceModel();
     $invoices = $invoice_model->GetInvoicesOfAccountOfPeriod($target_account['id'], $target_period['idperiodo']);
-    var_dump($invoices);
-    exit;
 }
 
 if($error === ''){

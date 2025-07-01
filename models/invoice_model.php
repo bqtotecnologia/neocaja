@@ -51,6 +51,19 @@ class InvoiceModel extends SQLModel
         return parent::GetRow("SELECT * FROM payment_method_types WHERE name = '$name'"); 
     }
 
+    /**
+     * Retorna los últimos números de control y de factura
+     */
+    public function GetLatestNumbers(){
+        $sql = "SELECT 
+            (MAX(invoice_number) + 1) as invoice_number, 
+            (MAX(control_number) + 1) as control_number
+            FROM
+            invoices";
+        
+        return parent::GetRow($sql);
+    }
+
     public function GetInvoicesOfAccountOfPeriod(string $account, string $period){
         $sql = "SELECT 
             inv.id,
@@ -70,8 +83,9 @@ class InvoiceModel extends SQLModel
             WHERE 
             accounts.id = $account AND 
             inv.period = $period AND
-            inv.active = 1 AND
-            inv.id IS NOT NULL";
+            inv.active = 1
+            GROUP BY
+            inv.id";
 
 
         return parent::GetRows($sql, true);
