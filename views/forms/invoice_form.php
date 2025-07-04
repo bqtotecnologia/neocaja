@@ -222,20 +222,21 @@ $latest = $invoice_model->GetLatestNumbers();
     const productTable = document.getElementById('product-table')
 
     const products = []
+    const productPrices = {}
     const payment_methods = []
     const coins = []
     const sale_points = []
 
     const months = {
-        '01': 'Enero',
-        '02': 'Febrero',
-        '03': 'Marzo',
-        '04': 'Abril',
-        '05': 'Mayo',
-        '06': 'Junio',
-        '07': 'Julio',
-        '08': 'Agosto',
-        '09': 'Septiembre',
+        '1': 'Enero',
+        '2': 'Febrero',
+        '3': 'Marzo',
+        '4': 'Abril',
+        '5': 'Mayo',
+        '6': 'Junio',
+        '7': 'Julio',
+        '8': 'Agosto',
+        '9': 'Septiembre',
         '10': 'Octubre',
         '11': 'Noviembre',
         '12': 'Diciembre',
@@ -243,6 +244,7 @@ $latest = $invoice_model->GetLatestNumbers();
 
     let nextProduct = 1
     let nextPaymentMethod = 1
+    let targetAccount = {}
 </script>
 
 <?php foreach($products as $product) { ?>
@@ -252,13 +254,13 @@ $latest = $invoice_model->GetLatestNumbers();
             'id': '<?= $product['id'] ?>',
         }
         products.push(product)
+
+        productPrices['<?= $product['name'] ?>'] = parseFloat('<?= $product['price'] ?>')
     </script>
 <?php } ?>
 
 <script>  
-    AddProduct()
-
-    
+    AddProduct()    
 
     $('#account').on('select2:select', async function (e) {
         ClearInvoices()
@@ -266,19 +268,42 @@ $latest = $invoice_model->GetLatestNumbers();
             var result = await GetInvoicesOfAccount(e.target.value)            
             
             if(typeof result !== "string"){
-                console.log(result.data.length)
+                targetAccount = await GetAccountData(e.target.value)
                 if(result.data.length > 0){
                     result.data.forEach((invoice) => {
                         AddInvoice(invoice)
                     })
                 }
             }
+
+            var scholarships = document.getElementsByClassName('scholarship-input')
+            if(targetAccount['scholarship_coverage'] !== null)
+                scholarshipValue = '0%'
+            else
+                scholarshipValue = String(targetAccount) + '%'
+
+            scholarships.forEach((scholarship) => {
+                scholarship.value = scholarshipValue
+            })
         }
     });
 
     async function GetInvoicesOfAccount(account){
         var period = '<?= $periodId ?>'
         var url = '<?= $base_url ?>/api/get_invoices_of_account.php?account=' + account + '&period=' + period
+
+        var fetchConfig = {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+
+        return await TryFetch(url, fetchConfig)
+    }
+
+    async function GetAccountData(account){
+        var url = '<?= $base_url ?>/api/get_account_data.php?account=' + account
 
         var fetchConfig = {
             method: 'GET', 
@@ -338,6 +363,7 @@ $latest = $invoice_model->GetLatestNumbers();
     function AddProduct(){
         BuildProductRow()
         nextProduct++
+        $(".select2").select2({width:'100%'});
     }
 
     function BuildProductRow(){
@@ -361,7 +387,7 @@ $latest = $invoice_model->GetLatestNumbers();
         var monthSelect = document.createElement('select')
         monthSelect.appendChild(document.createElement('option')) // Empty option
         AddClassesToSelect(monthSelect)
-        var buffer = "product-month-" + String(nextProduct)
+        buffer = "product-month-" + String(nextProduct)
         monthSelect.id = buffer
         monthSelect.name = buffer
         for(let key in months){
@@ -370,7 +396,36 @@ $latest = $invoice_model->GetLatestNumbers();
             option.innerHTML = months[key]
             monthSelect.appendChild(option)
         }
-        monthCol.appendChild(productSelect)
+        monthCol.appendChild(monthSelect)
+
+
+        var completeCol = document.createElement('td')
+        completeCol.classList.add('align-middle')
+        var completeCheckbox = document.createElement('input')
+        completeCheckbox.type = 'checkbox'
+        completeCheckbox.classList.add('flat')
+        completeCheckbox.name = 'complete'
+        completeCheckbox.value = 1
+        completeCheckbox.checked = true
+        buffer = "product-complete-" + String(nextProduct)
+        completeCheckbox.id = buffer
+        completeCheckbox.name = buffer
+        completeCol.appendChild(completeCheckbox)
+
+        var basePriceCol = document.createElement('td')
+        var basePriceInput = document.createElement('input')
+        basePriceInput.type = 'text'
+        basePriceInput.disabled = true
+        basePriceInput.classList.add('form-control')
+        basePriceCol.appendChild(basePriceInput)
+
+        var scholarshipCol = document.createElement('td')
+        var scholarshipInput = document.createElement('input')
+        scholarshipInput.type = 'text'
+        scholarshipInput.disabled = true
+        scholarshipInput.classList.add('form-control')
+        scholarshipInput.classList.add('scholarship-input')
+        scholarshipCol.appendChild(scholarshipInput)        
 
 
         var row = document.createElement('tr')
@@ -378,9 +433,11 @@ $latest = $invoice_model->GetLatestNumbers();
         row.classList.add('fs-5')        
         row.appendChild(productCol)
         row.appendChild(monthCol)
-        
+        row.append(completeCol)
+        row.append(basePriceCol)
+        row.append(scholarshipCol)
+
         productTable.appendChild(row)
-        $(".select2").select2({width:'100%'});
     }
 
     function AddClassesToSelect(select){
