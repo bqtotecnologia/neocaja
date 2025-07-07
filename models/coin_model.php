@@ -104,6 +104,24 @@ class CoinModel extends SQLModel
         return parent::GetRows("SELECT * FROM coin_history WHERE coin = $coinId ORDER BY created_at DESC", true);
     }
 
+    /**
+     * Retorna los últimos X valores de las monedas registradas (obviando el bolívar)
+     * @param int $limit el límite de registros a mostrar por moneda
+     */
+    public function GetOrderedCoinHistories($limit = 7){
+        $result = [];
+        $coins = $this->GetActiveCoins();
+
+        foreach($coins as $coin){
+            $coinId = $coin['id'];
+            $sql = "SELECT * FROM coin_history WHERE coin = $coinId ORDER BY created_at DESC LIMIT $limit";
+            $history = parent::GetRows($sql, true);
+            $result[$coin['name']] = $history;
+        }
+
+        return $result;
+    }
+
     public function UpdateCoin($id, $data){
         $name = $data['name'];
         $url = $data['url'];

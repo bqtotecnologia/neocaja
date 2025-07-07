@@ -28,6 +28,7 @@ $banks = $bank_model->GetActivebanks();
 $sale_points = $sale_point_model->GetSalePoints();
 $payment_methods = $payment_method_model->GetAllPaymentMethodTypes();
 $coins = $coin_model->GetActiveCoins();
+$coinHistories = $coin_model->GetOrderedCoinHistories();
 $products = $product_model->GetActiveProducts();
 
 $period = $siacad->GetCurrentPeriodo();
@@ -35,13 +36,37 @@ $periodId = $period['idperiodo'];
 
 $latest = $invoice_model->GetLatestNumbers();
 
-// onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46)"
-
 ?>
 
 <div class="row justify-content-center">
     <div class="col-12 row justify-content-center x_panel">
         <?php $btn_url = '../tables/search_invoices_of_today.php'; include_once '../layouts/backButton.php'; ?>
+    </div>
+
+    <div class="col-12 justify-content-center px-5 mt-4">
+        <div class="d-flex justify-content-around align-items-center x_panel flex-wrap">
+            <div class="col-12 text-center">
+                <h3 class="h1 text-black">Tasas de hoy</h3>
+            </div>
+
+            <div class="col-12 text-center">
+                <h3 class="h5 text-black">
+                    Click en la moneda para ver las 7 tasas más recientes
+                </h3>                
+            </div>
+
+            <?php foreach($coins as $coin) { if($coin['name'] === 'Bolívar') continue; ?>
+                <table class="table table-bordered col-3">
+                    <tr class="text-center align-middle h4">
+                        <td id="<?= $coin['name'] ?>" class="bg-theme text-white fw-bold" style="cursor:pointer" onclick="DisplayCoinHistory(this.id)">
+                            <?= $coin['name'] ?>
+                        </td>
+                        <td><?= $coin['price'] ?></td>
+                    </tr>
+                </table>
+            <?php } ?>
+        </div>
+
     </div>
     
     <div class="col-12 justify-content-center px-5 mt-4">
@@ -104,7 +129,7 @@ $latest = $invoice_model->GetLatestNumbers();
                 </div>
 
                 <div class="row col-12 col-md-6 my-2 justify-content-start">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered d-none" id="invoices">
                         <thead>
                             <tr class="text-center h6">
                                 <th>Fecha</th>
@@ -120,15 +145,20 @@ $latest = $invoice_model->GetLatestNumbers();
             </div>
 
             <div class="row col-12 m-0 p-0 justify-content-center align-items-start">
-                <h2 class="col-12 h2">
-                    Productos
-                </h2>
+                <div class="col-12 d-flex align-items-center">
+                    <h2 class="h2">
+                        Productos
+                    </h2>
+                    <button class="btn btn-info p-2 m-0 d-flex align-items-center" type="button" onclick="AddProduct()" style="margin-left:10px !important;" title="Añadir producto">
+                        <i class="fa fa-plus" style="font-size:20px"></i>
+                    </button>
+                </div>
                 <div class="col-12">
                     <table class="col-12 table table-bordered">
                         <thead class="text-center">
                             <tr>
-                                <th>Producto</th>
-                                <th>Mes</th>
+                                <th class="col-3">Producto</th>
+                                <th class="col-2">Mes</th>
                                 <th>Completo</th>
                                 <th>Monto base</th>
                                 <th>Descuento de beca</th>
@@ -139,11 +169,6 @@ $latest = $invoice_model->GetLatestNumbers();
                         <tbody id="product-table">
                         </tbody>
                     </table>
-                </div>
-                <div class="col-12">
-                    <button class="btn btn-info p-3 d-flex justify-content-center align-items-center mx-auto" type="button" onclick="AddProduct()">
-                        <i class="fa fa-plus" style="font-size:20px"></i>
-                    </button>
                 </div>
             </div>
 
@@ -217,235 +242,7 @@ $latest = $invoice_model->GetLatestNumbers();
 
 <?php include_once '../common/footer.php'; ?>
 
-<script>
-    const invoiceTable = document.getElementById('invoice-table')
-    const productTable = document.getElementById('product-table')
-
-    const products = []
-    const productPrices = {}
-    const payment_methods = []
-    const coins = []
-    const sale_points = []
-
-    const months = {
-        '1': 'Enero',
-        '2': 'Febrero',
-        '3': 'Marzo',
-        '4': 'Abril',
-        '5': 'Mayo',
-        '6': 'Junio',
-        '7': 'Julio',
-        '8': 'Agosto',
-        '9': 'Septiembre',
-        '10': 'Octubre',
-        '11': 'Noviembre',
-        '12': 'Diciembre',
-    }    
-
-    let nextProduct = 1
-    let nextPaymentMethod = 1
-    let targetAccount = {}
-</script>
-
-<?php foreach($products as $product) { ?>
-    <script>
-        product = {
-            'name': '<?= $product['name'] ?>',
-            'id': '<?= $product['id'] ?>',
-        }
-        products.push(product)
-
-        productPrices['<?= $product['name'] ?>'] = parseFloat('<?= $product['price'] ?>')
-    </script>
-<?php } ?>
-
-<script>  
-    AddProduct()    
-
-    $('#account').on('select2:select', async function (e) {
-        ClearInvoices()
-        if(e.target.value !== ''){
-            var result = await GetInvoicesOfAccount(e.target.value)            
-            
-            if(typeof result !== "string"){
-                targetAccount = await GetAccountData(e.target.value)
-                if(result.data.length > 0){
-                    result.data.forEach((invoice) => {
-                        AddInvoice(invoice)
-                    })
-                }
-            }
-
-            var scholarships = document.getElementsByClassName('scholarship-input')
-            if(targetAccount['scholarship_coverage'] !== null)
-                scholarshipValue = '0%'
-            else
-                scholarshipValue = String(targetAccount) + '%'
-
-            scholarships.forEach((scholarship) => {
-                scholarship.value = scholarshipValue
-            })
-        }
-    });
-
-    async function GetInvoicesOfAccount(account){
-        var period = '<?= $periodId ?>'
-        var url = '<?= $base_url ?>/api/get_invoices_of_account.php?account=' + account + '&period=' + period
-
-        var fetchConfig = {
-            method: 'GET', 
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }
-
-        return await TryFetch(url, fetchConfig)
-    }
-
-    async function GetAccountData(account){
-        var url = '<?= $base_url ?>/api/get_account_data.php?account=' + account
-
-        var fetchConfig = {
-            method: 'GET', 
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }
-
-        return await TryFetch(url, fetchConfig)
-    }
-
-    function AddInvoice(invoice){
-        var dateCol = document.createElement('td')
-        dateCol.classList.add('p-1')
-        const now = new Date(invoice.created_at);
-        const year = now.getFullYear();
-        const month = (now.getMonth() + 1).toString().padStart(2, '0');
-        const day = now.getDate().toString().padStart(2, '0');
-        const formattedDate = `${day}/${month}/${year}`;
-        dateCol.innerHTML = formattedDate
-
-        var conceptCol = document.createElement('td')
-        conceptCol.classList.add('p-1')
-        conceptCol.innerHTML = invoice.reason
-
-        var priceCol = document.createElement('td')
-        priceCol.classList.add('p-1')
-        priceCol.innerHTML = parseFloat(invoice.total).toFixed(2)
-
-        var seeCol = document.createElement('td')
-        seeCol.classList.add('p-1')
-        var seeLink = document.createElement('a')
-        seeLink.classList.add('h6')
-        seeLink.href = '<?= $base_url ?>/views/detailers/see_invoice.php'
-        seeLink.target = '_blank'
-        seeLink.innerHTML = 'Ver'
-        seeLink.classList.add('fw-bold')
-        seeCol.appendChild(seeLink)
-
-        var row = document.createElement('tr')
-        row.classList.add('text-center')
-        row.classList.add('fs-5')        
-        row.appendChild(dateCol)
-        row.appendChild(conceptCol)
-        row.appendChild(priceCol)
-        row.appendChild(seeCol)
-        
-        invoiceTable.appendChild(row)
-    }
-
-    function ClearInvoices(){
-        for (const child of invoiceTable.children) {
-            child.remove()
-        }
-    }
-
-    function AddProduct(){
-        BuildProductRow()
-        nextProduct++
-        $(".select2").select2({width:'100%'});
-    }
-
-    function BuildProductRow(){
-        var productCol = document.createElement('td')
-        var productSelect = document.createElement('select')
-        productSelect.appendChild(document.createElement('option')) // Empty option
-        AddClassesToSelect(productSelect)        
-        var buffer = "product-id-" + String(nextProduct)
-        productSelect.id = buffer
-        productSelect.name = buffer
-        products.forEach((product) => {
-            var option = document.createElement('option')
-            option.value = product['id']
-            option.innerHTML = product['name']
-            productSelect.appendChild(option)
-        })
-        productCol.appendChild(productSelect)
 
 
-        var monthCol = document.createElement('td')
-        var monthSelect = document.createElement('select')
-        monthSelect.appendChild(document.createElement('option')) // Empty option
-        AddClassesToSelect(monthSelect)
-        buffer = "product-month-" + String(nextProduct)
-        monthSelect.id = buffer
-        monthSelect.name = buffer
-        for(let key in months){
-            var option = document.createElement('option')
-            option.value = key
-            option.innerHTML = months[key]
-            monthSelect.appendChild(option)
-        }
-        monthCol.appendChild(monthSelect)
+<?php include_once '../common/partials/invoice_form_javascript.php'; ?>
 
-
-        var completeCol = document.createElement('td')
-        completeCol.classList.add('align-middle')
-        var completeCheckbox = document.createElement('input')
-        completeCheckbox.type = 'checkbox'
-        completeCheckbox.classList.add('flat')
-        completeCheckbox.name = 'complete'
-        completeCheckbox.value = 1
-        completeCheckbox.checked = true
-        buffer = "product-complete-" + String(nextProduct)
-        completeCheckbox.id = buffer
-        completeCheckbox.name = buffer
-        completeCol.appendChild(completeCheckbox)
-
-        var basePriceCol = document.createElement('td')
-        var basePriceInput = document.createElement('input')
-        basePriceInput.type = 'text'
-        basePriceInput.disabled = true
-        basePriceInput.classList.add('form-control')
-        basePriceCol.appendChild(basePriceInput)
-
-        var scholarshipCol = document.createElement('td')
-        var scholarshipInput = document.createElement('input')
-        scholarshipInput.type = 'text'
-        scholarshipInput.disabled = true
-        scholarshipInput.classList.add('form-control')
-        scholarshipInput.classList.add('scholarship-input')
-        scholarshipCol.appendChild(scholarshipInput)        
-
-
-        var row = document.createElement('tr')
-        row.classList.add('text-center')
-        row.classList.add('fs-5')        
-        row.appendChild(productCol)
-        row.appendChild(monthCol)
-        row.append(completeCol)
-        row.append(basePriceCol)
-        row.append(scholarshipCol)
-
-        productTable.appendChild(row)
-    }
-
-    function AddClassesToSelect(select){
-        select.classList.add('form-control')
-        select.classList.add('col-10')
-        select.classList.add('col-md-8')
-        select.classList.add('select2')
-    }
-
-
-</script>
