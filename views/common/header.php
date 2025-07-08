@@ -95,6 +95,12 @@
                         </ul>
                       </li>
 
+                      <li><a><i class="fa fa-gear"></i> Variables globales <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/tables/search_blobal_vars.php">Ver variables globales</a></li>
+                        </ul>
+                      </li>
+
                       <li><a><i class="fa fa-sitemap"></i> Métodos de pago <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/forms/payment_method_form.php">Crear método de pago</a></li>

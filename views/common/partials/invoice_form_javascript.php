@@ -66,31 +66,26 @@
     $('#account').on('select2:select', async function (e) {
         ClearInvoices()
         if(e.target.value !== ''){
-            var result = await GetInvoicesOfAccount(e.target.value)            
-            
-            if(typeof result !== "string"){
-                targetAccount = await GetAccountData(e.target.value)
-                if(result.data.length > 0){
-                    invoiceContainer.classList.remove('d-none')
-                    targetAccount = targetAccount.data
-                    result.data.forEach((invoice) => {
-                        AddInvoice(invoice)
-                    })
-                }
-            }
-
-            var scholarships = document.getElementsByClassName('scholarship-input')
-            if(targetAccount['scholarship_coverage'] === null)
-                scholarshipValue = '0%'
-            else
-                scholarshipValue = String(targetAccount) + '%'
-
-            for (let i = 0; i < scholarships.length; i++) {               
-                scholarships[i].value = scholarshipValue
-            }
-
+            await AccountSelecting(e)
         }
     });
+
+    async function AccountSelecting(e){
+        var result = await GetInvoicesOfAccount(e.target.value)            
+            
+        if(typeof result !== "string"){
+            targetAccount = await GetAccountData(e.target.value)
+            targetAccount = targetAccount.data
+            if(result.data.length > 0){
+                invoiceContainer.classList.remove('d-none')
+                result.data.forEach((invoice) => {
+                    AddInvoice(invoice)
+                })
+            }
+        }
+
+        UpdateProductsPrice()
+    }
 
     async function GetInvoicesOfAccount(account){
         var period = '<?= $periodId ?>'
@@ -117,46 +112,7 @@
         }
 
         return await TryFetch(url, fetchConfig)
-    }
-
-    function AddInvoice(invoice){
-        var dateCol = document.createElement('td')
-        dateCol.classList.add('p-1')
-        const now = new Date(invoice.created_at);
-        const year = now.getFullYear();
-        const month = (now.getMonth() + 1).toString().padStart(2, '0');
-        const day = now.getDate().toString().padStart(2, '0');
-        const formattedDate = `${day}/${month}/${year}`;
-        dateCol.innerHTML = formattedDate
-
-        var conceptCol = document.createElement('td')
-        conceptCol.classList.add('p-1')
-        conceptCol.innerHTML = invoice.reason
-
-        var priceCol = document.createElement('td')
-        priceCol.classList.add('p-1')
-        priceCol.innerHTML = parseFloat(invoice.total).toFixed(2)
-
-        var seeCol = document.createElement('td')
-        seeCol.classList.add('p-1')
-        var seeLink = document.createElement('a')
-        seeLink.classList.add('h6')
-        seeLink.href = '<?= $base_url ?>/views/detailers/see_invoice.php'
-        seeLink.target = '_blank'
-        seeLink.innerHTML = 'Ver'
-        seeLink.classList.add('fw-bold')
-        seeCol.appendChild(seeLink)
-
-        var row = document.createElement('tr')
-        row.classList.add('text-center')
-        row.classList.add('fs-5')        
-        row.appendChild(dateCol)
-        row.appendChild(conceptCol)
-        row.appendChild(priceCol)
-        row.appendChild(seeCol)
-        
-        invoiceTable.appendChild(row)
-    }
+    }  
 
     function ClearInvoices(){
         for (const child of invoiceTable.children) {
@@ -196,26 +152,75 @@
 
         var oldId = nextProduct
         $('#product-id-' + String(nextProduct)).on('select2:select', async function (e) {
-            var priceInput = document.getElementById('product-baseprice-' + String(oldId))
-            var price = 0
-            for(let i = 0; i < e.target.childNodes.length; i++){
-                var node = e.target.childNodes[i]
-                if(node.selected){
-                    price = productPrices[node.innerHTML]
-                    priceInput.value = price
-                }
-            }
+            ProductSelecting(oldId, e)
+        })
 
-            var total = price
-            if(targetAccount['scholarship_coverage'] !== null){
-                total = parseFloat(price) * (parseFloat(targetAccount['scholarship_coverage']) / 100)
-            }
-
-            console.log(targetAccount['scholarship_coverage'])
-
-            document.getElementById('product-total-' + String(oldId)).value = total
-        });        
         nextProduct++
+    }
+
+    function ProductSelecting(oldId, e){        
+        var priceInput = document.getElementById('product-baseprice-' + String(oldId))
+        var price = 0
+        for(let i = 0; i < e.target.childNodes.length; i++){
+            // searching the product name to get it's price
+            var node = e.target.childNodes[i]
+            if(node.selected){
+                price = productPrices[node.innerHTML]
+                priceInput.value = price
+            }
+        }
+        var total = price
+        if(targetAccount['scholarship_coverage'] !== null && targetAccount['scholarship_coverage'] !== undefined ){
+            total = parseFloat(price) * (parseFloat(targetAccount['scholarship_coverage']) / 100)
+        }
+        
+        var productTotalInput = document.getElementById('product-total-' + String(oldId))
+        productTotalInput.value = total    
+        UpdateProductsPrice()
+    }
+
+    function UpdateProductsPrice(){
+        UpdateScholarshipValues()
+
+        for(let i = 0; i <= nextProduct; i++){
+            var productBasePriceInput = document.getElementById('product-baseprice-' + String(i))
+
+            if(productBasePriceInput === null)
+                continue
+
+            var productBasePrice = parseFloat(productBasePriceInput.value)
+            var productSholarship = document.getElementById('product-scholarship-' + String(i))
+            var discount = parseFloat(productSholarship.value.trim('%'))
+
+            var productTotal = productBasePrice - (productBasePrice * (discount / 100))
+            document.getElementById('product-total-' + String(i)).value = productTotal
+        }
+        
+        UpdateProductTotal()
+    }
+
+    function UpdateScholarshipValues(){
+        var scholarshipValue = '0%'
+        var scholarships = document.getElementsByClassName('scholarship-input')
+        if(targetAccount['scholarship_coverage'] !== null && targetAccount['scholarship_coverage'] !== undefined )
+            scholarshipValue = String(targetAccount['scholarship_coverage']) + '%'
+
+        for (let i = 0; i < scholarships.length; i++) {               
+            scholarships[i].value = scholarshipValue
+        }
+    }
+
+    function UpdateProductTotal(){
+        var productsTotal = document.getElementById('products-total')
+        var total = 0
+        
+        // adding all totals of products
+        for (let i = 0; i <= nextProduct; i++) {
+            var priceInput = document.getElementById('product-total-' + i)
+            if(priceInput !== null)
+                total += parseFloat(priceInput.value)
+        }
+        productsTotal.innerHTML = total
     }
 
     function BuildProductRow(){
@@ -245,6 +250,7 @@
 
     function DeleteProductRow(id){
         document.getElementById('product-row-' + id).remove()
+        UpdateProductTotal()
     }
 
     function AddClassesToSelect(select){
@@ -273,21 +279,34 @@
 
     function GetNewMonthColumn(productId){
         var monthCol = document.createElement('td')
+        var div = document.createElement('div')
+        div.classList.add('d-flex', 'justify-content-center', 'm-0')
+        monthCol.appendChild(div)
         var monthSelect = document.createElement('select')
         var option = document.createElement('option')
         option.innerHTML = "&nbsp"
         monthSelect.appendChild(option)
-        AddClassesToSelect(monthSelect)
+        monthSelect.classList.add('form-control', 'col-12', 'col-md-8')
         buffer = "product-month-" + productId
         monthSelect.id = buffer
         monthSelect.name = buffer
         for(let key in months){
             var option = document.createElement('option')
             option.value = key
-            option.innerHTML = months[key]
+            var span = document.createElement('span')
+            span.innerHTML = months[key]
+            span.classList.add('bg-primary')
+            option.appendChild(span)
+
+            var currentMonth = new Date()
+            currentMonth = currentMonth.getMonth() + 1
+            if(parseInt(key) < currentMonth){
+                option.classList.add('fw-bold', 'text-danger')
+            }
+            //else if(intval(key) === currentMonth && APLICAR MORA AQUÍ
             monthSelect.appendChild(option)
         }
-        monthCol.appendChild(monthSelect)
+        div.appendChild(monthSelect)
         return monthCol
     }
 
@@ -352,6 +371,45 @@
         eraseBtn.appendChild(eraseIcon)
         eraseCol.appendChild(eraseBtn)
         return eraseCol
+    }
+
+    function AddInvoice(invoice){
+        var dateCol = document.createElement('td')
+        dateCol.classList.add('p-1')
+        const now = new Date(invoice.created_at);
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        const formattedDate = `${day}/${month}/${year}`;
+        dateCol.innerHTML = formattedDate
+
+        var conceptCol = document.createElement('td')
+        conceptCol.classList.add('p-1')
+        conceptCol.innerHTML = invoice.reason
+
+        var priceCol = document.createElement('td')
+        priceCol.classList.add('p-1')
+        priceCol.innerHTML = parseFloat(invoice.total).toFixed(2)
+
+        var seeCol = document.createElement('td')
+        seeCol.classList.add('p-1')
+        var seeLink = document.createElement('a')
+        seeLink.classList.add('h6')
+        seeLink.href = '<?= $base_url ?>/views/detailers/see_invoice.php'
+        seeLink.target = '_blank'
+        seeLink.innerHTML = 'Ver'
+        seeLink.classList.add('fw-bold')
+        seeCol.appendChild(seeLink)
+
+        var row = document.createElement('tr')
+        row.classList.add('text-center')
+        row.classList.add('fs-5')        
+        row.appendChild(dateCol)
+        row.appendChild(conceptCol)
+        row.appendChild(priceCol)
+        row.appendChild(seeCol)
+        
+        invoiceTable.appendChild(row)
     }
 
 

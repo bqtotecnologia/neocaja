@@ -2,6 +2,7 @@
 $admitted_user_types = ['Super', 'Cajero'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
+include_once '../../utils/Auth.php';
 
 include_once '../common/header.php';
 
@@ -68,7 +69,6 @@ $latest = $invoice_model->GetLatestNumbers();
         </div>
 
     </div>
-    
     <div class="col-12 justify-content-center px-5 mt-4">
         <form 
         action="../../controllers/handle_invoice.php" 
@@ -80,7 +80,7 @@ $latest = $invoice_model->GetLatestNumbers();
                 <h1 class="h1 text-black">Registrar nueva factura</h1>
             </div>
 
-            <div class="row col-12 m-0 p-0 justify-content-center align-items-start">
+            <div class="row col-12 m-0 p-0 justify-content-center align-items-start pb-2">
                 <div class="row col-12 my-2 justify-content-start mb-4">
                     <div class="row col-4">
                         <div class="row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-4">
@@ -130,8 +130,11 @@ $latest = $invoice_model->GetLatestNumbers();
 
                 <div class="row col-12 col-md-6 my-2 justify-content-start">
                     <table class="table table-bordered d-none" id="invoices">
-                        <thead>
-                            <tr class="text-center h6">
+                        <thead class="text-center">
+                            <tr class="h4 m-0">
+                                <th colspan="4">Sus facturas de este periodo</th>
+                            </tr>
+                            <tr class="h5 m-0">
                                 <th>Fecha</th>
                                 <th>Concepto</th>
                                 <th>Monto</th>
@@ -144,7 +147,7 @@ $latest = $invoice_model->GetLatestNumbers();
                 </div>
             </div>
 
-            <div class="row col-12 m-0 p-0 justify-content-center align-items-start">
+            <div class="row col-12 m-0 p-0 justify-content-center align-items-start pt-2 border-top">
                 <div class="col-12 d-flex align-items-center">
                     <h2 class="h2">
                         Productos
@@ -168,6 +171,43 @@ $latest = $invoice_model->GetLatestNumbers();
                         </thead>
                         <tbody id="product-table">
                         </tbody>
+                        <tr>
+                            <td class="text-right h5 fw-bold" colspan="5">Total</td>
+                            <td class="text-center fw-bold h4" id="products-total"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="row col-12 m-0 p-0 justify-content-center align-items-start pt-2 border-top">
+                <div class="col-12 d-flex align-items-center">
+                    <h2 class="h2">
+                        Métodos de pago
+                    </h2>
+                    <button class="btn btn-info p-2 m-0 d-flex align-items-center" type="button" onclick="AddPayment()" style="margin-left:10px !important;" title="Añadir método de pago">
+                        <i class="fa fa-plus" style="font-size:20px"></i>
+                    </button>
+                </div>
+                <div class="col-12">
+                    <table class="col-12 table table-bordered">
+                        <thead class="text-center">
+                            <tr>
+                                <th class="col-3">Producto</th>
+                                <th class="col-2">Mes</th>
+                                <th>Completo</th>
+                                <th>Monto base</th>
+                                <th>Descuento de beca</th>
+                                <th>Total</th>
+                                <th>Borrar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product-table">
+                        </tbody>
+                        <tr>
+                            <td class="text-right h5 fw-bold" colspan="5">Total</td>
+                            <td class="text-center fw-bold h4" id="products-total"></td>
+                        </tr>
                     </table>
                 </div>
             </div>

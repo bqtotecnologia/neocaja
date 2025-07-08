@@ -1,11 +1,15 @@
 <?php
+include_once '../utils/Auth.php';
 $admitted_user_types = ['Cajero', 'Super'];
-include_once '../utils/validate_user_type.php';
-
-include_once '../utils/base_url.php';
-include_once '../utils/Validator.php';
+session_start();
+$userOk = Auth::UserLevelIn($admitted_user_types);
 
 $error = '';
+if($userOk === false)
+    $error = 'Permiso denegado. Cierre sesión e inicie nuevamente';
+
+include_once '../utils/Validator.php';
+
 if(empty($_GET)){
     $error = 'GET vacío';
 }
