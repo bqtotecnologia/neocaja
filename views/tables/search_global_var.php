@@ -4,23 +4,21 @@ include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 
 include '../../views/common/header.php';
-include_once '../../models/bank_model.php';
-$bank_model = new BankModel();
+include_once '../../models/global_vars_model.php';
+$globals_model = new GlobalVarsModel();
 
-$banks = $bank_model->GetAllBanks();
+$global_vars = $globals_model->GetGlobalVars();
 ?>
 
 <div class="row justify-content-center">
     <div class="col-12 text-center">
-        <h1 class="h1 text-black">Lista de los bancos</h1>
+        <h1 class="h1 text-black">Lista de las variables globales</h1>
     </div>
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
             <?php 
-            $btn_url = '../forms/bank_form.php'; 
-            include_once '../layouts/addButton.php';
-            include '../common/tables/bank_table.php';
+            include '../common/tables/global_vars_table.php';
             ?>
         </div>
     </div>

@@ -6,15 +6,15 @@ include_once '../../utils/base_url.php';
 $edit = isset($_GET['id']);
 if($edit){
     if(!is_numeric($_GET['id'])){
-        header("Location: $base_url/views/tables/search_bank.php?error=Id inválido");
+        header("Location: $base_url/views/tables/search_global_vars.php?error=Id inválido");
         exit;
     }   
 
-    include_once '../../models/bank_model.php';
-    $bank_model = new BankModel();
-    $target_bank = $bank_model->GetBankById($_GET['id']);
+    include_once '../../models/global_vars_model.php';
+    $bank_model = new GlobalVarsModel();
+    $target_bank = $bank_model->GetglobalVar($_GET['id']);
     if($target_bank === false){
-        header("Location: $base_url/views/tables/search_bank.php?error=Banco no encontrado");
+        header("Location: $base_url/views/tables/search_global_vars.php?error=Variable global no encontrado");
         exit;
     }
 }
@@ -86,7 +86,7 @@ $formBuilder = new FormBuilder(
 
 <div class="row justify-content-center">
     <div class="col-12 row justify-content-center x_panel">
-        <?php $btn_url = '../tables/search_bank.php'; include_once '../layouts/backButton.php'; ?>
+        <?php $btn_url = '../tables/search_global_vars.php'; include_once '../layouts/backButton.php'; ?>
     </div>
     
     <div class="col-12 justify-content-center px-5 mt-4">            
