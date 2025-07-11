@@ -19,13 +19,13 @@ class GlobalVarsModel extends SQLModel
         return parent::GetRow($sql);
     }
 
-    public function GetGlobalVars($as_array = true){        
+    public function GetGlobalVars($as_array = false){        
         $global_vars = parent::GetRows($this->SELECT_TEMPLATE, true);
         $result = [];
 
         if($as_array){
             foreach($global_vars as $var){
-                $result['name'] = $var['value'];
+                $result[$var['name']] = $var['value'];
             }
         }
         else{
@@ -54,12 +54,11 @@ class GlobalVarsModel extends SQLModel
         return $history;
     }
 
-    public function UpdateGlobalVar(string $id, array $data){
+    public function UpdateGlobalVar(string $id, float $value){
         $disabled = $this->DisableAllHistoryOfGlobalVar($id);
         if($disabled === false)
             return false;
 
-        $value = $data['value'];
         $sql = "INSERT INTO global_vars_history (global_var, value) VALUES ($id, '$value')";
         return parent::DoQuery($sql);
     }

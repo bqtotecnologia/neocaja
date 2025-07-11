@@ -18,7 +18,7 @@ $global_vars = $globals_model->GetGlobalVars();
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
             <?php 
-            include '../common/tables/global_vars_table.php';
+            include '../common/tables/global_var_table.php';
             ?>
         </div>
     </div>

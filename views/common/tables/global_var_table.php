@@ -25,7 +25,13 @@
                             <a href="<?= $base_url ?>/views/forms/global_var_form.php?id=<?= $var['id'] ?>" class="btn btn-success" title="Editar">
                                 <i class="fa fa-pencil"></i>
                             </a>
-                        </div>                      
+                        </div>   
+                        
+                        <div class="col-3 text-center">
+                            <a href="<?= $base_url ?>/views/tables/global_var_history.php?id=<?= $var['id'] ?>" class="btn btn-info" title="Ver historial de valores">
+                                <i class="fa fa-list"></i>
+                            </a>
+                        </div>   
                     </div>
                 </td>
             </tr>

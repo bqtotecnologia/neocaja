@@ -14,6 +14,7 @@ include_once '../../models/coin_model.php';
 include_once '../../models/product_model.php';
 include_once '../../models/siacad_model.php';
 include_once '../../models/invoice_model.php';
+include_once '../../models/global_vars_model.php';
 
 $account_model = new AccountModel();
 $bank_model = new BankModel();
@@ -23,6 +24,7 @@ $coin_model = new CoinModel();
 $product_model = new ProductModel();
 $siacad = new SiacadModel();
 $invoice_model = new InvoiceModel();
+$global_vars_model = new GlobalVarsModel();
 
 $accounts = $account_model->GetAccounts();
 $banks = $bank_model->GetActivebanks();
@@ -31,6 +33,7 @@ $payment_methods = $payment_method_model->GetAllPaymentMethodTypes();
 $coins = $coin_model->GetActiveCoins();
 $coinHistories = $coin_model->GetOrderedCoinHistories();
 $products = $product_model->GetActiveProducts();
+$global_vars = $global_vars_model->GetGlobalVars(true);
 
 $period = $siacad->GetCurrentPeriodo();
 $periodId = $period['idperiodo'];
@@ -67,7 +70,6 @@ $latest = $invoice_model->GetLatestNumbers();
                 </table>
             <?php } ?>
         </div>
-
     </div>
     <div class="col-12 justify-content-center px-5 mt-4">
         <form 

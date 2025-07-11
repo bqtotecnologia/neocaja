@@ -12,11 +12,15 @@ if($edit){
 
     include_once '../../models/global_vars_model.php';
     $bank_model = new GlobalVarsModel();
-    $target_bank = $bank_model->GetglobalVar($_GET['id']);
-    if($target_bank === false){
-        header("Location: $base_url/views/tables/search_global_vars.php?error=Variable global no encontrado");
+    $target_global_var = $bank_model->GetglobalVar($_GET['id']);
+    if($target_global_var === false){
+        header("Location: $base_url/views/tables/search_global_vars.php?error=Variable global no encontrada");
         exit;
     }
+}
+else{
+    header("Location: $base_url/views/panel.php");
+    exit;
 }
 
 include_once '../common/header.php';
@@ -26,58 +30,43 @@ $fields = [
     [
         'name' => 'name',
         'display' => 'Nombre',
-        'placeholder' => 'Nombre del banco',
+        'placeholder' => 'Nombre',
         'id' => 'name',
         'type' => 'text',
         'size' => 8,
         'max' => 255,
         'min' => 5,
         'required' => true,
-        'value' => $edit ? $target_bank['name'] : ''
+        'disabled' => true,
+        'value' => $target_global_var['name']
     ],
     [
-        'name' => 'code',
-        'display' => 'Codigo',
-        'placeholder' => '4 primeros dígitos',
-        'id' => 'name',
-        'type' => 'text',
+        'name' => 'value',
+        'display' => 'Valor',
+        'placeholder' => 'Valor',
+        'id' => 'value',
+        'type' => 'decimal',
         'size' => 4,
         'max' => 4,
         'min' => 4,
         'required' => true,
-        'value' => $edit ? $target_bank['code'] : ''
-    ],
-    [
-        'name' => 'active',
-        'display' => 'Activo',
-        'placeholder' => '',
-        'id' => 'active',
-        'type' => 'checkbox',
-        'size' => 4,
-        'required' => false,
-        'value' => $edit ? [$target_bank['active']] : ['1'],
-        'elements' => [
-            [
-                'display' => 'Activo',
-                'value' => '1'
-            ]
-        ]
+        'value' => $target_global_var['value']
     ],
 ];
 
 if($edit){
     $id_field = [
         'name' => 'id',
-        'value' => $target_bank['id']
+        'value' => $target_global_var['id']
     ];
     array_push($fields, $id_field);
 }
 
 $formBuilder = new FormBuilder(
-    '../../controllers/handle_bank.php',    
+    '../../controllers/update_global_var.php',    
     'POST',
-    ($edit ? 'Editar' : 'Registrar nuevo') . ' banco',
-    ($edit ? 'Editar' : 'Registrar'),
+    'Actualizar variable global',
+    'Actualizar',
     '',
     $fields
 );

@@ -10,6 +10,9 @@
     const sale_points = []
     const coinHistories = {}
 
+    const retardMaxDay = parseInt('<?= $global_vars['Dia tope mora'] ?>')
+    const retardPercent = parseFloat('<?= $global_vars['Porcentaje mora'] ?>')
+
     const months = {
         '1': 'Enero',
         '2': 'Febrero',
@@ -189,11 +192,20 @@
                 continue
 
             var productBasePrice = parseFloat(productBasePriceInput.value)
+            var monthInput = document.getElementById('product-month-' + i)
+            var targetOption = monthInput.options[monthInput.selectedIndex]
+            if(targetOption.classList.contains('text-danger')){
+                // Add retard
+                productBasePrice += productBasePrice * (retardPercent / 100)
+            }
+
+            productBasePriceInput.value = productBasePrice
+
             var productSholarship = document.getElementById('product-scholarship-' + String(i))
             var discount = parseFloat(productSholarship.value.trim('%'))
 
             var productTotal = productBasePrice - (productBasePrice * (discount / 100))
-            document.getElementById('product-total-' + String(i)).value = productTotal
+            document.getElementById('product-total-' + String(i)).value = productTotal          
         }
         
         UpdateProductTotal()
@@ -217,8 +229,11 @@
         // adding all totals of products
         for (let i = 0; i <= nextProduct; i++) {
             var priceInput = document.getElementById('product-total-' + i)
-            if(priceInput !== null)
-                total += parseFloat(priceInput.value)
+            if(priceInput === null)
+                continue
+
+            var price = parseFloat(priceInput.value)          
+            total += price
         }
         productsTotal.innerHTML = total
     }
@@ -286,10 +301,12 @@
         var option = document.createElement('option')
         option.innerHTML = "&nbsp"
         monthSelect.appendChild(option)
+        monthSelect.addEventListener('click', function() { UpdateProductsPrice() })
         monthSelect.classList.add('form-control', 'col-12', 'col-md-8')
         buffer = "product-month-" + productId
         monthSelect.id = buffer
         monthSelect.name = buffer
+
         for(let key in months){
             var option = document.createElement('option')
             option.value = key
@@ -298,12 +315,15 @@
             span.classList.add('bg-primary')
             option.appendChild(span)
 
-            var currentMonth = new Date()
-            currentMonth = currentMonth.getMonth() + 1
+            var currentDate = new Date()
+            currentMonth = currentDate.getMonth() + 1
             if(parseInt(key) < currentMonth){
                 option.classList.add('fw-bold', 'text-danger')
             }
-            //else if(intval(key) === currentMonth && APLICAR MORA AQUÍ
+            else if(parseInt(key) === currentMonth && parseInt(currentDate.getDate()) > retardMaxDay){
+                option.classList.add('fw-bold', 'text-danger')
+            }
+
             monthSelect.appendChild(option)
         }
         div.appendChild(monthSelect)
@@ -329,10 +349,11 @@
         var basePriceCol = document.createElement('td')
         var basePriceInput = document.createElement('input')
         basePriceInput.type = 'text'
-        basePriceInput.disabled = true
+        //basePriceInput.disabled = true
         basePriceInput.id = "product-baseprice-" + productId
         basePriceInput.classList.add('form-control')
         basePriceCol.appendChild(basePriceInput)
+        basePriceInput.addEventListener('change', function(e){ UpdateProductsPrice() })
         return basePriceCol
     }
 
