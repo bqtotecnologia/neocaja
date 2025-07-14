@@ -191,7 +191,11 @@
             if(productBasePriceInput === null)
                 continue
 
-            var productBasePrice = parseFloat(productBasePriceInput.value)
+            var productSelect = document.getElementById('product-id-' + String(i))
+            var productName = productSelect.options[productSelect.selectedIndex].innerHTML
+            var productBasePrice = productPrices[productName]
+
+
             var monthInput = document.getElementById('product-month-' + i)
             var targetOption = monthInput.options[monthInput.selectedIndex]
             if(targetOption.classList.contains('text-danger')){
@@ -204,7 +208,7 @@
             var productSholarship = document.getElementById('product-scholarship-' + String(i))
             var discount = parseFloat(productSholarship.value.trim('%'))
 
-            var productTotal = productBasePrice - (productBasePrice * (discount / 100))
+            var productTotal = (productBasePrice - (productBasePrice * (discount / 100))).toFixed(2)
             document.getElementById('product-total-' + String(i)).value = productTotal          
         }
         
@@ -335,7 +339,6 @@
         completeCol.classList.add('align-middle')
         var completeCheckbox = document.createElement('input')
         completeCheckbox.type = 'checkbox'
-        completeCheckbox.name = 'complete'
         completeCheckbox.value = 1
         completeCheckbox.checked = true
         buffer = "product-complete-" + productId
