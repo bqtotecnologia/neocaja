@@ -14,6 +14,7 @@ class AdminModel extends SQLModel
             FROM
             admins
             INNER JOIN roles ON roles.id = admins.role ";
+            
     // Obtiene una cédula y retorna el registro que coincida
     public function CheckAdmin($cedula)
     {
@@ -41,7 +42,7 @@ class AdminModel extends SQLModel
 
     public function GetAdmins(){
         $sql = $this->ADMIN_SELECT;
-        return parent::GetRows($sql);
+        return parent::GetRows($sql, true);
     }
 
     public function GetRoles(){

@@ -33,14 +33,14 @@ if($error === ''){
 }
 
 if($error === ''){
-    include_once '../models/dbusuarios_model.php';
-    $dbusuarios = new DbusuariosModel();
-    if(!$dbusuarios->UserExists($user))
+    include_once '../models/bdusuarios_model.php';
+    $bdusuarios = new BdusuariosModel();
+    if(!$bdusuarios->UserExists($user))
         $error = 'Credenciales inválidas';
 }
 
 if($error === ''){
-    $target_user = $dbusuarios->TryLogin($user, $password);
+    $target_user = $bdusuarios->TryLogin($user, $password);
     if($target_user === false)
         $error = 'Credenciales inválidas';
 }
@@ -122,6 +122,7 @@ echo 'Cédula: ' . $_SESSION['neocaja_cedula'] . '<br>';
 echo 'Id: ' . $_SESSION['neocaja_id'] . '<br>';
 echo "Error: " . $error;
 */
+
 
 
 if($error === ''){

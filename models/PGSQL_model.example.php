@@ -25,15 +25,20 @@ class PGSQLModel{
         return $pdo;
     }
 
-    // Obtenemos una consulta SQL y retornamos todos los resultados
-    public function GetRows($sql){
+    /**
+     * Obtiene una consulta SELECt SQL y retorna los resultados
+     * @param string $sql La consulta
+     * @param bool $empty_array Si recibe true retornará un array vacío si no se encuentran resultados, de lo contrario retorna false
+     */
+    public function GetRows($sql, $empty_array = false){
         $conn = $this->GetConnection();
         $query = $conn->query($sql);
         $result = [];
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $result[] = $row;
         }
-        if($result === []) $result = false;
+
+        if($result === [] && $empty_array === false) $result = false;
         return $result;
     }
 

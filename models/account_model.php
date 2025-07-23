@@ -51,7 +51,7 @@ class AccountModel extends SQLModel
 
     public function GetAccounts(){
         $sql = $this->SELECT_TEMPLATE . " ORDER BY accounts.names, accounts.surnames";
-        return parent::GetRows($sql);
+        return parent::GetRows($sql, true);
     }
 
     public function GetAccount($id){

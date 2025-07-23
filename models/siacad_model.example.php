@@ -10,10 +10,10 @@ class SiacadModel extends PGSQLModel
     public function __construct()
     {
         parent::SetInfo(
-            'localhost',   // server
-            'postgres',    // username
-            '123456',      // password
-            'siacad'       // database
+            '', // server
+            '',          // username
+            '',     // password
+            ''       // database
         );
     }
 

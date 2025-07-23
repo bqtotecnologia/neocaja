@@ -61,7 +61,14 @@ class InvoiceModel extends SQLModel
             FROM
             invoices";
         
-        return parent::GetRow($sql);
+        $numbers = parent::GetRow($sql);
+        if($numbers['invoice_number'] === NULL)
+            $numbers['invoice_number'] = 1;
+
+        if($numbers['control_number'] === NULL)
+            $numbers['control_number'] = 1;
+
+        return $numbers;
     }
 
     public function GetInvoicesOfAccountOfPeriod(string $account, string $period){
