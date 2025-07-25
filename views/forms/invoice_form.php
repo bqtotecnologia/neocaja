@@ -162,13 +162,13 @@ $latest = $invoice_model->GetLatestNumbers();
                     <table class="col-12 table table-bordered">
                         <thead class="text-center">
                             <tr>
-                                <th class="col-3">Producto</th>
-                                <th class="col-2">Mes</th>
-                                <th>Completo</th>
-                                <th>Monto base</th>
-                                <th>Descuento de beca</th>
-                                <th>Total</th>
-                                <th>Borrar</th>
+                                <th class="col-3 align-middle">Producto</th>
+                                <th class="col-2 align-middle">Mes</th>
+                                <th class="align-middle">Completo</th>
+                                <th class="align-middle">Monto base</th>
+                                <th class="align-middle">Descuento de beca</th>
+                                <th class="align-middle">Total</th>
+                                <th class="align-middle">Borrar</th>
                             </tr>
                         </thead>
                         <tbody id="product-table">
@@ -195,20 +195,21 @@ $latest = $invoice_model->GetLatestNumbers();
                     <table class="col-12 table table-bordered">
                         <thead class="text-center">
                             <tr>
-                                <th class="col-3">Producto</th>
-                                <th class="col-2">Mes</th>
-                                <th>Completo</th>
-                                <th>Monto base</th>
-                                <th>Descuento de beca</th>
-                                <th>Total</th>
-                                <th>Borrar</th>
+                                <th class="col-2 align-middle">Método</th>
+                                <th class="col-1 align-middle px-5">Moneda</th>
+                                <th class="col-3 align-middle">Banco</th>
+                                <th class="col-1 align-middle px-5">Punto de venta</th>
+                                <th class="align-middle">Monto</th>
+                                <th class="align-middle">Tasa</th>
+                                <th class="align-middle">Total</th>
+                                <th class="align-middle">Borrar</th>
                             </tr>
                         </thead>
-                        <tbody id="product-table">
+                        <tbody id="payment-table">
                         </tbody>
                         <tr>
-                            <td class="text-right h5 fw-bold" colspan="5">Total</td>
-                            <td class="text-center fw-bold h4" id="products-total"></td>
+                            <td class="text-right h5 fw-bold" colspan="6">Total</td>
+                            <td class="text-center fw-bold h4" id="payment-total"></td>
                         </tr>
                     </table>
                 </div>
@@ -286,5 +287,6 @@ $latest = $invoice_model->GetLatestNumbers();
 
 
 
-<?php include_once '../common/partials/invoice_form_javascript.php'; ?>
+<?php include_once '../common/partials/invoice_form_invoice_javascript.php'; ?>
+<?php include_once '../common/partials/invoice_form_payments_javascript.php'; ?>
 

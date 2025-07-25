@@ -137,11 +137,25 @@ class Validator
      * Si el número no es flotante retorna false
      */
     public static function GetDecimalCountOfFloat(string $number){
-        $splits = explode('.', $number);
-        if(count($splits) < 2)
-            return false;
+        if(!is_string($number)){
+            $int = intval($number);
+            $decimal_part = $number - $int;
+            if($decimal_part === 0){
+                $result = 0;
+            }
+            else{
+                $result = strlen(strval($decimal_part));
+            }
+        }
+        else{
+            $splits = explode('.', $number);
+            if(count($splits) < 2)
+                $result = false;
+            else
+                $result = strlen($splits[1]);
+        }
 
-        return strlen($splits[1]);
+        return $result;
     }
 
     /**

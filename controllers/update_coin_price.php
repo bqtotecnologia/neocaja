@@ -53,7 +53,7 @@ if($error === ''){
 }
 
 if($error === ''){
-    $decimalCount = Validator::GetDecimalCountOfFloat(strval($cleanData['price']));
+    $decimalCount = Validator::GetDecimalCountOfFloat(strval($_POST['price']));
     if($decimalCount === false)
         $error = 'La tasa de la moneda debe ser decimal';
     else{

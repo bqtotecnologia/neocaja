@@ -5,9 +5,6 @@
 
     const products = []
     const productPrices = {}
-    const payment_methods = []
-    const coins = []
-    const sale_points = []
     const coinHistories = {}
 
     const retardMaxDay = parseInt('<?= $global_vars['Dia tope mora'] ?>')
@@ -29,7 +26,6 @@
     }    
 
     let nextProduct = 1
-    let nextPaymentMethod = 1
     let targetAccount = {}
 </script>
 
@@ -161,18 +157,29 @@
         nextProduct++
     }
 
-    function ProductSelecting(oldId, e){        
-        var priceInput = document.getElementById('product-baseprice-' + String(oldId))
+    function ProductSelecting(oldId, e){                
         var price = 0
+        var productName = null
+
         for(let i = 0; i < e.target.childNodes.length; i++){
             // searching the product name to get it's price
             var node = e.target.childNodes[i]
             if(node.selected){
-                price = productPrices[node.innerHTML]
-                priceInput.value = price
+                productName = node.innerHTML
             }
         }
-        var total = price
+
+        var total = 0
+
+        if(productName === '&nbsp;')
+            price = 0
+        else
+            price = productPrices[productName]
+
+        var priceInput = document.getElementById('product-baseprice-' + String(oldId))
+        priceInput.value = price
+        total = price
+        
         if(targetAccount['scholarship_coverage'] !== null && targetAccount['scholarship_coverage'] !== undefined ){
             total = parseFloat(price) * (parseFloat(targetAccount['scholarship_coverage']) / 100)
         }
@@ -188,11 +195,16 @@
         for(let i = 0; i <= nextProduct; i++){
             var productBasePriceInput = document.getElementById('product-baseprice-' + String(i))
 
+            
+
             if(productBasePriceInput === null)
                 continue
 
             var productSelect = document.getElementById('product-id-' + String(i))
             var productName = productSelect.options[productSelect.selectedIndex].innerHTML
+            if(productName === '&nbsp;' || productName === '')
+                continue
+
             var productBasePrice = productPrices[productName]
 
 
@@ -233,9 +245,9 @@
         // adding all totals of products
         for (let i = 0; i <= nextProduct; i++) {
             var priceInput = document.getElementById('product-total-' + i)
-            if(priceInput === null)
+            if(priceInput === null || priceInput.value === "")
                 continue
-
+            
             var price = parseFloat(priceInput.value)          
             total += price
         }
