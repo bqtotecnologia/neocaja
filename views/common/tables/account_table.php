@@ -25,7 +25,7 @@
                     <i class="fa fa-circle text-<?= $account['is_student'] === '1' ? 'success' : 'danger' ?>"></i>
                 </td>
                 <td class="align-middle text-center">
-                    <?= $account['scholarship'] === NULL ? '<spann class="text-danger">NO tiene</span>' : $account['scholarship'] ?>
+                    <?= $account['scholarship'] === NULL ? '<spann class="text-danger">NO tiene</span>' : ($account['scholarship'] . ' ' . intval($account['scholarship_coverage']) . '%') ?>
                 </td>
                 <td class="align-middle text-center">
                     <?= $account['company'] === NULL ? '<spann class="text-danger">NO aplica</span>' : $account['company'] ?>

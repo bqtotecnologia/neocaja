@@ -23,7 +23,8 @@ $coins = $coin_model->GetNotUpdatedCoins(false);
                     </h2>
                     <i class="fa fa-check col-12 text-center text-success" style="font-size:80px;"></i>
                 <?php } else { ?>
-                    <div class="row col-12 col-lg-8 m-0 p-0 justify-content-center">
+                    <form class="row col-12 col-lg-8 m-0 p-0 justify-content-center" method="POST" action="<?= $base_url ?>/controllers/refresh_coins.php">
+                        <input type="hidden" name="allow_refresh" value="1">
                         <h2 class="col-12 text-center h2">
                             Las siguientes monedas están desactualizadas
                         </h2>
@@ -48,13 +49,11 @@ $coins = $coin_model->GetNotUpdatedCoins(false);
                         </table>
     
                         <div class="col-12 text-center mt-5">
-                            <a href="<?= $base_url ?>/controllers/refresh_coins.php">
-                                <button class="btn btn-primary">
-                                    Actualizar automáticamente
-                                </button>
-                            </a>
+                            <button class="btn btn-primary">
+                                Actualizar automáticamente
+                            </button>
                         </div>
-                    </div>
+                    </form>
                 <?php } ?>
             </div>
         </div>

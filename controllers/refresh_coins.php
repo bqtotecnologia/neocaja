@@ -3,16 +3,28 @@
  * Este archivo actualiza las tasas de todas las monedas, sin embargo para ello se debe llamar a este archivo
  * habiendo declarado previamente una variable $allow_refresh.
  * 
+ * También puede ejecutarse si envías por método POST un dato 'allow_refresh' = '1'
+ * 
  * Este contiene una variable $coins_refreshed que empieza en false y termina en true si todo el script se ejecuta.
  * También al final crea una variable $message con los mensajes de error o éxito de la operación
  */
 include_once '../utils/base_url.php';
 
+
+
 $coins_refreshed = false;
-if(!isset($allow_refresh)){
+if(!isset($allow_refresh) && !isset($_POST['allow_refresh'])){
     header("Location: $base_url/views/forms/login.php");
     return;
 }
+
+if(isset($_POST['allow_refresh'])){
+    if($_POST['allow_refresh'] !== '1'){
+        header("Location: $base_url/views/forms/login.php");
+        return;
+    }
+}
+
 
 include_once '../utils/Validator.php';
 
@@ -54,10 +66,13 @@ foreach($data as $d){
         $message .= 'Moneda ' . $d['name'] . ' actualizada correctamente<br>';
 }
 
-if($error === '')
+if($error === ''){
     $refresh_message = 'Todas las monedas han sido actualizadas correctamente';
+    $refresh_success = true;
+}
 else{
     $refresh_message = $message . $error;
+    $refresh_success = false;
 }
 
 $coins_refreshed = true;

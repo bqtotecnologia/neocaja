@@ -216,6 +216,19 @@ $latest = $invoice_model->GetLatestNumbers();
             </div>
 
 
+            <div class="row col-12 m-0 p-0 justify-content-around align-items-start pt-2 border-top">
+                <div class="row col-6 m-0 p-3 border-right">
+                    <label class="h6 m-0 fw-bold px-2" for="reason">Motivo</label>
+                    <textarea class="col-12" name="reason" id="reason"></textarea>
+                </div>
+
+                <div class="row col-6 m-0 p-3 border-left">
+                    <label class="h6 m-0 fw-bold px-2" for="observation">Observación</label>
+                    <textarea class="col-12 " name="observation" id="observation"></textarea>
+                </div>
+            </div>
+
+
 
         
 

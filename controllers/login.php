@@ -130,8 +130,13 @@ if($error === ''){
     include_once 'refresh_coins.php';
 
     if($_SESSION['neocaja_rol'] !== 'Estudiante'){
-        if($coins_refreshed)
-            $redirect = "Location: $base_url/views/panel.php?message=$refresh_message";
+        if($coins_refreshed){
+            $redirect = "Location: $base_url/views/panel.php?";
+            if($refresh_success)
+                $redirect .= "message=$refresh_message";
+            else
+                $redirect .= "error=$refresh_message";
+        }
         else
             $redirect = "Location: $base_url/views/panel.php";
     }
