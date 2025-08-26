@@ -21,7 +21,7 @@
                 <td class="align-middle text-center"><?= $coin['name'] ?></td>
                 <td class="align-middle text-center"><?= $coin['price'] ?></td>
                 <td class="align-middle text-center"><?= $coin['coin_created_at'] ?></td>
-                <td class="align-middle text-center"><?= $coin['price_created_at'] ?></td>
+                <td class="align-middle text-center"><?= date('d/m/Y', strtotime($coin['price_created_at'])) ?></td>
                 <td class="align-middle text-center">
                     <i class="fa fa-circle text-<?= $coin['active'] ? 'success' : 'danger' ?>"></i>
                 </td>

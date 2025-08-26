@@ -17,7 +17,7 @@
                 <td class="align-middle text-center"><?php echo $count; $count++; ?></td>
                 <td class="align-middle text-center"><?= $target_product['name'] ?></td>
                 <td class="align-middle text-center"><?= $history['price'] ?></td>
-                <td class="align-middle text-center"><?= $history['created_at'] ?></td>
+                <td class="align-middle text-center"><?= date('d/m/Y', strtotime($history['created_at']))  ?></td>
             </tr>
         <?php } ?>
     </tbody>
