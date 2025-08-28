@@ -1,0 +1,225 @@
+<?php
+$admitted_user_types = ['Cajero', 'Super'];
+include_once '../utils/validate_user_type.php';
+
+include_once '../utils/base_url.php';
+include_once '../utils/Validator.php';
+
+$error = '';
+
+if(empty($_POST)){
+    $error = 'POST vacío';
+}
+
+$fields_config = [
+    'invoice_number' => [
+        'min' => 1,
+        'max' => 11,
+        'required' => true,
+        'type' => 'integer',
+        'suspicious' => true,
+    ],
+    'control_number' => [
+        'min' => 1,
+        'max' => 11,
+        'required' => true,
+        'type' => 'integer',
+        'suspicious' => true,
+    ],
+    'account' => [
+        'min' => 1,
+        'max' => 11,
+        'required' => true,
+        'type' => 'integer',
+        'suspicious' => true,
+    ],
+    'reason' => [
+        'min' => 3,
+        'max' => 255,
+        'required' => true,
+        'type' => 'string',
+        'suspicious' => true,
+    ],
+    'observation' => [
+        'min' => 0,
+        'max' => 255,
+        'required' => false,
+        'type' => 'string',
+        'suspicious' => true,
+    ]
+];
+
+$result = Validator::ValidatePOSTFields($fields_config);
+if(is_string($result))
+    $error = $result;
+else
+    $cleanData = $result;
+
+
+if($error === ''){
+    include_once '../models/invoice_model.php';
+    $invoice_model = new InvoiceModel();
+
+    $invoice_number = $cleanData['invoice_number'];
+    $control_number = $cleanData['control_number'];
+    $allOK = false;
+
+
+    while(true){
+        $invoice_number_exists = $invoice_model->GetInvoiceByInvoiceNumber($invoice_number);
+        $control_number_exists = $invoice_model->GetInvoiceByControlNumber($control_number);
+
+        if($invoice_number_exists !== false)
+            $invoice_number++;
+
+        if($control_number_exists !== false)
+            $control_number++;
+    
+        if([$invoice_number_exists, $control_number_exists] === [false, false]){
+            break;
+        }        
+    }
+}
+
+if($error === ''){
+    include_once '../models/account_model.php';
+    $account_model = new AccountModel();
+
+    $target_account = $account_model->GetAccount($cleanData['account']);
+    if($target_account === false)
+        $error = 'Cliente no encontrado';
+}
+
+if($error === ''){
+    $last_product_number = 0;
+    $last_payment_method_number = 0;
+
+    foreach($_POST as $key => $value){
+        if(strpos($key,'product' ) !== false){
+            $number = explode('-', $key)[2];
+            $last_product_number = intval($number);
+        }
+
+        if(strpos($key,'payment' ) !== false){
+            $number = explode('-', $key)[2];
+            $last_payment_method_number = intval($number);
+        }
+    }
+
+    $products = [];
+    $payment_methods = [];
+
+    include_once '../models/product_model.php';
+    $product_model = new ProductModel();
+
+    // Recorriendo y ordenando los productos
+    for ($i=1; $i <= $last_product_number; $i++) { 
+        if(!isset($_POST['product-id-' . $i]))
+            continue;
+
+        $product_id = $_POST['product-id-' . $i];
+        $target_product = $product_model->GetProduct($product_id);
+        if($target_product === false){
+            $error = "Producto de id $product_id no encontrado";
+            break;
+        }
+
+        // Se intentó registrar una mensualidad sin mes
+        if($_POST["product-month-$i"] === '' && $target_product['name'] === 'Mensualidad'){
+            $error = 'Se seleccionó el producto mensualidad sin especificar el mes';
+            break;
+        }
+
+        $to_add = [
+            'price' => $_POST["product-baseprice-$i"],
+            'history_id' => $target_product['history_id'],
+            'month' => $_POST["product-month-$i"],
+            'complete' => $_POST["product-complete-$i"],
+        ];
+
+        array_push($products, $to_add);
+    }
+    
+}
+
+if($error === ''){
+    include_once '../models/coin_model.php';
+    include_once '../models/bank_model.php';
+    include_once '../models/sale_point_model.php';
+    include_once '../models/payment_method_model.php';
+
+    $coin_model = new CoinModel();
+    $bank_model = new BankModel();
+    $sale_point_model = new SalePointModel();
+    $payment_method_model = new PaymentMethodModel();
+    // Recorriendo y ordenando los métodos de pago
+    for ($i=1; $i <= $last_payment_method_number; $i++) { 
+        if(!isset($_POST['payment-method-' . $i]))
+            continue;
+        
+        $payment_method_id = $_POST['payment-method-' . $i];
+        
+        $target_payment_method = $payment_method_model->GetPaymentMethodType($payment_method_id);
+        if($target_payment_method === false){
+            $error = "Método de pago de id $payment_method_id no encontrado";
+            break;
+        }
+
+        $coin_id = $_POST['payment-coin-' . $i];
+        $target_coin = $coin_model->GetCoin($coin_id);
+        if($target_coin === false){
+            $error = "Moneda de id $coin_id no encontrada";
+            break;
+        }
+
+        $bank_id = $_POST['payment-bank-' . $i];
+        if($bank_id !== ''){
+            $target_bank = $bank_model->GetBankById($bank_id);
+            if($target_bank === false){
+                $error = "Banco de id $bank_id no encontrado";
+                break;
+            }
+        }        
+        else
+            $target_bank = null;
+        
+        $sale_point_id = $_POST['payment-salepoint-' . $i];
+        if($sale_point_id !== ''){
+            $target_sale_point = $sale_point_model->GetSalePointByCode($sale_point_id);
+            if($target_sale_point === false){
+                $error = "Punto de venta de código $sale_point_id no encontrado";
+                break;
+            }   
+        }
+        else
+            $target_sale_point = null;
+
+        $to_add = [
+            'method' => $target_payment_method['id'],
+            'coin' => $target_coin['history_id'],
+            'salepoint' => $target_sale_point['id'] ?? 'NULL',
+            'bank' => $target_bank['id'] ?? 'NULL',
+            'price' => $_POST["payment-price-$i"] ?? 'NULL',
+        ];
+
+        array_push($payment_methods, $to_add);
+    }
+}
+
+if($error === ''){
+    $invoice_model->CreateInvoice($cleanData);
+}
+
+echo 'Error: ' . $error;
+
+echo '<br><br>';
+foreach($_POST as $key => $value){
+    echo '<strong>';
+    echo $key;
+    echo '</strong>';
+    echo ' => ';
+    var_dump($value);
+    echo '<br>';
+}
+
+exit;

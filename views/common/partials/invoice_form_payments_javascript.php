@@ -156,6 +156,7 @@
         methodCol.appendChild(div)
         var option = document.createElement('option')
         option.innerHTML = "&nbsp"
+        option.value = ''
         methodSelect.appendChild(option)
         var buffer = "payment-method-" + paymentId
         methodSelect.id = buffer
@@ -180,6 +181,7 @@
         coinCol.appendChild(div)
         var option = document.createElement('option')
         option.innerHTML = "&nbsp"
+        option.value = ''
         coinSelect.appendChild(option)
         var buffer = "payment-coin-" + paymentId
         coinSelect.id = buffer
@@ -205,6 +207,7 @@
         //bankCol.appendChild(div)
         var option = document.createElement('option')
         option.innerHTML = "&nbsp"
+        option.value = ''
         bankSelect.appendChild(option)
         var buffer = "payment-bank-" + paymentId
         bankSelect.id = buffer
@@ -230,6 +233,7 @@
         salePointCol.appendChild(div)
         var option = document.createElement('option')
         option.innerHTML = "&nbsp"
+        option.value = ''
         salePointSelect.appendChild(option)
         var buffer = "payment-salepoint-" + paymentId
         salePointSelect.id = buffer
@@ -249,8 +253,10 @@
     function GetNewPaymentPriceColumn(paymentId){
         var priceCol = document.createElement('td')
         var priceInput = document.createElement('input')
+        var name = "payment-price-" + paymentId
         priceInput.type = 'text'
-        priceInput.id = "payment-price-" + paymentId
+        priceInput.id = name
+        priceInput.name = name
         priceInput.classList.add('form-control')
         priceCol.appendChild(priceInput)
         priceInput.addEventListener('change', function(e){ UpdatePaymentPrice(paymentId); UpdatePaymentTotal(); })

@@ -13,6 +13,7 @@ class CoinModel extends SQLModel
         coins.created_at as coin_created_at,
         coins.auto_update,
         coins.url,
+        ch.id as history_id,
         ch.price,
         ch.created_at as price_created_at
         FROM

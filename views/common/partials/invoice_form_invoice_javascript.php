@@ -240,6 +240,8 @@
 
     function UpdateProductTotal(){
         var productsTotal = document.getElementById('products-total')
+        var productsTotalBs = document.getElementById('products-total-bs')
+        var usdRate = document.getElementById('Dólar-rate').innerHTML
         var total = 0
         
         // adding all totals of products
@@ -251,7 +253,10 @@
             var price = parseFloat(priceInput.value)          
             total += price
         }
-        productsTotal.innerHTML = total
+
+        console.log(usdRate)
+        productsTotal.innerHTML = total + '$'
+        productsTotalBs.innerHTML = 'Bs. ' + (total * parseFloat(usdRate))
     }
 
     function BuildProductRow(){
@@ -293,6 +298,7 @@
         var productSelect = document.createElement('select')
         var option = document.createElement('option')
         option.innerHTML = "&nbsp"
+        option.value = ''
         productSelect.appendChild(option)
         AddClassesToSelect(productSelect)        
         var buffer = "product-id-" + productId
@@ -316,6 +322,7 @@
         var monthSelect = document.createElement('select')
         var option = document.createElement('option')
         option.innerHTML = "&nbsp"
+        option.value = ''
         monthSelect.appendChild(option)
         monthSelect.addEventListener('click', function() { UpdateProductsPrice() })
         monthSelect.classList.add('form-control', 'col-12', 'col-md-8')
@@ -363,9 +370,10 @@
     function GetNewBasePriceColumn(productId){
         var basePriceCol = document.createElement('td')
         var basePriceInput = document.createElement('input')
-        basePriceInput.type = 'text'
-        //basePriceInput.disabled = true
-        basePriceInput.id = "product-baseprice-" + productId
+        var name = "product-baseprice-" + productId
+        basePriceInput.name = name
+        basePriceInput.id = name
+        basePriceInput.type = 'text'                
         basePriceInput.classList.add('form-control')
         basePriceCol.appendChild(basePriceInput)
         basePriceInput.addEventListener('change', function(e){ UpdateProductsPrice() })

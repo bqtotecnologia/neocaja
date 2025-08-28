@@ -22,7 +22,29 @@ class InvoiceModel extends SQLModel
     ";
 
     public function CreateInvoice(array $data){
-        $name = $data['name'];
+        // TODO: terminar esta función y poner comillas en los campos de texto directamente en las variables para poder poner NULL
+        $invoice_number = $data['invoice_number'];
+        $control_number = $data['control_number'];
+        $account = $data['account'];
+        $reason = $data['reason'];
+        $observation = $data['observation'];
+
+        $sql = "INSERT INTO invoice
+        (invoice_number,
+        control_number,
+        account,
+        reason,
+        observation
+        )
+        VALUES
+        (
+        $invoice_number,
+        $control_number,
+        $account,
+        $reason,
+        $observation,
+        )";
+
 
         $created = parent::DoQuery("INSERT INTO payment_method_types (name) VALUES ('$name')");
         if($created === true)
@@ -41,6 +63,16 @@ class InvoiceModel extends SQLModel
     public function GetInvoicesOfDate($date){
         $sql = $this->SINGLE_SELECT_TEMPLATE . " WHERE DATE(invoices.created_at) = $date ORDER BY invoices.created_at DESC";
         return parent::GetRows($sql, true);
+    }
+
+    public function GetInvoiceByInvoiceNumber($number){
+        $sql = $this->SINGLE_SELECT_TEMPLATE . " WHERE invoices.invoice_number = $number";
+        return parent::GetRow($sql);
+    }
+
+    public function GetInvoiceByControlNumber($number){
+        $sql = $this->SINGLE_SELECT_TEMPLATE . " WHERE invoices.control_number = $number";
+        return parent::GetRow($sql);
     }
 
     public function GetPaymentMethodType(string $id){

@@ -1,8 +1,14 @@
-import requests
 from flask import Flask, jsonify
 from config import config
+
+import requests
+import certifi
 from bs4 import BeautifulSoup
 from lxml import etree
+import urllib3
+import urllib3.contrib.pyopenssl
+import ssl
+    
 
 USD_XPATH = "//*[@id='dolar']//strong"
 EUR_XPATH = "//*[@id='euro']//strong"
@@ -55,10 +61,19 @@ def create_app():
 
     def GetValueDirectlyFromBCV(xpath):
         success = False
-        response = requests.get('https://www.bcv.org.ve/glosario/cambio-oficial') # production
+        urllib3.contrib.pyopenssl.inject_into_urllib3()
+        #http = urllib3.PoolManager(
+            #cert_reqs='CERT_REQUIRED', # Force certificate check.
+            #ca_certs=certifi.where(), # Path to the Certifi bundle.
+            #)
+        
+        #response = http.request('GET', 'https://www.bcv.org.ve/glosario/cambio-oficial')
+        #response = urllib3.request("GET", "https://www.bcv.org.ve/glosario/cambio-oficial")
+
+        response = requests.get('https://www.bcv.org.ve/glosario/cambio-oficial', verify=certifi.where()) # production
         # For local testing comment the previous line and uncomment the next one
         #response = requests.get('https://www.bcv.org.ve/glosario/cambio-oficial', verify=False) # development
-        soup = BeautifulSoup(response.content, 'lxml')
+        soup = BeautifulSoup(response.data, 'lxml')
         tree = etree.fromstring(str(soup), parser=etree.HTMLParser())
         target_element = tree.xpath(xpath)
 

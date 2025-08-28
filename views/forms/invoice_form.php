@@ -65,7 +65,7 @@ $latest = $invoice_model->GetLatestNumbers();
                         <td id="<?= $coin['name'] ?>" class="bg-theme text-white fw-bold" style="cursor:pointer" onclick="DisplayCoinHistory(this.id)">
                             <?= $coin['name'] ?>
                         </td>
-                        <td><?= $coin['price'] ?></td>
+                        <td id="<?= $coin['name'] ?>-rate"><?= $coin['price'] ?></td>
                     </tr>
                 </table>
             <?php } ?>
@@ -118,7 +118,7 @@ $latest = $invoice_model->GetLatestNumbers();
                     </div>
                     <div class=" row col-12 col-md-9 m-0 p-0 justify-content-center justify-content-md-start ">
                         <div class="row m-0 p-0 col-12 col-md-10">
-                            <select id="account" name="account" class="form-control col-10 col-md-8 select2">
+                            <select id="account" name="account" class="form-control col-10 col-md-8 select2" required>
                                 <option value="">&nbsp;</option>
                                 <?php foreach($accounts as $account) { ?>
                                     <option value="<?= $account['id'] ?>">
@@ -177,6 +177,10 @@ $latest = $invoice_model->GetLatestNumbers();
                             <td class="text-right h5 fw-bold" colspan="5">Total</td>
                             <td class="text-center fw-bold h4" id="products-total"></td>
                         </tr>
+                        <tr>
+                            <td class="text-right h5 fw-bold" colspan="5">Total en Bs.</td>
+                            <td class="text-center fw-bold h4" id="products-total-bs"></td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -194,7 +198,7 @@ $latest = $invoice_model->GetLatestNumbers();
                 <div class="col-12">
                     <table class="col-12 table table-bordered">
                         <thead class="text-center">
-                            <tr>
+                            <tr class="bg-light">
                                 <th class="col-2 align-middle">Método</th>
                                 <th class="col-1 align-middle px-5">Moneda</th>
                                 <th class="col-3 align-middle">Banco</th>
@@ -216,81 +220,34 @@ $latest = $invoice_model->GetLatestNumbers();
             </div>
 
 
-            <div class="row col-12 m-0 p-0 justify-content-around align-items-start pt-2 border-top">
+            <div class="row col-12 m-0 p-0 justify-content-around align-items-start pt-4 border-top">
                 <div class="row col-6 m-0 p-3 border-right">
                     <label class="h6 m-0 fw-bold px-2" for="reason">Motivo</label>
-                    <textarea class="col-12" name="reason" id="reason"></textarea>
+                    <textarea 
+                    class="col-12 form-control" 
+                    rows="3" 
+                    maxlength="255" 
+                    name="reason" 
+                    id="reason"
+                    required
+                    ></textarea>
                 </div>
 
                 <div class="row col-6 m-0 p-3 border-left">
                     <label class="h6 m-0 fw-bold px-2" for="observation">Observación</label>
-                    <textarea class="col-12 " name="observation" id="observation"></textarea>
+                    <textarea 
+                    class="col-12 form-control" 
+                    rows="3" 
+                    maxlength="255" 
+                    name="observation" 
+                    id="observation"
+                    ></textarea>
                 </div>
             </div>
 
 
-
-        
-
-
-            <div class=" row col-12 col-md-8 my-2 justify-content-start ">
-                <div class=" row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-4 ">
-                    <label class=" h6 m-0 fw-bold px-2 " for="cedula">Cliente</label>
-                </div>
-                <div class=" row col-12 col-md-8 m-0 p-0 justify-content-center justify-content-md-start ">
-                    <input id="cedula" name="cedula" class=" form-control  col-10 col-md-5" placeholder="" required="" value="" type="number"  maxlength="10" minlength="7">
-                </div>
-            </div>
-
-            <div class=" row col-12 col-md-8 my-2 justify-content-start ">
-                <div class=" row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-4 ">
-                    <label class=" h6 m-0 fw-bold px-2 " for="names">Nombres</label>
-                </div>
-                <div class=" row col-12 col-md-8 m-0 p-0 justify-content-center justify-content-md-start ">
-                    <input id="names" name="names" class=" form-control  col-10 col-md-8" placeholder="Ambos nombres" required="" value="" type="text" maxlength="100" minlength="5">
-                </div>
-            </div>
-
-            <div class=" row col-12 col-md-8 my-2 justify-content-start ">
-                <div class=" row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-4 ">
-                    <label class=" h6 m-0 fw-bold px-2 " for="address">Dirección</label>
-                </div>
-                <div class=" row col-12 col-md-8 m-0 p-0 justify-content-center justify-content-md-start ">
-                    <textarea id="address" name="address" class=" form-control  col-10 col-md-8" required="" rows="3" columns="50" value=""
-                    ></textarea> 
-                </div>
-            </div>
-
-            <div class=" row col-12 col-md-8 my-2 justify-content-start ">
-                <div class=" row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-4 ">
-                    <label class=" h6 m-0 fw-bold px-2 " for="is_student">Es estudiante</label>
-                </div>
-                <div class=" row col-12 col-md-8 m-0 p-0 justify-content-center justify-content-md-start ">
-                    <div class="row col-12 m-0 p-0 mx-2">
-                        <div class="icheckbox_flat-green" style="position: relative;">
-                            <input id="is_student-1" type="checkbox" name="is_student[]" value="1" class=" form-control  col-10 col-md-5 flat ">
-                        </div>
-                        <label for="is_student-1" class=" text-left mx-2 h6 ">Es estudiante</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class=" row col-12 col-md-8 my-2 justify-content-start ">
-                <div class=" row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-4 ">
-                    <label class=" h6 m-0 fw-bold px-2 " for="company">Empresa</label>
-                </div>
-                <div class=" row col-12 col-md-8 m-0 p-0 justify-content-center justify-content-md-start ">
-                    <div class="row m-0 p-0 col-12 col-md-8">
-                        <select id="company" name="company" class="form-control col-10 col-md-8 select2" tabindex="-1" aria-hidden="true">
-                            <option value="">&nbsp;</option>
-                            <option value="1">Granel SA</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row col-12 m-0 p-0 justify-content-center">
-                <button type="submit" class="btn btn-success">Registrar</button>
+            <div class="row col-12 m-0 p-0 justify-content-center mt-5">
+                <button type="submit" class="btn btn-success fw-bold">Registrar</button>
             </div>
         </form>
     </div>

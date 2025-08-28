@@ -8,6 +8,7 @@ class ProductModel extends SQLModel
         pr.name,
         pr.active,
         pr.created_at as product_created_at,
+        ph.id as history_id,
         ph.price,
         ph.created_at as price_created_at
         FROM
