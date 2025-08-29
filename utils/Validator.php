@@ -104,7 +104,7 @@ class Validator
      * Verifica si existe un valor 'id' en el método HTTP escogido
      * @param string $key_name El nombre del key que contiene el id a validar
      * @param string $method El nombre del método "GET"/"POST"
-     * @return string|int
+     * @return string|int String especificando el error o un integer con el id recibido
      */
     public static function ValidateRecievedId(string $key_name = 'id', string $method = 'GET'){
         $data = [

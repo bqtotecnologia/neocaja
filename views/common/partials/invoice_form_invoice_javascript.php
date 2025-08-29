@@ -89,6 +89,7 @@
     async function GetInvoicesOfAccount(account){
         var period = '<?= $periodId ?>'
         var url = '<?= $base_url ?>/api/get_invoices_of_account.php?account=' + account + '&period=' + period
+        console.log(url)
 
         var fetchConfig = {
             method: 'GET', 

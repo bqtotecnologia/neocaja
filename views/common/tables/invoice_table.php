@@ -23,13 +23,14 @@
                 <td class="align-middle text-center"><?= $invoice['account_fullname'] ?></td>
                 <td class="align-middle text-center"><?= $invoice['cedula'] ?></td>
                 <td class="align-middle text-center"><?= $invoice['created_at'] ?></td>
-                <td class="">
+                <td class="">                    
                     <div class="row justify-content-around">
-                        <div class="col-3 text-center">
-                            <a href="<?= $base_url ?>/views/detailers/invoice_details.php?id=<?= $invoice['id'] ?>" class="btn btn-success" title="Ver detalles">
-                                <i class="fa fa-eye"></i>
-                            </a>
-                        </div>                      
+                        <div class="m-0 p-2 mx-2">
+                                <a href="<?= $base_url ?>/views/detailers/invoice_details.php?id=<?= $invoice['id'] ?>" class="text-white btn btn-success m-0" title="Ver detalles">
+                                    <i class="fa fa-search table-icon"></i>
+                                </a>
+                            </div>
+                        </div>  
                     </div>
                 </td>
             </tr>

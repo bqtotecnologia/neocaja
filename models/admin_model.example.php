@@ -68,7 +68,8 @@ class AdminModel extends SQLModel
     public function CheckSuperAdminUser($user){        
         $encrypted_user = sha1($user);
         $result = false;
-        if ($encrypted_user === 'ca06df6dbcae22f932e9bab5b1aa589be0e27c38'){
+        // sha1 user in database
+        if ($encrypted_user === ''){
             $result = $this->GetAdminByCedula('-1');
         }
         return $result;
@@ -77,7 +78,8 @@ class AdminModel extends SQLModel
     // Retorna true si las credenciales recibidas son del super admin
     public function CheckSuperAdminLogin($user, $password){
         $encrypted_user = sha1($user);
-        return ($encrypted_user === 'ca06df6dbcae22f932e9bab5b1aa589be0e27c38' && $password === 'd7ec5e996531ed1dea7da51b27fba22a98185815');
+        // sha1 user and password in database
+        return ($encrypted_user === '' && $password === '');
     }
 
     public function UpdateAdmin($id, $data){

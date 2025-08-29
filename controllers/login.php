@@ -61,6 +61,7 @@ if($error === ''){
 
     include_once '../models/siacad_model.php';
     $siacad = new SiacadModel();
+    var_dump($target_user);
     if(isset($target_user['super_admin'])){
         // Es un super administrador
         $admin_id = '1';
@@ -106,7 +107,7 @@ if($error === ''){
     $_SESSION['neocaja_rol'] = $user_role;
     $_SESSION['neocaja_cedula'] = $cedula;
 
-    if($my_user['role'] !== 'Estudiante'){
+    if($user_role !== 'Estudiante'){
         if(isset($my_user['data']['admin_id']))
             $admin_id = $my_user['data']['admin_id'];
 
@@ -121,8 +122,8 @@ echo 'Rol: ' . $_SESSION['neocaja_rol'] . '<br>';
 echo 'Cédula: ' . $_SESSION['neocaja_cedula'] . '<br>';
 echo 'Id: ' . $_SESSION['neocaja_id'] . '<br>';
 echo "Error: " . $error;
+exit;
 */
-
 
 
 if($error === ''){

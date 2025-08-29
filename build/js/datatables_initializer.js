@@ -92,7 +92,7 @@ $('.datatable-date-5').DataTable({
             },
         ],
     columnDefs: [{
-        targets: [4],
+        targets: [5],
         render: $.fn.dataTable.render.moment('YYYY-MM-DD HH:mm:ss', 'DD/MM/YYYY HH:mm:ss')
       }],
     responsive: true

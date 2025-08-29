@@ -69,7 +69,7 @@ class SQLModel{
 
     // Crea una entrada en la bitácora
     public function CreateBinnacle($user, $action){
-        $sql = "INSERT INTO bitacora (usuario, accion) VALUES ($user, '$action')";
+        $sql = "INSERT INTO binnacle (user, action) VALUES ($user, '$action')";
         $this->DoQuery($sql);
     }
 }

@@ -21,20 +21,21 @@ class InvoiceModel extends SQLModel
         INNER JOIN accounts ON accounts.id = invoices.account 
     ";
 
-    public function CreateInvoice(array $data){
-        // TODO: terminar esta función y poner comillas en los campos de texto directamente en las variables para poder poner NULL
+    public function CreateInvoice(array $data, string $period_id){
         $invoice_number = $data['invoice_number'];
         $control_number = $data['control_number'];
         $account = $data['account'];
         $reason = $data['reason'];
         $observation = $data['observation'];
 
-        $sql = "INSERT INTO invoice
-        (invoice_number,
+        $sql = "INSERT INTO invoices
+        (
+        invoice_number,
         control_number,
         account,
         reason,
-        observation
+        observation,
+        period
         )
         VALUES
         (
@@ -43,16 +44,71 @@ class InvoiceModel extends SQLModel
         $account,
         $reason,
         $observation,
+        $period_id
         )";
 
-
-        $created = parent::DoQuery("INSERT INTO payment_method_types (name) VALUES ('$name')");
+        $created = parent::DoQuery($sql);
         if($created === true)
-            $result = $this->GetPaymentMethodTypeByName($name);
+            $result = $this->GetInvoiceByControlNumber($control_number);
         else
             $result = false;
 
         return $result;
+    }
+
+    public function AddConceptToInvoice(array $concept, string $invoice_id){
+        $product_history = $concept['history_id'];
+        $price = $concept['price'];
+        $month = $concept['month'];
+        $complete = $concept['complete'];
+
+        $sql = "INSERT INTO concepts
+        (
+        product,
+        price,
+        invoice,
+        month,
+        complete
+        )
+        VALUES
+        (
+        $product_history,
+        $price,
+        $invoice_id,
+        $month,
+        $complete
+        )";
+
+        return parent::DoQuery($sql);
+    }
+
+    public function AddPaymentMethodToInvoice(array $payment_method, string $invoice_id){
+        $method = $payment_method['method'];
+        $coin = $payment_method['coin'];
+        $salepoint = $payment_method['salepoint'];
+        $bank = $payment_method['bank'];
+        $price = $payment_method['price'];
+
+        $sql = "INSERT INTO invoice_payment_method
+        (
+        invoice,
+        type,
+        price,
+        coin,
+        bank,
+        sale_point
+        )
+        VALUES
+        (
+        $invoice_id,
+        $method,
+        $price,
+        $coin,
+        $bank,
+        $salepoint
+        )";
+
+        return parent::DoQuery($sql);
     }
 
     public function GetAllInvoices(){
@@ -61,8 +117,13 @@ class InvoiceModel extends SQLModel
     }
 
     public function GetInvoicesOfDate($date){
-        $sql = $this->SINGLE_SELECT_TEMPLATE . " WHERE DATE(invoices.created_at) = $date ORDER BY invoices.created_at DESC";
+        $sql = $this->SINGLE_SELECT_TEMPLATE . " WHERE DATE(invoices.created_at) = '$date' ORDER BY invoices.created_at DESC";
         return parent::GetRows($sql, true);
+    }
+
+    public function GetInvoice($id){
+        $sql = $this->SINGLE_SELECT_TEMPLATE . " WHERE invoices.id = $id";
+        return parent::GetRow($sql);        
     }
 
     public function GetInvoiceByInvoiceNumber($number){
@@ -73,14 +134,6 @@ class InvoiceModel extends SQLModel
     public function GetInvoiceByControlNumber($number){
         $sql = $this->SINGLE_SELECT_TEMPLATE . " WHERE invoices.control_number = $number";
         return parent::GetRow($sql);
-    }
-
-    public function GetPaymentMethodType(string $id){
-        return parent::GetRow("SELECT * FROM payment_method_types WHERE id = '$id'"); 
-    }
-
-    public function GetPaymentMethodTypeByName(string $name){
-        return parent::GetRow("SELECT * FROM payment_method_types WHERE name = '$name'"); 
     }
 
     /**
@@ -115,9 +168,10 @@ class InvoiceModel extends SQLModel
             INNER JOIN (
                 SELECT
                 invoice_payment_method.invoice,
-                invoice_payment_method.price * invoice_payment_method.rate as total
+                nvoice_payment_method.price * coin_history.price as total
                 FROM
                 invoice_payment_method
+                INNER JOIN coin_history ON coin_history.id = invoice_payment_method.coin
             ) as ipm ON ipm.invoice = inv.id
             WHERE 
             accounts.id = $account AND 
@@ -130,10 +184,36 @@ class InvoiceModel extends SQLModel
         return parent::GetRows($sql, true);
     }
 
-    public function UpdatePaymentMethodType(string $id, array $data){
-        $name = $data['name'];
+    public function GetPaymentMethodsOfInvoice($id){
+        $sql = "SELECT
+        ipm.price,
+        coins.name,
+        banks.name,
+        payment_method_types.name,
+        sale_point.code
+        FROM
+        invoice_payment_method ipm
+        INNER JOIN coin_history ON coin_history.id = ipm.coin
+        INNER JOIN coins ON coins.id = coin_history.coin
+        INNER JOIN payment_method_types ON payment_method_types.id = ipm.type
+        INNER JOIN banks ON banks.id = ipm.bank
+        INNER JOIN sale_points ON sale_points.id = ipm.sale_point
+        WHERE
+        ipm.invoice = $id";
 
-        $sql = "UPDATE payment_method_types SET name = '$name' WHERE id = $id";
-        return parent::DoQuery($sql);
+        return parent::GetRow($sql);
+    }
+
+    public function GetConceptsOfInvoice($id){
+        return [];
+    }
+
+    /**
+     * Borra una factura. 
+     * Solo se ejecuta cuando ocurre un error al momento de agregar los conceptos y métodos de pago durante
+     * la creación de la factura
+     */
+    public function DeleteInvoice($id){
+        return parent::DoQuery("DELETE FROM invoice WHERE id = $id");
     }
 }

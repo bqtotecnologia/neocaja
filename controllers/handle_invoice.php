@@ -91,6 +91,21 @@ if($error === ''){
 }
 
 if($error === ''){
+    include_once '../models/siacad_model.php';
+    $siacad = new SiacadModel();
+    $period = $siacad->GetCurrentPeriodo();
+    $cleanData['reason'] = "'" . $cleanData['reason'] . "'";
+    if($cleanData['observation'] === '')
+        $cleanData['observation'] = 'NULL';
+    else
+        $cleanData['observation'] = "'" . $cleanData['obaservation'] . "'";
+    
+    $target_invoice = $invoice_model->CreateInvoice($cleanData, strval($period['idperiodo']));
+    if($target_invoice === false)
+        $error = 'Hubo un error al intentar crear la factura';
+}
+
+if($error === ''){
     $last_product_number = 0;
     $last_payment_method_number = 0;
 
@@ -105,13 +120,11 @@ if($error === ''){
             $last_payment_method_number = intval($number);
         }
     }
-
-    $products = [];
-    $payment_methods = [];
-
+    
     include_once '../models/product_model.php';
     $product_model = new ProductModel();
-
+    
+    $concepts = [];    
     // Recorriendo y ordenando los productos
     for ($i=1; $i <= $last_product_number; $i++) { 
         if(!isset($_POST['product-id-' . $i]))
@@ -133,13 +146,12 @@ if($error === ''){
         $to_add = [
             'price' => $_POST["product-baseprice-$i"],
             'history_id' => $target_product['history_id'],
-            'month' => $_POST["product-month-$i"],
-            'complete' => $_POST["product-complete-$i"],
+            'month' => $_POST["product-month-$i"] === '' ? 'NULL' : $_POST["product-month-$i"],
+            'complete' => isset($_POST["product-complete-$i"]) ? '1' : '0',
         ];
 
-        array_push($products, $to_add);
-    }
-    
+        array_push($concepts, $to_add);
+    }    
 }
 
 if($error === ''){
@@ -152,7 +164,9 @@ if($error === ''){
     $bank_model = new BankModel();
     $sale_point_model = new SalePointModel();
     $payment_method_model = new PaymentMethodModel();
-    // Recorriendo y ordenando los métodos de pago
+
+    $payment_methods = [];
+    // Recorriendo y ordenando los métodos de pago    
     for ($i=1; $i <= $last_payment_method_number; $i++) { 
         if(!isset($_POST['payment-method-' . $i]))
             continue;
@@ -207,11 +221,44 @@ if($error === ''){
 }
 
 if($error === ''){
-    $invoice_model->CreateInvoice($cleanData);
+    // Agregamos los conceptos de la factura
+    foreach($concepts as $concept){
+        $created = $invoice_model->AddConceptToInvoice($concept, strval($target_invoice['id']));
+        if($created === false){
+            $error = 'Ocurrió un error al intentar agregar el concepto del producto de monto ' . $concept['price'];
+            break;
+        }
+    }
 }
 
-echo 'Error: ' . $error;
+if($error === ''){
+    // Agregamos los conceptos de la factura
+    foreach($payment_methods as $payment_method){
+        $created = $invoice_model->AddPaymentMethodToInvoice($payment_method, strval($target_invoice['id']));
+        if($created === false){
+            $error = 'Ocurrió un error al intentar agregar el método de pago de monto ' . $payment_method['price'];
+            break;
+        }
+    }
+}
 
+if($error === ''){
+    $action = "Creó la factura Nº $invoice_number, Numero de control: $control_number. Al cliente " . $target_account['names'] . ' ' . $target_account['surnames'] . ' de cédula ' . $target_account['cedula'];
+    $invoice_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
+    $message = 'Factura creada correctamente';
+    $redirect = $base_url . '/views/panel.php?message=' . $message;
+}
+else{
+    $invoice_model->DeleteInvoice($target_invoice['id']);
+    $redirect = $base_url . '/views/forms/invoice_form.php?error=' . $error;
+}
+
+/*
+
+
+
+
+echo 'Error: ' . $error;
 echo '<br><br>';
 foreach($_POST as $key => $value){
     echo '<strong>';
@@ -222,4 +269,8 @@ foreach($_POST as $key => $value){
     echo '<br>';
 }
 
+exit;
+*/
+
+header('Location: ' . $redirect);
 exit;
