@@ -4,13 +4,24 @@ include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 include_once '../../utils/Auth.php';
 
+include_once '../../models/coin_model.php';
+$coin_model = new CoinModel();
+
+$latest = $coin_model->GetCoinByName('Dólar');
+$lastRateDate = new DateTime($latest['price_created_at'], new DateTimeZone('America/Caracas'));
+$today = new DateTime('now', new DateTimeZone('America/Caracas'));
+if($lastRateDate->format('Y-m-d') !== $today->format('Y-m-d')){
+    header("Location: $base_url/views/forms/update_coin_price.php?error=Antes de facturar, se requiere que la tasa del dólar esté actualizada al día de hoy");
+    exit;
+}
+
 include_once '../common/header.php';
+
 
 include_once '../../models/account_model.php';
 include_once '../../models/bank_model.php';
 include_once '../../models/sale_point_model.php';
 include_once '../../models/payment_method_model.php';
-include_once '../../models/coin_model.php';
 include_once '../../models/product_model.php';
 include_once '../../models/siacad_model.php';
 include_once '../../models/invoice_model.php';
@@ -20,7 +31,7 @@ $account_model = new AccountModel();
 $bank_model = new BankModel();
 $sale_point_model = new SalePointModel();
 $payment_method_model = new PaymentMethodModel();
-$coin_model = new CoinModel();
+
 $product_model = new ProductModel();
 $siacad = new SiacadModel();
 $invoice_model = new InvoiceModel();
@@ -42,7 +53,10 @@ $latest = $invoice_model->GetLatestNumbers();
 
 ?>
 
-<div class="row justify-content-center">
+<form 
+    action="../../controllers/handle_invoice.php" 
+    method="POST"
+    class="row justify-content-center">
     <div class="col-12 row justify-content-center x_panel">
         <?php $btn_url = '../tables/search_invoices_of_today.php'; include_once '../layouts/backButton.php'; ?>
     </div>
@@ -50,7 +64,10 @@ $latest = $invoice_model->GetLatestNumbers();
     <div class="col-12 justify-content-center px-5 mt-4">
         <div class="d-flex justify-content-around align-items-center x_panel flex-wrap">
             <div class="col-12 text-center">
-                <h3 class="h1 text-black">Tasas de hoy</h3>
+                <h3 class="h1 text-black">Seleccionar fecha de la tasa</h3>
+            </div>
+            <div class="col-12 text-center">
+                <input id="rate-date" class="form-control mx-auto col-3 fs-1" type="date" name="rate-date" value="<?= date('Y-m-d') ?>">
             </div>
 
             <div class="col-12 text-center">
@@ -72,10 +89,9 @@ $latest = $invoice_model->GetLatestNumbers();
         </div>
     </div>
     <div class="col-12 justify-content-center px-5 mt-4">
-        <form 
+        <div 
         action="../../controllers/handle_invoice.php" 
         method="POST"
-        id="" 
         class="d-flex justify-content-center align-items-center flex-column x_panel confirm-form"
         >
             <div class="col-12 text-center">
@@ -130,8 +146,8 @@ $latest = $invoice_model->GetLatestNumbers();
                     </div>
                 </div>
 
-                <div class="row col-12 col-md-6 my-2 justify-content-start">
-                    <table class="table table-bordered d-none" id="invoices">
+                <div class="row col-12 col-md-6 my-2 justify-content-invoicesstart">
+                    <table class="table table-bordered d-none" id="">
                         <thead class="text-center">
                             <tr class="h4 m-0">
                                 <th colspan="4">Sus facturas de este periodo</th>
@@ -165,7 +181,7 @@ $latest = $invoice_model->GetLatestNumbers();
                                 <th class="col-3 align-middle">Producto</th>
                                 <th class="col-2 align-middle">Mes</th>
                                 <th class="align-middle">Completo</th>
-                                <th class="align-middle">Monto base</th>
+                                <th class="align-middle">Monto base ($)</th>
                                 <th class="align-middle">Descuento de beca</th>
                                 <th class="align-middle">Total</th>
                                 <th class="align-middle">Borrar</th>
@@ -204,7 +220,6 @@ $latest = $invoice_model->GetLatestNumbers();
                                 <th class="col-3 align-middle">Banco</th>
                                 <th class="col-1 align-middle px-5">Punto de venta</th>
                                 <th class="align-middle">Monto</th>
-                                <th class="align-middle">Tasa</th>
                                 <th class="align-middle">Total</th>
                                 <th class="align-middle">Borrar</th>
                             </tr>
@@ -249,12 +264,58 @@ $latest = $invoice_model->GetLatestNumbers();
             <div class="row col-12 m-0 p-0 justify-content-center mt-5">
                 <button type="submit" class="btn btn-success fw-bold">Registrar</button>
             </div>
-        </form>
+        </div>
     </div>
-</div>
+</form>
 
 <?php include_once '../common/footer.php'; ?>
 
+
+<script>
+    const rateDate = document.getElementById('rate-date')
+    let coinValues = {}
+
+    rateDate.addEventListener('change', async function(e) { await ChangingRateDate(e) })
+
+    async function ChangingRateDate(e){
+        if(e.target.value !== '')
+            await GetCoinRatesOfDay(e.target.value)
+    }
+
+
+    async function GetCoinRatesOfDay(date){
+        var result = await FetchCoinRatesOfDay(date)
+            
+        if(typeof result !== "string"){
+            coinValues = result['data']
+
+            for(let key in coinValues){
+                console.log(key + '-rate')
+                const targetElement = document.getElementById(key + '-rate')
+                if(targetElement !== null){
+                    targetElement.innerHTML = coinValues[key]
+                }
+            }
+
+        }
+
+        UpdateProductsPrice()
+        RefreshPaymentMethods()
+    }
+
+    async function FetchCoinRatesOfDay(date){
+        var url = '<?= $base_url ?>/api/get_coin_values_of_date.php?date=' + date
+
+        var fetchConfig = {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+
+        return await TryFetch(url, fetchConfig)
+    }
+</script>
 
 
 <?php include_once '../common/partials/invoice_form_invoice_javascript.php'; ?>

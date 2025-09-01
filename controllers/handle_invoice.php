@@ -33,6 +33,13 @@ $fields_config = [
         'type' => 'integer',
         'suspicious' => true,
     ],
+    'rate-date' => [
+        'min' => 8,
+        'max' => 10,
+        'required' => true,
+        'type' => 'date',
+        'suspicious' => false,
+    ],
     'reason' => [
         'min' => 3,
         'max' => 255,
@@ -82,6 +89,9 @@ if($error === ''){
 }
 
 if($error === ''){
+    $cleanData['invoice_number'] = $invoice_number;
+    $cleanData['control_number'] = $control_number;
+
     include_once '../models/account_model.php';
     $account_model = new AccountModel();
 
@@ -185,6 +195,11 @@ if($error === ''){
             $error = "Moneda de id $coin_id no encontrada";
             break;
         }
+        else{
+            $rate_exists = $coin_model->GetCoinPriceOfDate($target_coin['id'], $cleanData['rate-date']->format('Y-m-d'));
+            if($rate_exists === false && $target_coin['name'] !== 'Bolívar')
+                $error = 'No existe una tasa para la moneda ' . $target_coin['name'] . ' en la fecha ' . $cleanData['rate-date']->format('d/m/Y');
+        }
 
         $bank_id = $_POST['payment-bank-' . $i];
         if($bank_id !== ''){
@@ -249,15 +264,16 @@ if($error === ''){
     $redirect = $base_url . '/views/panel.php?message=' . $message;
 }
 else{
-    $invoice_model->DeleteInvoice($target_invoice['id']);
-    $redirect = $base_url . '/views/forms/invoice_form.php?error=' . $error;
+    if(isset($target_invoice)){
+        if($target_invoice !== false){
+            $invoice_model->DeleteInvoice($target_invoice['id']);
+            $redirect = $base_url . '/views/forms/invoice_form.php?error=' . $error;
+        }
+    }
 }
 
+
 /*
-
-
-
-
 echo 'Error: ' . $error;
 echo '<br><br>';
 foreach($_POST as $key => $value){

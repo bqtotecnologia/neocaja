@@ -64,6 +64,21 @@ class CoinModel extends SQLModel
         return parent::GetRow($sql);
     }
 
+    public function GetCoinValuesOfDate($date){
+        $sql = "SELECT 
+        coins.name,
+        coin_history.price
+        FROM
+        coins
+        INNER JOIN coin_history ON coin_history.coin = coins.id
+        WHERE
+        DATE(coin_history.created_at) = '$date'
+        GROUP BY
+        coins.id";
+
+        return parent::GetRows($sql);
+    }
+
     /**
      * Retorna todas las monedas cuya tasa no esté actualizada al día de hoy
      * @param bool $include_not_auto_updated Si recibe true incluye las monedas que tengan auto_update, sino, las omite

@@ -24,6 +24,7 @@ class InvoiceModel extends SQLModel
     public function CreateInvoice(array $data, string $period_id){
         $invoice_number = $data['invoice_number'];
         $control_number = $data['control_number'];
+        $rate_date = $data['rate-date']->format('Y-m-d');
         $account = $data['account'];
         $reason = $data['reason'];
         $observation = $data['observation'];
@@ -32,6 +33,7 @@ class InvoiceModel extends SQLModel
         (
         invoice_number,
         control_number,
+        rate_date,
         account,
         reason,
         observation,
@@ -41,6 +43,7 @@ class InvoiceModel extends SQLModel
         (
         $invoice_number,
         $control_number,
+        '$rate_date',
         $account,
         $reason,
         $observation,
@@ -168,7 +171,7 @@ class InvoiceModel extends SQLModel
             INNER JOIN (
                 SELECT
                 invoice_payment_method.invoice,
-                nvoice_payment_method.price * coin_history.price as total
+                invoice_payment_method.price * coin_history.price as total
                 FROM
                 invoice_payment_method
                 INNER JOIN coin_history ON coin_history.id = invoice_payment_method.coin
@@ -187,21 +190,20 @@ class InvoiceModel extends SQLModel
     public function GetPaymentMethodsOfInvoice($id){
         $sql = "SELECT
         ipm.price,
-        coins.name,
-        banks.name,
-        payment_method_types.name,
-        sale_point.code
+        coins.name as coin,
+        banks.name as bank,
+        payment_method_types.name as payment_method,
+        sale_points.code
         FROM
         invoice_payment_method ipm
         INNER JOIN coin_history ON coin_history.id = ipm.coin
         INNER JOIN coins ON coins.id = coin_history.coin
         INNER JOIN payment_method_types ON payment_method_types.id = ipm.type
-        INNER JOIN banks ON banks.id = ipm.bank
-        INNER JOIN sale_points ON sale_points.id = ipm.sale_point
+        LEFT JOIN banks ON banks.id = ipm.bank
+        LEFT JOIN sale_points ON sale_points.id = ipm.sale_point
         WHERE
         ipm.invoice = $id";
-
-        return parent::GetRow($sql);
+        return parent::GetRows($sql);
     }
 
     public function GetConceptsOfInvoice($id){
@@ -214,6 +216,6 @@ class InvoiceModel extends SQLModel
      * la creación de la factura
      */
     public function DeleteInvoice($id){
-        return parent::DoQuery("DELETE FROM invoice WHERE id = $id");
+        return parent::DoQuery("DELETE FROM invoices WHERE id = $id");
     }
 }

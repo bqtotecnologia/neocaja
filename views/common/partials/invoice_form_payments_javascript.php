@@ -3,7 +3,6 @@
 
     const payment_methods = []
     const coins = []
-    const coinValues = {}
     const banks = []
     const sale_points = [] 
 
@@ -64,6 +63,15 @@
         nextPaymentMethod++
     }
 
+    function RefreshPaymentMethods(){
+        for(let i = 0; i < nextPaymentMethod; i++){
+            const targetElement = document.getElementById('payment-coin-' + String(i))
+            if(targetElement !== null)
+                UpdatePaymentPrice(i)
+        }
+        UpdatePaymentTotal()
+    }
+
     function CoinSelecting(oldId, e){     
         UpdatePaymentPrice(oldId)
         UpdatePaymentTotal()
@@ -81,13 +89,11 @@
             }
         }
 
-        if(coinName === '&nbsp;')
-            rate = 0
-        else
+        if(coinName !== '&nbsp;')
             rate = coinValues[coinName]
 
-        var rateInput = document.getElementById('payment-rate-' + String(id))
-        rateInput.value = rate
+        //var rateInput = document.getElementById('payment-rate-' + String(id))
+        //rateInput.value = rate
 
         var price = 0
         var priceInput = document.getElementById('payment-price-' + String(id))
@@ -123,7 +129,6 @@
         var bankCol = GetNewBankColumn(paymentId)
         var salePointCol = GetNewSalePointColumn(paymentId)
         var priceCol = GetNewPaymentPriceColumn(paymentId)
-        var rateCol = GetNewRateColumn(paymentId)
         var totalCol = GetNewPaymentTotalColumn(paymentId)
         var eraseCol = GetNewErasePaymentButtonColumn(paymentId)      
 
@@ -135,7 +140,6 @@
         row.appendChild(bankCol)
         row.appendChild(salePointCol)
         row.appendChild(priceCol)
-        row.appendChild(rateCol)
         row.appendChild(totalCol)
         row.appendChild(eraseCol)
 
@@ -261,17 +265,6 @@
         priceCol.appendChild(priceInput)
         priceInput.addEventListener('change', function(e){ UpdatePaymentPrice(paymentId); UpdatePaymentTotal(); })
         return priceCol
-    }
-
-    function GetNewRateColumn(paymentId){
-        var rateCol = document.createElement('td')
-        var rateInput = document.createElement('input')
-        rateInput.type = 'text'
-        rateInput.disabled = true
-        rateInput.id = "payment-rate-" + paymentId
-        rateInput.classList.add('form-control')
-        rateCol.appendChild(rateInput)
-        return rateCol
     }
 
     function GetNewPaymentTotalColumn(paymentId){

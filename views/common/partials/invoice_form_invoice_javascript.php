@@ -89,7 +89,6 @@
     async function GetInvoicesOfAccount(account){
         var period = '<?= $periodId ?>'
         var url = '<?= $base_url ?>/api/get_invoices_of_account.php?account=' + account + '&period=' + period
-        console.log(url)
 
         var fetchConfig = {
             method: 'GET', 
@@ -440,7 +439,7 @@
         seeCol.classList.add('p-1')
         var seeLink = document.createElement('a')
         seeLink.classList.add('h6')
-        seeLink.href = '<?= $base_url ?>/views/detailers/see_invoice.php'
+        seeLink.href = '<?= $base_url ?>/views/detailers/invoice_details.php?id=' + invoice.id
         seeLink.target = '_blank'
         seeLink.innerHTML = 'Ver'
         seeLink.classList.add('fw-bold')
