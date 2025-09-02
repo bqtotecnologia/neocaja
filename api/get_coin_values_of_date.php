@@ -28,24 +28,9 @@ catch(Exception $e){
 if($error === ''){
     include_once '../models/coin_model.php';
     $coin_model = new CoinModel();
-    $coins = $coin_model->GetActiveCoins();
-    $coin_values = $coin_model->GetCoinValuesOfDate($target_date->format('Y-m-d')) ;
-    if($coin_values === false)
+    $ordered_coins = $coin_model->GetCoinValuesOfDate($target_date->format('Y-m-d')) ;
+    if($ordered_coins === false)
         $error = 'No hay tasas registradas en al fecha dada';
-}
-
-if($error === ''){
-    $ordered_coins = [];
-    foreach($coins as $coin){
-        if($coin['name'] === 'Bolívar')
-            $ordered_coins[$coin['name']] = 1;
-        else
-            $ordered_coins[$coin['name']] = 0;
-    }
-
-    foreach($coin_values as $coin){
-        $ordered_coins[$coin['name']] = floatval($coin['price']);
-    }
 }
 
 if($error === ''){

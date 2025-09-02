@@ -25,8 +25,8 @@ include_once '../../utils/FormBuilder.php';
 $fields = [
     [
         'name' => 'name',
-        'display' => 'Nombre',
-        'placeholder' => 'Nombre del banco',
+        'display' => 'Nombre y código',
+        'placeholder' => 'Nombre y código del banco',
         'id' => 'name',
         'type' => 'text',
         'size' => 8,
@@ -34,18 +34,6 @@ $fields = [
         'min' => 5,
         'required' => true,
         'value' => $edit ? $target_bank['name'] : ''
-    ],
-    [
-        'name' => 'code',
-        'display' => 'Codigo',
-        'placeholder' => '4 primeros dígitos',
-        'id' => 'name',
-        'type' => 'text',
-        'size' => 4,
-        'max' => 4,
-        'min' => 4,
-        'required' => true,
-        'value' => $edit ? $target_bank['code'] : ''
     ],
     [
         'name' => 'active',

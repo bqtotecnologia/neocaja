@@ -2,8 +2,8 @@
     <thead>
         <tr>
             <th class="text-center" style="padding-right:15px !important;">Nº</th>
-            <th class="text-center">Nº Control</th>
             <th class="text-center">Nº Factura</th>
+            <th class="text-center">Nº Control</th>
             <th class="text-center">Cliente</th>
             <th class="text-center">Cédula</th>
             <th class="text-center">Fecha de creación</th>
@@ -19,8 +19,8 @@
         <?php foreach($invoices as $invoice) {  ?>
             <tr class="h6">
                 <td class="align-middle text-center"><?php echo $count; $count++; ?></td>
+                <td class="fw-bold align-middle text-center text-<?= intval($invoice['active']) === 0 ? 'danger' : 'success' ?>"><?= $invoice['invoice_number'] ?></td>
                 <td class="align-middle text-center"><?= $invoice['control_number'] ?></td>
-                <td class="align-middle text-center"><?= $invoice['invoice_number'] ?></td>
                 <td class="align-middle text-center"><?= $invoice['account_fullname'] ?></td>
                 <td class="align-middle text-center"><?= $invoice['cedula'] ?></td>
                 <td class="align-middle text-center"><?= $invoice['created_at'] ?></td>

@@ -3,6 +3,7 @@ $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 include_once '../../utils/Validator.php';
+include_once '../../utils/months_data.php';
 
 $id = Validator::ValidateRecievedId();
 $error = '';
@@ -14,10 +15,12 @@ if(is_string($id)){
 include_once '../../models/invoice_model.php';
 include_once '../../models/account_model.php';
 include_once '../../models/siacad_model.php';
+include_once '../../models/coin_model.php';
 
 $invoice_model = new InvoiceModel();
 $account_model = new AccountModel();
 $siacad = new SiacadModel();
+$coin_model = new CoinModel();
 
 $target_invoice = $invoice_model->GetInvoice($id);
 if($target_invoice === false){
@@ -33,14 +36,28 @@ $target_period = $siacad->GetPeriodoById($target_invoice['period']);
 $target_account = $account_model->GetAccount($target_invoice['account_id']);
 $payment_methods = $invoice_model->GetPaymentMethodsOfInvoice($id);
 $concepts = $invoice_model->GetConceptsOfInvoice($id);
+$coinValues = $coin_model->GetCoinValuesOfDate($target_invoice['rate_date']);
 
 include '../../views/common/header.php';
 
 ?>
 
 <div class="row justify-content-center">
-    <div class="col-12 text-center my-4">
+    
+    <div class="col-12 row justify-content-center">
+        <?php $btn_url = $base_url . '/views/tables/search_invoices_of_today.php'; include_once '../layouts/backButton.php'; ?>
+    </div>
+
+    <div class="col-12 text-center mt-4">
         <h1 class="h1 text-black">Factura Nº <?= $target_invoice['invoice_number'] ?></h1>
+    </div>
+
+    <div class="row col-12 mb-5">
+        <a target="_blank" href="<?= $base_url . '/views/exports/export_invoice_as_pdf.php?id=' . $target_invoice['id'] ?>">
+            <button class="btn btn-success">
+                Imprimir
+            </button>
+        </a>
     </div>
 
     <div class="col-12 row justify-content-center px-4">
@@ -142,6 +159,18 @@ include '../../views/common/header.php';
                         <?= $target_period['nombreperiodo'] ?>
                     </span>
                 </div>
+
+                <div class="row col-10 justify-content-start align-items-middle">
+                    <label class="fw-bold mx-2">
+                        Estado:
+                    </label>
+                    <?php if(intval($target_invoice['active']) === 1) { ?>
+                        <span class="text-success fw-bold">VÁLIDA
+                    <?php } else { ?>
+                        <span class="text-danger fw-bold">ANULADA
+                    <?php } ?>
+                    </span>
+                </div>
             </div>
         </section>
 
@@ -152,23 +181,138 @@ include '../../views/common/header.php';
 
             <div class="row col-12">
                 <div class="table-responsive">
-                    <table>
+                    <table class="table table-bordered">
                         <thead>
-                            <tr>
+                            <tr class="text-center">
                                 <th>Producto</th>
-                                <th>Precio</th>
                                 <th>Mes</th>
                                 <th>Completo</th>
+                                <th>Monto ($)</th>
+                                <th>Descuento</th>
+                                <th>Tasa</th>
+                                <th>Total</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <?php $products_total = 0; ?>
+                            <?php foreach($concepts as $concept) { ?>
+                                <?php 
+                                    $total = floatval($concept['price']) * $coinValues['Dólar']; 
+                                    $disccount_percent = 0;
+                                    if($target_account['scholarship'] !== null && intval($target_account['scholarship_coverage']) > 0){
+                                        $disccount_percent = intval($target_account['scholarship_coverage']);
+                                    }
 
+                                    $total = $total - ($total * ($disccount_percent / 100));
+                                    $products_total += $total; 
+                                ?>
+                                <tr class="text-center">
+                                    <td><?= $concept['product'] ?></td>
+                                    <td>
+                                        <?php if($concept['month'] === null) { ?>
+                                            <i class="fa fa-close text-danger"></i>
+                                        <?php } else { ?>
+                                            <?= $month_translate[$concept['month']] ?>
+                                        <?php } ?>
+                                    </td>
+                                    <td>
+                                        <?php if(intval($concept['complete']) === 1) { ?>
+                                            <i class="fa fa-check text-success"></i>
+                                        <?php } else { ?>
+                                            <i class="fa fa-close text-danger"></i>
+                                        <?php } ?>
+                                    </td>
+                                    <td class="text-right"><?= $concept['price'] ?></td>
+                                    <td class="text-right"><?= $disccount_percent ?>%</td>
+                                    <td class="text-right"><?= $coinValues['Dólar'] ?></td>
+                                    <td class="text-right">Bs. <?= $total ?></td>
+                                </tr>
+                            <?php } ?>
+                            <tr class="fw-bold text-right">
+                                <td colspan="6">Total:</td>
+                                <td>Bs. <?= $products_total ?></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="col-12 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
+            <h2 class="col-12 h2">
+                Métodos de pago
+            </h2>
+
+            <div class="row col-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr class="text-center">
+                                <th>Método</th>
+                                <th>Moneda</th>
+                                <th>Banco receptor</th>
+                                <th>Punto de venta</th>
+                                <th>Monto</th>
+                                <th>Tasa</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $payments_total = 0; ?>
+                            <?php foreach($payment_methods as $method) { ?>
+                                <?php 
+                                    $total = floatval($method['price']) * $coinValues[$method['coin']]; 
+                                    $payments_total += $total; 
+                                ?>
+
+                                <tr class="text-center">
+                                    <td><?= $method['payment_method'] ?></td>
+                                    <td><?= $method['coin'] ?></td>
+                                    <td>
+                                        <?php if($method['bank'] === null) { ?>
+                                            <i class="fa fa-close text-danger"></i>
+                                        <?php } else { ?>
+                                            <?= $method['bank'] ?>
+                                        <?php } ?>
+                                    </td>
+                                    <td>
+                                        <?php if($method['sale_point'] === null) { ?>
+                                            <i class="fa fa-close text-danger"></i>
+                                        <?php } else { ?>
+                                            <?= $method['sale_point'] ?>
+                                        <?php } ?>
+                                    </td>
+                                    <td class="text-right"><?= $method['price'] ?></td>
+                                    <td class="text-right"><?= $coinValues[$method['coin']] ?></td>
+                                    <td class="text-right">Bs. <?= $total ?></td>
+                                </tr>
+                            <?php } ?>
+                            <tr class="fw-bold text-right">
+                                <td colspan="6">Total:</td>
+                                <td>Bs. <?= $payments_total ?></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </section>
     </div>
+
+    <?php if(intval($target_invoice['active']) === 0) { ?>
+        <div class="row col-12 justify-content-center mt-5">
+            <button class="btn btn-danger" onclick="ConfirmCancelInvoice()">
+                Anular factura
+            </button>
+        </div>
+    <?php } ?>
 </div>
+
+<script>
+    function ConfirmCancelInvoice(){
+        var confirm = ForceUserToConfirmWritting('ANULAR FACTURA <?= $target_invoice['invoice_number'] ?>')
+        if(confirm)
+            window.location.href = "<?= $base_url ?>/controllers/cancel_invoice.php?id=<?= $target_invoice['id'] ?>";
+    }
+</script>
 
 <?php include '../common/footer.php'; ?>

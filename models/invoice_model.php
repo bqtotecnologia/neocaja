@@ -13,6 +13,7 @@ class InvoiceModel extends SQLModel
         invoices.active,
         invoices.reason,
         invoices.observation,
+        invoices.rate_date,
         CONCAT(accounts.names, ' ', accounts.surnames) as account_fullname,
         accounts.cedula,
         accounts.id as account_id
@@ -193,7 +194,7 @@ class InvoiceModel extends SQLModel
         coins.name as coin,
         banks.name as bank,
         payment_method_types.name as payment_method,
-        sale_points.code
+        sale_points.code as sale_point
         FROM
         invoice_payment_method ipm
         INNER JOIN coin_history ON coin_history.id = ipm.coin
@@ -203,11 +204,28 @@ class InvoiceModel extends SQLModel
         LEFT JOIN sale_points ON sale_points.id = ipm.sale_point
         WHERE
         ipm.invoice = $id";
+        
         return parent::GetRows($sql);
     }
 
     public function GetConceptsOfInvoice($id){
-        return [];
+        $sql = "SELECT
+        products.name as product,
+        concepts.price,
+        concepts.month,
+        concepts.complete
+        FROM
+        concepts
+        INNER JOIN product_history ON product_history.id = concepts.product
+        INNER JOIN products ON products.id = product_history.product
+        WHERE
+        concepts.invoice = $id";
+
+        return parent::GetRows($sql);
+    }
+
+    public function AnullInvoice($id){
+        return parent::DoQuery("UPDATE invoices SET active = 0 WHERE id = $id");
     }
 
     /**

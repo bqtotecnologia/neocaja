@@ -86,3 +86,10 @@ function ExportToPDF(){
     }
     return result
   }
+
+  function ForceUserToConfirmWritting(confirmText){
+      var message = 'Para llevar a cabo la acción, se requiere que escriba exactamente el siguiente texto "' + confirmText + '"'
+      var result = prompt(message)
+
+      return result === confirmText
+  }

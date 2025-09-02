@@ -58,13 +58,15 @@ class CoinModel extends SQLModel
             coins
             INNER JOIN coin_history ON coin_history.coin = coins.id
             WHERE
-            coin_history.created_at = '$date' AND
+            DATE(coin_history.created_at) = '$date' AND
             coins.id = $id";
 
         return parent::GetRow($sql);
     }
 
     public function GetCoinValuesOfDate($date){
+        $coins = $this->GetActiveCoins();
+
         $sql = "SELECT 
         coins.name,
         coin_history.price
@@ -76,7 +78,23 @@ class CoinModel extends SQLModel
         GROUP BY
         coins.id";
 
-        return parent::GetRows($sql);
+        $coin_values = parent::GetRows($sql);
+        if($coin_values === false)
+            return false;
+
+        $ordered_coins = [];
+        foreach($coins as $coin){
+            if($coin['name'] === 'Bolívar')
+                $ordered_coins[$coin['name']] = 1;
+            else
+                $ordered_coins[$coin['name']] = 0;
+        }
+
+        foreach($coin_values as $coin){
+            $ordered_coins[$coin['name']] = floatval($coin['price']);
+        }
+
+        return $ordered_coins;
     }
 
     /**

@@ -6,10 +6,9 @@ class BankModel extends SQLModel
 {    
     public function CreateBank(array $data){
         $name = $data['name'];
-        $code = $data['code'];
         $active = $data['active'];
 
-        return parent::DoQuery("INSERT INTO banks (code, name, active) VALUES ('$code', '$name', $active)");
+        return parent::DoQuery("INSERT INTO banks (name, active) VALUES ('$name', $active)");
     }
 
     public function GetAllbanks(){
@@ -40,16 +39,15 @@ class BankModel extends SQLModel
         return parent::GetRow("SELECT * FROM banks WHERE id = '$id'"); 
     }
 
-    public function GetBankByCode(string $code){
-        return parent::GetRow("SELECT * FROM banks WHERE code = '$code'"); 
-    }    
+    public function GetBankByName(string $name){
+        return parent::GetRow("SELECT * FROM banks WHERE name = '$name'"); 
+    }
 
     public function UpdateBank(string $id, array $data){
         $name = $data['name'];
-        $code = $data['code'];
         $active = $data['active'];
 
-        $sql = "UPDATE banks SET name = '$name', code = '$code', active = $active WHERE id = $id";
+        $sql = "UPDATE banks SET name = '$name', active = $active WHERE id = $id";
         return parent::DoQuery($sql);
     }
 }

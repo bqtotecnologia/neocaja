@@ -165,6 +165,11 @@ if($error === ''){
 }
 
 if($error === ''){
+    if(count($concepts) === 0)
+        $error = 'Se debe escoger al menos un concepto';
+}
+
+if($error === ''){
     include_once '../models/coin_model.php';
     include_once '../models/bank_model.php';
     include_once '../models/sale_point_model.php';
@@ -236,6 +241,11 @@ if($error === ''){
 }
 
 if($error === ''){
+    if(count($payment_methods) === 0)
+        $error = 'Se debe escoger al menos un método de pago';
+}
+
+if($error === ''){
     // Agregamos los conceptos de la factura
     foreach($concepts as $concept){
         $created = $invoice_model->AddConceptToInvoice($concept, strval($target_invoice['id']));
@@ -271,22 +281,6 @@ else{
         }
     }
 }
-
-
-/*
-echo 'Error: ' . $error;
-echo '<br><br>';
-foreach($_POST as $key => $value){
-    echo '<strong>';
-    echo $key;
-    echo '</strong>';
-    echo ' => ';
-    var_dump($value);
-    echo '<br>';
-}
-
-exit;
-*/
 
 header('Location: ' . $redirect);
 exit;

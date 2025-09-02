@@ -20,13 +20,6 @@ $fields_config = [
         'type' => 'string',
         'suspicious' => true,
     ],
-    'code' => [
-        'min' => 4,
-        'max' => 4,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
 ];
 
 $result = Validator::ValidatePOSTFields($fields_config);
@@ -46,17 +39,12 @@ if($error === ''){
         if($target_bank === false)
             $error = 'Banco no encontrado';
     }
-    else{
-        $target_bank = $bank_model->GetBankByCode($cleanData['code']);
-        if($target_bank !== false)
-            $error = 'El código del banco está repetido';
-    }   
 }
 
 if($error === ''){
     if($edit){
-        if($target_bank['id'] !== $cleanData['id'] && $target_bank['code'] === $cleanData['code'])
-            $error = 'El código ingresado ya está registrado';
+        if($target_bank['id'] !== $cleanData['id'] && $target_bank['name'] === $cleanData['name'])
+            $error = 'El nombre ingresado ya está registrado';
     }
 }  
 
@@ -81,7 +69,6 @@ if($error === ''){
     if($edit){        
         $message = 'Banco actualizado correctamente';
 
-        $codeChanged = $cleanData['code'] !== $target_bank['code'];
         $activeChanged = $cleanData['active'] !== $target_bank['active'];
         $nameChanged = $cleanData['name'] !== $target_bank['name'];
 
@@ -91,13 +78,11 @@ if($error === ''){
 
         if($activeChanged)
             $action .= '. Al estado activo ' . ($cleanData['active'] === '1' ? 'Si' : 'No');
-
-        if($codeChanged)
-            $action .= '. Al codigo ' . $cleanData['code'];
     }
     else{
+        $created = $bank_model->GetBankByName($cleanData['name']);
         $message = 'Banco registrado correctamente';
-        $action = 'Creo el banco ' . $cleanData['name'] . ' con el codigo ' . $cleanData['code'];
+        $action = 'Creo el banco ' . $cleanData['name'];
     }
     $bank_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
 }

@@ -71,9 +71,12 @@ $formBuilder = new FormBuilder(
     </div>
 
     <div class="col-12 row m-0 p-0 justify-content-center mt-5">
-        <h4 class="text-danger">
+        <h4 class="text-danger text-center col-12">
             Si la tasa ya existe en la fecha dada se actualizará, sino, se creará la tasa de ese día.
         </h4>
+        <h5 class="text-center col-12">
+            <a href="https://www.bcv.org.ve/" target="_blank">Página del banco central</a>
+        </h5>
     </div>
     
     <div class="col-12 justify-content-center px-5 mt-4">            

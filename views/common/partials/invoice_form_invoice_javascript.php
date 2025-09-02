@@ -254,9 +254,8 @@
             total += price
         }
 
-        console.log(usdRate)
         productsTotal.innerHTML = total + '$'
-        productsTotalBs.innerHTML = 'Bs. ' + (total * parseFloat(usdRate))
+        productsTotalBs.innerHTML = 'Bs. ' + (total * parseFloat(usdRate)).toFixed(4)
     }
 
     function BuildProductRow(){
