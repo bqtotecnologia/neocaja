@@ -9,6 +9,7 @@ class AccountModel extends SQLModel
         accounts.surnames,
         accounts.cedula,
         accounts.address,
+        accounts.phone,
         accounts.is_student,
         accounts.scholarship_coverage,
         accounts.created_at,
@@ -30,15 +31,16 @@ class AccountModel extends SQLModel
         $surnames = $data['surnames'];
         $cedula = $data['cedula'];
         $address = $data['address'];
+        $phone = $data['phone'];
         $is_student = $data['is_student'];
         $scholarship = $data['scholarship'];
         $scholarship_coverage = $data['scholarship_coverage'];
         $company = $data['company'];
 
         $sql = "INSERT INTO accounts 
-            (names, surnames, cedula, address, is_student, scholarship, scholarship_coverage, company)
+            (names, surnames, cedula, address, phone, is_student, scholarship, scholarship_coverage, company)
             VALUES
-            ('$names', '$surnames', '$cedula', '$address', $is_student, $scholarship, $scholarship_coverage, $company)";
+            ('$names', '$surnames', '$cedula', '$address', '$phone', $is_student, $scholarship, $scholarship_coverage, $company)";
 
         $created = parent::DoQuery($sql);
         if($created === true)
@@ -74,6 +76,7 @@ class AccountModel extends SQLModel
         $surnames = $data['surnames'];
         $cedula = $data['cedula'];
         $address = $data['address'];
+        $phone = $data['phone'];
         $is_student = $data['is_student'];
         $scholarship = $data['scholarship'];
         $scholarship_coverage = $data['scholarship_coverage'];
@@ -84,6 +87,7 @@ class AccountModel extends SQLModel
             names = '$names',
             surnames = '$surnames',
             address = '$address',
+            phone = '$phone',
             is_student = $is_student,
             scholarship = $scholarship,
             scholarship_coverage = $scholarship_coverage,

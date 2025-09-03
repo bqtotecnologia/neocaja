@@ -92,6 +92,18 @@ $fields = [
         'value' => $edit ? $target_account['surnames'] : '',
     ],
     [
+        'name' => 'phone',
+        'display' => 'Teléfono',
+        'placeholder' => 'Teléfono',
+        'id' => 'phone',
+        'type' => 'text',
+        'size' => 8,
+        'min' => 11,
+        'max' => 11,
+        'required' => true,
+        'value' => $edit ? $target_account['phone'] : '',
+    ],
+    [
         'name' => 'address',
         'display' => 'Dirección',
         'placeholder' => 'Dirección del cliente',
