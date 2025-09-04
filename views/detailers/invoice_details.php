@@ -103,15 +103,6 @@ include '../../views/common/header.php';
 
                 <div class="row col-10 justify-content-start align-items-middle">
                     <label class="fw-bold mx-2">
-                        Razón:
-                    </label>
-                    <span class="">
-                        <?= $target_invoice['reason'] ?>
-                    </span>
-                </div>
-
-                <div class="row col-10 justify-content-start align-items-middle">
-                    <label class="fw-bold mx-2">
                         Observación:
                     </label>
                     <span class="">
@@ -252,6 +243,7 @@ include '../../views/common/header.php';
                                 <th>Moneda</th>
                                 <th>Banco receptor</th>
                                 <th>Punto de venta</th>
+                                <th>Número de Documento</th>
                                 <th>Monto</th>
                                 <th>Tasa</th>
                                 <th>Total</th>
@@ -282,13 +274,20 @@ include '../../views/common/header.php';
                                             <?= $method['sale_point'] ?>
                                         <?php } ?>
                                     </td>
+                                    <td>
+                                        <?php if($method['document_number'] === null) { ?>
+                                            <i class="fa fa-close text-danger"></i>
+                                        <?php } else { ?>
+                                            <?= $method['document_number'] ?>
+                                        <?php } ?>
+                                    </td>
                                     <td class="text-right"><?= $method['price'] ?></td>
                                     <td class="text-right"><?= $coinValues[$method['coin']] ?></td>
                                     <td class="text-right">Bs. <?= $total ?></td>
                                 </tr>
                             <?php } ?>
                             <tr class="fw-bold text-right">
-                                <td colspan="6">Total:</td>
+                                <td colspan="7">Total:</td>
                                 <td>Bs. <?= $payments_total ?></td>
                             </tr>
                         </tbody>

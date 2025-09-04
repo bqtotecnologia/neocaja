@@ -426,10 +426,6 @@
         const formattedDate = `${day}/${month}/${year}`;
         dateCol.innerHTML = formattedDate
 
-        var conceptCol = document.createElement('td')
-        conceptCol.classList.add('p-1')
-        conceptCol.innerHTML = invoice.reason
-
         var priceCol = document.createElement('td')
         priceCol.classList.add('p-1')
         priceCol.innerHTML = parseFloat(invoice.total).toFixed(2)
@@ -448,7 +444,6 @@
         row.classList.add('text-center')
         row.classList.add('fs-5')        
         row.appendChild(dateCol)
-        row.appendChild(conceptCol)
         row.appendChild(priceCol)
         row.appendChild(seeCol)
         

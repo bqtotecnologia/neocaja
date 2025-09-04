@@ -7,7 +7,7 @@
             <th class="text-center">Cliente</th>
             <th class="text-center">Cédula</th>
             <th class="text-center">Fecha de creación</th>
-            <th class="text-center">Razón</th>
+            <th class="text-center">Observación</th>
             <th class="text-center">Acción</th>
         </tr>
     </thead>
@@ -24,7 +24,7 @@
                 <td class="align-middle text-center"><?= $invoice['account_fullname'] ?></td>
                 <td class="align-middle text-center"><?= $invoice['cedula'] ?></td>
                 <td class="align-middle text-center"><?= $invoice['created_at'] ?></td>
-                <td class="align-middle text-center"><?= $invoice['reason'] ?></td>
+                <td class="align-middle text-center"><?= $invoice['observation'] ?></td>
                 <td class="">                    
                     <div class="row justify-content-around">
                         <div class="m-0 p-2 mx-2">

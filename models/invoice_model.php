@@ -11,7 +11,6 @@ class InvoiceModel extends SQLModel
         invoices.created_at,
         invoices.period,
         invoices.active,
-        invoices.reason,
         invoices.observation,
         invoices.rate_date,
         CONCAT(accounts.names, ' ', accounts.surnames) as account_fullname,
@@ -27,7 +26,6 @@ class InvoiceModel extends SQLModel
         $control_number = $data['control_number'];
         $rate_date = $data['rate-date']->format('Y-m-d');
         $account = $data['account'];
-        $reason = $data['reason'];
         $observation = $data['observation'];
 
         $sql = "INSERT INTO invoices
@@ -36,7 +34,6 @@ class InvoiceModel extends SQLModel
         control_number,
         rate_date,
         account,
-        reason,
         observation,
         period
         )
@@ -46,7 +43,6 @@ class InvoiceModel extends SQLModel
         $control_number,
         '$rate_date',
         $account,
-        $reason,
         $observation,
         $period_id
         )";
@@ -90,8 +86,10 @@ class InvoiceModel extends SQLModel
         $method = $payment_method['method'];
         $coin = $payment_method['coin'];
         $salepoint = $payment_method['salepoint'];
+        $document_number = $payment_method['document_number'];
         $bank = $payment_method['bank'];
         $price = $payment_method['price'];
+        $igtf = $payment_method['igtf'];
 
         $sql = "INSERT INTO invoice_payment_method
         (
@@ -100,7 +98,9 @@ class InvoiceModel extends SQLModel
         price,
         coin,
         bank,
-        sale_point
+        sale_point,
+        document_number,
+        igtf
         )
         VALUES
         (
@@ -109,8 +109,12 @@ class InvoiceModel extends SQLModel
         $price,
         $coin,
         $bank,
-        $salepoint
+        $salepoint,
+        $document_number,
+        $igtf
         )";
+
+        var_dump($sql);
 
         return parent::DoQuery($sql);
     }
@@ -164,7 +168,6 @@ class InvoiceModel extends SQLModel
         $sql = "SELECT 
             inv.id,
             inv.created_at,
-            inv.reason,
             SUM(ipm.total) as total
             FROM
             invoices inv
@@ -194,6 +197,8 @@ class InvoiceModel extends SQLModel
         coins.name as coin,
         banks.name as bank,
         payment_method_types.name as payment_method,
+        ipm.document_number,
+        ipm.igtf,
         sale_points.code as sale_point
         FROM
         invoice_payment_method ipm

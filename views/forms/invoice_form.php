@@ -92,7 +92,7 @@ $latest = $invoice_model->GetLatestNumbers();
         <div 
         action="../../controllers/handle_invoice.php" 
         method="POST"
-        class="d-flex justify-content-center align-items-center flex-column x_panel confirm-form"
+        class="d-flex justify-content-center align-items-center flex-column  confirm-form"
         >
             <div class="col-12 text-center">
                 <h1 class="h1 text-black">Registrar nueva factura</h1>
@@ -165,7 +165,7 @@ $latest = $invoice_model->GetLatestNumbers();
                 </div>
             </div>
 
-            <div class="row col-12 m-0 p-0 justify-content-center align-items-start pt-2 border-top">
+            <div class="x_panel row col-12 m-0 p-0 justify-content-center align-items-start pt-2 my-2 border-top">
                 <div class="col-12 d-flex align-items-center">
                     <h2 class="h2">
                         Productos
@@ -177,14 +177,14 @@ $latest = $invoice_model->GetLatestNumbers();
                 <div class="col-12">
                     <table class="col-12 table table-bordered">
                         <thead class="text-center">
-                            <tr>
-                                <th class="col-3 align-middle">Producto</th>
-                                <th class="col-2 align-middle">Mes</th>
-                                <th class="align-middle">Completo</th>
-                                <th class="align-middle">Monto base ($)</th>
-                                <th class="align-middle">Descuento de beca</th>
-                                <th class="align-middle">Total</th>
-                                <th class="align-middle">Borrar</th>
+                            <tr class="bg-light">
+                                <th class="p-1 col-3 align-middle">Producto</th>
+                                <th class="p-1 col-2 align-middle">Mes</th>
+                                <th class="p-1 align-middle">Completo</th>
+                                <th class="p-1 align-middle">Monto base ($)</th>
+                                <th class="p-1 align-middle">Descuento de beca</th>
+                                <th class="p-1 align-middle">Total</th>
+                                <th class="p-1 align-middle">Borrar</th>
                             </tr>
                         </thead>
                         <tbody id="product-table">
@@ -202,7 +202,7 @@ $latest = $invoice_model->GetLatestNumbers();
             </div>
 
 
-            <div class="row col-12 m-0 p-0 justify-content-center align-items-start pt-2 border-top">
+            <div class="x_panel row col-12 m-0 p-0 justify-content-center align-items-start pt-2 my-2 border-top">
                 <div class="col-12 d-flex align-items-center">
                     <h2 class="h2">
                         Métodos de pago
@@ -215,13 +215,14 @@ $latest = $invoice_model->GetLatestNumbers();
                     <table class="col-12 table table-bordered">
                         <thead class="text-center">
                             <tr class="bg-light">
-                                <th class="col-2 align-middle">Método</th>
-                                <th class="col-1 align-middle px-5">Moneda</th>
-                                <th class="col-3 align-middle">Banco</th>
-                                <th class="col-1 align-middle px-5">Punto de venta</th>
-                                <th class="align-middle">Monto</th>
-                                <th class="align-middle">Total</th>
-                                <th class="align-middle">Borrar</th>
+                                <th class="p-1 align-middle" style="width:11%">Método</th>
+                                <th class="p-1 align-middle px-5" style="width:10%">Moneda</th>
+                                <th class="p-1 align-middle" style="width:17%">Banco</th>
+                                <th class="p-1 align-middle px-5" style="width:13%">Pto de venta</th>
+                                <th class="p-1 align-middle px-5" style="width:13%">Nº Doc.</th>
+                                <th class="p-1 align-middle" style="width:12%">Monto</th>
+                                <th class="p-1 align-middle" style="width:12%">Total</th>
+                                <th class="p-1 align-middle" style="width:15%">Borrar</th>
                             </tr>
                         </thead>
                         <tbody id="payment-table">
@@ -234,21 +235,89 @@ $latest = $invoice_model->GetLatestNumbers();
                 </div>
             </div>
 
+            <div class="x_panel row col-12 m-0 p-0 justify-content-center align-items-start pt-2 my-2 border-top d-none" id="igtf-table">
+                <div class="col-12 d-flex align-items-center">
+                    <h2 class="h2">
+                        IGTF
+                    </h2>
+                </div>
+                <div class="col-12">
+                    <table class="col-12 table table-bordered">
+                        <thead class="text-center">
+                            <tr class="bg-light">
+                                <th class="p-1 align-middle" style="width:11%">Método</th>
+                                <th class="p-1 align-middle px-5" style="width:10%">Moneda</th>
+                                <th class="p-1 align-middle" style="width:17%">Banco</th>
+                                <th class="p-1 align-middle px-5" style="width:13%">Pto de venta</th>
+                                <th class="p-1 align-middle px-5" style="width:13%">Nº Doc.</th>
+                                <th class="p-1 align-middle" style="width:12%">Monto</th>
+                                <th class="p-1 align-middle" style="width:12%">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex justify-content-center m-0">
+                                        <select class="select2" name="igtf-method" id="igtf-method">
+                                            <option value=""></option>
+                                            <?php foreach($payment_methods as $payment_method) { ?>
+                                                <option value="<?= $payment_method['id'] ?>"><?= $payment_method['name'] ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center m-0">
+                                        <select class="select2" name="igtf-coin" id="igtf-coin">
+                                            <option value=""></option>
+                                            <?php foreach($coins as $coin) { ?>
+                                                <option value="<?= $coin['id'] ?>"><?= $coin['name'] ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center m-0">
+                                        <select class="select2" name="igtf-bank" id="igtf-bank">
+                                            <option value=""></option>
+                                            <?php foreach($banks as $bank) { ?>
+                                                <option value="<?= $bank['id'] ?>"><?= $bank['name'] ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center m-0">
+                                        <select class="select2" name="igtf-salepoint" id="igtf-salepoint">
+                                            <option value=""></option>
+                                            <?php foreach($sale_points as $sale_point) { ?>
+                                                <option value="<?= $sale_point['id'] ?>"><?= $sale_point['code'] ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <input class="col-12 form-control" type="text" name="igtf-document" id="igtf-document">
+                                </td>
+
+                                <td>
+                                    <input class="col-12 form-control" type="text" name="igtf-price" id="igtf-price" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46)" >
+                                </td>
+
+                                <td>
+                                    <input class="col-12 form-control" type="text" id="igtf-total" disabled>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
 
             <div class="row col-12 m-0 p-0 justify-content-around align-items-start pt-4 border-top">
-                <div class="row col-6 m-0 p-3 border-right">
-                    <label class="h6 m-0 fw-bold px-2" for="reason">Motivo</label>
-                    <textarea 
-                    class="col-12 form-control" 
-                    rows="3" 
-                    maxlength="255" 
-                    name="reason" 
-                    id="reason"
-                    required
-                    ></textarea>
-                </div>
-
-                <div class="row col-6 m-0 p-3 border-left">
+                <div class="row col-6 m-0 p-3">
                     <label class="h6 m-0 fw-bold px-2" for="observation">Observación</label>
                     <textarea 
                     class="col-12 form-control" 
@@ -320,4 +389,4 @@ $latest = $invoice_model->GetLatestNumbers();
 
 <?php include_once '../common/partials/invoice_form_invoice_javascript.php'; ?>
 <?php include_once '../common/partials/invoice_form_payments_javascript.php'; ?>
-
+<?php include_once '../common/partials/invoice_form_igtf_javascript.php'; ?>

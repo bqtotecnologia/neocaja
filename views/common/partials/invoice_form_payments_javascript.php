@@ -72,7 +72,24 @@
         UpdatePaymentTotal()
     }
 
-    function CoinSelecting(oldId, e){     
+    function CoinSelecting(oldId, e){   
+        var coinSelect = document.getElementById('payment-coin-' + String(oldId))
+        for(let i = 0; i < coinSelect.childNodes.length; i++){
+            var node = coinSelect.childNodes[i]
+            if(node.selected){
+                coinName = node.innerHTML
+            }
+        }
+
+        var igtf_table = document.getElementById('igtf-table')
+        if(coinName !== 'Bolívar' && coinName !== '&nbsp;'){
+            igtf_table.classList.remove('d-none')
+        }
+        else{
+            igtf_table.classList.add('d-none')
+        }
+
+
         UpdatePaymentPrice(oldId)
         UpdatePaymentTotal()
     }
@@ -128,6 +145,7 @@
         var coinCol = GetNewCoinColumn(paymentId)
         var bankCol = GetNewBankColumn(paymentId)
         var salePointCol = GetNewSalePointColumn(paymentId)
+        var documentNumberCol = GetNewDocumentNumberColumn(paymentId)
         var priceCol = GetNewPaymentPriceColumn(paymentId)
         var totalCol = GetNewPaymentTotalColumn(paymentId)
         var eraseCol = GetNewErasePaymentButtonColumn(paymentId)      
@@ -139,6 +157,7 @@
         row.appendChild(coinCol)
         row.appendChild(bankCol)
         row.appendChild(salePointCol)
+        row.appendChild(documentNumberCol)
         row.appendChild(priceCol)
         row.appendChild(totalCol)
         row.appendChild(eraseCol)
@@ -252,6 +271,19 @@
         salePointCol.appendChild(salePointSelect)
         div.appendChild(salePointSelect)
         return salePointCol
+    }
+
+    function GetNewDocumentNumberColumn(paymentId){
+        var documentNumberCol = document.createElement('td')
+        var documentNumberInput = document.createElement('input')
+        var name = "payment-document-" + paymentId
+        documentNumberInput.type = 'text'
+        documentNumberInput.id = name
+        documentNumberInput.name = name
+        documentNumberInput.classList.add('form-control')
+        documentNumberCol.appendChild(documentNumberInput)
+        documentNumberInput.addEventListener('change', function(e){ UpdatePaymentPrice(paymentId); UpdatePaymentTotal(); })
+        return documentNumberCol
     }
 
     function GetNewPaymentPriceColumn(paymentId){

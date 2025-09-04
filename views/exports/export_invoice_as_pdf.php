@@ -50,72 +50,72 @@ include_once '../../vendors/fpdf/fpdf.php';
 $pdf = new FPDF();
 
 $pdf->AddPage();
-$pdf->SetFont('Times', '', 11);
+$pdf->SetFont('Times', '', 9);
 
 // Invoice header
 $pdf->SetXY(8, $upper_margin);
-$pdf->Cell(25, 6, 'Lugar', 1, 0, 'C');
-$pdf->Cell(25, 6, 'Fecha', 1, 0, 'C');
-$pdf->SetXY(8, $upper_margin + 6);
-$pdf->Cell(25, 6, $self_data['city'], 1, 0, 'C');
-$pdf->Cell(25, 6, date('d/m/Y'), 1, 0, 'C');
-$pdf->Cell(105, 6, MyDecode($self_data['fullname']), 0, 0, 'C');
-$pdf->SetXY(180, $upper_margin);
-$pdf->Cell(25, 6, '"Contribuyente Formal"', 0, 0, 'C');
-$pdf->SetXY(180, $upper_margin + 6);
-$pdf->SetFont('Times', 'B', 11);
-$pdf->Cell(25, 6, MyDecode('FACTURA Nº: ' . $target_invoice['invoice_number']), 0, 0, 'C');
+$pdf->Cell(22, 4, 'Lugar', 1, 0, 'C');
+$pdf->Cell(20, 4, 'Fecha', 1, 0, 'C');
+$pdf->SetXY(8, $upper_margin + 4);
+$pdf->Cell(22, 4, $self_data['city'], 1, 0, 'C');
+$pdf->Cell(20, 4, date('d/m/Y'), 1, 0, 'C');
+$pdf->Cell(83, 4, MyDecode($self_data['fullname']), 0, 0, 'C');
+$pdf->SetXY(150, $upper_margin);
+$pdf->Cell(22, 4, '"Contribuyente Formal"', 0, 0, 'C');
+$pdf->SetXY(150, $upper_margin + 4);
+$pdf->SetFont('Times', 'B', 9);
+$pdf->Cell(22, 4, MyDecode('FACTURA Nº: ' . $target_invoice['invoice_number']), 0, 0, 'C');
 
 // Name and Cedula/Rif
-$pdf->SetXY(8, $upper_margin + 14);
-$pdf->Cell(185, 12, '', 1, 0, 'T');
-$pdf->SetXY(8, $upper_margin + 14);
-$pdf->Cell(185, 6, MyDecode('Nombre o razón social:'), 0, 0, 'L');
-$pdf->Cell(94, 6, 'C.I/RIF:', 1, 0, 'C');
-$pdf->SetXY(193, $upper_margin + 20);
-$pdf->SetFont('Times', '', 11);
-$pdf->Cell(94, 6, $target_account['cedula'], 1, 0, 'C');
-$pdf->SetXY(8, $upper_margin + 20);
-$pdf->Cell(185, 6, MyDecode($target_account['names'] . ' ' . $target_account['surnames']), 0, 0, 'L');
+$pdf->SetXY(8, $upper_margin + 9);
+$pdf->Cell(142, 8, '', 1, 0, 'T');
+$pdf->SetXY(8, $upper_margin + 9);
+$pdf->Cell(142, 4, MyDecode('Nombre o razón social:'), 0, 0, 'L');
+$pdf->Cell(52, 4, 'C.I/RIF:', 1, 0, 'C');
+$pdf->SetXY(150, $upper_margin + 13);
+$pdf->SetFont('Times', '', 9);
+$pdf->Cell(52, 4, $target_account['cedula'], 1, 0, 'C');
+$pdf->SetXY(8, $upper_margin + 12);
+$pdf->Cell(135, 6, MyDecode($target_account['names'] . ' ' . $target_account['surnames']), 0, 0, 'L');
 
 // Address, phone and contact people fields
-$pdf->SetXY(8, $upper_margin + 26);
-$pdf->Cell(185, 16, '', 1, 0);
-$pdf->SetXY(8, $upper_margin + 26);
-$pdf->SetFont('Times', 'B', 11);
-$pdf->Cell(185, 6, 'Domicilio Fiscal', 0, 0, 'L');
-$pdf->Cell(47, 8, MyDecode('Teléfono:'), 1, 0, 'C');
-$pdf->SetFont('Times', '', 11);
-$pdf->Cell(47, 8, $target_account['phone'], 1, 0, 'C');
-$pdf->SetFont('Times', 'B', 11);
-$pdf->SetXY(193, $upper_margin + 34);
-$pdf->Cell(47, 8, MyDecode('Persona contacto:'), 1, 0, 'C');
-$pdf->SetFont('Times', '', 11);
-$pdf->Cell(47, 8, '', 1, 0, 'C');
-$pdf->SetXY(8, $upper_margin + 32);
-$pdf->Cell(185, 5, $target_account['address'], 0, 0, 'L');
+$pdf->SetXY(8, $upper_margin + 17);
+$pdf->Cell(142, 12, '', 1, 0);
+$pdf->SetXY(8, $upper_margin + 17);
+$pdf->SetFont('Times', 'B', 9);
+$pdf->Cell(142, 4, 'Domicilio Fiscal', 0, 0, 'L');
+$pdf->Cell(26, 5, MyDecode('Teléfono:'), 1, 0, 'C');
+$pdf->SetFont('Times', '', 9);
+$pdf->Cell(26, 5, $target_account['phone'], 1, 0, 'C');
+$pdf->SetFont('Times', 'B', 9);
+$pdf->SetXY(150, $upper_margin + 22);
+$pdf->Cell(26, 7, MyDecode('Persona contacto:'), 1, 0, 'C');
+$pdf->SetFont('Times', '', 9);
+$pdf->Cell(26, 7, '', 1, 0, 'C');
+$pdf->SetXY(8, $upper_margin + 20);
+$pdf->Cell(142, 4, $target_account['address'], 0, 0, 'L');
 
 // Products and payment methods header
-$pdf->SetFont('Times', 'B', 11);
-$pdf->SetXY(8, $upper_margin + 42);
-$pdf->Cell(170, 6, MyDecode('Concepto o descripción'), 1, 0, 'L');
-$pdf->Cell(15, 6, 'Cant.', 1, 0, 'L');
-$pdf->Cell(47, 6, 'Precio Unid Bs.', 1, 0, 'C');
-$pdf->Cell(47, 6, 'Total Bs.', 1, 0, 'C');
+$pdf->SetFont('Times', 'B', 9);
+$pdf->SetXY(8, $upper_margin + 29);
+$pdf->Cell(142, 4, MyDecode('Concepto o descripción'), 1, 0, 'L');
+$pdf->Cell(10, 4, 'Cant.', 1, 0, 'L');
+$pdf->Cell(24, 4, 'Precio Unid Bs.', 1, 0, 'C');
+$pdf->Cell(18, 4, 'Total Bs.', 1, 0, 'C');
 
 // Products and payment methods empty box
-$pdf->SetXY(8, $upper_margin + 48);
-$pdf->Cell(170, 85, '', 1, 0, 'C');
-$pdf->Cell(15, 85, '', 1, 0, 'C');
-$pdf->Cell(47, 85, '', 1, 0, 'C');
-$pdf->Cell(47, 85, '', 1, 0, 'C');
+$pdf->SetXY(8, $upper_margin + 33);
+$pdf->Cell(142, 46, '', 1, 0, 'C');
+$pdf->Cell(10, 46, '', 1, 0, 'C');
+$pdf->Cell(24, 46, '', 1, 0, 'C');
+$pdf->Cell(18, 46, '', 1, 0, 'C');
 
 // Observation box
-$pdf->SetXY(8, $upper_margin + 133);
-$pdf->Cell(279, 6, MyDecode('Observación:'), 1, 0, 'L');
-$pdf->SetFont('Times', '', 11);
-$pdf->SetXY(15, $upper_margin + 133);
-$pdf->Cell(279, 6, MyDecode($target_invoice['observation']), 0, 0, 'L');
+$pdf->SetXY(8, $upper_margin + 79);
+$pdf->Cell(194, 6, MyDecode('Observación:'), 1, 0, 'L');
+$pdf->SetFont('Times', '', 9);
+$pdf->SetXY(15, $upper_margin + 79);
+$pdf->Cell(194, 6, MyDecode($target_invoice['observation']), 0, 0, 'L');
 
 // Listing products
 $baseY = 91;
@@ -129,43 +129,44 @@ foreach($concepts as $concept){
         $igtf = $concept['price'];
     }
 
-    $pdf->SetXY(9, $upper_margin + 48 + $rowPosition);
-    $pdf->Cell(169, 6, $concept['product'], 0, 0, 'L');
-    $pdf->Cell(15, 6, '1', 0, 0, 'C');
+    $pdf->SetXY(9, $upper_margin + 32 + $rowPosition);
+    $pdf->Cell(142, 4, $concept['product'], 0, 0, 'L');
+    $pdf->Cell(8, 4, '1', 0, 0, 'C');
     $productsTotal += $productPrice;
-    $pdf->Cell(47, 6, $productPrice, 0, 0, 'R');
-    $pdf->Cell(47, 6, $productPrice, 0, 0, 'R');
-    $rowPosition += 6;
+    $pdf->Cell(24, 4, $productPrice, 0, 0, 'R');
+    $pdf->Cell(18, 4, $productPrice, 0, 0, 'R');
+    $rowPosition += 4;
 }
 
 // Payment methods header
 $rowPosition += 10;
-$pdf->SetFont('Times', 'B', 11);
-$pdf->SetXY(10, $upper_margin + 48 + $rowPosition);
-$pdf->Cell(166, 6, MyDecode('Métodos de pago'), 'T', 0, 'L');
+$pdf->SetFont('Times', 'B', 9);
+$pdf->SetXY(10, $upper_margin + 32 + $rowPosition);
+$pdf->Cell(138, 6, MyDecode('Métodos de pago'), 'T', 0, 'L');
+
+$rowPosition += 5;
+$pdf->SetXY(10, $upper_margin + 32 + $rowPosition);
+$pdf->Cell(20, 4, 'Tipo', 0, 0, 'L');
+$pdf->Cell(18, 4, 'Moneda', 0, 0, 'L');
+$pdf->Cell(16, 4, 'Monto', 0, 0, 'L');
+$pdf->Cell(16, 4, 'Tasa', 0, 0, 'L');
+$pdf->Cell(36, 4, 'Banco', 0, 0, 'L');
+$pdf->Cell(16, 4, 'No. Doc.', 0, 0, 'L');
+$pdf->Cell(16, 4, 'Monto Bs.', 0, 0, 'L');
 
 $rowPosition += 6;
-$pdf->SetXY(10, $upper_margin + 48 + $rowPosition);
-$pdf->Cell(28, 6, 'Tipo', 0, 0, 'L');
-$pdf->Cell(25, 6, 'Moneda', 0, 0, 'L');
-$pdf->Cell(18, 6, 'Monto', 0, 0, 'L');
-$pdf->Cell(18, 6, 'Tasa', 0, 0, 'L');
-$pdf->Cell(38, 6, 'Banco', 0, 0, 'L');
-$pdf->Cell(18, 6, 'No. Doc.', 0, 0, 'L');
-$pdf->Cell(20, 6, 'Monto Bs.', 0, 0, 'L');
-$rowPosition += 6;
-$pdf->SetFont('Times', '', 11);
+$pdf->SetFont('Times', '', 9);
 // Listing the payment methods
 foreach($payment_methods as $payment_method){
-    $pdf->SetXY(10, $upper_margin + 48 + $rowPosition);
-    $pdf->Cell(28, 6, MyDecode($payment_method['payment_method']), 0, 0, 'L');
-    $pdf->Cell(25, 6, MyDecode($payment_method['coin']), 0, 0, 'L');
-    $pdf->Cell(18, 6, MyDecode($payment_method['price']), 0, 0, 'L');
-    $pdf->Cell(18, 6, MyDecode($coinValues[$payment_method['coin']]), 0, 0, 'L');
-    $pdf->Cell(38, 6, MyDecode($payment_method['bank']), 0, 0, 'L');
-    $pdf->Cell(18, 6, MyDecode('10NO188'), 0, 0, 'L');
-    $pdf->Cell(20, 6, MyDecode($payment_method['price'] * $coinValues[$payment_method['coin']]), 0, 0, 'L');
-    $rowPosition += 6;
+    $pdf->SetXY(10, $upper_margin + 30 + $rowPosition);
+    $pdf->Cell(20, 4, MyDecode($payment_method['payment_method']), 0, 0, 'L');
+    $pdf->Cell(18, 4, MyDecode($payment_method['coin']), 0, 0, 'L');
+    $pdf->Cell(16, 4, MyDecode($payment_method['price']), 0, 0, 'L');
+    $pdf->Cell(16, 4, MyDecode($coinValues[$payment_method['coin']]), 0, 0, 'L');
+    $pdf->Cell(36, 4, MyDecode($payment_method['bank']), 0, 0, 'L');
+    $pdf->Cell(16, 4, MyDecode($payment_method['document_number']), 0, 0, 'L');
+    $pdf->Cell(16, 4, MyDecode($payment_method['price'] * $coinValues[$payment_method['coin']]), 0, 0, 'L');
+    $rowPosition += 4;
 }
 
 // Listing other concepts
@@ -179,149 +180,17 @@ $other_concepts = [
     'Sub-total' => $productsTotal,    
 ];
 
-$box_limit = $upper_margin + 127;
+$box_limit = $upper_margin + 75;
 $other_concept_position = 0;
 foreach($other_concepts as $key => $value){
-    $pdf->SetFont('Times', 'B', 11);
-    $pdf->SetXY(193, $box_limit - $other_concept_position);
-    $pdf->Cell(47, 6, MyDecode($key . ':'), 0, 0, 'R');
-    $pdf->SetFont('Times', '', 11);
-    $pdf->Cell(47, 6, $value, 0, 0, 'R');
-    $other_concept_position += 6;
+    $pdf->SetFont('Times', 'B', 9);
+    $pdf->SetXY(160, $box_limit - $other_concept_position);
+    $pdf->Cell(24, 4, MyDecode($key), 0, 0, 'R');
+    $pdf->SetFont('Times', '', 9);
+    $pdf->Cell(18, 4, $value, 0, 0, 'R');
+    $other_concept_position += 4;
 }
-
-
-
-
-
-
 
 $pdf->Output();     
 
 exit;
-
-foreach($recibos as $recibo){
-    $weekly_corresponded_hours = $recibo['horas_semanales_presenciales'] + $recibo['horas_semanales_virtuales'];
-    $corresponded_hours = $weekly_corresponded_hours * 4;
-
-    $conceptos = $recibo_model->GetConceptosOfRecibo($recibo['recibo_id']);
-    $fist_name = explode(' ', $recibo['nombres'])[0];
-    $fist_lastname = explode(' ', $recibo['apellidos'])[0];
-    $fullname = $fist_name . ' ' . $fist_lastname;
-
-    $pdf->AddPage('O');
-    $pdf->Image('../images/iujo-transparent.png', 10, 10, 50);
-    
-    $pdf->SetFont('Times', 'B', 16);
-    
-    $pdf->SetXY(10, 28); $pdf->Cell(0, 0, $title, 0, 1, 'C');
-
-    $pdf->SetXY(10, 50); $pdf->Cell(0, 0, 'Beneficiario:', 0, 1);
-
-    $pdf->SetXY(110, 50); $pdf->Cell(0, 0, 'Desde:', 0, 1);
-    $pdf->SetXY(110, 57); $pdf->Cell(0, 0, 'Hasta:', 0, 1);
-
-    $pdf->SetXY(10, 71); $pdf->Cell(0, 0, 'Cedula:', 0, 1);
-    $pdf->SetXY(10, 78); $pdf->Cell(0, 0, 'Cargo:', 0, 1);
-    $pdf->SetXY(10, 85); $pdf->Cell(0, 0, 'Fecha de ingreso:', 0, 1);
-    
-    $pdf->SetXY(110, 71); $pdf->Cell(0, 0, Decode('Fecha de emisión:'), 200, 200);
-    $pdf->SetXY(110, 78); $pdf->Cell(0, 0, 'Horas mensuales:', 200, 200);
-
-    
-    if($recibo['tipo'] === 'Bono alimentario'){
-        $pdf->SetXY(110, 85); $pdf->Cell(0, 0, $recibo['is_teacher'] === '1' ? 'Valor hora:' : 'Valor dia:', 200, 200);
-        $daily_bono = round(($globals['Bono alimentario'] / 30), 2);
-        if($recibo['is_teacher']){
-            $value = $daily_bono / 10;
-        }
-        else{
-            $value = $daily_bono;
-        }
-        $pdf->SetFont('Times','', 16);
-        $pdf->SetXY(150, 85); $pdf->Cell(0, 0, $value, 0, 1);
-    }
-    
-
-    $pdf->SetFont('Times','', 16);
-    $pdf->SetXY(44, 50); $pdf->Cell(0, 0, Decode($fullname), 0, 1);
-
-    $pdf->SetXY(130, 50); $pdf->Cell(0, 0, date('d/m/Y', strtotime($generacion['fecha_inicio'])), 0, 1);
-    $pdf->SetXY(130, 57); $pdf->Cell(0, 0, date('d/m/Y', strtotime($generacion['fecha_fin'])), 0, 1);
-
-    $pdf->SetXY(31, 71); $pdf->Cell(0, 0, $recibo['cedula'], 10, 10);
-    $pdf->SetXY(32, 78); $pdf->Cell(0, 0, Decode($recibo['cargo']), 0, 1);
-    $pdf->SetXY(56, 85); $pdf->Cell(0, 0, date('d/m/Y', strtotime($recibo['fecha_ingreso'])), 0, 1);
-    
-    $pdf->SetXY(155, 71); $pdf->Cell(0, 0, date('d/m/Y'), 10, 10);
-    $pdf->SetXY(155, 78); $pdf->Cell(0, 0, $corresponded_hours, 10, 10);
-
-    
-    $asignaciones = $conceptos['asignaciones'];
-    $deducciones = $conceptos['deducciones'];
-    
-    $total_asignaciones = 0;
-    $total_deducciones = 0;
-    $asignaciones_count = count($asignaciones);
-    $deducciones_count = count($deducciones);
-
-    $bigger_row_number = abs($deducciones_count - $asignaciones_count);
-    
-    $widths = array(60, 25);
-    $pdf->SetXY(10, 105);
-
-    // Mostrando asignaciones
-    $pdf->SetFont('Times', 'B', 14);
-    $pdf->Cell(85, 7, 'Asignaciones', 1, 0, 'C');
-    $pdf->Ln();
-    $pdf->SetFont('Times', '', 12);
-    
-    foreach($asignaciones as $row)
-    {
-        $total_asignaciones += $row['monto'];
-        $pdf->Cell($widths[0], 6, $row['concepto'], 1, 0, 'C');
-        $pdf->Cell($widths[1], 6, $row['monto'], 1, 0, 'C');
-        $pdf->Ln();
-    }
-    // Total de las asignaciones
-    $pdf->SetFont('Times', 'B', 13);
-    $pdf->Cell($widths[0], 6, 'Total', 1, 0, 'R');
-    $pdf->Cell($widths[1], 6, $total_asignaciones, 1, 0, 'C');
-    $pdf->Ln();
-    
-    $pdf->Cell(array_sum($widths),0,'','T');
-    
-    
-    // Mostrando deduciones
-    $pdf->SetXY(105, 105);
-    $pdf->SetFont('Times', 'B', 14);
-    $pdf->Cell(85, 7, 'Deducciones', 1, 0, 'C');
-    $pdf->Ln();
-    $pdf->SetFont('Times', '', 12);
-    
-    foreach($deducciones as $row)
-    {
-        $pdf->SetX(105);
-        $total_deducciones += $row['monto'];
-        $pdf->Cell($widths[0],6,$row['concepto'], 1, 0, 'C');
-        $pdf->Cell($widths[1],6,$row['monto'], 1, 0, 'C');
-        $pdf->Ln();
-    }
-    // Total de las deducciones
-    $pdf->SetX(105);
-    $pdf->SetFont('Times', 'B', 13);
-    $pdf->Cell($widths[0], 6, 'Total', 1, 0, 'R');
-    $pdf->Cell($widths[1], 6, $total_deducciones, 1, 0, 'C');
-    $pdf->Ln();
-    
-    $pdf->Cell(array_sum($widths),0,'');
-    
-    $to_pay = $total_asignaciones - $total_deducciones;
-    $pdf->SetFont('Times', 'B', 16);
-    $pdf->Cell(120, ($bigger_row_number + 3) * 9, 'NETO RECIBIDO Bs.         ' . $to_pay);   
-}
-
-$message = "Exportó los recibos de " . $generacion['fecha_creacion'] . " como pdf";
-$recibo_model->CreateBinnacle($_SESSION['hor_user_id'], $message);
-
-$pdf->Output();        

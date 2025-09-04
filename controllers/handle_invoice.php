@@ -40,13 +40,6 @@ $fields_config = [
         'type' => 'date',
         'suspicious' => false,
     ],
-    'reason' => [
-        'min' => 3,
-        'max' => 255,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
     'observation' => [
         'min' => 0,
         'max' => 255,
@@ -104,7 +97,6 @@ if($error === ''){
     include_once '../models/siacad_model.php';
     $siacad = new SiacadModel();
     $period = $siacad->GetCurrentPeriodo();
-    $cleanData['reason'] = "'" . $cleanData['reason'] . "'";
     if($cleanData['observation'] === '')
         $cleanData['observation'] = 'NULL';
     else
@@ -233,11 +225,64 @@ if($error === ''){
             'coin' => $target_coin['history_id'],
             'salepoint' => $target_sale_point['id'] ?? 'NULL',
             'bank' => $target_bank['id'] ?? 'NULL',
+            'document_number' => $_POST["payment-document-$i"] === '' ? 'NULL' : ("'" . $_POST["payment-document-$i"] . "'"),
             'price' => $_POST["payment-price-$i"] ?? 'NULL',
+            'igtf' => '0',
         ];
 
         array_push($payment_methods, $to_add);
     }
+}
+
+// Processing the IGTF
+if($error === '' && isset($_POST['igtf-total'])){
+    $payment_method_id = $_POST['igtf-method'];
+        
+    $target_payment_method = $payment_method_model->GetPaymentMethodType($payment_method_id);
+    if($target_payment_method === false){
+        $error = "Método de pago de id $payment_method_id no encontrado";
+    }
+
+    $coin_id = $_POST['igtf-coin'];
+    $target_coin = $coin_model->GetCoin($coin_id);
+    if($target_coin === false){
+        $error = "Moneda de id $coin_id no encontrada";
+    }
+
+    $bank_id = $_POST['igtf-bank'];
+    if($bank_id !== ''){
+        $target_bank = $bank_model->GetBankById($bank_id);
+        if($target_bank === false){
+            $error = "Banco de id $bank_id no encontrado";
+        }
+    }        
+    else
+        $target_bank = null;
+    
+    $sale_point_id = $_POST['igtf-salepoint'];
+    if($sale_point_id !== ''){
+        $target_sale_point = $sale_point_model->GetSalePointByCode($sale_point_id);
+        if($target_sale_point === false){
+            $error = "Punto de venta de código $sale_point_id no encontrado";
+        }   
+    }
+    else
+        $target_sale_point = null;
+        
+}
+
+if($error === ''){
+    $to_add = [
+        'method' => $_POST['igtf-method'],
+        'coin' => $_POST['igtf-coin'],
+        'salepoint' => $_POST["igtf-salepoint"] === '' ? 'NULL' : ("'" . $_POST["igtf-salepoint"] . "'"),
+        'bank' => $_POST['igtf-bank'] ?? 'NULL',
+        'document_number' => $_POST["igtf-document"] === '' ? 'NULL' : ("'" . $_POST["igtf-document"] . "'"),
+        'price' => $_POST["igtf-price"] ?? 'NULL',
+        'igtf' => '1',
+    ];
+    
+    array_push($payment_methods, $to_add);
 }
 
 if($error === ''){
@@ -266,6 +311,7 @@ if($error === ''){
         }
     }
 }
+
 
 if($error === ''){
     $action = "Creó la factura Nº $invoice_number, Numero de control: $control_number. Al cliente " . $target_account['names'] . ' ' . $target_account['surnames'] . ' de cédula ' . $target_account['cedula'];
