@@ -271,7 +271,7 @@ if($error === '' && isset($_POST['igtf-total'])){
         
 }
 
-if($error === ''){
+if($error === '' && isset($_POST['igtf-total'])){
     $to_add = [
         'method' => $_POST['igtf-method'],
         'coin' => $_POST['igtf-coin'],

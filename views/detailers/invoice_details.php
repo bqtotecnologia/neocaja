@@ -253,8 +253,14 @@ include '../../views/common/header.php';
                             <?php $payments_total = 0; ?>
                             <?php foreach($payment_methods as $method) { ?>
                                 <?php 
+                                    if(intval($method['igtf']) === 1){
+                                        $igtf = $method;
+                                        continue;
+                                    }
                                     $total = floatval($method['price']) * $coinValues[$method['coin']]; 
                                     $payments_total += $total; 
+
+                                    
                                 ?>
 
                                 <tr class="text-center">
@@ -295,6 +301,64 @@ include '../../views/common/header.php';
                 </div>
             </div>
         </section>
+
+        <?php if(isset($igtf)) { ?>
+
+            <section class="col-12 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
+                <h2 class="col-12 h2">
+                    IGTF
+                </h2>
+    
+                <div class="row col-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>Método</th>
+                                    <th>Moneda</th>
+                                    <th>Banco receptor</th>
+                                    <th>Punto de venta</th>
+                                    <th>Número de Documento</th>
+                                    <th>Monto</th>
+                                    <th>Tasa</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="text-center">
+                                    <td><?= $igtf['payment_method'] ?></td>
+                                    <td><?= $igtf['coin'] ?></td>
+                                    <td>
+                                        <?php if($igtf['bank'] === null) { ?>
+                                            <i class="fa fa-close text-danger"></i>
+                                        <?php } else { ?>
+                                            <?= $igtf['bank'] ?>
+                                        <?php } ?>
+                                    </td>
+                                    <td>
+                                        <?php if($igtf['sale_point'] === null) { ?>
+                                            <i class="fa fa-close text-danger"></i>
+                                        <?php } else { ?>
+                                            <?= $igtf['sale_point'] ?>
+                                        <?php } ?>
+                                    </td>
+                                    <td>
+                                        <?php if($igtf['document_number'] === null) { ?>
+                                            <i class="fa fa-close text-danger"></i>
+                                        <?php } else { ?>
+                                            <?= $igtf['document_number'] ?>
+                                        <?php } ?>
+                                    </td>
+                                    <td class="text-right"><?= $igtf['price'] ?></td>
+                                    <td class="text-right"><?= $coinValues[$igtf['coin']] ?></td>
+                                    <td class="text-right">Bs. <?= floatval($igtf['price']) * $coinValues[$igtf['coin']] ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        <?php } ?>
     </div>
 
     <?php if(intval($target_invoice['active']) === 0) { ?>

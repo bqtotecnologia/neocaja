@@ -102,7 +102,7 @@ if($error === ''){
     header("Location: $base_url/views/tables/search_coin.php?message=$message");
 }
 else{
-    header("Location: $base_url/views/tables/search_coin.php?error=$error");
+    header("Location: $base_url/views/forms/update_coin_price.php?error=$error");
 }
 
 exit;

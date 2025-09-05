@@ -56,7 +56,9 @@ $latest = $invoice_model->GetLatestNumbers();
 <form 
     action="../../controllers/handle_invoice.php" 
     method="POST"
-    class="row justify-content-center">
+    class="row justify-content-center"
+    onkeydown="return event.key != 'Enter';"
+    >
     <div class="col-12 row justify-content-center x_panel">
         <?php $btn_url = '../tables/search_invoices_of_today.php'; include_once '../layouts/backButton.php'; ?>
     </div>
@@ -89,11 +91,7 @@ $latest = $invoice_model->GetLatestNumbers();
         </div>
     </div>
     <div class="col-12 justify-content-center px-5 mt-4">
-        <div 
-        action="../../controllers/handle_invoice.php" 
-        method="POST"
-        class="d-flex justify-content-center align-items-center flex-column  confirm-form"
-        >
+        <div class="d-flex justify-content-center align-items-center flex-column  confirm-form">
             <div class="col-12 text-center">
                 <h1 class="h1 text-black">Registrar nueva factura</h1>
             </div>
@@ -143,25 +141,34 @@ $latest = $invoice_model->GetLatestNumbers();
                                 <?php } ?>
                             </select>
                         </div>
+
+                    </div>
+                    <div class="row m-0 p-0 col-12 col-md-10 justify-content-center my-2">
+                        <a class="d-none" href="<?= $base_url . '/views/detailers/client_details.php?id=' ?>" target="_blank" id="account-link">
+                            <button class="btn btn-info" type="button">
+                                Ver cliente
+                            </button>
+                        </a>
                     </div>
                 </div>
 
-                <div class="row col-12 col-md-6 my-2 justify-content-invoicesstart">
-                    <table class="table table-bordered d-none" id="">
-                        <thead class="text-center">
-                            <tr class="h4 m-0">
-                                <th colspan="4">Sus facturas de este periodo</th>
-                            </tr>
-                            <tr class="h5 m-0">
-                                <th>Fecha</th>
-                                <th>Concepto</th>
-                                <th>Monto</th>
-                                <th>Ver</th>
-                            </tr>
-                        </thead>
-                        <tbody id="invoice-table">                            
-                        </tbody>
-                    </table>
+                <div class="row col-12 col-md-6 my-2 justify-content-start">
+                    <div class="x_panel row col-12 m-0 p-2 justify-content-center d-none" id="invoices">
+                        <table class="table table-bordered  border border-black">
+                            <thead class="text-center">
+                                <tr class="h4 m-0 bg-light">
+                                    <th class="border border-black" colspan="4">Sus facturas de este periodo</th>
+                                </tr>
+                                <tr class="h5 m-0">
+                                    <th class="border border-black">Nº de Factura</th>
+                                    <th class="border border-black">Fecha</th>
+                                    <th class="border border-black">Ver</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoice-table">                        
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -359,7 +366,6 @@ $latest = $invoice_model->GetLatestNumbers();
             coinValues = result['data']
 
             for(let key in coinValues){
-                console.log(key + '-rate')
                 const targetElement = document.getElementById(key + '-rate')
                 if(targetElement !== null){
                     targetElement.innerHTML = coinValues[key]
@@ -390,3 +396,4 @@ $latest = $invoice_model->GetLatestNumbers();
 <?php include_once '../common/partials/invoice_form_invoice_javascript.php'; ?>
 <?php include_once '../common/partials/invoice_form_payments_javascript.php'; ?>
 <?php include_once '../common/partials/invoice_form_igtf_javascript.php'; ?>
+<?php include_once '../common/partials/invoice_form_months_state_javascript.php'; ?>

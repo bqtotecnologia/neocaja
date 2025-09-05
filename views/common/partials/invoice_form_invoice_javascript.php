@@ -70,18 +70,23 @@
     });
 
     async function AccountSelecting(e){
+        var accountButton = document.getElementById('account-link')
+        accountButton.classList.add('d-none')
         var result = await GetInvoicesOfAccount(e.target.value)            
             
         if(typeof result !== "string"){
             targetAccount = await GetAccountData(e.target.value)
+            accountMonths = await GetMonthsData(e.target.value, '<?= $periodId ?>')
             targetAccount = targetAccount.data
+            accountButton.classList.remove('d-none')
+            accountButton.href = '<?= $base_url ?>' + '/views/detailers/account_details.php?id=' + targetAccount.id
             if(result.data.length > 0){
                 invoiceContainer.classList.remove('d-none')
                 result.data.forEach((invoice) => {
                     AddInvoice(invoice)
                 })
             }
-        }
+        }      
 
         UpdateProductsPrice()
     }
@@ -89,7 +94,6 @@
     async function GetInvoicesOfAccount(account){
         var period = '<?= $periodId ?>'
         var url = '<?= $base_url ?>/api/get_invoices_of_account.php?account=' + account + '&period=' + period
-
         var fetchConfig = {
             method: 'GET', 
             headers: {
@@ -112,6 +116,19 @@
 
         return await TryFetch(url, fetchConfig)
     }  
+
+    async function GetMonthsData(account, period){
+        var url = '<?= $base_url ?>/api/get_account_months_data.php?account=' + account + '&period=' + period
+
+        var fetchConfig = {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+
+        return await TryFetch(url, fetchConfig)
+    }
 
     function ClearInvoices(){
         for (const child of invoiceTable.children) {
@@ -418,7 +435,7 @@
 
     function AddInvoice(invoice){
         var dateCol = document.createElement('td')
-        dateCol.classList.add('p-1')
+        AddClassToTR(dateCol)
         const now = new Date(invoice.created_at);
         const year = now.getFullYear();
         const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -426,12 +443,12 @@
         const formattedDate = `${day}/${month}/${year}`;
         dateCol.innerHTML = formattedDate
 
-        var priceCol = document.createElement('td')
-        priceCol.classList.add('p-1')
-        priceCol.innerHTML = parseFloat(invoice.total).toFixed(2)
+        var invoiceNumberCol = document.createElement('td')
+        AddClassToTR(invoiceNumberCol)
+        invoiceNumberCol.innerHTML = invoice.invoice_number
 
         var seeCol = document.createElement('td')
-        seeCol.classList.add('p-1')
+        AddClassToTR(seeCol)
         var seeLink = document.createElement('a')
         seeLink.classList.add('h6')
         seeLink.href = '<?= $base_url ?>/views/detailers/invoice_details.php?id=' + invoice.id
@@ -442,12 +459,21 @@
 
         var row = document.createElement('tr')
         row.classList.add('text-center')
-        row.classList.add('fs-5')        
+        row.classList.add('fs-5')
+        row.classList.add('text-black')
+        row.appendChild(invoiceNumberCol)
         row.appendChild(dateCol)
-        row.appendChild(priceCol)
         row.appendChild(seeCol)
         
         invoiceTable.appendChild(row)
+    }
+
+    function AddClassToTR(tr){
+        tr.classList.add('p-1')
+        tr.classList.add('bg-white')
+        tr.classList.add('border')
+        tr.classList.add('border-black')
+        tr.classList.add('text-black')
     }
 
 

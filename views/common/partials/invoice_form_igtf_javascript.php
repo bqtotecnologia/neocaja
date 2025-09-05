@@ -5,9 +5,6 @@
 
     const priceIGTF = document.getElementById('igtf-price')
     priceIGTF.addEventListener('change', function(e) {RefreshIGTF()})
-    console.log(priceIGTF)
-    
- 
 
     function RefreshIGTF(){
         var rate = 0

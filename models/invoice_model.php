@@ -114,8 +114,6 @@ class InvoiceModel extends SQLModel
         $igtf
         )";
 
-        var_dump($sql);
-
         return parent::DoQuery($sql);
     }
 
@@ -167,7 +165,30 @@ class InvoiceModel extends SQLModel
     public function GetInvoicesOfAccountOfPeriod(string $account, string $period){
         $sql = "SELECT 
             inv.id,
+            inv.invoice_number,
+            inv.created_at
+            FROM
+            invoices inv
+            INNER JOIN accounts ON accounts.id = inv.account 
+            WHERE 
+            accounts.id = $account AND 
+            inv.period = $period AND
+            inv.active = 1
+            GROUP BY
+            inv.id";
+
+        return parent::GetRows($sql, true);
+    }
+
+    public function GetInvoicesOfAccount($account){
+        $sql = "SELECT 
+            inv.id,
+            inv.invoice_number,
+            inv.control_number,
             inv.created_at,
+            CONCAT(accounts.surnames, ' ', accounts.names, ' ') as account_fullname,
+            accounts.cedula,
+            inv.observation,
             SUM(ipm.total) as total
             FROM
             invoices inv
@@ -181,8 +202,7 @@ class InvoiceModel extends SQLModel
                 INNER JOIN coin_history ON coin_history.id = invoice_payment_method.coin
             ) as ipm ON ipm.invoice = inv.id
             WHERE 
-            accounts.id = $account AND 
-            inv.period = $period AND
+            accounts.id = $account AND
             inv.active = 1
             GROUP BY
             inv.id";
@@ -227,6 +247,35 @@ class InvoiceModel extends SQLModel
         concepts.invoice = $id";
 
         return parent::GetRows($sql);
+    }
+
+    /**
+     * Retorna el estado de cuenta de un cliente de un periodo específico
+     */
+    public function GetAccountState($cedula, $period){
+        $sql = "SELECT
+        ipm.price,
+        coins.name as coin,
+        banks.name as bank,
+        payment_method_types.name as payment_method,
+        ipm.document_number,
+        ipm.igtf,
+        sale_points.code as sale_point
+        FROM
+        invoice_payment_method ipm
+        INNER JOIN coin_history ON coin_history.id = ipm.coin
+        INNER JOIN coins ON coins.id = coin_history.coin
+        INNER JOIN payment_method_types ON payment_method_types.id = ipm.type
+        LEFT JOIN banks ON banks.id = ipm.bank
+        LEFT JOIN sale_points ON sale_points.id = ipm.sale_point
+        INNER JOIN invoices ON invoices.id = ipm.invoice
+        INNER JOIN accounts ON accounts.id = invoices.account        
+        WHERE
+        accounts.cedula = '$cedula' AND
+        invoices.period = $period";
+
+        $result = parent::GetRow($sql);
+        var_dump($result);
     }
 
     public function AnullInvoice($id){
