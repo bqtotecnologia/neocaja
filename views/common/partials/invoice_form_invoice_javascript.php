@@ -6,6 +6,7 @@
     const products = []
     const productPrices = {}
     const coinHistories = {}
+    const productIds = {}
 
     const retardMaxDay = parseInt('<?= $global_vars['Dia tope mora'] ?>')
     const retardPercent = parseFloat('<?= $global_vars['Porcentaje mora'] ?>')
@@ -25,8 +26,14 @@
         '12': 'Diciembre',
     }    
 
+    
     let nextProduct = 1
     let targetAccount = {}
+    
+
+    var currentDate = new Date()
+    let currentMonth = currentDate.getMonth() 
+    let lastMonth = currentMonth
 </script>
 
 <?php foreach($products as $product) { ?>
@@ -38,6 +45,10 @@
         products.push(product)
 
         productPrices['<?= $product['name'] ?>'] = parseFloat('<?= $product['price'] ?>')
+        productIds['<?= $product['name'] ?>'] = '<?= $product['id'] ?>'
+
+        if(product['name'] === 'Mensualidad')
+            monthlyId = String(product['id'])
     </script>
 <?php } ?>
 
@@ -72,22 +83,24 @@
     async function AccountSelecting(e){
         var accountButton = document.getElementById('account-link')
         accountButton.classList.add('d-none')
-        var result = await GetInvoicesOfAccount(e.target.value)            
+        var accountMonths = await GetAccountState(e.target.value, '<?= $periodId ?>')
+        invoiceTable.innerHTML = ''
+        CleanProducts()
             
-        if(typeof result !== "string"){
+        if(typeof accountMonths !== "string"){
             targetAccount = await GetAccountData(e.target.value)
-            accountMonths = await GetMonthsData(e.target.value, '<?= $periodId ?>')
             targetAccount = targetAccount.data
             accountButton.classList.remove('d-none')
             accountButton.href = '<?= $base_url ?>' + '/views/detailers/account_details.php?id=' + targetAccount.id
-            if(result.data.length > 0){
+            if(Object.keys(accountMonths.data).length > 0){
                 invoiceContainer.classList.remove('d-none')
-                result.data.forEach((invoice) => {
-                    AddInvoice(invoice)
-                })
+                for(let key in accountMonths.data){
+                    AddInvoice(key, accountMonths.data[key])
+                }
             }
-        }      
+        }
 
+        DisplayDefaultProduct()        
         UpdateProductsPrice()
     }
 
@@ -117,8 +130,9 @@
         return await TryFetch(url, fetchConfig)
     }  
 
-    async function GetMonthsData(account, period){
-        var url = '<?= $base_url ?>/api/get_account_months_data.php?account=' + account + '&period=' + period
+    async function GetAccountState(account, period){
+        var url = '<?= $base_url ?>/api/get_account_state.php?account=' + account + '&period=' + period
+        console.log(url)
 
         var fetchConfig = {
             method: 'GET', 
@@ -206,13 +220,11 @@
         UpdateProductsPrice()
     }
 
-    function UpdateProductsPrice(){
+    function UpdateProductsPrice(forceUpdatePrice = false){
         UpdateScholarshipValues()
 
         for(let i = 0; i <= nextProduct; i++){
-            var productBasePriceInput = document.getElementById('product-baseprice-' + String(i))
-
-            
+            var productBasePriceInput = document.getElementById('product-baseprice-' + String(i))            
 
             if(productBasePriceInput === null)
                 continue
@@ -224,15 +236,20 @@
 
             var productBasePrice = productPrices[productName]
 
+            if(!forceUpdatePrice)
+                productBasePrice = parseFloat(productBasePriceInput.value)
 
             var monthInput = document.getElementById('product-month-' + i)
             var targetOption = monthInput.options[monthInput.selectedIndex]
-            if(targetOption.classList.contains('text-danger')){
+            
+            if(targetOption.classList.contains('text-danger') && productName === 'Diferencia Mensualidad'){
                 // Add retard
-                productBasePrice += productBasePrice * (retardPercent / 100)
+                var monthlyPrice = productPrices['Mensualidad']
+                productBasePrice = monthlyPrice * (retardPercent / 100)
             }
 
-            productBasePriceInput.value = productBasePrice
+            if(forceUpdatePrice)
+                productBasePriceInput.value = productBasePrice
 
             var productSholarship = document.getElementById('product-scholarship-' + String(i))
             var discount = parseFloat(productSholarship.value.trim('%'))
@@ -275,12 +292,42 @@
         productsTotalBs.innerHTML = 'Bs. ' + (total * parseFloat(usdRate)).toFixed(4)
     }
 
+    function DisplayDefaultProduct(){      
+        if(nextProduct !== 2)
+            return
+
+        console.log(lastMonth)
+        var nextMonth = lastMonth + 1
+        console.log(nextMonth)
+        if(nextMonth >= 12)
+            nextMonth = 1
+        console.log(nextMonth)
+
+        if(GetMonthIsRetarded(nextMonth)){
+            ChangeMonth(nextMonth, nextProduct - 1)
+            ChangeProduct(nextProduct - 1, productIds['Diferencia Mensualidad'])
+            AddProduct()
+        }
+
+        ChangeMonth(nextMonth, nextProduct - 1)
+        ChangeProduct(nextProduct - 1, productIds['Mensualidad'])        
+
+        UpdateProductsPrice(true)
+    }
+
+    function ChangeMonth(month, id){      
+        $('#product-month-' + (nextProduct - 1)).val(String(month)) 
+    }
+
+    function ChangeProduct(position, productId){
+        $('#product-id-' + position).select2("val", String(productId))
+    }
+
     function BuildProductRow(){
         var productId = String(nextProduct)
 
         var productCol = GetNewProductColumn(productId)        
         var monthCol = GetNewMonthColumn(productId)
-        var completeCol = GetNewCompleteColumn(productId)
         var basePriceCol = GetNewBasePriceColumn(productId)
         var scholarshipCol = GetNewScholarshipDiscountColumn(productId)
         var totalCol = GetNewTotalColumn(productId)
@@ -291,7 +338,6 @@
         row.id = "product-row-" + productId
         row.appendChild(productCol)
         row.appendChild(monthCol)
-        row.appendChild(completeCol)
         row.appendChild(basePriceCol)
         row.appendChild(scholarshipCol)
         row.appendChild(totalCol)
@@ -300,9 +346,29 @@
         productTable.appendChild(row)
     }
 
+    function CleanProducts(){
+        lastMonth = currentMonth
+        productTable.innerHTML = ''
+        nextProduct = 1
+        AddProduct()
+    }
+
     function DeleteProductRow(id){
         document.getElementById('product-row-' + id).remove()
         UpdateProductTotal()
+    }
+
+    function GetMonthIsRetarded(targetMonth){
+        var currentDate = new Date()
+        currentMonth = currentDate.getMonth() + 1
+        result = false
+        if(parseInt(targetMonth) < currentMonth){
+            result = true
+        }
+        else if(parseInt(targetMonth) === currentMonth && parseInt(currentDate.getDate()) > retardMaxDay){
+            result = true
+        }
+        return result
     }
 
     function AddClassesToSelect(select){
@@ -354,33 +420,13 @@
             span.classList.add('bg-primary')
             option.appendChild(span)
 
-            var currentDate = new Date()
-            currentMonth = currentDate.getMonth() + 1
-            if(parseInt(key) < currentMonth){
+            if(GetMonthIsRetarded(key))
                 option.classList.add('fw-bold', 'text-danger')
-            }
-            else if(parseInt(key) === currentMonth && parseInt(currentDate.getDate()) > retardMaxDay){
-                option.classList.add('fw-bold', 'text-danger')
-            }
 
             monthSelect.appendChild(option)
         }
         div.appendChild(monthSelect)
         return monthCol
-    }
-
-    function GetNewCompleteColumn(productId){
-        var completeCol = document.createElement('td')
-        completeCol.classList.add('align-middle')
-        var completeCheckbox = document.createElement('input')
-        completeCheckbox.type = 'checkbox'
-        completeCheckbox.value = 1
-        completeCheckbox.checked = true
-        buffer = "product-complete-" + productId
-        completeCheckbox.id = buffer
-        completeCheckbox.name = buffer
-        completeCol.appendChild(completeCheckbox)
-        return completeCol
     }
 
     function GetNewBasePriceColumn(productId){
@@ -433,25 +479,70 @@
         return eraseCol
     }
 
-    function AddInvoice(invoice){
-        var dateCol = document.createElement('td')
-        AddClassToTR(dateCol)
-        const now = new Date(invoice.created_at);
-        const year = now.getFullYear();
-        const month = (now.getMonth() + 1).toString().padStart(2, '0');
-        const day = now.getDate().toString().padStart(2, '0');
-        const formattedDate = `${day}/${month}/${year}`;
-        dateCol.innerHTML = formattedDate
+    function AddInvoice(month, invoice){
+        lastMonth = parseInt(month)
+        monthNumber = month
+        if(monthNumber.length === 1)
+            monthNumber = '0' + monthNumber
 
-        var invoiceNumberCol = document.createElement('td')
-        AddClassToTR(invoiceNumberCol)
-        invoiceNumberCol.innerHTML = invoice.invoice_number
+        var invoiceMonthCol = document.createElement('td')
+        AddClassToTR(invoiceMonthCol)
+        invoiceMonthCol.innerHTML = monthNumber + ' ' + months[month]
+
+        // Paid column
+        var invoicePaidCol = document.createElement('td')
+        AddClassToTR(invoicePaidCol)
+        var paidSymbol = document.createElement('i')
+        paidSymbol.classList.add('fa')
+
+        if(invoice.paid === 1){
+            paidSymbol.classList.add('fa-check')
+            paidSymbol.classList.add('text-success')
+        }
+        else{
+            paidSymbol.classList.add('fa-close')
+            paidSymbol.classList.add('text-danger')
+        }
+        invoicePaidCol.appendChild(paidSymbol)
+
+        // Debt column
+        var invoiceDebtCol = document.createElement('td')
+        AddClassToTR(invoiceDebtCol)
+        var debtSymbol = document.createElement('i')
+        debtSymbol.classList.add('fa')
+
+        if(invoice.debt === 1){
+            debtSymbol.classList.add('fa-check')
+            debtSymbol.classList.add('text-success')
+        }
+        else{
+            debtSymbol.classList.add('fa-close')
+            debtSymbol.classList.add('text-danger')
+        }
+        invoiceDebtCol.appendChild(debtSymbol)
+
+        // Partial column
+        var invoicePartialCol = document.createElement('td')
+        AddClassToTR(invoicePartialCol)
+        var partialSymbol = document.createElement('i')
+        partialSymbol.classList.add('fa')
+
+        if(invoice.partial === 1){
+            partialSymbol.classList.add('fa-check')
+            partialSymbol.classList.add('text-success')
+        }
+        else{
+            partialSymbol.classList.add('fa-close')
+            partialSymbol.classList.add('text-danger')
+        }
+        invoicePartialCol.appendChild(partialSymbol)
+        
 
         var seeCol = document.createElement('td')
         AddClassToTR(seeCol)
         var seeLink = document.createElement('a')
         seeLink.classList.add('h6')
-        seeLink.href = '<?= $base_url ?>/views/detailers/invoice_details.php?id=' + invoice.id
+        seeLink.href = '<?= $base_url ?>/views/detailers/invoice_details.php?id=' + invoice.invoice
         seeLink.target = '_blank'
         seeLink.innerHTML = 'Ver'
         seeLink.classList.add('fw-bold')
@@ -461,8 +552,10 @@
         row.classList.add('text-center')
         row.classList.add('fs-5')
         row.classList.add('text-black')
-        row.appendChild(invoiceNumberCol)
-        row.appendChild(dateCol)
+        row.appendChild(invoiceMonthCol)
+        row.appendChild(invoicePaidCol)
+        row.appendChild(invoiceDebtCol)
+        row.appendChild(invoicePartialCol)
         row.appendChild(seeCol)
         
         invoiceTable.appendChild(row)

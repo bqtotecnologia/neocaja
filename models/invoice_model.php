@@ -60,23 +60,20 @@ class InvoiceModel extends SQLModel
         $product_history = $concept['history_id'];
         $price = $concept['price'];
         $month = $concept['month'];
-        $complete = $concept['complete'];
 
         $sql = "INSERT INTO concepts
         (
         product,
         price,
         invoice,
-        month,
-        complete
+        month
         )
         VALUES
         (
         $product_history,
         $price,
         $invoice_id,
-        $month,
-        $complete
+        $month
         )";
 
         return parent::DoQuery($sql);
@@ -237,8 +234,7 @@ class InvoiceModel extends SQLModel
         $sql = "SELECT
         products.name as product,
         concepts.price,
-        concepts.month,
-        concepts.complete
+        concepts.month
         FROM
         concepts
         INNER JOIN product_history ON product_history.id = concepts.product
@@ -251,31 +247,85 @@ class InvoiceModel extends SQLModel
 
     /**
      * Retorna el estado de cuenta de un cliente de un periodo específico
+     * Especifica si cada mes fue pagado, es o estuvo moroso y si abonó
      */
     public function GetAccountState($cedula, $period){
+        include_once 'global_vars_model.php';
+        $global_model = new GlobalVarsModel();
+        $global_vars = $global_model->GetGlobalVars(true);
+
         $sql = "SELECT
-        ipm.price,
-        coins.name as coin,
-        banks.name as bank,
-        payment_method_types.name as payment_method,
-        ipm.document_number,
-        ipm.igtf,
-        sale_points.code as sale_point
+        products.name as product,
+        concepts.price,
+        concepts.month,
+        invoices.id as invoice,
+        invoices.created_at
         FROM
-        invoice_payment_method ipm
-        INNER JOIN coin_history ON coin_history.id = ipm.coin
-        INNER JOIN coins ON coins.id = coin_history.coin
-        INNER JOIN payment_method_types ON payment_method_types.id = ipm.type
-        LEFT JOIN banks ON banks.id = ipm.bank
-        LEFT JOIN sale_points ON sale_points.id = ipm.sale_point
-        INNER JOIN invoices ON invoices.id = ipm.invoice
-        INNER JOIN accounts ON accounts.id = invoices.account        
+        invoices
+        INNER JOIN concepts ON concepts.invoice = invoices.id
+        INNER JOIN products ON products.id = concepts.product
+        INNER JOIN accounts ON accounts.id = invoices.account
         WHERE
         accounts.cedula = '$cedula' AND
-        invoices.period = $period";
+        invoices.period = $period AND
+        products.name LIKE '%Mensualidad%'AND
+        concepts.month IS NOT NULL
+        ORDER BY
+        concepts.month";
 
-        $result = parent::GetRow($sql);
-        var_dump($result);
+        $concepts = parent::GetRows($sql, true);
+
+        $ordered_concepts = [];
+        foreach($concepts as $concept){
+            if(!isset($ordered_concepts[$concept['month']])){
+                $ordered_concepts[$concept['month']] = [
+                    'concepts' => [],
+                    'invoice' => $concept['invoice'],
+                    'date' => $concept['created_at'],
+                    'paid' => 0,
+                    'debt' => 0,
+                    'partial' => 0
+                ];
+            }
+
+            array_push($ordered_concepts[$concept['month']]['concepts'], $concept['product']);
+        }
+
+        $result = [];
+        foreach($ordered_concepts as $key => $value){
+            $result[$key] = $value;
+            if(in_array('Mensualidad', $value['concepts']) || in_array('Saldo Mensualidad', $value['concepts'])){
+                // El mes está pagado
+                $result[$key]['paid'] = 1;
+            }
+
+            if($result[$key]['paid'] === 1){
+                if(in_array('Diferencia Mensualidad', $value['concepts']))
+                    $result[$key]['debt'] = 1;
+            }
+            else{
+                $timezone = new DateTimeZone('America/Caracas');
+                $invoice_date = new DateTime($value['date'], $timezone);
+                $invoice_month = intval($invoice_date->format('m'));
+                $invoice_year = $invoice_date->format('Y');
+
+                $retard_date = "$invoice_year-$invoice_month-" . $global_vars['Dia tope mora'];
+                $retard_date = new DateTime($retard_date, $timezone);
+                
+                if(intval($key) < $invoice_month){
+                    $result[$key]['debt'] = 1;
+                }
+                else if(intval($key) === $invoice_month && $invoice_date > $retard_date){
+                    $result[$key]['debt'] = 1;
+                }
+            }
+
+            if(in_array('Abono Mensualidad', $value['concepts'])){
+                $result[$key]['partial'] = 1;
+            }
+        }
+
+        return $result;
     }
 
     public function AnullInvoice($id){

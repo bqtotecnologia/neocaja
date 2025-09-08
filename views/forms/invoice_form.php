@@ -96,8 +96,8 @@ $latest = $invoice_model->GetLatestNumbers();
                 <h1 class="h1 text-black">Registrar nueva factura</h1>
             </div>
 
-            <div class="row col-12 m-0 p-0 justify-content-center align-items-start pb-2">
-                <div class="row col-12 my-2 justify-content-start mb-4">
+            <div class="x_panel row col-12 m-0 p-0 justify-content-center align-items-center my-2">
+                <div class="row col-12 my-2 justify-content-start my-3">
                     <div class="row col-4">
                         <div class="row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-4">
                             <label class="h6 m-0 fw-bold px-2" for="invoice_number">Nº Factura</label>
@@ -125,7 +125,9 @@ $latest = $invoice_model->GetLatestNumbers();
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <div class="x_panel row col-12 m-0 p-0 justify-content-center align-items-center pt-2">              
                 <div class="row col-12 col-md-6 my-2 justify-content-start">
                     <div class="row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-3">
                         <label class="h6 m-0 fw-bold px-2" for="account">Cliente</label>
@@ -153,15 +155,17 @@ $latest = $invoice_model->GetLatestNumbers();
                 </div>
 
                 <div class="row col-12 col-md-6 my-2 justify-content-start">
-                    <div class="x_panel row col-12 m-0 p-2 justify-content-center d-none" id="invoices">
+                    <div class="row col-12 m-0 p-2 justify-content-center d-none" id="invoices">
                         <table class="table table-bordered  border border-black">
                             <thead class="text-center">
                                 <tr class="h4 m-0 bg-light">
-                                    <th class="border border-black" colspan="4">Sus facturas de este periodo</th>
+                                    <th class="border border-black" colspan="5">Estado de cuenta en este periodo</th>
                                 </tr>
                                 <tr class="h5 m-0">
-                                    <th class="border border-black">Nº de Factura</th>
-                                    <th class="border border-black">Fecha</th>
+                                    <th class="border border-black">Mes</th>
+                                    <th class="border border-black">Pagado</th>
+                                    <th class="border border-black">Moroso</th>
+                                    <th class="border border-black">Abonado</th>
                                     <th class="border border-black">Ver</th>
                                 </tr>
                             </thead>
@@ -187,7 +191,6 @@ $latest = $invoice_model->GetLatestNumbers();
                             <tr class="bg-light">
                                 <th class="p-1 col-3 align-middle">Producto</th>
                                 <th class="p-1 col-2 align-middle">Mes</th>
-                                <th class="p-1 align-middle">Completo</th>
                                 <th class="p-1 align-middle">Monto base ($)</th>
                                 <th class="p-1 align-middle">Descuento de beca</th>
                                 <th class="p-1 align-middle">Total</th>
@@ -197,11 +200,11 @@ $latest = $invoice_model->GetLatestNumbers();
                         <tbody id="product-table">
                         </tbody>
                         <tr>
-                            <td class="text-right h5 fw-bold" colspan="5">Total</td>
+                            <td class="text-right h5 fw-bold" colspan="4">Total</td>
                             <td class="text-center fw-bold h4" id="products-total"></td>
                         </tr>
                         <tr>
-                            <td class="text-right h5 fw-bold" colspan="5">Total en Bs.</td>
+                            <td class="text-right h5 fw-bold" colspan="4">Total en Bs.</td>
                             <td class="text-center fw-bold h4" id="products-total-bs"></td>
                         </tr>
                     </table>

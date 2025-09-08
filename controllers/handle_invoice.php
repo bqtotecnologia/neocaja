@@ -149,7 +149,6 @@ if($error === ''){
             'price' => $_POST["product-baseprice-$i"],
             'history_id' => $target_product['history_id'],
             'month' => $_POST["product-month-$i"] === '' ? 'NULL' : $_POST["product-month-$i"],
-            'complete' => isset($_POST["product-complete-$i"]) ? '1' : '0',
         ];
 
         array_push($concepts, $to_add);
@@ -211,9 +210,9 @@ if($error === ''){
         
         $sale_point_id = $_POST['payment-salepoint-' . $i];
         if($sale_point_id !== ''){
-            $target_sale_point = $sale_point_model->GetSalePointByCode($sale_point_id);
+            $target_sale_point = $sale_point_model->GetSalePoint($sale_point_id);
             if($target_sale_point === false){
-                $error = "Punto de venta de código $sale_point_id no encontrado";
+                $error = "Punto de venta de id $sale_point_id no encontrado";
                 break;
             }   
         }
