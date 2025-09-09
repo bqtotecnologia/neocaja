@@ -182,15 +182,7 @@ for($i = 0; $i < count($concepts); $i++){
                 $productName .= $month_translate[$month['month']] . ' ';
             }
         }
-
-
-        /*
-        $targetMonth = $month_translate[$currentConcept['month']];
-        if(intval($currentConcept['complete']) === 0)
-            $productName = 'Abono ' . $productName;
-            
-        $productName .= ' ' . $targetMonth . ' ' . $target_period['nombreperiodo'];
-        */
+        
         $productName .= ' ' . $target_period['nombreperiodo'];
     }
 

@@ -145,12 +145,24 @@ $latest = $invoice_model->GetLatestNumbers();
                         </div>
 
                     </div>
-                    <div class="row m-0 p-0 col-12 col-md-10 justify-content-center my-2">
+                    <div class="row m-0 p-0 col-12 justify-content-center my-2">
                         <a class="d-none" href="<?= $base_url . '/views/detailers/client_details.php?id=' ?>" target="_blank" id="account-link">
                             <button class="btn btn-info" type="button">
                                 Ver cliente
                             </button>
                         </a>
+                    </div>
+
+                    <div class="row m-0 p-0 col-12 justify-content-center my-2">
+                        <h3 class="h3">
+                            Deuda:
+                            <span class="text-success">
+                                SIN DEUDA
+                            </span>
+                            <span class="text-danger">
+                                481358Bs (24$)
+                            </span>
+                        </h3>
                     </div>
                 </div>
 

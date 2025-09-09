@@ -206,13 +206,6 @@ include '../../views/common/header.php';
                                             <?= $month_translate[$concept['month']] ?>
                                         <?php } ?>
                                     </td>
-                                    <td>
-                                        <?php if(intval($concept['complete']) === 1) { ?>
-                                            <i class="fa fa-check text-success"></i>
-                                        <?php } else { ?>
-                                            <i class="fa fa-close text-danger"></i>
-                                        <?php } ?>
-                                    </td>
                                     <td class="text-right"><?= $concept['price'] ?></td>
                                     <td class="text-right"><?= $disccount_percent ?>%</td>
                                     <td class="text-right"><?= $coinValues['Dólar'] ?></td>

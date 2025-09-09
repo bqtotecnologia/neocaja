@@ -32,7 +32,7 @@
     
 
     var currentDate = new Date()
-    let currentMonth = currentDate.getMonth() 
+    let currentMonth = currentDate.getMonth()
     let lastMonth = currentMonth
 </script>
 
@@ -92,6 +92,7 @@
             targetAccount = targetAccount.data
             accountButton.classList.remove('d-none')
             accountButton.href = '<?= $base_url ?>' + '/views/detailers/account_details.php?id=' + targetAccount.id
+            console.log(accountMonths)
             if(Object.keys(accountMonths.data).length > 0){
                 invoiceContainer.classList.remove('d-none')
                 for(let key in accountMonths.data){
@@ -100,6 +101,7 @@
             }
         }
 
+        
         DisplayDefaultProduct()        
         UpdateProductsPrice()
     }
@@ -296,12 +298,10 @@
         if(nextProduct !== 2)
             return
 
-        console.log(lastMonth)
-        var nextMonth = lastMonth + 1
+        var nextMonth = parseInt(lastMonth) + 1
         console.log(nextMonth)
         if(nextMonth >= 12)
             nextMonth = 1
-        console.log(nextMonth)
 
         if(GetMonthIsRetarded(nextMonth)){
             ChangeMonth(nextMonth, nextProduct - 1)
@@ -360,12 +360,12 @@
 
     function GetMonthIsRetarded(targetMonth){
         var currentDate = new Date()
-        currentMonth = currentDate.getMonth() + 1
+        var todayMonth = currentDate.getMonth() + 1
         result = false
-        if(parseInt(targetMonth) < currentMonth){
+        if(parseInt(targetMonth) < todayMonth){
             result = true
         }
-        else if(parseInt(targetMonth) === currentMonth && parseInt(currentDate.getDate()) > retardMaxDay){
+        else if(parseInt(targetMonth) === todayMonth && parseInt(currentDate.getDate()) > retardMaxDay){
             result = true
         }
         return result
@@ -480,14 +480,31 @@
     }
 
     function AddInvoice(month, invoice){
-        lastMonth = parseInt(month)
-        monthNumber = month
+        var month_translate = {
+            'Enero': 1,
+            'Febrero': 2,
+            'Marzo': 3,
+            'Abril': 4,
+            'Mayo': 5,
+            'Junio': 6,
+            'Julio': 7,
+            'Agosto': 8,
+            'Septiembre': 9,
+            'Octubre': 10,
+            'Noviembre': 11,
+            'Diciembre': 12
+        }
+
+        //lastMonth = month_translate[month]
+        lastMonth = Object.keys(months).find(key => months[key] === String(month));
+        console.log(month)
+        monthNumber = lastMonth
         if(monthNumber.length === 1)
             monthNumber = '0' + monthNumber
 
         var invoiceMonthCol = document.createElement('td')
         AddClassToTR(invoiceMonthCol)
-        invoiceMonthCol.innerHTML = monthNumber + ' ' + months[month]
+        invoiceMonthCol.innerHTML = monthNumber + ' ' + months[lastMonth]
 
         // Paid column
         var invoicePaidCol = document.createElement('td')
