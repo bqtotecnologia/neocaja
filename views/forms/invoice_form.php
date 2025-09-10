@@ -153,15 +153,8 @@ $latest = $invoice_model->GetLatestNumbers();
                         </a>
                     </div>
 
-                    <div class="row m-0 p-0 col-12 justify-content-center my-2">
-                        <h3 class="h3">
-                            Deuda:
-                            <span class="text-success">
-                                SIN DEUDA
-                            </span>
-                            <span class="text-danger">
-                                481358Bs (24$)
-                            </span>
+                    <div class="row m-0 p-0 col-12 justify-content-center my-2" id="debt-container">
+                        <h3 class="h3 text-center" id="debt-content">
                         </h3>
                     </div>
                 </div>

@@ -250,63 +250,38 @@ class InvoiceModel extends SQLModel
      * Especifica si cada mes fue pagado, es o estuvo moroso y si abonó
      */
     public function GetAccountState($cedula, $periodId){
-        include_once 'global_vars_model.php';
+        include_once 'global_vars_model.php';       
         include_once 'siacad_model.php';
 
         $global_model = new GlobalVarsModel();
         $siacad = new SiacadModel();
-        $global_vars = $global_model->GetGlobalVars(true);
-        $currentPeriod = $siacad->GetCurrentPeriodo();
 
-        $month_translate = [
-            '1' => 'Enero',
-            '2' => 'Febrero',
-            '3' => 'Marzo',
-            '4' => 'Abril',
-            '5' => 'Mayo',
-            '6' => 'Junio',
-            '7' => 'Julio',
-            '8' => 'Agosto',
-            '9' => 'Septiembre',
-            '10' => 'Octubre',
-            '11' => 'Noviembre',
-            '12' => 'Diciembre',
-        ];
+        $periodMonths = $siacad->GerMonthsOfPeriodo($periodId, true);
+        $global_vars = $global_model->GetGlobalVars(true);
 
         $sql = "SELECT
-        products.name as product,
-        concepts.price,
-        concepts.month,
-        invoices.id as invoice,
-        invoices.created_at
-        FROM
-        invoices
-        INNER JOIN concepts ON concepts.invoice = invoices.id
-        INNER JOIN products ON products.id = concepts.product
-        INNER JOIN accounts ON accounts.id = invoices.account
-        WHERE
-        accounts.cedula = '$cedula' AND
-        invoices.period = $periodId AND
-        products.name LIKE '%Mensualidad%'AND
-        concepts.month IS NOT NULL
-        ORDER BY
-        concepts.month";
+            products.name as product,
+            concepts.price,
+            concepts.month,
+            invoices.id as invoice,
+            invoices.created_at
+            FROM
+            invoices
+            INNER JOIN concepts ON concepts.invoice = invoices.id
+            INNER JOIN products ON products.id = concepts.product
+            INNER JOIN accounts ON accounts.id = invoices.account
+            WHERE
+            accounts.cedula = '$cedula' AND
+            invoices.period = $periodId AND
+            products.name LIKE '%Mensualidad%'AND
+            concepts.month IS NOT NULL
+            ORDER BY
+            concepts.month";
 
         $concepts = parent::GetRows($sql, true);
-
-        $timezone = new DateTimeZone('America/Caracas');
-        $startDate = new DateTime($currentPeriod['fechainicio'], $timezone);
-        $endDate = new DateTime($currentPeriod['fechafin'], $timezone);
-        $periodMonths = [];
         
-        while($startDate < $endDate){
-            $month = intval($startDate->format('m'));
-            array_push($periodMonths, $month);
-            $startDate->modify('+1 month');
-        }
-
         $ordered_concepts = [];
-        foreach($month_translate as $number => $month){
+        foreach($periodMonths as $month){
             $ordered_concepts[$month] = [
                 'concepts' => [],
                 'paid' => 0,
@@ -316,41 +291,38 @@ class InvoiceModel extends SQLModel
             ];
         }
 
+        
+        
         foreach($concepts as $concept){           
-            $target_month = $month_translate[strval($concept['month'])];
+            $target_month = $this->month_translate[strval($concept['month'])];
+            if(!isset($ordered_concepts[$target_month]))
+                continue;
+            
             $ordered_concepts[$target_month]['invoice'] = $concept['invoice'];
-            $ordered_concepts[$target_month]['date'] = $concept['created_at'];
+            //$ordered_concepts[$target_month]['price'] = $concept['created_at'];
             $ordered_concepts[$target_month]['valid'] = 1;
 
-            array_push($ordered_concepts[$target_month]['concepts'], $concept['product']);
+            $ordered_concepts[$target_month]['concepts'][$concept['product']] = $concept['price'];
         }     
-
         $result = [];
+
         if($concepts !== []){
             foreach($ordered_concepts as $key => $value){
-                if(!in_array(intval($key), $periodMonths) && $value['concepts'] === []){
+                if(!in_array($key, $periodMonths)){
                     continue;
                 }
+                $result[$key] = $value; 
 
-                $result[$key] = $value;
-                if(in_array(intval($key), $periodMonths)){
-                    $result[$key]['valid'] = 1;
-                    continue;
-                }
-
-                if($value['valid'] === 0)
-                    continue;                
-
-                if(in_array('Mensualidad', $value['concepts']) || in_array('Saldo Mensualidad', $value['concepts'])){
+                if(array_key_exists('Mensualidad', $value['concepts']) || array_key_exists('Saldo Mensualidad', $value['concepts'])){
                     // El mes está pagado
                     $result[$key]['paid'] = 1;
                 }
     
                 if($result[$key]['paid'] === 1){
-                    if(in_array('Diferencia Mensualidad', $value['concepts']))
+                    if(array_key_exists('Diferencia Mensualidad', $value['concepts']))
                         $result[$key]['debt'] = 1;
                 }
-                else{
+                else if(isset($result[$key]['invoice'])){
                     $timezone = new DateTimeZone('America/Caracas');
                     $invoice_date = new DateTime($value['date'], $timezone);
                     $invoice_month = intval($invoice_date->format('m'));
@@ -367,13 +339,112 @@ class InvoiceModel extends SQLModel
                     }
                 }
     
-                if(in_array('Abono Mensualidad', $value['concepts'])){
+                if(array_key_exists('Abono Mensualidad', $value['concepts'])){
                     $result[$key]['partial'] = 1;
                 }
             }
         }
+        else{
+            $result = $ordered_concepts;
+        }
 
         return $result;
+    }
+
+    /**
+     * Obtiene la deuda de un cliente en este periodo.
+     * Especifica los meses que debe incluyendo el actual.
+     * También verifica que el estudiante haya pagado FOC.
+     */
+    public function GetDebtOfAccountOfPeriod($cedula, $periodId){
+        include_once 'siacad_model.php';
+        include_once 'global_vars_model.php';
+        include_once 'product_model.php';
+
+        $siacad = new SiacadModel();
+        $global_vars_model = new GlobalVarsModel();
+        $product_model = new ProductModel();
+
+        $global_vars = $global_vars_model->GetGlobalVars(true);
+        $monthly = $product_model->GetProductByName('Mensualidad');
+        $target_period = $siacad->GetPeriodoById($periodId);
+
+        $timezone = new DateTimeZone('America/Caracas');
+        $start_date = new DateTime($target_period['fechainicio'], $timezone);
+        $end_date = new DateTime($target_period['fechafin'], $timezone);
+
+        $periodMonths = [];
+        $periodDates = [];
+        while(true){
+            $month = intval($start_date->format('m'));
+            $date = $start_date->format('Y-m-01');
+            array_push($periodMonths, $this->month_translate[strval($month)]);
+            array_push($periodDates, $date);
+
+            $start_date->modify('+1 month');
+            if($start_date > $end_date)
+                break;
+        }
+
+        $accountState = $this->GetAccountState($cedula, $periodId);
+        $cleanState = [];
+
+        foreach($accountState as $month => $value){
+            if($value['paid'] === 0 && in_array($month, $periodMonths))
+                $cleanState[$month] = $value;
+        }
+        
+        $today = new DateTime('now', $timezone);
+        $today->setDate($today->format('Y'), $today->format('m'), '1');
+        
+        $debt_data = [
+            'months' => 0,
+            'retard' => 0,
+        ];
+
+        foreach($periodDates as $periodDate){
+            $date = new DateTime($periodDate, $timezone);
+
+            if($date > $today)
+                break;
+
+            $month = intval($date->format('m'));
+            $monthName = $this->month_translate[strval($month)];
+
+            if(!isset($cleanState[$monthName]))
+                continue;
+
+            
+
+            $monthValue = $cleanState[$monthName];
+
+            $monthly_debt = floatval($monthly['price']);
+            if($monthValue['partial'] === 0)
+                $debt_data['months'] += $monthly_debt;
+            else{
+                $monthly_debt -= floatval($monthValue['concept']['Abono Mensualidad']);
+                $debt_data['months'] += $monthly_debt;
+            }
+
+
+            $retard_applies = false;
+            if($month === intval($today->format('m'))){
+                if(intval($today->format('d')) > intval($global_vars['Dia tope mora']))
+                    $retard_applies = true;                    
+            }
+            else{
+                $retard_applies = true;                
+            }
+
+            if($retard_applies){
+                $retard = round($monthly_debt * ($global_vars['Porcentaje mora'] / 100), 2);
+                $debt_data['retard'] += $retard;
+            }
+
+            
+        }
+
+        return $debt_data;
     }
 
     public function AnullInvoice($id){

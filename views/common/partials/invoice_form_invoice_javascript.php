@@ -2,6 +2,8 @@
     const invoiceContainer = document.getElementById('invoices')
     const invoiceTable = document.getElementById('invoice-table')
     const productTable = document.getElementById('product-table')
+    const debtContainer = document.getElementById('debt-container')
+    const debtContent = document.getElementById('debt-content')
 
     const products = []
     const productPrices = {}
@@ -83,11 +85,13 @@
     async function AccountSelecting(e){
         var accountButton = document.getElementById('account-link')
         accountButton.classList.add('d-none')
+        debtContainer.classList.add('d-none')
         var accountMonths = await GetAccountState(e.target.value, '<?= $periodId ?>')
         invoiceTable.innerHTML = ''
         CleanProducts()
             
         if(typeof accountMonths !== "string"){
+            await DisplayDebt(e.target.value, '<?= $periodId ?>')
             targetAccount = await GetAccountData(e.target.value)
             targetAccount = targetAccount.data
             accountButton.classList.remove('d-none')
@@ -109,6 +113,7 @@
     async function GetInvoicesOfAccount(account){
         var period = '<?= $periodId ?>'
         var url = '<?= $base_url ?>/api/get_invoices_of_account.php?account=' + account + '&period=' + period
+        console.log(url)
         var fetchConfig = {
             method: 'GET', 
             headers: {
@@ -146,10 +151,70 @@
         return await TryFetch(url, fetchConfig)
     }
 
+    async function GetDebtOfAccountOfPeriod(account,period){
+        var url = '<?= $base_url ?>/api/get_account_debt.php?account=' + account + '&period=' + period
+        console.log(url)
+
+        var fetchConfig = {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+
+        return await TryFetch(url, fetchConfig)
+    }
+
     function ClearInvoices(){
         for (const child of invoiceTable.children) {
             child.remove()
         }
+    }
+
+    async function DisplayDebt(account, period){
+        var debt = await GetDebtOfAccountOfPeriod(account,period)
+        if(typeof debt !== "string"){
+            debtContainer.classList.remove('d-none')
+            console.log(debt.data)
+            if(debt.data.months > 0){
+                debtContent.classList.remove('text-success')
+                debtContent.classList.add('text-danger')  
+                var monthDebt = GetPrettyCiphers(debt.data.months * coinValues['Dólar'])
+                var retardDebt = GetPrettyCiphers(debt.data.retard * coinValues['Dólar'])                
+
+                debtContent.innerHTML = '<br>Mensualidad: ' + (monthDebt) + 'Bs. <br>'
+                debtContent.innerHTML += 'Mora: ' + (retardDebt) + 'Bs.'
+            }
+            else{
+                debtContent.classList.remove('text-danger')
+                debtContent.classList.add('text-success')
+                debtContent.innerHTML = 'SIN DEUDA'
+            }
+        }
+    }
+
+    function GetPrettyCiphers(cipher){
+        var strCipher = String(cipher).replace('.', ',')
+        var splits = strCipher.split(',')
+        var intPart = splits[0]
+        var decimalPart = splits[1]
+        
+
+        var finalStr = ''
+        var positionCount = 0
+        for(let i = intPart.length - 1; i >= 0; i--){
+            var display = intPart[i]
+
+            positionCount++
+            if(positionCount === 4)
+                display = display + '.'
+
+            finalStr = display + finalStr
+        }
+
+        if(decimalPart !== undefined)
+            finalStr = finalStr + ','  + decimalPart
+        return finalStr
     }
 
     function DisplayCoinHistory(coin){

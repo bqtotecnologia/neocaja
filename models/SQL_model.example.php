@@ -7,6 +7,21 @@ class SQLModel{
     public  $db_password = '';
     public $db_database = '';
 
+    public $month_translate = [
+        '1' => 'Enero',
+        '2' => 'Febrero',
+        '3' => 'Marzo',
+        '4' => 'Abril',
+        '5' => 'Mayo',
+        '6' => 'Junio',
+        '7' => 'Julio',
+        '8' => 'Agosto',
+        '9' => 'Septiembre',
+        '10' => 'Octubre',
+        '11' => 'Noviembre',
+        '12' => 'Diciembre',
+    ];
+
     // Una función que recibe los parámetros necesarios para iniciar una conexión
     public function SetInfo($server, $user, $pass, $database){
         $this->db_server = $server;
@@ -65,6 +80,18 @@ class SQLModel{
             echo'<br><br>';
             return false;
         }
+    }
+
+    /**
+     * Retorna el número de un mes obteniendo su nombre en español
+     */
+    public function GetMonthNumberByName($name){
+        $result = null;
+        foreach($this->month_translate as $number => $month)
+            if($month === $name)
+                $result = $number;
+
+        return $result;
     }
 
     // Crea una entrada en la bitácora

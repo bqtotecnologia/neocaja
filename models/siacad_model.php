@@ -28,6 +28,31 @@ class SiacadModel extends PGSQLModel
         return parent::GetRow($sql);
     }
 
+    /**
+     * Retorna una lista con los números de los meses que conforman el periodo
+     * Si recibe $names = true retorna la lista de meses pero con los nombres en vez de los números
+     */
+    public function GerMonthsOfPeriodo($id, $names = false){
+        $periodMonths = [];
+        $target_period = $this->GetPeriodoById($id);
+        $timezone = new DateTimeZone('America/Caracas');
+        $startDate = new DateTime($target_period['fechainicio'], $timezone);
+        $endDate = new DateTime($target_period['fechafin'], $timezone);
+        
+        while($startDate < $endDate){
+            $month = intval($startDate->format('m'));
+
+            if($names === false)
+                array_push($periodMonths, $month);
+            else
+                array_push($periodMonths, $this->month_translate[strval($month)]);
+            
+            $startDate->modify('+1 month');
+        }
+
+        return $periodMonths;
+    }
+
     // Obtiene una cédula y retorna el tipo de usuario junto a su registro
     public function GetUserTypeByCedula($cedula){
         $data = [];
