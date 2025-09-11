@@ -4,6 +4,8 @@
     const productTable = document.getElementById('product-table')
     const debtContainer = document.getElementById('debt-container')
     const debtContent = document.getElementById('debt-content')
+    const debtTable = document.getElementById('debt-table')
+    const focContent = document.getElementById('foc-content')
 
     const products = []
     const productPrices = {}
@@ -36,6 +38,7 @@
     var currentDate = new Date()
     let currentMonth = currentDate.getMonth()
     let lastMonth = currentMonth
+    let monthReached = false
 </script>
 
 <?php foreach($products as $product) { ?>
@@ -104,7 +107,6 @@
                 }
             }
         }
-
         
         DisplayDefaultProduct()        
         UpdateProductsPrice()
@@ -175,26 +177,95 @@
         var debt = await GetDebtOfAccountOfPeriod(account,period)
         if(typeof debt !== "string"){
             debtContainer.classList.remove('d-none')
-            console.log(debt.data)
-            if(debt.data.months > 0){
-                debtContent.classList.remove('text-success')
-                debtContent.classList.add('text-danger')  
-                var monthDebt = GetPrettyCiphers(debt.data.months * coinValues['Dólar'])
-                var retardDebt = GetPrettyCiphers(debt.data.retard * coinValues['Dólar'])                
+            debtTable.innerHTML = ''
 
-                debtContent.innerHTML = '<br>Mensualidad: ' + (monthDebt) + 'Bs. <br>'
-                debtContent.innerHTML += 'Mora: ' + (retardDebt) + 'Bs.'
+            var monthlyRow = document.createElement('tr')
+            var monthlyCol = document.createElement('td')
+            var monthlyVES = document.createElement('td')
+            var monthlyUSD = document.createElement('td')
+            AddBorderToTD(monthlyCol)
+            AddBorderToTD(monthlyVES)
+            AddBorderToTD(monthlyUSD)
+            monthlyCol.classList.remove('bg-white')
+            monthlyCol.classList.add('bg-theme', 'text-white')
+            monthlyCol.innerHTML = 'Mensualidad'
+
+            if(debt.data.months > 0){
+                monthlyVES.classList.add('text-danger')  
+                monthlyUSD.classList.add('text-danger')  
+                monthlyVES.innerHTML = 'Bs. ' + GetPrettyCiphers(debt.data.months * coinValues['Dólar'])
+                monthlyUSD.innerHTML = GetPrettyCiphers(debt.data.months) + '$'
             }
             else{
-                debtContent.classList.remove('text-danger')
-                debtContent.classList.add('text-success')
-                debtContent.innerHTML = 'SIN DEUDA'
+                monthlyVES.classList.add('text-success')  
+                monthlyUSD.classList.add('text-success')  
+                monthlyVES.innerHTML = 'SIN DEUDA'
+                monthlyUSD.innerHTML = 'SIN DEUDA'
             }
+            monthlyRow.appendChild(monthlyCol)
+            monthlyRow.appendChild(monthlyVES)
+            monthlyRow.appendChild(monthlyUSD)
+
+            var retardRow = document.createElement('tr')            
+            var retardCol = document.createElement('td')
+            var retardVES = document.createElement('td')
+            var retardUSD = document.createElement('td')
+            AddBorderToTD(retardCol)
+            AddBorderToTD(retardVES)
+            AddBorderToTD(retardUSD)
+            retardCol.classList.remove('bg-white')
+            retardCol.classList.add('bg-theme', 'text-white')
+            retardCol.innerHTML = 'Mora'
+
+
+            if(debt.data.retard > 0){
+                retardVES.classList.add('text-danger')  
+                retardUSD.classList.add('text-danger')  
+                retardVES.innerHTML = 'Bs. ' + GetPrettyCiphers(debt.data.retard * coinValues['Dólar'])
+                retardUSD.innerHTML = GetPrettyCiphers(debt.data.retard) + '$'
+            }
+            else{
+                retardVES.classList.add('text-success')  
+                retardUSD.classList.add('text-success')  
+                retardVES.innerHTML = 'SIN DEUDA'
+                retardUSD.innerHTML = 'SIN DEUDA'
+            }
+            retardRow.appendChild(retardCol)
+            retardRow.appendChild(retardVES)
+            retardRow.appendChild(retardUSD)
+
+            var focRow = document.createElement('tr')            
+            var focCol = document.createElement('td')
+            var focValue = document.createElement('td')
+            AddBorderToTD(focCol)
+            AddBorderToTD(focValue)
+            focCol.innerHTML = 'FOC'
+            focCol.classList.remove('bg-white')
+            focCol.classList.add('bg-theme', 'text-white')
+
+
+            if(debt.data.foc === true){
+                focCol.classList.add('text-danger')  
+                focValue.colSpan = 2
+                focValue.innerHTML = 'PAGADO'
+            }
+            else{
+                focCol.classList.add('text-success')  
+                focValue.colSpan = 2
+                focValue.innerHTML = 'POR PAGAR'
+            }
+            focRow.appendChild(focCol)
+            focRow.appendChild(focValue)
+
+            debtTable.appendChild(monthlyRow)
+            debtTable.appendChild(retardRow)
+            debtTable.appendChild(focRow)
         }
     }
 
     function GetPrettyCiphers(cipher){
-        var strCipher = String(cipher).replace('.', ',')
+        buffer = parseFloat(cipher).toFixed(2)
+        var strCipher = String(buffer).replace('.', ',')
         var splits = strCipher.split(',')
         var intPart = splits[0]
         var decimalPart = splits[1]
@@ -363,8 +434,7 @@
         if(nextProduct !== 2)
             return
 
-        var nextMonth = parseInt(lastMonth) + 1
-        console.log(nextMonth)
+        var nextMonth = parseInt(lastMonth)
         if(nextMonth >= 12)
             nextMonth = 1
 
@@ -413,6 +483,7 @@
 
     function CleanProducts(){
         lastMonth = currentMonth
+        monthReached = false
         productTable.innerHTML = ''
         nextProduct = 1
         AddProduct()
@@ -560,20 +631,22 @@
             'Diciembre': 12
         }
 
-        //lastMonth = month_translate[month]
-        lastMonth = Object.keys(months).find(key => months[key] === String(month));
-        console.log(month)
-        monthNumber = lastMonth
+        if(invoice.paid === 0 && monthReached === false){
+            monthReached = true
+            lastMonth = Object.keys(months).find(key => months[key] === String(month));
+        }
+
+        monthNumber = month_translate[month]
         if(monthNumber.length === 1)
             monthNumber = '0' + monthNumber
 
         var invoiceMonthCol = document.createElement('td')
-        AddClassToTR(invoiceMonthCol)
-        invoiceMonthCol.innerHTML = monthNumber + ' ' + months[lastMonth]
+        AddClassToTD(invoiceMonthCol)
+        invoiceMonthCol.innerHTML = monthNumber + ' ' + month
 
         // Paid column
         var invoicePaidCol = document.createElement('td')
-        AddClassToTR(invoicePaidCol)
+        AddClassToTD(invoicePaidCol)
         var paidSymbol = document.createElement('i')
         paidSymbol.classList.add('fa')
 
@@ -589,7 +662,7 @@
 
         // Debt column
         var invoiceDebtCol = document.createElement('td')
-        AddClassToTR(invoiceDebtCol)
+        AddClassToTD(invoiceDebtCol)
         var debtSymbol = document.createElement('i')
         debtSymbol.classList.add('fa')
 
@@ -605,7 +678,7 @@
 
         // Partial column
         var invoicePartialCol = document.createElement('td')
-        AddClassToTR(invoicePartialCol)
+        AddClassToTD(invoicePartialCol)
         var partialSymbol = document.createElement('i')
         partialSymbol.classList.add('fa')
 
@@ -621,7 +694,7 @@
         
 
         var seeCol = document.createElement('td')
-        AddClassToTR(seeCol)
+        AddClassToTD(seeCol)
         var seeLink = document.createElement('a')
         seeLink.classList.add('h6')
         seeLink.href = '<?= $base_url ?>/views/detailers/invoice_details.php?id=' + invoice.invoice
@@ -643,12 +716,18 @@
         invoiceTable.appendChild(row)
     }
 
-    function AddClassToTR(tr){
-        tr.classList.add('p-1')
-        tr.classList.add('bg-white')
-        tr.classList.add('border')
-        tr.classList.add('border-black')
-        tr.classList.add('text-black')
+    function AddClassToTD(td){
+        td.classList.add('p-1')
+        td.classList.add('bg-white')
+        td.classList.add('border')
+        td.classList.add('border-black')
+        td.classList.add('text-black')
+    }
+
+    function AddBorderToTD(td){
+        td.classList.add('p-1')
+        td.classList.add('border')
+        td.classList.add('border-black')
     }
 
 

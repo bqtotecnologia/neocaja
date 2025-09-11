@@ -56,7 +56,7 @@ $latest = $invoice_model->GetLatestNumbers();
 <form 
     action="../../controllers/handle_invoice.php" 
     method="POST"
-    class="row justify-content-center"
+    class="row justify-content-center confirm-form"
     onkeydown="return event.key != 'Enter';"
     >
     <div class="col-12 row justify-content-center x_panel">
@@ -91,7 +91,7 @@ $latest = $invoice_model->GetLatestNumbers();
         </div>
     </div>
     <div class="col-12 justify-content-center px-5 mt-4">
-        <div class="d-flex justify-content-center align-items-center flex-column  confirm-form">
+        <div class="d-flex justify-content-center align-items-center flex-column">
             <div class="col-12 text-center">
                 <h1 class="h1 text-black">Registrar nueva factura</h1>
             </div>
@@ -152,16 +152,18 @@ $latest = $invoice_model->GetLatestNumbers();
                             </button>
                         </a>
                     </div>
-
                     <div class="row m-0 p-0 col-12 justify-content-center my-2" id="debt-container">
-                        <h3 class="h3 text-center" id="debt-content">
-                        </h3>
+                        <table class="col-10 table table-bordered border border-black text-center h4">
+                            <tbody id="debt-table">
+                                
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
                 <div class="row col-12 col-md-6 my-2 justify-content-start">
                     <div class="row col-12 m-0 p-2 justify-content-center d-none" id="invoices">
-                        <table class="table table-bordered  border border-black">
+                        <table class="table table-bordered border border-black">
                             <thead class="text-center">
                                 <tr class="h4 m-0 bg-light">
                                     <th class="border border-black" colspan="5">Estado de cuenta en este periodo</th>
@@ -252,9 +254,12 @@ $latest = $invoice_model->GetLatestNumbers();
 
             <div class="x_panel row col-12 m-0 p-0 justify-content-center align-items-start pt-2 my-2 border-top d-none" id="igtf-table">
                 <div class="col-12 d-flex align-items-center">
-                    <h2 class="h2">
+                    <h2 class="h2 col-6">
                         IGTF
                     </h2>
+                    <h4 class="h4 col-6 text-right" id="igtf-total-label">
+
+                    </h4>
                 </div>
                 <div class="col-12">
                     <table class="col-12 table table-bordered">
@@ -273,7 +278,7 @@ $latest = $invoice_model->GetLatestNumbers();
                             <tr>
                                 <td>
                                     <div class="d-flex justify-content-center m-0">
-                                        <select class="select2" name="igtf-method" id="igtf-method">
+                                        <select class="select2" name="igtf-method" id="igtf-method" disabled>
                                             <option value=""></option>
                                             <?php foreach($payment_methods as $payment_method) { ?>
                                                 <option value="<?= $payment_method['id'] ?>"><?= $payment_method['name'] ?></option>
@@ -283,7 +288,7 @@ $latest = $invoice_model->GetLatestNumbers();
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center m-0">
-                                        <select class="select2" name="igtf-coin" id="igtf-coin">
+                                        <select class="select2" name="igtf-coin" id="igtf-coin" disabled>
                                             <option value=""></option>
                                             <?php foreach($coins as $coin) { ?>
                                                 <option value="<?= $coin['id'] ?>"><?= $coin['name'] ?></option>
@@ -293,7 +298,7 @@ $latest = $invoice_model->GetLatestNumbers();
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center m-0">
-                                        <select class="select2" name="igtf-bank" id="igtf-bank">
+                                        <select class="select2" name="igtf-bank" id="igtf-bank" disabled>
                                             <option value=""></option>
                                             <?php foreach($banks as $bank) { ?>
                                                 <option value="<?= $bank['id'] ?>"><?= $bank['name'] ?></option>
@@ -303,21 +308,21 @@ $latest = $invoice_model->GetLatestNumbers();
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center m-0">
-                                        <select class="select2" name="igtf-salepoint" id="igtf-salepoint">
+                                        <select class="select2" name="igtf-salepoint" id="igtf-salepoint" disabled>
                                             <option value=""></option>
                                             <?php foreach($sale_points as $sale_point) { ?>
-                                                <option value="<?= $sale_point['id'] ?>"><?= $sale_point['code'] ?></option>
+                                                <option value="<?= $sale_point['code'] ?>"><?= $sale_point['code'] ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>
                                 </td>
 
                                 <td>
-                                    <input class="col-12 form-control" type="text" name="igtf-document" id="igtf-document">
+                                    <input class="col-12 form-control" type="text" name="igtf-document" id="igtf-document" disabled>
                                 </td>
 
                                 <td>
-                                    <input class="col-12 form-control" type="text" name="igtf-price" id="igtf-price" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46)" >
+                                    <input class="col-12 form-control" type="text" name="igtf-price" id="igtf-price" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46)"  disabled>
                                 </td>
 
                                 <td>
@@ -345,7 +350,7 @@ $latest = $invoice_model->GetLatestNumbers();
             </div>
 
 
-            <div class="row col-12 m-0 p-0 justify-content-center mt-5">
+            <div class="row col-12 m-0 p-0 justify-content-center my-5">
                 <button type="submit" class="btn btn-success fw-bold">Registrar</button>
             </div>
         </div>
@@ -404,4 +409,3 @@ $latest = $invoice_model->GetLatestNumbers();
 <?php include_once '../common/partials/invoice_form_invoice_javascript.php'; ?>
 <?php include_once '../common/partials/invoice_form_payments_javascript.php'; ?>
 <?php include_once '../common/partials/invoice_form_igtf_javascript.php'; ?>
-<?php include_once '../common/partials/invoice_form_months_state_javascript.php'; ?>

@@ -234,7 +234,7 @@ if($error === ''){
 }
 
 // Processing the IGTF
-if($error === '' && isset($_POST['igtf-total'])){
+if($error === '' && isset($_POST['igtf-price'])){
     $payment_method_id = $_POST['igtf-method'];
         
     $target_payment_method = $payment_method_model->GetPaymentMethodType($payment_method_id);
@@ -266,15 +266,15 @@ if($error === '' && isset($_POST['igtf-total'])){
         }   
     }
     else
-        $target_sale_point = null;
-        
+        $target_sale_point = null;        
 }
 
-if($error === '' && isset($_POST['igtf-total'])){
+
+if($error === '' && isset($_POST['igtf-price'])){
     $to_add = [
         'method' => $_POST['igtf-method'],
         'coin' => $_POST['igtf-coin'],
-        'salepoint' => $_POST["igtf-salepoint"] === '' ? 'NULL' : ("'" . $_POST["igtf-salepoint"] . "'"),
+        'salepoint' => $_POST["igtf-salepoint"] === '' ? 'NULL' : ("'" . $target_sale_point['id'] . "'"),
         'bank' => $_POST['igtf-bank'] ?? 'NULL',
         'document_number' => $_POST["igtf-document"] === '' ? 'NULL' : ("'" . $_POST["igtf-document"] . "'"),
         'price' => $_POST["igtf-price"] ?? 'NULL',
@@ -303,6 +303,8 @@ if($error === ''){
 if($error === ''){
     // Agregamos los conceptos de la factura
     foreach($payment_methods as $payment_method){
+        var_dump($payment_method);
+        echo '<br>';
         $created = $invoice_model->AddPaymentMethodToInvoice($payment_method, strval($target_invoice['id']));
         if($created === false){
             $error = 'Ocurrió un error al intentar agregar el método de pago de monto ' . $payment_method['price'];

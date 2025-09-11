@@ -111,6 +111,8 @@ class InvoiceModel extends SQLModel
         $igtf
         )";
 
+        var_dump($sql);
+        echo '<br>';
         return parent::DoQuery($sql);
     }
 
@@ -172,7 +174,9 @@ class InvoiceModel extends SQLModel
             inv.period = $period AND
             inv.active = 1
             GROUP BY
-            inv.id";
+            inv.id
+            ORDER BY
+            inv.created_at DESC";
 
         return parent::GetRows($sql, true);
     }
@@ -202,7 +206,9 @@ class InvoiceModel extends SQLModel
             accounts.id = $account AND
             inv.active = 1
             GROUP BY
-            inv.id";
+            inv.id
+            ORDER BY
+            inv.created_at DESC";
 
 
         return parent::GetRows($sql, true);
@@ -274,7 +280,8 @@ class InvoiceModel extends SQLModel
             accounts.cedula = '$cedula' AND
             invoices.period = $periodId AND
             products.name LIKE '%Mensualidad%'AND
-            concepts.month IS NOT NULL
+            concepts.month IS NOT NULL AND
+            invoices.active = 1
             ORDER BY
             concepts.month";
 
@@ -299,7 +306,7 @@ class InvoiceModel extends SQLModel
                 continue;
             
             $ordered_concepts[$target_month]['invoice'] = $concept['invoice'];
-            //$ordered_concepts[$target_month]['price'] = $concept['created_at'];
+            $ordered_concepts[$target_month]['date'] = $concept['created_at'];
             $ordered_concepts[$target_month]['valid'] = 1;
 
             $ordered_concepts[$target_month]['concepts'][$concept['product']] = $concept['price'];
@@ -328,7 +335,7 @@ class InvoiceModel extends SQLModel
                     $invoice_month = intval($invoice_date->format('m'));
                     $invoice_year = $invoice_date->format('Y');
     
-                    $retard_date = "$invoice_year-$invoice_month-" . $global_vars['Dia tope mora'];
+                    $retard_date = "$invoice_year-$invoice_month-" . intval($global_vars['Dia tope mora']);
                     $retard_date = new DateTime($retard_date, $timezone);
                     
                     if(intval($key) < $invoice_month){
@@ -389,32 +396,33 @@ class InvoiceModel extends SQLModel
         $accountState = $this->GetAccountState($cedula, $periodId);
         $cleanState = [];
 
+        $debt_data = [
+            'months' => 0,
+            'retard' => 0,
+            'foc' => true
+        ];
+
         foreach($accountState as $month => $value){
             if($value['paid'] === 0 && in_array($month, $periodMonths))
                 $cleanState[$month] = $value;
         }
         
-        $today = new DateTime('now', $timezone);
-        $today->setDate($today->format('Y'), $today->format('m'), '1');
+        $real_today = new DateTime('now', $timezone);
+        $fake_today = new DateTime('now', $timezone);
+        $fake_today->setDate($fake_today->format('Y'), $fake_today->format('m'), '1');        
         
-        $debt_data = [
-            'months' => 0,
-            'retard' => 0,
-        ];
 
         foreach($periodDates as $periodDate){
             $date = new DateTime($periodDate, $timezone);
 
-            if($date > $today)
+            if($date > $fake_today)
                 break;
 
             $month = intval($date->format('m'));
             $monthName = $this->month_translate[strval($month)];
 
             if(!isset($cleanState[$monthName]))
-                continue;
-
-            
+                continue;            
 
             $monthValue = $cleanState[$monthName];
 
@@ -422,14 +430,13 @@ class InvoiceModel extends SQLModel
             if($monthValue['partial'] === 0)
                 $debt_data['months'] += $monthly_debt;
             else{
-                $monthly_debt -= floatval($monthValue['concept']['Abono Mensualidad']);
+                $monthly_debt -= floatval($monthValue['concepts']['Abono Mensualidad']);
                 $debt_data['months'] += $monthly_debt;
-            }
-
+            }    
 
             $retard_applies = false;
-            if($month === intval($today->format('m'))){
-                if(intval($today->format('d')) > intval($global_vars['Dia tope mora']))
+            if($month === intval($fake_today->format('m'))){
+                if(intval($real_today->format('d')) > intval($global_vars['Dia tope mora']))
                     $retard_applies = true;                    
             }
             else{
@@ -439,12 +446,32 @@ class InvoiceModel extends SQLModel
             if($retard_applies){
                 $retard = round($monthly_debt * ($global_vars['Porcentaje mora'] / 100), 2);
                 $debt_data['retard'] += $retard;
-            }
-
-            
+            }            
         }
 
+        $debt_data['foc'] = $this->AccountPaidFOCOnPeriod($cedula, $periodId);
         return $debt_data;
+    }
+
+    public function AccountPaidFOCOnPeriod($cedula, $periodId){
+        $sql = "SELECT
+            invoices.id as invoice
+            FROM
+            invoices
+            INNER JOIN concepts ON concepts.invoice = invoices.id
+            INNER JOIN products ON products.id = concepts.product
+            INNER JOIN accounts ON accounts.id = invoices.account
+            WHERE
+            accounts.cedula = '$cedula' AND
+            invoices.period = $periodId AND
+            products.name = 'FOC' AND
+            invoices.active = 1";
+
+        $result = parent::GetRow($sql);
+        if($result !== false)
+            $result = true;
+
+        return $result;
     }
 
     public function AnullInvoice($id){

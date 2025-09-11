@@ -240,7 +240,7 @@ $igtfTotal = 0;
 if($igtf !== null){
     $pdf->SetFont('Times', 'B', 9);
     $pdf->SetXY(10, $upper_margin + 34 + $rowPosition);
-    $pdf->Cell(20, 4, MyDecode('Método de pago del IGTF'), 0, 0, 'L');
+    $pdf->Cell(20, 4, MyDecode('IGTF'), 0, 0, 'L');
     $pdf->SetFont('Times', '', 9);
     $rowPosition += 4;
     $pdf->SetXY(10, $upper_margin + 34 + $rowPosition);

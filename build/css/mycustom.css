@@ -2,6 +2,10 @@
     background-color: #2A3F54;
 }
 
+.bg-gray{
+    background-color: #cfcfcf;
+}
+
 td, th {
     border: 1px black solid;
 }
@@ -12,6 +16,10 @@ td, th {
 
 .text-black {
     color: #2D2D2D !important;
+}
+
+.text-white {
+    color:#fff !important;
 }
 
 .border-black{

@@ -37,6 +37,7 @@ $target_account = $account_model->GetAccount($target_invoice['account_id']);
 $payment_methods = $invoice_model->GetPaymentMethodsOfInvoice($id);
 $concepts = $invoice_model->GetConceptsOfInvoice($id);
 $coinValues = $coin_model->GetCoinValuesOfDate($target_invoice['rate_date']);
+$igtf = null;
 
 include '../../views/common/header.php';
 
@@ -177,10 +178,10 @@ include '../../views/common/header.php';
                             <tr class="text-center">
                                 <th>Producto</th>
                                 <th>Mes</th>
-                                <th>Completo</th>
                                 <th>Monto ($)</th>
-                                <th>Descuento</th>
                                 <th>Tasa</th>
+                                <th>Subtotal</th>
+                                <th>Descuento</th>
                                 <th>Total</th>
                             </tr>
                         </thead>
@@ -188,13 +189,13 @@ include '../../views/common/header.php';
                             <?php $products_total = 0; ?>
                             <?php foreach($concepts as $concept) { ?>
                                 <?php 
-                                    $total = floatval($concept['price']) * $coinValues['Dólar']; 
+                                    $subtotal = round($concept['price'] * $coinValues['Dólar'], 2); 
                                     $disccount_percent = 0;
                                     if($target_account['scholarship'] !== null && intval($target_account['scholarship_coverage']) > 0){
                                         $disccount_percent = intval($target_account['scholarship_coverage']);
                                     }
 
-                                    $total = $total - ($total * ($disccount_percent / 100));
+                                    $total = $subtotal - ($subtotal * ($disccount_percent / 100));
                                     $products_total += $total; 
                                 ?>
                                 <tr class="text-center">
@@ -207,14 +208,15 @@ include '../../views/common/header.php';
                                         <?php } ?>
                                     </td>
                                     <td class="text-right"><?= $concept['price'] ?></td>
-                                    <td class="text-right"><?= $disccount_percent ?>%</td>
                                     <td class="text-right"><?= $coinValues['Dólar'] ?></td>
-                                    <td class="text-right">Bs. <?= $total ?></td>
+                                    <td class="text-right"><?= $subtotal ?></td>
+                                    <td class="text-right"><?= $disccount_percent ?>%</td>
+                                    <td class="text-right">Bs. <?= round($total, 2) ?></td>
                                 </tr>
                             <?php } ?>
                             <tr class="fw-bold text-right">
                                 <td colspan="6">Total:</td>
-                                <td>Bs. <?= $products_total ?></td>
+                                <td>Bs. <?= round($products_total, 2) ?></td>
                             </tr>
                         </tbody>
                     </table>
@@ -250,10 +252,8 @@ include '../../views/common/header.php';
                                         $igtf = $method;
                                         continue;
                                     }
-                                    $total = floatval($method['price']) * $coinValues[$method['coin']]; 
-                                    $payments_total += $total; 
-
-                                    
+                                    $total = round($method['price'] * $coinValues[$method['coin']], 2);
+                                    $payments_total += $total;                                     
                                 ?>
 
                                 <tr class="text-center">
@@ -295,7 +295,7 @@ include '../../views/common/header.php';
             </div>
         </section>
 
-        <?php if(isset($igtf)) { ?>
+        <?php if($igtf !== null) { ?>
 
             <section class="col-12 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
                 <h2 class="col-12 h2">
@@ -354,8 +354,8 @@ include '../../views/common/header.php';
         <?php } ?>
     </div>
 
-    <?php if(intval($target_invoice['active']) === 0) { ?>
-        <div class="row col-12 justify-content-center mt-5">
+    <?php if(intval($target_invoice['active']) === 1) { ?>
+        <div class="row col-12 justify-content-center my-5">
             <button class="btn btn-danger" onclick="ConfirmCancelInvoice()">
                 Anular factura
             </button>

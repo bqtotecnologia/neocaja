@@ -80,13 +80,12 @@
                 coinName = node.innerHTML
             }
         }
-
-        var igtf_table = document.getElementById('igtf-table')
+        
         if(coinName !== 'Bolívar' && coinName !== '&nbsp;'){
-            igtf_table.classList.remove('d-none')
+            EnableIGTF()
         }
         else{
-            igtf_table.classList.add('d-none')
+            DisableIGTF()
         }
 
 
@@ -225,9 +224,6 @@
     function GetNewBankColumn(paymentId){
         var bankCol = document.createElement('td')
         var bankSelect = document.createElement('select')
-        //var div = document.createElement('div')
-        //div.classList.add('d-flex', 'justify-content-center', 'm-0')
-        //bankCol.appendChild(div)
         var option = document.createElement('option')
         option.innerHTML = "&nbsp"
         option.value = ''
@@ -241,10 +237,8 @@
             option.innerHTML = bank['name']
             bankSelect.appendChild(option)
         })
-        //bankSelect.classList.add('form-control', 'col-11')
         AddClassesToSelect(bankSelect)  
         bankCol.appendChild(bankSelect)
-        //div.appendChild(bankSelect)
         return bankCol
     }
 
