@@ -30,15 +30,34 @@
         '12': 'Diciembre',
     }    
 
+    const month_translate = {
+        'Enero': 1,
+        'Febrero': 2,
+        'Marzo': 3,
+        'Abril': 4,
+        'Mayo': 5,
+        'Junio': 6,
+        'Julio': 7,
+        'Agosto': 8,
+        'Septiembre': 9,
+        'Octubre': 10,
+        'Noviembre': 11,
+        'Diciembre': 12
+    }
+
     
     let nextProduct = 1
     let targetAccount = {}
+    let periodMonths = []
     
 
     var currentDate = new Date()
     let currentMonth = currentDate.getMonth()
     let lastMonth = currentMonth
+    let yearOfNextMonth = currentDate.getFullYear()
     let monthReached = false
+    let paidMonths = []
+    let debtData = ''
 </script>
 
 <?php foreach($products as $product) { ?>
@@ -76,8 +95,6 @@
 
 
 <script>  
-    AddProduct()    
-
     $('#account').on('select2:select', async function (e) {
         ClearInvoices()
         if(e.target.value !== ''){
@@ -98,73 +115,25 @@
             targetAccount = await GetAccountData(e.target.value)
             targetAccount = targetAccount.data
             accountButton.classList.remove('d-none')
-            accountButton.href = '<?= $base_url ?>' + '/views/detailers/account_details.php?id=' + targetAccount.id
-            console.log(accountMonths)
-            if(Object.keys(accountMonths.data).length > 0){
-                invoiceContainer.classList.remove('d-none')
-                for(let key in accountMonths.data){
-                    AddInvoice(key, accountMonths.data[key])
-                }
+            accountButton.href  = '<?= $base_url ?>' + '/views/detailers/account_details.php?id=' + targetAccount.id
+            await DisplayInvoices(accountMonths.data)
+        }
+
+        AddProduct()
+        DisplayDefaultProduct()        
+        if(typeof debtData !== "string"){
+            UpdateDefaultProducts(debtData.data)
+        }
+        UpdateProductsPrice()
+    }    
+
+    async function DisplayInvoices(invoices){
+        if(Object.keys(invoices).length > 0){
+            invoiceContainer.classList.remove('d-none')
+            for(let key in invoices){
+                AddInvoice(key, invoices[key])
             }
         }
-        
-        DisplayDefaultProduct()        
-        UpdateProductsPrice()
-    }
-
-    async function GetInvoicesOfAccount(account){
-        var period = '<?= $periodId ?>'
-        var url = '<?= $base_url ?>/api/get_invoices_of_account.php?account=' + account + '&period=' + period
-        console.log(url)
-        var fetchConfig = {
-            method: 'GET', 
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }
-
-        return await TryFetch(url, fetchConfig)
-    }
-
-    async function GetAccountData(account){
-        var url = '<?= $base_url ?>/api/get_account_data.php?account=' + account
-
-        var fetchConfig = {
-            method: 'GET', 
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }
-
-        return await TryFetch(url, fetchConfig)
-    }  
-
-    async function GetAccountState(account, period){
-        var url = '<?= $base_url ?>/api/get_account_state.php?account=' + account + '&period=' + period
-        console.log(url)
-
-        var fetchConfig = {
-            method: 'GET', 
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }
-
-        return await TryFetch(url, fetchConfig)
-    }
-
-    async function GetDebtOfAccountOfPeriod(account,period){
-        var url = '<?= $base_url ?>/api/get_account_debt.php?account=' + account + '&period=' + period
-        console.log(url)
-
-        var fetchConfig = {
-            method: 'GET', 
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }
-
-        return await TryFetch(url, fetchConfig)
     }
 
     function ClearInvoices(){
@@ -174,92 +143,9 @@
     }
 
     async function DisplayDebt(account, period){
-        var debt = await GetDebtOfAccountOfPeriod(account,period)
-        if(typeof debt !== "string"){
-            debtContainer.classList.remove('d-none')
-            debtTable.innerHTML = ''
-
-            var monthlyRow = document.createElement('tr')
-            var monthlyCol = document.createElement('td')
-            var monthlyVES = document.createElement('td')
-            var monthlyUSD = document.createElement('td')
-            AddBorderToTD(monthlyCol)
-            AddBorderToTD(monthlyVES)
-            AddBorderToTD(monthlyUSD)
-            monthlyCol.classList.remove('bg-white')
-            monthlyCol.classList.add('bg-theme', 'text-white')
-            monthlyCol.innerHTML = 'Mensualidad'
-
-            if(debt.data.months > 0){
-                monthlyVES.classList.add('text-danger')  
-                monthlyUSD.classList.add('text-danger')  
-                monthlyVES.innerHTML = 'Bs. ' + GetPrettyCiphers(debt.data.months * coinValues['Dólar'])
-                monthlyUSD.innerHTML = GetPrettyCiphers(debt.data.months) + '$'
-            }
-            else{
-                monthlyVES.classList.add('text-success')  
-                monthlyUSD.classList.add('text-success')  
-                monthlyVES.innerHTML = 'SIN DEUDA'
-                monthlyUSD.innerHTML = 'SIN DEUDA'
-            }
-            monthlyRow.appendChild(monthlyCol)
-            monthlyRow.appendChild(monthlyVES)
-            monthlyRow.appendChild(monthlyUSD)
-
-            var retardRow = document.createElement('tr')            
-            var retardCol = document.createElement('td')
-            var retardVES = document.createElement('td')
-            var retardUSD = document.createElement('td')
-            AddBorderToTD(retardCol)
-            AddBorderToTD(retardVES)
-            AddBorderToTD(retardUSD)
-            retardCol.classList.remove('bg-white')
-            retardCol.classList.add('bg-theme', 'text-white')
-            retardCol.innerHTML = 'Mora'
-
-
-            if(debt.data.retard > 0){
-                retardVES.classList.add('text-danger')  
-                retardUSD.classList.add('text-danger')  
-                retardVES.innerHTML = 'Bs. ' + GetPrettyCiphers(debt.data.retard * coinValues['Dólar'])
-                retardUSD.innerHTML = GetPrettyCiphers(debt.data.retard) + '$'
-            }
-            else{
-                retardVES.classList.add('text-success')  
-                retardUSD.classList.add('text-success')  
-                retardVES.innerHTML = 'SIN DEUDA'
-                retardUSD.innerHTML = 'SIN DEUDA'
-            }
-            retardRow.appendChild(retardCol)
-            retardRow.appendChild(retardVES)
-            retardRow.appendChild(retardUSD)
-
-            var focRow = document.createElement('tr')            
-            var focCol = document.createElement('td')
-            var focValue = document.createElement('td')
-            AddBorderToTD(focCol)
-            AddBorderToTD(focValue)
-            focCol.innerHTML = 'FOC'
-            focCol.classList.remove('bg-white')
-            focCol.classList.add('bg-theme', 'text-white')
-
-
-            if(debt.data.foc === true){
-                focCol.classList.add('text-danger')  
-                focValue.colSpan = 2
-                focValue.innerHTML = 'PAGADO'
-            }
-            else{
-                focCol.classList.add('text-success')  
-                focValue.colSpan = 2
-                focValue.innerHTML = 'POR PAGAR'
-            }
-            focRow.appendChild(focCol)
-            focRow.appendChild(focValue)
-
-            debtTable.appendChild(monthlyRow)
-            debtTable.appendChild(retardRow)
-            debtTable.appendChild(focRow)
+        debtData = await GetDebtOfAccountOfPeriod(account,period)        
+        if(typeof debtData !== "string"){
+            BuildDebtTable(debtData.data)
         }
     }
 
@@ -312,6 +198,20 @@
             title: '7 tasas más recientes del ' + coin,
             html:text
         })
+    }
+
+    function UpdateDefaultProducts(debt){
+        var firstProduct = document.getElementById('product-baseprice-1')
+        var secondProduct = document.getElementById('product-baseprice-2')
+        if(debt.months > 0 && debt.retard > 0){
+            // Tiene tanto mora como deuda
+            firstProduct.value = debt.retard
+            secondProduct.value = debt.months            
+        }
+        else if(debt.months > 0){
+            // Aún debe el mes pero no tiene mora
+            firstProduct.value = debt.months
+        }
     }
 
     function AddProduct(){
@@ -380,7 +280,7 @@
             var monthInput = document.getElementById('product-month-' + i)
             var targetOption = monthInput.options[monthInput.selectedIndex]
             
-            if(targetOption.classList.contains('text-danger') && productName === 'Diferencia Mensualidad'){
+            if(productName === 'Diferencia Mensualidad'){
                 // Add retard
                 var monthlyPrice = productPrices['Mensualidad']
                 productBasePrice = monthlyPrice * (retardPercent / 100)
@@ -427,7 +327,8 @@
         }
 
         productsTotal.innerHTML = total + '$'
-        productsTotalBs.innerHTML = 'Bs. ' + (total * parseFloat(usdRate)).toFixed(4)
+        productsTotalBs.innerHTML = (total * parseFloat(usdRate)).toFixed(2)
+        UpdatePaymentMethodsDiffWithProducts()
     }
 
     function DisplayDefaultProduct(){      
@@ -435,9 +336,14 @@
             return
 
         var nextMonth = parseInt(lastMonth)
-        if(nextMonth >= 12)
+        /*
+        if(nextMonth >= 12){
             nextMonth = 1
-
+            yearOfNextMonth += 1
+        }
+            */
+        
+        console.log('Mes atrasado: ' + yearOfNextMonth)
         if(GetMonthIsRetarded(nextMonth)){
             ChangeMonth(nextMonth, nextProduct - 1)
             ChangeProduct(nextProduct - 1, productIds['Diferencia Mensualidad'])
@@ -458,27 +364,8 @@
         $('#product-id-' + position).select2("val", String(productId))
     }
 
-    function BuildProductRow(){
-        var productId = String(nextProduct)
-
-        var productCol = GetNewProductColumn(productId)        
-        var monthCol = GetNewMonthColumn(productId)
-        var basePriceCol = GetNewBasePriceColumn(productId)
-        var scholarshipCol = GetNewScholarshipDiscountColumn(productId)
-        var totalCol = GetNewTotalColumn(productId)
-        var eraseCol = GetNewEraseButtonColumn(productId)      
-
-        var row = document.createElement('tr')
-        row.classList.add('text-center', 'fs-5')
-        row.id = "product-row-" + productId
-        row.appendChild(productCol)
-        row.appendChild(monthCol)
-        row.appendChild(basePriceCol)
-        row.appendChild(scholarshipCol)
-        row.appendChild(totalCol)
-        row.appendChild(eraseCol)
-
-        productTable.appendChild(row)
+    function ToggleReadOnly(input){
+        input.readOnly = !input.readOnly
     }
 
     function CleanProducts(){
@@ -486,7 +373,10 @@
         monthReached = false
         productTable.innerHTML = ''
         nextProduct = 1
-        AddProduct()
+        paidMonths = []
+        updatePricesAccordToDebt = false
+        periodMonths = []
+        //AddProduct()
     }
 
     function DeleteProductRow(id){
@@ -498,7 +388,7 @@
         var currentDate = new Date()
         var todayMonth = currentDate.getMonth() + 1
         result = false
-        if(parseInt(targetMonth) < todayMonth){
+        if(parseInt(targetMonth) < todayMonth && yearOfNextMonth === currentDate.getFullYear()){
             result = true
         }
         else if(parseInt(targetMonth) === todayMonth && parseInt(currentDate.getDate()) > retardMaxDay){
@@ -506,229 +396,4 @@
         }
         return result
     }
-
-    function AddClassesToSelect(select){
-        select.classList.add('form-control', 'col-12', 'col-md-8', 'select2')
-    }
-
-    function GetNewProductColumn(productId){
-        var productCol = document.createElement('td')
-        var productSelect = document.createElement('select')
-        var option = document.createElement('option')
-        option.innerHTML = "&nbsp"
-        option.value = ''
-        productSelect.appendChild(option)
-        AddClassesToSelect(productSelect)        
-        var buffer = "product-id-" + productId
-        productSelect.id = buffer
-        productSelect.name = buffer
-        products.forEach((product) => {
-            var option = document.createElement('option')
-            option.value = product['id']
-            option.innerHTML = product['name']
-            productSelect.appendChild(option)
-        })
-        productCol.appendChild(productSelect)
-        return productCol
-    }
-
-    function GetNewMonthColumn(productId){
-        var monthCol = document.createElement('td')
-        var div = document.createElement('div')
-        div.classList.add('d-flex', 'justify-content-center', 'm-0')
-        monthCol.appendChild(div)
-        var monthSelect = document.createElement('select')
-        var option = document.createElement('option')
-        option.innerHTML = "&nbsp"
-        option.value = ''
-        monthSelect.appendChild(option)
-        monthSelect.addEventListener('click', function() { UpdateProductsPrice() })
-        monthSelect.classList.add('form-control', 'col-12', 'col-md-8')
-        buffer = "product-month-" + productId
-        monthSelect.id = buffer
-        monthSelect.name = buffer
-
-        for(let key in months){
-            var option = document.createElement('option')
-            option.value = key
-            var span = document.createElement('span')
-            span.innerHTML = months[key]
-            span.classList.add('bg-primary')
-            option.appendChild(span)
-
-            if(GetMonthIsRetarded(key))
-                option.classList.add('fw-bold', 'text-danger')
-
-            monthSelect.appendChild(option)
-        }
-        div.appendChild(monthSelect)
-        return monthCol
-    }
-
-    function GetNewBasePriceColumn(productId){
-        var basePriceCol = document.createElement('td')
-        var basePriceInput = document.createElement('input')
-        var name = "product-baseprice-" + productId
-        basePriceInput.name = name
-        basePriceInput.id = name
-        basePriceInput.type = 'text'                
-        basePriceInput.classList.add('form-control')
-        basePriceCol.appendChild(basePriceInput)
-        basePriceInput.addEventListener('change', function(e){ UpdateProductsPrice() })
-        return basePriceCol
-    }
-
-    function GetNewScholarshipDiscountColumn(productId){
-        var scholarshipCol = document.createElement('td')
-        var scholarshipInput = document.createElement('input')
-        scholarshipInput.type = 'text'
-        scholarshipInput.disabled = true
-        scholarshipInput.id = "product-scholarship-" + productId
-        scholarshipInput.classList.add('form-control', 'scholarship-input')
-        scholarshipCol.appendChild(scholarshipInput)
-        return scholarshipCol
-    }
-
-    function GetNewTotalColumn(productId){
-        var totalCol = document.createElement('td')
-        var totalInput = document.createElement('input')
-        totalInput.type = 'text'
-        totalInput.disabled = true
-        totalInput.id = "product-total-" + productId
-        totalInput.classList.add('form-control')
-        totalCol.appendChild(totalInput)
-        return totalCol
-    }
-
-    function GetNewEraseButtonColumn(productId){
-        var eraseCol = document.createElement('td')
-        eraseCol.classList.add('text-center')
-        var eraseBtn = document.createElement('button')
-        eraseBtn.classList.add('btn', 'btn-danger')
-        eraseBtn.title = 'Eliminar fila'
-        eraseBtn.type = 'button'
-        eraseBtn.addEventListener('click', function(){ DeleteProductRow(productId)})
-        var eraseIcon = document.createElement('i')
-        eraseIcon.classList.add('fa', 'fa-trash')
-        eraseBtn.appendChild(eraseIcon)
-        eraseCol.appendChild(eraseBtn)
-        return eraseCol
-    }
-
-    function AddInvoice(month, invoice){
-        var month_translate = {
-            'Enero': 1,
-            'Febrero': 2,
-            'Marzo': 3,
-            'Abril': 4,
-            'Mayo': 5,
-            'Junio': 6,
-            'Julio': 7,
-            'Agosto': 8,
-            'Septiembre': 9,
-            'Octubre': 10,
-            'Noviembre': 11,
-            'Diciembre': 12
-        }
-
-        if(invoice.paid === 0 && monthReached === false){
-            monthReached = true
-            lastMonth = Object.keys(months).find(key => months[key] === String(month));
-        }
-
-        monthNumber = month_translate[month]
-        if(monthNumber.length === 1)
-            monthNumber = '0' + monthNumber
-
-        var invoiceMonthCol = document.createElement('td')
-        AddClassToTD(invoiceMonthCol)
-        invoiceMonthCol.innerHTML = monthNumber + ' ' + month
-
-        // Paid column
-        var invoicePaidCol = document.createElement('td')
-        AddClassToTD(invoicePaidCol)
-        var paidSymbol = document.createElement('i')
-        paidSymbol.classList.add('fa')
-
-        if(invoice.paid === 1){
-            paidSymbol.classList.add('fa-check')
-            paidSymbol.classList.add('text-success')
-        }
-        else{
-            paidSymbol.classList.add('fa-close')
-            paidSymbol.classList.add('text-danger')
-        }
-        invoicePaidCol.appendChild(paidSymbol)
-
-        // Debt column
-        var invoiceDebtCol = document.createElement('td')
-        AddClassToTD(invoiceDebtCol)
-        var debtSymbol = document.createElement('i')
-        debtSymbol.classList.add('fa')
-
-        if(invoice.debt === 1){
-            debtSymbol.classList.add('fa-check')
-            debtSymbol.classList.add('text-success')
-        }
-        else{
-            debtSymbol.classList.add('fa-close')
-            debtSymbol.classList.add('text-danger')
-        }
-        invoiceDebtCol.appendChild(debtSymbol)
-
-        // Partial column
-        var invoicePartialCol = document.createElement('td')
-        AddClassToTD(invoicePartialCol)
-        var partialSymbol = document.createElement('i')
-        partialSymbol.classList.add('fa')
-
-        if(invoice.partial === 1){
-            partialSymbol.classList.add('fa-check')
-            partialSymbol.classList.add('text-success')
-        }
-        else{
-            partialSymbol.classList.add('fa-close')
-            partialSymbol.classList.add('text-danger')
-        }
-        invoicePartialCol.appendChild(partialSymbol)
-        
-
-        var seeCol = document.createElement('td')
-        AddClassToTD(seeCol)
-        var seeLink = document.createElement('a')
-        seeLink.classList.add('h6')
-        seeLink.href = '<?= $base_url ?>/views/detailers/invoice_details.php?id=' + invoice.invoice
-        seeLink.target = '_blank'
-        seeLink.innerHTML = 'Ver'
-        seeLink.classList.add('fw-bold')
-        seeCol.appendChild(seeLink)
-
-        var row = document.createElement('tr')
-        row.classList.add('text-center')
-        row.classList.add('fs-5')
-        row.classList.add('text-black')
-        row.appendChild(invoiceMonthCol)
-        row.appendChild(invoicePaidCol)
-        row.appendChild(invoiceDebtCol)
-        row.appendChild(invoicePartialCol)
-        row.appendChild(seeCol)
-        
-        invoiceTable.appendChild(row)
-    }
-
-    function AddClassToTD(td){
-        td.classList.add('p-1')
-        td.classList.add('bg-white')
-        td.classList.add('border')
-        td.classList.add('border-black')
-        td.classList.add('text-black')
-    }
-
-    function AddBorderToTD(td){
-        td.classList.add('p-1')
-        td.classList.add('border')
-        td.classList.add('border-black')
-    }
-
-
 </script>

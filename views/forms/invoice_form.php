@@ -103,7 +103,18 @@ $latest = $invoice_model->GetLatestNumbers();
                             <label class="h6 m-0 fw-bold px-2" for="invoice_number">Nº Factura</label>
                         </div>
                         <div class="row col-12 col-md-8 m-0 p-0 justify-content-center justify-content-md-start">
-                            <input id="invoice_number" name="invoice_number" class=" form-control col-10 col-md-8" placeholder="Número de factura" required value="<?= $latest['invoice_number'] ?>" type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+                            <input 
+                            id="invoice_number" 
+                            name="invoice_number" 
+                            class=" form-control col-10 col-md-8" 
+                            placeholder="Número de factura" 
+                            required 
+                            readonly
+                            value="<?= $latest['invoice_number'] ?>" 
+                            type="text" 
+                            onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
+                            onclick="ToggleReadOnly(this)"
+                            >
                         </div>
                     </div>
 
@@ -112,7 +123,18 @@ $latest = $invoice_model->GetLatestNumbers();
                             <label class="h6 m-0 fw-bold px-2" for="control_number">Nº Control</label>
                         </div>
                         <div class="row col-12 col-md-8 m-0 p-0 justify-content-center justify-content-md-start">
-                            <input id="control_number" name="control_number" class=" form-control col-10 col-md-8" placeholder="Número de control" required value="<?= $latest['control_number'] ?>" type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+                            <input 
+                            id="control_number" 
+                            name="control_number" 
+                            class=" form-control col-10 col-md-8" 
+                            placeholder="Número de control" 
+                            required 
+                            readonly
+                            value="<?= $latest['control_number'] ?>" 
+                            type="text" 
+                            onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
+                            onclick="ToggleReadOnly(this)"
+                            >
                         </div>
                     </div>
 
@@ -152,10 +174,16 @@ $latest = $invoice_model->GetLatestNumbers();
                             </button>
                         </a>
                     </div>
-                    <div class="row m-0 p-0 col-12 justify-content-center my-2" id="debt-container">
+                    <div class="row m-0 p-0 col-12 justify-content-center my-2 d-none" id="debt-container">
                         <table class="col-10 table table-bordered border border-black text-center h4">
+                            <thead>
+                                <tr class="bg-theme text-white fw-bold">
+                                    <th>Deuda</th>
+                                    <th>Bolívares</th>
+                                    <th>Dólares</th>
+                                </tr>
+                            </thead>
                             <tbody id="debt-table">
-                                
                             </tbody>
                         </table>
                     </div>
@@ -164,8 +192,8 @@ $latest = $invoice_model->GetLatestNumbers();
                 <div class="row col-12 col-md-6 my-2 justify-content-start">
                     <div class="row col-12 m-0 p-2 justify-content-center d-none" id="invoices">
                         <table class="table table-bordered border border-black">
-                            <thead class="text-center">
-                                <tr class="h4 m-0 bg-light">
+                            <thead class="text-center bg-theme text-white">
+                                <tr class="h4 m-0">
                                     <th class="border border-black" colspan="5">Estado de cuenta en este periodo</th>
                                 </tr>
                                 <tr class="h5 m-0">
@@ -195,7 +223,7 @@ $latest = $invoice_model->GetLatestNumbers();
                 <div class="col-12">
                     <table class="col-12 table table-bordered">
                         <thead class="text-center">
-                            <tr class="bg-light">
+                            <tr class="bg-theme text-white">
                                 <th class="p-1 col-3 align-middle">Producto</th>
                                 <th class="p-1 col-2 align-middle">Mes</th>
                                 <th class="p-1 align-middle">Monto base ($)</th>
@@ -207,12 +235,12 @@ $latest = $invoice_model->GetLatestNumbers();
                         <tbody id="product-table">
                         </tbody>
                         <tr>
-                            <td class="text-right h5 fw-bold" colspan="4">Total</td>
-                            <td class="text-center fw-bold h4" id="products-total"></td>
+                            <td class="text-right h5 fw-bold p-1" colspan="4">Total</td>
+                            <td class="text-center fw-bold h4 p-1" id="products-total"></td>
                         </tr>
                         <tr>
-                            <td class="text-right h5 fw-bold" colspan="4">Total en Bs.</td>
-                            <td class="text-center fw-bold h4" id="products-total-bs"></td>
+                            <td class="text-right h5 fw-bold p-1" colspan="4">Total en Bs.</td>
+                            <td class="text-center fw-bold h4 p-1" id="products-total-bs"></td>
                         </tr>
                     </table>
                 </div>
@@ -231,7 +259,7 @@ $latest = $invoice_model->GetLatestNumbers();
                 <div class="col-12">
                     <table class="col-12 table table-bordered">
                         <thead class="text-center">
-                            <tr class="bg-light">
+                            <tr class="bg-theme text-white">
                                 <th class="p-1 align-middle" style="width:11%">Método</th>
                                 <th class="p-1 align-middle px-5" style="width:10%">Moneda</th>
                                 <th class="p-1 align-middle" style="width:17%">Banco</th>
@@ -245,8 +273,12 @@ $latest = $invoice_model->GetLatestNumbers();
                         <tbody id="payment-table">
                         </tbody>
                         <tr>
-                            <td class="text-right h5 fw-bold" colspan="6">Total</td>
-                            <td class="text-center fw-bold h4" id="payment-total"></td>
+                            <td class="text-right h5 fw-bold p-1" colspan="6">Total</td>
+                            <td class="text-center fw-bold h4 p-1" id="payment-total"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-right h5 fw-bold p-1" colspan="6">Diferencia</td>
+                            <td class="text-center fw-bold h4 p-1" id="payment-diff"></td>
                         </tr>
                     </table>
                 </div>
@@ -257,14 +289,13 @@ $latest = $invoice_model->GetLatestNumbers();
                     <h2 class="h2 col-6">
                         IGTF
                     </h2>
-                    <h4 class="h4 col-6 text-right" id="igtf-total-label">
-
+                    <h4 class="h4 col-6 text-right text-black" id="igtf-total-label">
                     </h4>
                 </div>
                 <div class="col-12">
                     <table class="col-12 table table-bordered">
                         <thead class="text-center">
-                            <tr class="bg-light">
+                            <tr class="bg-theme text-white">
                                 <th class="p-1 align-middle" style="width:11%">Método</th>
                                 <th class="p-1 align-middle px-5" style="width:10%">Moneda</th>
                                 <th class="p-1 align-middle" style="width:17%">Banco</th>
@@ -405,6 +436,9 @@ $latest = $invoice_model->GetLatestNumbers();
     }
 </script>
 
+
+<?php include_once '../common/partials/invoice_form_fetchs_javascript.php'; ?>
+<?php include_once '../common/partials/invoice_form_element_builder.php'; ?>
 
 <?php include_once '../common/partials/invoice_form_invoice_javascript.php'; ?>
 <?php include_once '../common/partials/invoice_form_payments_javascript.php'; ?>

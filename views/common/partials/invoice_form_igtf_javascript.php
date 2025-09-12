@@ -51,11 +51,13 @@
     function EnableIGTF(){        
         igtf_table.classList.remove('d-none')
         HandleIGTF(false)
-        var productsTotal = document.getElementById('products-total-bs');
-        splits = productsTotal.innerHTML.split('Bs. ')
-        var total = parseFloat(splits[1])
+        
+    }
+
+    function UpdateIGTF(total){
         var igtf = (total * igtf_rate).toFixed(2)
-        igtf_total_label.innerHTML = '3% IGTF: ' + igtf
+        var igtfUSD = (igtf / coinValues['Dólar']).toFixed(2)
+        igtf_total_label.innerHTML = '3% IGTF: Bs. ' + igtf + ' (' + igtfUSD + '$)'
     }
 
     function HandleIGTF(disabling){    
@@ -66,5 +68,4 @@
         igtf_salepoint.disabled = disabling
         igtf_document.disabled = disabling
     }
-
 </script>
