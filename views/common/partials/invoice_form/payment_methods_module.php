@@ -1,57 +1,3 @@
-<script>
-    const paymentTable = document.getElementById('payment-table')
-
-    const payment_methods = []
-    const coins = []
-    const banks = []
-    const sale_points = [] 
-
-    let nextPaymentMethod = 1
-</script>
-
-<?php foreach($banks as $bank) { ?>
-    <script>
-        bank = {
-            'name': '<?= $bank['name'] ?>',
-            'id': '<?= $bank['id'] ?>',
-        }
-        banks.push(bank)
-    </script>
-<?php } ?>
-
-<?php foreach($coins as $coin) { ?>
-    <script>
-        coin = {
-            'name': '<?= $coin['name'] ?>',
-            'id': '<?= $coin['id'] ?>',
-        }
-        coins.push(coin)
-
-        coinValues['<?= $coin['name'] ?>'] = parseFloat('<?= $coin['price'] ?>')
-    </script>
-<?php } ?>
-
-<?php foreach($payment_methods as $method) { ?>
-    <script>
-        payment_method = {
-            'name': '<?= $method['name'] ?>',
-            'id': '<?= $method['id'] ?>',
-        }
-        payment_methods.push(payment_method)
-    </script>
-<?php } ?>
-
-<?php foreach($sale_points as $sale_point) { ?>
-    <script>
-        sale_point = {
-            'code': '<?= $sale_point['code'] ?>',
-            'id': '<?= $sale_point['id'] ?>',
-        }
-        sale_points.push(sale_point)
-    </script>
-<?php } ?>
-
-
 <script>  
     AddPayment() 
 
@@ -73,20 +19,31 @@
     }
 
     function CoinSelecting(oldId, e){   
-        var coinSelect = document.getElementById('payment-coin-' + String(oldId))
-        for(let i = 0; i < coinSelect.childNodes.length; i++){
-            var node = coinSelect.childNodes[i]
-            if(node.selected){
-                coinName = node.innerHTML
+        var nonVESFound = false
+
+        for(let i = 1; i <= oldId; i++){
+            var coinSelect = document.getElementById('payment-coin-' + String(i))
+            
+            if(coinSelect === null)
+                continue
+
+            for(let j = 0; j < coinSelect.childNodes.length; j++){
+                var node = coinSelect.childNodes[j]
+                if(node.selected){
+                    var coinName = node.innerHTML
+                    if(coinName !== 'Bolívar' && coinName !== '&nbsp;')
+                        nonVESFound = true
+                }
             }
+                
+            if(nonVESFound)
+                break
         }
         
-        if(coinName !== 'Bolívar' && coinName !== '&nbsp;'){
+        if(nonVESFound)
             EnableIGTF()
-        }
-        else{
+        else
             DisableIGTF()
-        }
 
         UpdatePaymentPrice(oldId)
         UpdatePaymentTotal()
@@ -109,6 +66,10 @@
 
         var price = 0
         var priceInput = document.getElementById('payment-price-' + String(id))
+
+        if(priceInput.value < 0)
+            priceInput.value = 0
+
         if(priceInput.value !== '')            
             price = parseFloat(priceInput.value)
 
@@ -139,7 +100,6 @@
 
             var price = parseFloat(priceInput.value)
             
-
             if(coinName !== 'Bolívar' && coinName !== '&nbsp;'){                
                 igtf += price
             }
@@ -152,21 +112,8 @@
         UpdatePaymentMethodsDiffWithProducts()
     }
 
-    function UpdatePaymentMethodsDiffWithProducts(){
-        const diffElement = document.getElementById('payment-diff')
-        const productsTotal = document.getElementById('products-total-bs').innerHTML
-        const paymentsTotal = document.getElementById('payment-total').innerHTML
-        
-        if(productsTotal !== '' && paymentsTotal !== ''){
-            var diff = (parseFloat(productsTotal) - parseFloat(paymentsTotal)).toFixed(2)
-            diffElement.innerHTML = diff
-
-        }
-    }
-
     function DeletePaymentRow(id){
         document.getElementById('payment-row-' + id).remove()
         UpdatePaymentTotal()
     }
-
 </script>

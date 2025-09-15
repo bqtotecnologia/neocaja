@@ -12,9 +12,19 @@ $coin_model = new CoinModel();
 $coins = $coin_model->GetAllCoins();
 
 $display_coins = [];
+$usdId = null;
 foreach($coins as $coin){
+    if($coin['name'] === 'Dólar')
+        $usdId = $coin['id'];
+
     $to_add = ['display' => $coin['name'], 'value' => $coin['id']];
     array_push($display_coins, $to_add);
+}
+
+$focusUSD = false;
+if(isset($_GET['error'])){
+    if($_GET['error'] === 'Antes de facturar, se requiere que la tasa del dólar esté actualizada al día de hoy')
+        $focusUSD = true;
 }
 
 $fields = [
@@ -84,4 +94,11 @@ $formBuilder = new FormBuilder(
     </div>
 </div>
 
+
 <?php include_once '../common/footer.php'; ?>
+
+<?php if($focusUSD) { ?>
+    <script>
+        $('#coin').val('<?= $usdId ?>')
+    </script>
+<?php } ?>

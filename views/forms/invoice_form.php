@@ -17,7 +17,6 @@ if($lastRateDate->format('Y-m-d') !== $today->format('Y-m-d')){
 
 include_once '../common/header.php';
 
-
 include_once '../../models/account_model.php';
 include_once '../../models/bank_model.php';
 include_once '../../models/sale_point_model.php';
@@ -56,7 +55,8 @@ $latest = $invoice_model->GetLatestNumbers();
 <form 
     action="../../controllers/handle_invoice.php" 
     method="POST"
-    class="row justify-content-center confirm-form"
+    class="row justify-content-center"
+    id="invoice_form"
     onkeydown="return event.key != 'Enter';"
     >
     <div class="col-12 row justify-content-center x_panel">
@@ -388,58 +388,62 @@ $latest = $invoice_model->GetLatestNumbers();
     </div>
 </form>
 
-<?php include_once '../common/footer.php'; ?>
-
-
 <script>
-    const rateDate = document.getElementById('rate-date')
-    let coinValues = {}
+    const myForm = document.getElementById('invoice_form')
+    myForm.addEventListener('submit', ValidateForm)
 
-    rateDate.addEventListener('change', async function(e) { await ChangingRateDate(e) })
+    function ValidateForm(e){
+        e.preventDefault()
+        var error = ''
+        var productTotal = parseFloat(document.getElementById('products-total-bs').innerHTML)
+        var paymentTotal = parseFloat(document.getElementById('payment-total').innerHTML)
 
-    async function ChangingRateDate(e){
-        if(e.target.value !== '')
-            await GetCoinRatesOfDay(e.target.value)
-    }
+        var invalidValues = [0, undefined]
+        console.log(typeof paymentTotal)
+        
+        console.log(paymentTotal in invalidValues)
+        if(
+            productTotal  in invalidValues || 
+            paymentTotal in invalidValues ||
+            isNaN(productTotal) || isNaN(paymentTotal)
+        ){
+            error = 'Para facturar se necesita al menos un producto y un método de pago'
+        }
 
-
-    async function GetCoinRatesOfDay(date){
-        var result = await FetchCoinRatesOfDay(date)
+        
+        if(paymentTotal > productTotal){
+            error = 'No se puede facturar un monto inferior al total de los métodos de pago'
             
-        if(typeof result !== "string"){
-            coinValues = result['data']
-
-            for(let key in coinValues){
-                const targetElement = document.getElementById(key + '-rate')
-                if(targetElement !== null){
-                    targetElement.innerHTML = coinValues[key]
-                }
-            }
-
         }
 
-        UpdateProductsPrice()
-        RefreshPaymentMethods()
-    }
-
-    async function FetchCoinRatesOfDay(date){
-        var url = '<?= $base_url ?>/api/get_coin_values_of_date.php?date=' + date
-
-        var fetchConfig = {
-            method: 'GET', 
-            headers: {
-                'Content-Type': 'application/json',
-            },
+        if(error === ''){
+            Swal.fire({
+              title: "Mensaje",
+              icon:'success',
+              html: 'Fino señores',
+            })
+        }
+        else{
+            Swal.fire({
+                title: "Error",
+                icon:'error',
+                html: 'No se puede facturar un monto inferior al total de los métodos de pago',
+            })            
         }
 
-        return await TryFetch(url, fetchConfig)
     }
 </script>
 
+<?php include_once '../common/footer.php'; ?>
 
-<?php include_once '../common/partials/invoice_form_fetchs_javascript.php'; ?>
-<?php include_once '../common/partials/invoice_form_element_builder.php'; ?>
+<?php include_once '../common/partials/invoice_form/initializations.php'; ?>
+<?php include_once '../common/partials/invoice_form/fetchs.php'; ?>
+<?php include_once '../common/partials/invoice_form/element_builder.php'; ?>
 
-<?php include_once '../common/partials/invoice_form_invoice_javascript.php'; ?>
-<?php include_once '../common/partials/invoice_form_payments_javascript.php'; ?>
-<?php include_once '../common/partials/invoice_form_igtf_javascript.php'; ?>
+<?php include_once '../common/partials/invoice_form/account_module.php'; ?>
+<?php include_once '../common/partials/invoice_form/coin_module.php'; ?>
+<?php include_once '../common/partials/invoice_form/igtf_module.php'; ?>
+<?php include_once '../common/partials/invoice_form/invoice_module.php'; ?>
+<?php include_once '../common/partials/invoice_form/payment_methods_module.php'; ?>
+<?php include_once '../common/partials/invoice_form/products_module.php'; ?>
+<?php include_once '../common/partials/invoice_form/utils_functions.php'; ?>

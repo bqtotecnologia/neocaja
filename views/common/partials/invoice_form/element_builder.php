@@ -1,6 +1,33 @@
-<script>  
+<script>     
     ////////////////////////// INVOICE //////////////////////////
-        function AddInvoice(month, invoice){
+
+    function DisplayCoinHistory(coin){
+        var text = `<table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tasa</th>
+                </tr>
+            </thead>
+            <tbody>`
+
+        coinHistories[coin].forEach((history) => {
+            text += 
+                `<tr>
+                    <td>` + history['date'] + `</td>
+                    <td>` + history['value'] + `</td>
+                </tr>`
+        })
+
+        text += `</tbody></table>`
+
+        Swal.fire({
+            title: '7 tasas más recientes del ' + coin,
+            html:text
+        })
+    } 
+
+    function AddInvoice(month, invoice){
         if(invoice.paid === 1){
             paidMonths.push(month)
         }
@@ -11,19 +38,20 @@
             monthReached = true
             
             
-            lastMonth = Object.keys(months).find(key => months[key] === String(month));
-            if(lastMonth === '1' && month === 'Enero')
+            //lastMonth = Object.keys(monthNumberToName).find(key => monthNumberToName[key] === String(month));
+            lastMonth = GetMonthNumberByName(month)
+            if(lastMonth === 1 && month === 'Enero')
                 yearOfNextMonth += 1
         }
 
-        monthNumber = month_translate[month]
-        if(monthNumber.length === 1)
-            monthNumber = '0' + monthNumber
+        var numberDisplay = GetMonthNumberByName(month)
+        if(numberDisplay.length === 1)
+            numberDisplay = '0' + numberDisplay
 
         var invoiceMonthCol = document.createElement('td')
         AddBorderToTD(invoiceMonthCol)
         AddInvoiceClassToTD(invoiceMonthCol)
-        invoiceMonthCol.innerHTML = monthNumber + ' ' + month
+        invoiceMonthCol.innerHTML = numberDisplay + ' ' + month
 
         // Paid column
         var invoicePaidCol = document.createElement('td')
@@ -162,11 +190,10 @@
         buffer = "product-month-" + productId
         monthSelect.id = buffer
         monthSelect.name = buffer
-
         
         periodMonths.forEach((month) => {
             var option = document.createElement('option')
-            option.value = month_translate[month]
+            option.value = GetMonthNumberByName(month)
             var span = document.createElement('span')
             span.innerHTML = month
             span.classList.add('bg-primary')
@@ -315,9 +342,6 @@
     }
 
     function BuildDebtFOCRow(focDebt){
-        /**
-         * Colocar acá el monto en bolívares, en dólares y añadir otra fila con el total de toda la deuda
-         */
         var focRow = document.createElement('tr')            
         var focCol = document.createElement('td')
         var focVES = document.createElement('td')
@@ -558,6 +582,18 @@
         return eraseCol
     }
 
+    function UpdatePaymentMethodsDiffWithProducts(){
+        const diffElement = document.getElementById('payment-diff')
+        const productsTotal = document.getElementById('products-total-bs').innerHTML
+        const paymentsTotal = document.getElementById('payment-total').innerHTML
+        
+        if(productsTotal !== '' && paymentsTotal !== ''){
+            var diff = (parseFloat(productsTotal) - parseFloat(paymentsTotal)).toFixed(2)
+            diffElement.innerHTML = diff
+
+        }
+    }
+    
 
     ////////////////////////// STYLE FUNCTIONS //////////////////////////
     function AddInvoiceClassToTD(td){

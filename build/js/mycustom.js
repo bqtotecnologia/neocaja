@@ -1,3 +1,18 @@
+const monthNumberToName = {
+  '1': 'Enero',
+  '2': 'Febrero',
+  '3': 'Marzo',
+  '4': 'Abril',
+  '5': 'Mayo',
+  '6': 'Junio',
+  '7': 'Julio',
+  '8': 'Agosto',
+  '9': 'Septiembre',
+  '10': 'Octubre',
+  '11': 'Noviembre',
+  '12': 'Diciembre',
+}    
+
 var confirm_forms = document.getElementsByClassName("confirm-form");
 
 Array.from(confirm_forms).forEach(function(form){  
@@ -91,4 +106,13 @@ function ExportToPDF(){
       var result = prompt(message)
 
       return result === confirmText
+  }
+
+  function GetMonthNameByNumber(number){
+    var strNumber = String(number)
+    return monthNumberToName[strNumber]
+  }
+
+  function GetMonthNumberByName(name){
+    return Object.keys(monthNumberToName).find(key => monthNumberToName[key] === String(name));
   }
