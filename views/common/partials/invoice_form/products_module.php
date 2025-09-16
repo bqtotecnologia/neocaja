@@ -2,10 +2,10 @@
     function UpdateDefaultProducts(debt){
         var firstProduct = document.getElementById('product-baseprice-1')
         var secondProduct = document.getElementById('product-baseprice-2')
-        if(debt.months > 0 && debt.retard > 0){
+        if(debt.months > 0 && debt.retard > 0 && !scholarshipped){
             // Tiene tanto mora como deuda
             firstProduct.value = debt.retard
-            secondProduct.value = debt.months            
+            secondProduct.value = debt.months
         }
         else if(debt.months > 0){
             // Aún debe el mes pero no tiene mora
@@ -48,8 +48,9 @@
         priceInput.value = price
         total = price
         
-        if(targetAccount['scholarship_coverage'] !== null && targetAccount['scholarship_coverage'] !== undefined ){
-            total = parseFloat(price) * (parseFloat(targetAccount['scholarship_coverage']) / 100)
+        if(scholarshipped){
+            if(productName === 'Mensualidad')
+                total = parseFloat(price) * (parseFloat(targetAccount['scholarship_coverage']) / 100)
         }
         
         var productTotalInput = document.getElementById('product-total-' + String(oldId))
@@ -93,8 +94,11 @@
                 productBasePrice = 0
             }
 
-            var productSholarship = document.getElementById('product-scholarship-' + String(i))
-            var discount = parseFloat(productSholarship.value.trim('%'))
+            var productScholarship = document.getElementById('product-scholarship-' + String(i))
+            if(productName !== 'Mensualidad'){
+                productScholarship.value = '0%'
+            }
+            var discount = parseFloat(productScholarship.value.trim('%'))
 
             var productTotal = (productBasePrice - (productBasePrice * (discount / 100))).toFixed(2)
             document.getElementById('product-total-' + String(i)).value = productTotal          
@@ -109,8 +113,16 @@
         if(targetAccount['scholarship_coverage'] !== null && targetAccount['scholarship_coverage'] !== undefined )
             scholarshipValue = String(targetAccount['scholarship_coverage']) + '%'
 
-        for (let i = 0; i < scholarships.length; i++) {               
-            scholarships[i].value = scholarshipValue
+        for (let i = 0; i < scholarships.length; i++) {      
+            var targetScholarship = scholarships[i]
+            var targetId = targetScholarship.id.split('-')
+            targetId = targetId[targetId.length - 1]
+            var productSelect = document.getElementById('product-id-' + targetId)
+            var productName = productSelect.options[productSelect.selectedIndex].innerHTML
+            if(productName === 'Mensualidad')            
+                scholarships[i].value = scholarshipValue
+            else
+                scholarships[i].value = '0%'
         }
     }
 
@@ -142,9 +154,13 @@
         var nextMonth = parseInt(lastMonth)
         
         if(GetMonthIsRetarded(nextMonth)){
-            ChangeMonth(nextMonth, nextProduct - 1)
-            ChangeProduct(nextProduct - 1, productIds['Diferencia Mensualidad'])
-            AddProduct()
+            // Se le aplica mora
+            if(targetAccount['scholarship_coverage'] === null && targetAccount['scholarship_coverage'] === undefined){
+                // No se le aplica mora porque es becado
+                ChangeMonth(nextMonth, nextProduct - 1)
+                ChangeProduct(nextProduct - 1, productIds['Diferencia Mensualidad'])
+                AddProduct()
+            }
         }
 
         ChangeMonth(nextMonth, nextProduct - 1)

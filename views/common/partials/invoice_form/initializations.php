@@ -59,6 +59,7 @@
     let yearOfNextMonth = currentDate.getFullYear()
     let monthReached = false
     let nextPaymentMethod = 1
+    let scholarshipped = false
 </script>
 
 

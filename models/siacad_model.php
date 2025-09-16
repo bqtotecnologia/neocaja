@@ -29,6 +29,20 @@ class SiacadModel extends PGSQLModel
     }
 
     /**
+     * Retorna los periodos según una lista de ids
+     */
+    public function GetPeriodsByIdList($idList){
+        $ids = '';
+        foreach($idList as $id){
+            $ids .= $id . ', ';
+        }
+
+        $ids = trim($ids, ', ');
+        $sql = "SELECT * FROM periodos WHERE idperiodo IN ($ids) ORDER BY fechainicio DESC";
+        return parent::GetRows($sql);
+    }
+
+    /**
      * Retorna una lista con los números de los meses que conforman el periodo
      * Si recibe $names = true retorna la lista de meses pero con los nombres en vez de los números
      */

@@ -119,9 +119,21 @@ class CoinModel extends SQLModel
         return $not_updated_coins;
     }
 
-    public function GetActiveCoins(){
+    public function GetActiveCoins($as_dict = false){
         $sql = $this->SELECT_TEMPLATE . " WHERE coins.active = 1 ORDER BY coins.name";
-        return parent::GetRows($sql, true);
+        $coins = parent::GetRows($sql, true);
+
+        $result = [];
+        if($as_dict === true){
+            foreach($coins as $coin){
+                $result[$coin['name']] = $coin['price'];
+            }
+        }
+        else{
+            $result = $coins;
+        }
+
+        return $result;
     }
 
     public function GetCoin($id){

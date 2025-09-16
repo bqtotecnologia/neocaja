@@ -161,11 +161,30 @@ class InvoiceModel extends SQLModel
         return $numbers;
     }
 
+    /**
+     * Retorna una lista con los ids de los periodos registrados en las facturas
+     */
+    public function GetPeriodsOfInvoices(){
+        $sql = "SELECT period FROM invoices GROUP BY period";
+        $ids = parent::GetRows($sql);
+
+        $result = [];
+        foreach($ids as $id){
+            array_push($result, $id['period']);
+        }
+
+        return $result;
+    }
+
     public function GetInvoicesOfAccountOfPeriod(string $account, string $period){
         $sql = "SELECT 
             inv.id,
             inv.invoice_number,
-            inv.created_at
+            inv.control_number,
+            inv.created_at,
+            CONCAT(accounts.surnames, ' ', accounts.names, ' ') as account_fullname,
+            accounts.cedula,
+            inv.observation
             FROM
             invoices inv
             INNER JOIN accounts ON accounts.id = inv.account 
@@ -189,19 +208,10 @@ class InvoiceModel extends SQLModel
             inv.created_at,
             CONCAT(accounts.surnames, ' ', accounts.names, ' ') as account_fullname,
             accounts.cedula,
-            inv.observation,
-            SUM(ipm.total) as total
+            inv.observation
             FROM
             invoices inv
             INNER JOIN accounts ON accounts.id = inv.account 
-            INNER JOIN (
-                SELECT
-                invoice_payment_method.invoice,
-                invoice_payment_method.price * coin_history.price as total
-                FROM
-                invoice_payment_method
-                INNER JOIN coin_history ON coin_history.id = invoice_payment_method.coin
-            ) as ipm ON ipm.invoice = inv.id
             WHERE 
             accounts.id = $account AND
             inv.active = 1

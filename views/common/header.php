@@ -49,10 +49,19 @@
 
                     <!-- Student -->
                     <?php if(Auth::UserLevelIn(['Estudiante', 'Super'])){ ?>
-                      <li><a><i class="fa fa-fax"></i> Pagos <span class="fa fa-chevron-down"></span></a>
+                      <li><a><i class="fa fa-usd"></i> Pagar <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/confirm_payment.php">Conciliar pago</a></li>
                           <li><a href="<?= $base_url ?>/views/my_payments.php">Historial de pagos</a></li>
+                        </ul>
+                      </li>
+
+                      <li><a><i class="fa fa-fax"></i> Mis facturas <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/tables/search_my_invoices.php">Este periodo</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_invoices_by_period.php">Buscar por periodo</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_all_my_invoices.php">Ver todas</a></li>
+                          <li><a href="<?= $base_url ?>/views/panel.php">Estado de cuenta</a></li>
                         </ul>
                       </li>
                     <?php } ?>

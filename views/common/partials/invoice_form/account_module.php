@@ -7,27 +7,34 @@
     });
     
     async function AccountSelecting(e){
-        var accountButton = document.getElementById('account-link')
-        accountButton.classList.add('d-none')
-        debtContainer.classList.add('d-none')
-        var accountMonths = await GetAccountState(e.target.value, '<?= $periodId ?>')
-        invoiceTable.innerHTML = ''
         CleanProducts()
-            
-        if(typeof accountMonths !== "string"){
-            await DisplayDebt(e.target.value, '<?= $periodId ?>')
-            targetAccount = await GetAccountData(e.target.value)
+        var error = false
+        targetAccount = await GetAccountData(e.target.value)
+        if(targetAccount.status !== false){
             targetAccount = targetAccount.data
+            scholarshipped = targetAccount['scholarship_coverage'] !== null && targetAccount['scholarship_coverage'] !== undefined
+        }
+        else
+            error = true
+
+        if(!error){
+            var accountButton = document.getElementById('account-link')
+            accountButton.classList.add('d-none')
+            debtContainer.classList.add('d-none')
             accountButton.classList.remove('d-none')
             accountButton.href  = '<?= $base_url ?>' + '/views/detailers/account_details.php?id=' + targetAccount.id
-            await DisplayInvoices(accountMonths.data)
-        }
 
-        AddProduct()
-        DisplayDefaultProduct()        
-        if(typeof debtData !== "string"){
-            UpdateDefaultProducts(debtData.data)
+            var accountMonths = await GetAccountState(e.target.value, '<?= $periodId ?>')
+            invoiceTable.innerHTML = ''
+            await DisplayDebt(e.target.value, '<?= $periodId ?>')
+            await DisplayInvoices(accountMonths.data)
+
+            AddProduct()
+            DisplayDefaultProduct()        
+            if(typeof debtData !== "string"){
+                UpdateDefaultProducts(debtData.data)
+            }
+            UpdateProductsPrice()
         }
-        UpdateProductsPrice()
     }    
 </script>

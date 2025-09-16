@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Cajero', 'Super'];
+$admitted_user_types = ['Cajero', 'Super', 'Estudiante'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 include_once '../../utils/Validator.php';
@@ -27,8 +27,17 @@ if($target_invoice === false){
     $error = 'Factura no encontrada';
 }
 
+if($_SESSION['neocaja_rol'] !== 'Estudiante'){
+    if($target_invoice['cedula'] !== $_SESSION['neocaja_cedula']){
+        $error = 'Factura inválida';
+    }
+}
+
 if($error !== ''){
-    header('Location: ' . $base_url . '/views/tables/search_invoices_of_today.php?error='. $error);
+    if($_SESSION['neocaja_rol'] !== 'Estudiante')
+        header('Location: ' . $base_url . '/views/tables/search_invoices_of_today.php?error='. $error);
+    else
+        header('Location: ' . $base_url . '/views/panel.php?error='. $error);
     exit;
 }
 
@@ -46,20 +55,28 @@ include '../../views/common/header.php';
 <div class="row justify-content-center">
     
     <div class="col-12 row justify-content-center">
-        <?php $btn_url = $base_url . '/views/tables/search_invoices_of_today.php'; include_once '../layouts/backButton.php'; ?>
+        <?php 
+        if($_SESSION['neocaja_rol'] === 'Estudiante')
+            $btn_url = $base_url . '/views/tables/search_my_invoices.php'; 
+        else
+            $btn_url = $base_url . '/views/tables/search_invoices_of_today.php'; 
+        include_once '../layouts/backButton.php'; 
+        ?>
     </div>
 
     <div class="col-12 text-center mt-4">
         <h1 class="h1 text-black">Factura Nº <?= $target_invoice['invoice_number'] ?></h1>
     </div>
 
-    <div class="row col-12 mb-5">
-        <a target="_blank" href="<?= $base_url . '/views/exports/export_invoice_as_pdf.php?id=' . $target_invoice['id'] ?>">
-            <button class="btn btn-success">
-                Imprimir
-            </button>
-        </a>
-    </div>
+    <?php if($_SESSION['neocaja_rol'] !== 'Estudiante') { ?>
+        <div class="row col-12 mb-5">
+            <a target="_blank" href="<?= $base_url . '/views/exports/export_invoice_as_pdf.php?id=' . $target_invoice['id'] ?>">
+                <button class="btn btn-success">
+                    Imprimir
+                </button>
+            </a>
+        </div>
+    <?php } ?>
 
     <div class="col-12 row justify-content-center px-4">
         <section class="col-12 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
@@ -354,12 +371,14 @@ include '../../views/common/header.php';
         <?php } ?>
     </div>
 
-    <?php if(intval($target_invoice['active']) === 1) { ?>
-        <div class="row col-12 justify-content-center my-5">
-            <button class="btn btn-danger" onclick="ConfirmCancelInvoice()">
-                Anular factura
-            </button>
-        </div>
+    <?php if($_SESSION['neocaja_rol'] !== 'Estudiante') { ?>
+        <?php if(intval($target_invoice['active']) === 1) { ?>
+            <div class="row col-12 justify-content-center my-5">
+                <button class="btn btn-danger" onclick="ConfirmCancelInvoice()">
+                    Anular factura
+                </button>
+            </div>
+        <?php } ?>
     <?php } ?>
 </div>
 

@@ -1,20 +1,6 @@
 <script>
     async function FetchCoinRatesOfDay(date){
         var url = '<?= $base_url ?>/api/get_coin_values_of_date.php?date=' + date
-
-        var fetchConfig = {
-            method: 'GET', 
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }
-
-        return await TryFetch(url, fetchConfig)
-    }
-
-    async function GetInvoicesOfAccount(account){
-        var period = '<?= $periodId ?>'
-        var url = '<?= $base_url ?>/api/get_invoices_of_account.php?account=' + account + '&period=' + period
         var fetchConfig = {
             method: 'GET', 
             headers: {

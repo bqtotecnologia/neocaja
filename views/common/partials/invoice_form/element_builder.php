@@ -259,7 +259,6 @@
     ////////////////////////// DEBT TABLE //////////////////////////
 
     function BuildDebtTable(debtData){
-        console.log/debtData
         debtContainer.classList.remove('d-none')
         debtTable.innerHTML = ''
 
@@ -321,8 +320,8 @@
         AddBorderToTD(retardUSD)
         retardCol.innerHTML = 'Mora'
 
-
-        if(retardDebt > 0){
+        if(retardDebt > 0 && !scholarshipped){
+            // Tiene mora y NO está becado
             retardVES.classList.add('text-danger')  
             retardUSD.classList.add('text-danger')  
             retardVES.innerHTML = 'Bs. ' + GetPrettyCiphers(retardDebt * coinValues['Dólar'])
@@ -331,8 +330,14 @@
         else{
             retardVES.classList.add('text-success')  
             retardUSD.classList.add('text-success')  
-            retardVES.innerHTML = 'SIN DEUDA'
-            retardUSD.innerHTML = 'SIN DEUDA'
+            if(scholarshipped){
+                retardVES.innerHTML = 'BECADO'
+                retardUSD.innerHTML = 'BECADO'
+            }
+            else{
+                retardVES.innerHTML = 'SIN DEUDA'
+                retardUSD.innerHTML = 'SIN DEUDA'
+            }
         }
         retardRow.appendChild(retardCol)
         retardRow.appendChild(retardVES)

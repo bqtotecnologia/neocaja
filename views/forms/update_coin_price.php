@@ -94,7 +94,6 @@ $formBuilder = new FormBuilder(
     </div>
 </div>
 
-
 <?php include_once '../common/footer.php'; ?>
 
 <?php if($focusUSD) { ?>

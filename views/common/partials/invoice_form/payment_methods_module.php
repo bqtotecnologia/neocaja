@@ -107,7 +107,7 @@
             total += price
         }
 
-        paymentTotal.innerHTML = total
+        paymentTotal.innerHTML = total.toFixed(2)
         UpdateIGTF(igtf)
         UpdatePaymentMethodsDiffWithProducts()
     }
