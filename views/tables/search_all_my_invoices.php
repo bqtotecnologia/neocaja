@@ -27,7 +27,7 @@ $invoices = $invoice_model->GetInvoicesOfAccount($target_account['id']);
 
 <div class="row justify-content-center">
     <div class="col-12 text-center">
-        <h1 class="h1 text-black">Tus facturas de este periodo</h1>
+        <h1 class="h1 text-black">Todas tus facturas registradas</h1>
     </div>
 
     <div class="col-12 row justify-content-center px-4">

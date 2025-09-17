@@ -200,6 +200,11 @@ class InvoiceModel extends SQLModel
         return parent::GetRows($sql, true);
     }
 
+    public function GetInvoicesOfPeriod($id){
+        $sql = $this->SINGLE_SELECT_TEMPLATE . " WHERE invoices.period = $id ORDER BY invoices.created_at DESC";
+        return parent::GetRows($sql);
+    }
+
     public function GetInvoicesOfAccount($account){
         $sql = "SELECT 
             inv.id,

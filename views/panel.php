@@ -35,13 +35,13 @@ if($_SESSION['neocaja_rol'] === 'Estudiante'){
 
 <?php if($_SESSION['neocaja_rol'] === 'Estudiante'){ ?>
     <div class="x_panel row col-12 m-0 p-0 justify-content-center align-items-center pt-2">              
-        <div class="row col-12 my-2 justify-content-start">
+        <div class="row col-12 p-0 m-0 my-2 justify-content-center">
             <h1 class="h1 text-center w-100">Su estado de cuenta en el periodo <?= $currentPeriod['nombreperiodo'] ?></h1>
         </div>
-        <div class="row col-12 my-2 justify-content-center">
-            <div class="col-6">
+        <div class="row col-12 p-0 m-0 my-2 justify-content-center">
+            <div class="col-12 col-md-6">
                 <h2 class="h2 text-center w-100">Tasas del día de hoy <?php date('d/m/Y') ?></h2>
-                <div class="row col-12 justify-content-center">
+                <div class="row p-0 m-0 col-12 justify-content-center">
                     <table class="table table-bordered col-6 h5 text-center">
                         <tr>
                             <td class="bg-theme text-white">Dólar</td>
@@ -51,9 +51,9 @@ if($_SESSION['neocaja_rol'] === 'Estudiante'){
                 </div>
             </div>
 
-            <div class="col-6">
+            <div class="col-12 col-md-6">
                 <h2 class="h2 text-center w-100">Datos sobre la mora</h2>
-                <div class="row col-12 justify-content-center">
+                <div class="row p-0 m-0 col-12 justify-content-center">
                     <table class="table table-bordered col-12 h5 text-center">
                         <tr>
                             <td class="bg-theme text-white">Día límite antes de aplicar mora</td>
@@ -67,9 +67,9 @@ if($_SESSION['neocaja_rol'] === 'Estudiante'){
                 </div>
             </div>
         </div>
-        <div class="row col-12 col-md-6 my-2 justify-content-start">
-            <div class="row m-0 p-0 col-12 justify-content-center my-2" id="debt-container">
-                <table class="col-10 table table-bordered border border-black text-center h4">
+        <div class="row col-12 col-md-6 m-0 p-0 justify-content-center">
+            <div class="row m-0 p-0 col-12 justify-content-center my-2 p-2" id="debt-container">
+                <table class="col-12 col-md-10 table table-bordered border border-black text-center h6">
                     <thead>
                         <tr class="bg-theme text-white fw-bold">
                             <th>Deuda</th>
@@ -119,8 +119,8 @@ if($_SESSION['neocaja_rol'] === 'Estudiante'){
             </div>
         </div>
 
-        <div class="row col-12 col-md-6 my-2 justify-content-start">
-            <div class="row col-12 m-0 p-2 justify-content-center" id="invoices">
+        <div class="row m-0 p-0 col-12 col-md-6 my-2 justify-content-start">
+            <div class="row m-0 p-0 col-12 p-2 justify-content-center" id="invoices">
                 <table class="table table-bordered border border-black">
                     <thead class="text-center bg-theme text-white">
                         <tr class="h5 m-0">

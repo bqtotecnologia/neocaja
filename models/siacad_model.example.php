@@ -10,10 +10,10 @@ class SiacadModel extends PGSQLModel
     public function __construct()
     {
         parent::SetInfo(
-            '', // server
-            '',          // username
-            '',     // password
-            ''       // database
+            '',    // server
+            '',    // username
+            '',    // password
+            ''     // database
         );
     }
 
@@ -26,6 +26,45 @@ class SiacadModel extends PGSQLModel
     public function GetPeriodoById($id){
         $sql = "SELECT * FROM periodos WHERE idperiodo=$id";
         return parent::GetRow($sql);
+    }
+
+    /**
+     * Retorna los periodos según una lista de ids
+     */
+    public function GetPeriodsByIdList($idList){
+        $ids = '';
+        foreach($idList as $id){
+            $ids .= $id . ', ';
+        }
+
+        $ids = trim($ids, ', ');
+        $sql = "SELECT * FROM periodos WHERE idperiodo IN ($ids) ORDER BY fechainicio DESC";
+        return parent::GetRows($sql);
+    }
+
+    /**
+     * Retorna una lista con los números de los meses que conforman el periodo
+     * Si recibe $names = true retorna la lista de meses pero con los nombres en vez de los números
+     */
+    public function GerMonthsOfPeriodo($id, $names = false){
+        $periodMonths = [];
+        $target_period = $this->GetPeriodoById($id);
+        $timezone = new DateTimeZone('America/Caracas');
+        $startDate = new DateTime($target_period['fechainicio'], $timezone);
+        $endDate = new DateTime($target_period['fechafin'], $timezone);
+        
+        while($startDate < $endDate){
+            $month = intval($startDate->format('m'));
+
+            if($names === false)
+                array_push($periodMonths, $month);
+            else
+                array_push($periodMonths, $this->month_translate[strval($month)]);
+            
+            $startDate->modify('+1 month');
+        }
+
+        return $periodMonths;
     }
 
     // Obtiene una cédula y retorna el tipo de usuario junto a su registro
