@@ -113,12 +113,14 @@ td, th {
 
 .product-card{
     background-color: #c8dcfa;
+    cursor:pointer;
+    transition:0.15s;
 }
 
 .product-selected{
-
+    background-color: #72c558;
 }
 
-.product-disabled{
-
+.cart-product{
+    padding:50px !important;
 }

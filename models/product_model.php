@@ -83,4 +83,62 @@ class ProductModel extends SQLModel
         $sql = "UPDATE product_history SET current = 0 WHERE product = $id";
         return parent::DoQuery($sql);
     }
+
+    /**
+     * Retorna los productos que el estudiante ve al momento de pagar
+    */
+    public function GetAvailableProductsOfStudent($cedula, $period){
+        include_once 'invoice_model.php';
+        include_once 'global_vars_model.php';
+
+        $invoice_model = new InvoiceModel();
+        $global_vars_model = new GlobalVarsModel();
+
+        $global_vars = $global_vars_model->GetGlobalVars(true);        
+        $monthly = $this->GetProductByName('Mensualidad');
+        $foc = $this->GetProductByName('FOC');
+
+        $monthStates = $invoice_model->GetAccountState($cedula, $period);
+        $nonPaid = [];
+        if($invoice_model->AccountPaidFOCOnPeriod($cedula, $period) === false){
+            $to_add = [
+                'name' => 'FOC',
+                'price' => floatval($foc['price']),
+                'code' => sha1($cedula . 'F')
+            ];
+            array_push($nonPaid, $to_add);
+        }
+            
+        foreach($monthStates as $month => $value){
+            if($value['paid'] === 1)
+                continue;
+
+            $monthFinalPrice = floatval($monthly['price']);
+            $monthNumber = $this->GetMonthNumberByName($month);
+
+            $to_add = [
+                'name' => 'Mensualidad ' . $month,
+                'code' => $cedula . 'M' . $monthNumber
+            ];
+
+            if($value['partial'] === 1){                
+                $remaining = $invoice_model->GetRemainingPriceOfMonthOfStudent($monthNumber, $cedula, $period);
+                $monthFinalPrice -= $remaining;
+                $to_add['code'] .= 'P';
+            }
+
+            if($value['debt'] === 1){
+                $to_add['name'] .= ' con mora';
+                $monthFinalPrice += $monthFinalPrice * ($global_vars['Porcentaje mora'] / 100);
+                $monthFinalPrice = round(floatval($monthFinalPrice), 2);
+                $to_add['code'] .= 'R';
+            }
+            
+            $to_add['price'] = $monthFinalPrice;
+            $to_add['code'] = sha1($to_add['code']);
+            
+            array_push($nonPaid, $to_add);
+        }
+        return $nonPaid;
+    }
 }

@@ -8,8 +8,6 @@ $error = '';
 if($userOk === false)
     $error = 'Permiso denegado. Cierre sesión e inicie nuevamente';
 
-include_once '../utils/Validator.php';
-
 if(empty($_GET)){
     $error = 'GET vacío';
 }

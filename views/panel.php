@@ -25,7 +25,10 @@ if($_SESSION['neocaja_rol'] === 'Estudiante'){
     $debtState = $invoice_model->GetDebtOfAccountOfPeriod($_SESSION['neocaja_cedula'], $currentPeriod['idperiodo']);
 
     $coin_model = new CoinModel();
-    $coinValues = $coin_model->GetActiveCoins(true);
+    $usd = $coin_model->GetCoinByName('Dólar');
+    $coin_date = date('Y-m-d', strtotime($usd['price_created_at']));
+    $today = date('Y-m-d');
+    $usdUpdated = strtotime($today) === strtotime($coin_date);
     $total_debt = $debtState['months'] + $debtState['retard'];
 
     if($debtState['foc'] === false)
@@ -40,15 +43,19 @@ if($_SESSION['neocaja_rol'] === 'Estudiante'){
         </div>
         <div class="row col-12 p-0 m-0 my-2 justify-content-center">
             <div class="col-12 col-md-6">
-                <h2 class="h2 text-center w-100">Tasas del día de hoy <?php date('d/m/Y') ?></h2>
-                <div class="row p-0 m-0 col-12 justify-content-center">
-                    <table class="table table-bordered col-6 h5 text-center">
-                        <tr>
-                            <td class="bg-theme text-white">Dólar</td>
-                            <td><?= $coinValues['Dólar'] ?></td>
-                        </tr>
-                    </table>
-                </div>
+                <?php if($usdUpdated) { ?>
+                    <h2 class="h2 text-center w-100">Tasas del día de hoy <?php date('d/m/Y') ?></h2>
+                    <div class="row p-0 m-0 col-12 justify-content-center">
+                        <table class="table table-bordered col-6 h5 text-center">
+                            <tr>
+                                <td class="bg-theme text-white">Dólar</td>
+                                <td><?= $usd['price'] ?></td>
+                            </tr>
+                        </table>
+                    </div>
+                <?php } else { ?>
+                    <h2 class="h2 text-center w-100 text-danger">La tasa del dólar aún no ha sido actualizada</h2>
+                <?php } ?>
             </div>
 
             <div class="col-12 col-md-6">
@@ -84,7 +91,7 @@ if($_SESSION['neocaja_rol'] === 'Estudiante'){
                                 <?= $debtState['months'] > 0 ? ($debtState['months'] . '$') : 'SIN DEUDA' ?>
                             </td>
                             <td class="p-1 border border-black text-<?= $debtState['months'] > 0 ? 'danger' : 'success' ?>">
-                                <?= $debtState['months'] > 0 ? ('Bs. ' . $debtState['months'] * $coinValues['Dólar']) : 'SIN DEUDA' ?>
+                                <?= $debtState['months'] > 0 ? ('Bs. ' . $debtState['months'] * $usd['price']) : 'SIN DEUDA' ?>
                             </td>
                         </tr>
                         <tr>
@@ -93,7 +100,7 @@ if($_SESSION['neocaja_rol'] === 'Estudiante'){
                                 <?= $debtState['retard'] > 0 ? ($debtState['retard'] . '$') : 'SIN DEUDA' ?>
                             </td>
                             <td class="p-1 border border-black text-<?= $debtState['retard'] > 0 ? 'danger' : 'success' ?>">
-                                <?= $debtState['retard'] > 0 ? ('Bs. ' . $debtState['retard'] * $coinValues['Dólar']) : 'SIN DEUDA' ?>
+                                <?= $debtState['retard'] > 0 ? ('Bs. ' . $debtState['retard'] * $usd['price']) : 'SIN DEUDA' ?>
                             </td>
                     </tr>
                     <tr>
@@ -102,14 +109,14 @@ if($_SESSION['neocaja_rol'] === 'Estudiante'){
                             <td class="p-1 border border-black text-success" colspan="2">SIN DEUDA</td>
                         <?php } else { ?>
                             <td class="p-1 border border-black text-danger"><?= $focProduct['price'] ?>$</td>
-                            <td class="p-1 border border-black text-danger">Bs. <?= $focProduct['price'] * $coinValues['Dólar'] ?></td>
+                            <td class="p-1 border border-black text-danger">Bs. <?= $focProduct['price'] * $usd['price'] ?></td>
                         <?php } ?>
                     </tr>
                         <tr>
                             <td class="p-1 border border-black bg-theme text-white fw-bold">TOTAL</td>
                             <?php if($total_debt > 0) { ?>                                
                                 <td class="p-1 border border-black fw-bold text-danger"><?= $total_debt ?>$</td>
-                                <td class="p-1 border border-black fw-bold text-danger">Bs. <?= $total_debt * $coinValues['Dólar'] ?></td>
+                                <td class="p-1 border border-black fw-bold text-danger">Bs. <?= $total_debt * $usd['price'] ?></td>
                             <?php } else { ?>
                                 <td class="p-1 border border-black fw-bold text-success" colspan="2">SIN DEUDA</td>
                             <?php } ?>

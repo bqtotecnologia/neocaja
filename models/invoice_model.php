@@ -468,6 +468,35 @@ class InvoiceModel extends SQLModel
         return $debt_data;
     }
 
+    /**
+     * Retorna el monto restante a pagar de una mensualidad
+     */
+    public function GetRemainingPriceOfMonthOfStudent($monthNumber, $cedula, $period){
+        $sql = "SELECT
+            concepts.price
+            FROM
+            invoices
+            INNER JOIN concepts ON concepts.invoice = invoices.id
+            INNER JOIN products ON products.id = concepts.product
+            INNER JOIN accounts ON accounts.id = invoices.account
+            WHERE
+            accounts.cedula = '$cedula' AND
+            invoices.period = $period AND
+            products.name = 'Abono Mensualidad' AND
+            concepts.month = $monthNumber AND
+            invoices.active = 1";
+
+        $paid = 0;
+        $prices = parent::GetRows($sql);
+        if($prices !== false){
+            foreach($prices as $price){
+                $paid += $price['price'];
+            }
+        }
+
+        return $paid;
+    }
+
     public function AccountPaidFOCOnPeriod($cedula, $periodId){
         $sql = "SELECT
             invoices.id as invoice
