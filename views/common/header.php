@@ -23,7 +23,7 @@
 
   </head>
 
-  <body class="nav-md">
+  <body class="nav-md" id="page-body">
     <div class="container body">
       <div class="main_container">
         <div class="col-md-3 left_col menu_fixed">
@@ -116,6 +116,13 @@
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/forms/payment_method_form.php">Crear método de pago</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_payment_method.php">Ver métodos de pago</a></li>
+                        </ul>
+                      </li>
+
+                      <li><a><i class="fa fa-exchange"></i> Cuentas de depósito <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/tables/search_mobile_payments.php">Pago móvil</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_transfers.php">Transferencias</a></li>
                         </ul>
                       </li>
 

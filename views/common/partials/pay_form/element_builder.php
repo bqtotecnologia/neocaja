@@ -20,7 +20,7 @@
         productRow.appendChild(priceCol)
         productRow.appendChild(totalCol)
 
-        cartTable.appendChild(productRow)
+        return productRow
     }
 
     function DeleteProductRow(product){

@@ -90,7 +90,6 @@ function ExportToPDF(){
       const response = await fetch(url, fetchConfig);
       const json = await response.json();
       result = json
-      console.log(result)
 
       if(result.status === false)
         result = result.message

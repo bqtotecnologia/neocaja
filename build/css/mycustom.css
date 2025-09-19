@@ -124,3 +124,57 @@ td, th {
 .cart-product{
     padding:50px !important;
 }
+
+.my-hidden{
+    transform: scale(0);
+    height:0;
+}
+
+.animated{
+    transition:1.5s;
+}
+
+.appear{
+    animation: show-checkout 2.0s forwards;    
+}
+
+.disappear{
+    animation: hide-pay-form 1.0s forwards;
+    
+}
+
+@keyframes hide-pay-form {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }  
+
+  99%{
+    opacity: 0;
+    transform: translateX(-100vw);
+  }
+
+  100%{
+    opacity: 0;
+    transform: translateX(-100vw);
+    display:none;
+  }
+}
+
+@keyframes show-checkout {
+  0% {
+    opacity:0;
+    transform: translateX(100vw);
+  }  
+
+  50%{
+    opacity:0;
+    transform: translateX(100vw);    
+  }
+
+  100%{
+    opacity:1;
+    transform: translateX(0);
+  }
+}
+

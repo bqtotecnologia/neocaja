@@ -6,6 +6,9 @@
     }
 
     function SelectProduct(element){
+        if(proceedToPay)
+            return
+
         var code = element.id
         var product = GetProductByCode(code)
 
@@ -21,7 +24,8 @@
 
     function AddProductToCart(product){
         selectedProducts.push(product)
-        BuildProductRow(product)
+        var row = BuildProductRow(product)
+        cartTable.appendChild(row)
     }
 
     function RemoveProductFromCart(productToRemove){
