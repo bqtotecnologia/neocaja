@@ -47,6 +47,7 @@
         checkoutContainer.classList.add('appear')
 
         FillCheckoutTable()
+        console.log(mobile_payments)
     }
 
     async function FillCheckoutTable(){
@@ -71,6 +72,46 @@
         var vesTotal = GetPrettyCiphers((usdTotal * usdValue).toFixed(2))
         document.getElementById('checkout-total-bs').innerHTML = vesTotal
         totalToPay.innerHTML = vesTotal
+    }
+
+    function SelectPaymentMethodType(paymentType){
+        ResetPaymentMethodInputs()
+
+        if(paymentType === '' || !['mobile_payment', 'transfer'].includes(paymentType) )
+            return
+
+        FillPaymentMethodSelection(paymentType)
+        ShowMethodSelection()
+    }
+
+    function FillPaymentMethodSelection(paymentType){
+        var targetMethods = paymentMethods[paymentType]
+        FillSelectWithThisPaymentMethods(targetMethods)
+    }
+
+    function ResetPaymentMethodInputs(){
+        paymentMethodSelection.innerHTML = ''
+        priceInput.value = ''
+        refInput.value = ''
+        cedulaInput.value = ''
+        HideInputs()
+        HideMethodSelection()
+    }
+
+    function ShowMethodSelection(){
+        paymentMethodSelection.classList.remove('d-none')
+    }
+
+    function HideMethodSelection(){
+        paymentMethodSelection.classList.add('d-none')
+    }
+
+    function ShowInputs(){
+        paymentMethodDisplayContainer.classList.remove('d-none')
+    }
+
+    function HideInputs(){
+        paymentMethodDisplayContainer.classList.add('d-none')
     }
 
 </script>

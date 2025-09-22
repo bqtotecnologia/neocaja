@@ -21,17 +21,23 @@ include_once '../../models/product_model.php';
 include_once '../../models/siacad_model.php';
 include_once '../../models/shop_model.php';
 include_once '../../models/global_vars_model.php';
+include_once '../../models/transfers_model.php';
+include_once '../../models/mobile_payments_model.php';
 
 $product_model = new ProductModel();
 $siacad = new SiacadModel();
 $shop_model = new ShopModel();
 $global_vars_model = new GlobalVarsModel();
+$transfers_model = new TransfersModel();
+$mobile_payments_model = new MobilePaymentsModel();
 
 $current_period = $siacad->GetCurrentPeriodo();
 
 $usdValue = $coin_model->GetCoinByName('Dólar');
 $products = $product_model->GetAvailableProductsOfStudent($_SESSION['neocaja_cedula'], $current_period['idperiodo']);
 $global_vars = $global_vars_model->GetGlobalVars(true);
+$transfers = $transfers_model->GetActiveTransfers();
+$mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
 
 ?>
 
@@ -77,6 +83,45 @@ $global_vars = $global_vars_model->GetGlobalVars(true);
                         <td class="p-1 h2 fw-bold text-black" id="total-to-pay"></td>
                     </tr>
                 </table>
+            </div>
+
+            <div class="row m-0 p-0 col-12 text-center justify-content-center align-items-start mt-3">
+                <div class="col-12 text-center mt-3">
+                    <h2 class="col-12 h2">Escoger método de pago</h2>
+                </div>
+
+                <div class="row m-0 p-0 col-12 text-center mt-3 justify-content-center">
+                    <select class="form-control col-12 col-lg-5" id="payment-method-type">
+                        <option value=""></option>
+                        <option value="mobile_payment">Pago móvil</option>
+                        <option value="transfer">Transferencia</option>
+                    </select>
+                </div>
+
+                 <div class="row m-0 p-0 col-12 text-center mt-3 d-none justify-content-center" id="payment-method-container">
+                    <select class="form-control col-12 col-lg-5" id="payment-method">
+                    </select>
+                </div>
+
+                <div class="row m-0 p-0 col-12 col-lg-5 text-center mt-3 d-none" id="payment-method-display">
+                </div>        
+
+                <div class="row m-0 p-0 col-12 col-lg-5 mt-5" id="checkout-data-container">
+                    <div class="row col-12 m-0 p-0 align-items-center my-1">
+                        <label class="col-12 col-lg-5 text-right align-middle m-0 h6" for="cedula">Cédula</label>
+                        <input class="col-12 col-lg-7 form-control" id="cedula" type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+                    </div>
+
+                    <div class="row col-12 m-0 p-0 align-items-center my-1">
+                        <label class="col-12 col-lg-5 text-right align-middle m-0 h6" for="ref">Referencia</label>
+                        <input class="col-12 col-lg-7 form-control" id="ref" type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+                    </div>
+
+                    <div class="row col-12 m-0 p-0 align-items-center my-1">
+                        <label class="col-12 col-lg-5 text-right align-middle m-0 h6" for="price">Monto</label>
+                        <input class="col-12 col-lg-7 form-control" id="price" type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46">
+                    </div>
+                </div>
             </div>
         </section>
 

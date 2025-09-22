@@ -99,4 +99,52 @@ class SQLModel{
         $sql = "INSERT INTO binnacle (user, action) VALUES ($user, '$action')";
         $this->DoQuery($sql);
     }
+
+    /**
+     * Crea un insert a una tabla dada y recibiendo un array asociativo comprendido por 'campo' => valor
+     * Si algún valor es NULL intentará insertarlo como NULL
+     */
+    public function SimpleInsert($table, $data){       
+        $field_names = '';
+        $field_values = '';
+        
+        foreach($data as $name => $value){
+            if($name === 'id') continue;
+
+            $field_names .= $name . ', ';
+            if($value === null)
+                $field_values .= 'NULL, ';
+            else
+                $field_values .= "'$value', ";
+        }
+
+        $field_names = trim($field_names, ', ');
+        $field_values = trim($field_values, ', ');
+
+        $sql = "INSERT INTO $table ($field_names) VALUES ($field_values)";
+        return $this->DoQuery($sql);
+    }
+
+    /**
+     * Crea y ejecuta un update recibiendo el nombre de tabla, el id del registro y un array asociativo
+     * comprendido por 'campo' => valor
+     * Si algún valor es NULL intentará insertarlo como NULL
+     */
+    public function SimpleUpdate($table, $data, $target_id){
+        $sql = "UPDATE $table SET ";
+        foreach($data as $name => $value){
+            if($name === 'id') continue;
+            
+            $sql .= "$name = ";
+
+            if($value === null)
+                $sql .= 'NULL, ';
+            else
+                $sql .= "'$value', ";
+        }
+
+        $sql = trim($sql, ', ');
+        $sql .= " WHERE id = $target_id";
+        return $this->DoQuery($sql);
+    }
 }

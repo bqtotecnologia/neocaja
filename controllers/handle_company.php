@@ -113,7 +113,7 @@ if($error === ''){
             $action .= '. Al número de rif ' . $cleanData['rif_number'];
 
         if($addressChanged)
-            $action .= '. Al la dirección ' . $cleanData['address'];
+            $action .= '. A la dirección ' . $cleanData['address'];
     }
     else{
         $message = 'Empresa registrada correctamente';

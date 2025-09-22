@@ -1,0 +1,121 @@
+<?php
+$admitted_user_types = ['Cajero', 'Super'];
+include_once '../utils/validate_user_type.php';
+
+include_once '../utils/base_url.php';
+include_once '../utils/Validator.php';
+
+$error = '';
+$target_transfer = false;
+
+if(empty($_POST)){
+    $error = 'POST vacío';
+}
+
+$fields_config = [
+    'account_number' => [
+        'min' => 20,
+        'max' => 20,
+        'required' => true,
+        'type' => 'string',
+        'suspicious' => true,
+    ],
+    'document_letter' => [
+        'min' => 1,
+        'max' => 1,
+        'required' => true,
+        'type' => 'string',
+        'suspicious' => true,
+    ],
+    'document_number' => [
+        'min' => 7,
+        'max' => 45,
+        'required' => true,
+        'type' => 'string',
+        'suspicious' => true,
+    ],
+];
+
+$result = Validator::ValidatePOSTFields($fields_config);
+if(is_string($result))
+    $error = $result;
+else
+    $cleanData = $result;
+
+$edit = isset($_POST['id']);
+
+if($error === ''){
+    include_once '../models/transfers_model.php';
+    $transfer_model = new TransfersModel();
+
+    if($edit){
+        $target_transfer = $transfer_model->GetTransfer($cleanData['id']);
+        if($target_transfer === false)
+            $error = 'Cuenta de transferencias no encontrada';
+    }
+}
+
+// Creating / updating the transfer
+if($error === ''){
+    $cleanData['active'] = intval(isset($_POST['active']));
+    if($edit){
+        $updated = $transfer_model->SimpleUpdate('transfers', $cleanData, $cleanData['id']);
+        
+        if($updated === false)
+            $error = 'Hubo un error al intentar actualizar la cuenta de transferencias';
+    }
+    else{
+        $created = $transfer_model->CreateTransfer($cleanData);
+        if($created === false)
+            $error = 'Hubo un error al intentar registrar la cuenta de transferencias';
+    }
+}
+
+// Managing feedback message and binnacle
+if($error === ''){    
+    if($edit){        
+        $message = 'Cuenta de transferencias actualizada correctamente';
+
+        $accountNumberChanged = $cleanData['account_number'] !== $target_transfer['account_number'];
+        $letterChanged = $cleanData['document_letter'] !== $target_transfer['document_letter'];
+        $numberChanged = $cleanData['document_number'] !== $target_transfer['document_number'];
+        $activeChanged = intval($cleanData['active']) !== intval($target_transfer['active']);
+
+        $action = 'Actualizó la cuenta de transferencias de id ' . $target_transfer['id'];
+        if($accountNumberChanged)
+            $action .= '. Al número de cuenta ' . $cleanData['account_number'];
+
+        if($letterChanged)
+            $action .= '. A la letra de documento ' . $cleanData['document_letter'];
+
+        if($numberChanged)
+            $action .= '. Al número de documento ' . $cleanData['document_number'];
+
+        if($activeChanged)
+            $action .= '. Al estado activo ' . $cleanData['active'];
+    }
+    else{
+        $message = 'Cuenta de transferencias registrada correctamente';
+        $action = 'Creo la cuenta de transferencias de numero de cuenta' . $cleanData['account_number'] . ' con el documento ' . $cleanData['document_letter'] . '-' . $cleanData['document_number'];
+    }
+    $transfer_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
+}
+
+if($error === ''){    
+    if($edit)
+        header("Location: $base_url/views/forms/transfer_form.php?message=$message&id=" . $cleanData['id']);
+    else
+        header("Location: $base_url/views/forms/transfer_form.php?message=$message&id=" . $created['id']);
+}
+else{
+    if($edit){
+        if($target_transfer === false)
+            header("Location: $base_url/views/tables/search_transfers.php?error=$error");
+        else
+            header("Location: $base_url/views/forms/transfer_form.php?error=$error&id=" . $target_transfer['id']);
+    }
+    else
+        header("Location: $base_url/views/forms/transfer_form.php?error=$error");
+}
+
+exit;

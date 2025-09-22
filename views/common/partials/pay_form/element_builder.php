@@ -51,6 +51,15 @@
         return totalCol
     }
 
+
+    function FillSelectWithThisPaymentMethods(methods){
+        methods.forEach((m) => {
+            var option = document.createElement('option')
+            option.innerHTML = methods.bank
+            option.value = methods.id
+        })
+    }
+
     function AddStyleToProductTD(td){
         td.classList.add('text-right', 'p-1')
     }

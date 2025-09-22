@@ -68,7 +68,7 @@ if($_SESSION['neocaja_rol'] === 'Estudiante'){
                         </tr>
                         <tr>
                             <td class="bg-theme text-white">Porcentaje de la mora</td>
-                            <td><?= intval($global_vars['Porcentaje mora']) ?>$</td>
+                            <td><?= intval($global_vars['Porcentaje mora']) ?>%</td>
                         </tr>
                     </table>
                 </div>

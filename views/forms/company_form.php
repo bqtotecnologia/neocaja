@@ -71,7 +71,7 @@ $fields = [
         'min' => 9,
         'max' => 9,
         'size' => 5,
-        'required' => false,
+        'required' => true,
         'value' => $edit ? $target_company['rif_number'] : '',
     ],
     [
@@ -81,7 +81,7 @@ $fields = [
         'id' => 'address',
         'type' => 'textarea',
         'size' => 8,
-        'required' => false,
+        'required' => true,
         'value' => $edit ? $target_company['address'] : '',
     ],
 ];
