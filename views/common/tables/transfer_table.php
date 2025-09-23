@@ -1,7 +1,8 @@
-<table class="table table-striped table-bordered datatable-date-3" style="width:100%">
+<table class="table table-striped table-bordered datatable-date-4" style="width:100%">
     <thead>
         <tr>
             <th class="text-center" style="padding-right:15px !important;">Nº</th>
+            <th class="text-center">Banco</th>
             <th class="text-center">Número de cuenta</th>
             <th class="text-center">Rif/Cédula</th>
             <th class="text-center">Fecha de creación</th>
@@ -17,6 +18,7 @@
         <?php foreach($transfers as $transfer) {  ?>
             <tr class="h6">
                 <td class="align-middle text-center"><?php echo $count; $count++; ?></td>
+                <td class="align-middle text-center"><?= $transfer['bank'] ?></td>
                 <td class="align-middle text-center"><?= $transfer['account_number'] ?></td>
                 <td class="align-middle text-center"><?= $transfer['document_letter'] . $transfer['document_number'] ?></td>
                 <td class="align-middle text-center"><?= $transfer['created_at'] ?></td>
@@ -25,7 +27,7 @@
                 </td>
                 <td class="">
                     <div class="row justify-content-around">
-                        <div class="col-3 text-center">
+                        <div class="col-6 text-center">
                             <a href="<?= $base_url ?>/views/forms/transfer_form.php?id=<?= $transfer['id'] ?>" class="btn btn-success" title="Editar">
                                 <i class="fa fa-pencil"></i>
                             </a>

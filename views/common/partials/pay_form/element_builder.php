@@ -53,11 +53,78 @@
 
 
     function FillSelectWithThisPaymentMethods(methods){
+        methodSelect.innerHTML = ''
+        var emptyOption = document.createElement('option')
+        emptyOption.innerHTML = 'Escoja una opción'
+        methodSelect.appendChild(emptyOption)
+
         methods.forEach((m) => {
             var option = document.createElement('option')
-            option.innerHTML = methods.bank
-            option.value = methods.id
+            option.innerHTML = m.bank
+            option.value = m.id
+            methodSelect.appendChild(option)
         })
+    }
+
+    function DisplayPaymentMethodData(paymentId, methodType){        
+        var targetPayment = null
+        paymentMethods[methodType].forEach((pm) => {
+            if(pm.id === paymentId){
+                targetPayment = pm
+            }
+        })
+
+        BuildPaymentMethodSelected(targetPayment)                
+    }
+
+    function BuildPaymentMethodSelected(payment){
+        methodDataTable.innerHTML = ''
+        const fieldTranslate = {
+            'bank': 'Banco',
+            'phone': 'Teléfono',
+            'document': 'Cédula/Rif',
+            'account_number': 'Número de cuenta'
+        }
+
+        for(let field in payment){
+            if(!Object.keys(fieldTranslate).includes(field))
+                continue
+
+            var row = document.createElement('tr')
+            var tdHeader = document.createElement('td')
+            var tdValue = document.createElement('td')
+            tdHeader.classList.add('fw-bold', 'bg-theme', 'text-white')
+            tdValue.classList.add('border', 'border-black')
+            tdHeader.innerHTML = fieldTranslate[field]
+            tdValue.innerHTML = payment[field]
+            row.appendChild(tdHeader)
+            row.appendChild(tdValue)
+            methodDataTable.appendChild(row)
+        }
+    }
+
+    function ShowMethodSelection(){
+        methodSelectContainer.classList.remove('d-none')
+    }
+
+    function HideMethodSelection(){
+        methodSelectContainer.classList.add('d-none')
+    }
+
+    function ShowPaymentData(){
+        methodDataContainer.classList.remove('d-none')
+    }
+
+    function HidePaymentData(){
+        methodDataContainer.classList.add('d-none')
+    }
+
+    function ShowInputs(){
+        checkoutInputContainer.classList.remove('d-none')
+    }
+
+    function HideInputs(){
+        checkoutInputContainer.classList.add('d-none')
     }
 
     function AddStyleToProductTD(td){

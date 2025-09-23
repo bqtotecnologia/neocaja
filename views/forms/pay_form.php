@@ -92,7 +92,7 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
 
                 <div class="row m-0 p-0 col-12 text-center mt-3 justify-content-center">
                     <select class="form-control col-12 col-lg-5" id="payment-method-type">
-                        <option value=""></option>
+                        <option value="">¿Cómo desea pagar?</option>
                         <option value="mobile_payment">Pago móvil</option>
                         <option value="transfer">Transferencia</option>
                     </select>
@@ -103,23 +103,28 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
                     </select>
                 </div>
 
-                <div class="row m-0 p-0 col-12 col-lg-5 text-center mt-3 d-none" id="payment-method-display">
+                <div class="row m-0 p-0 col-12 text-center mt-3 d-none justify-content-center" id="payment-method-display">
+                    <table class="col-lg-5 table text-center h5" id="payment-method-table">                        
+                    </table>
                 </div>        
 
-                <div class="row m-0 p-0 col-12 col-lg-5 mt-5" id="checkout-data-container">
+                <div class="row m-0 p-0 col-12 col-lg-5 mt-5 d-none" id="checkout-inputs-container">
                     <div class="row col-12 m-0 p-0 align-items-center my-1">
-                        <label class="col-12 col-lg-5 text-right align-middle m-0 h6" for="cedula">Cédula</label>
-                        <input class="col-12 col-lg-7 form-control" id="cedula" type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+                        <h3 class="col-12 text-center h3">Tras realizar la transacción registre los siguientes datos</h3>
+                    </div>
+                    <div class="row col-12 m-0 p-0 align-items-center my-1">
+                        <label class="col-12 col-lg-4 text-right align-middle m-0 h6" for="cedula">Cédula del emisor</label>
+                        <input class="col-12 col-lg-8 form-control" id="cedula" type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
                     </div>
 
                     <div class="row col-12 m-0 p-0 align-items-center my-1">
-                        <label class="col-12 col-lg-5 text-right align-middle m-0 h6" for="ref">Referencia</label>
-                        <input class="col-12 col-lg-7 form-control" id="ref" type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+                        <label class="col-12 col-lg-4 text-right align-middle m-0 h6" for="ref">Referencia de la transacción</label>
+                        <input class="col-12 col-lg-8 form-control" id="ref" type="text" placeholder="Referencia completa" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
                     </div>
 
                     <div class="row col-12 m-0 p-0 align-items-center my-1">
-                        <label class="col-12 col-lg-5 text-right align-middle m-0 h6" for="price">Monto</label>
-                        <input class="col-12 col-lg-7 form-control" id="price" type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46">
+                        <label class="col-12 col-lg-4 text-right align-middle m-0 h6" for="price">Monto de la transacción</label>
+                        <input class="col-12 col-lg-8 form-control" id="price" type="text" placeholder="Usar punto en vez de coma" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46">
                     </div>
                 </div>
             </div>

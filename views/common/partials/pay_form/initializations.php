@@ -6,15 +6,17 @@
     const checkoutContainer = document.getElementById('checkout-container')    
     const productContainer = document.getElementById('product-container')    
     const cartContainer = document.getElementById('cart-container')
-    const checkoutDataContainer = document.getElementById('checkout-data-container')
-    const paymentMethodDisplayContainer = document.getElementById('payment-method-display')
+    const checkoutInputContainer = document.getElementById('checkout-inputs-container')    
 
     const totalUSDLabel = document.getElementById('total-usd')
     const totalVESLabel = document.getElementById('total-bs')
     const totalToPay = document.getElementById('total-to-pay')
 
-    const paymentMethodType = document.getElementById('payment-method-type')
-    const paymentMethodSelection = document.getElementById('payment-method')
+    const methodTypeSelect = document.getElementById('payment-method-type')
+    const methodSelectContainer = document.getElementById('payment-method-container')
+    const methodSelect = document.getElementById('payment-method')
+    const methodDataContainer = document.getElementById('payment-method-display')
+    const methodDataTable = document.getElementById('payment-method-table')
 
     const cedulaInput = document.getElementById('cedula')
     const priceInput = document.getElementById('price')
@@ -29,7 +31,8 @@
     let productList = []
     let proceedToPay = false
 
-    paymentMethodType.addEventListener('change', function(e) { SelectPaymentMethodType(e.target.value) })
+    methodTypeSelect.addEventListener('change', function(e) { SelectPaymentMethodType(e.target.value) })
+    methodSelect.addEventListener('change', function(e) { SelectPaymentMethod(e.target.value, methodTypeSelect.value) })
 </script>
 
 
@@ -70,7 +73,7 @@
 
 <script>
     paymentMethods = {
-        'mobile_payments': mobile_payment,
-        'transfers': transfers
+        'mobile_payment': mobile_payments,
+        'transfer': transfers
     }
 </script>

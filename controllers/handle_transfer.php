@@ -34,6 +34,13 @@ $fields_config = [
         'type' => 'string',
         'suspicious' => true,
     ],
+    'bank' => [
+        'min' => 5,
+        'max' => 60,
+        'required' => true,
+        'type' => 'string',
+        'suspicious' => true,
+    ],
 ];
 
 $result = Validator::ValidatePOSTFields($fields_config);
@@ -79,6 +86,7 @@ if($error === ''){
         $accountNumberChanged = $cleanData['account_number'] !== $target_transfer['account_number'];
         $letterChanged = $cleanData['document_letter'] !== $target_transfer['document_letter'];
         $numberChanged = $cleanData['document_number'] !== $target_transfer['document_number'];
+        $bankChanged = $cleanData['bank'] !== $target_transfer['bank'];
         $activeChanged = intval($cleanData['active']) !== intval($target_transfer['active']);
 
         $action = 'Actualizó la cuenta de transferencias de id ' . $target_transfer['id'];
@@ -91,12 +99,15 @@ if($error === ''){
         if($numberChanged)
             $action .= '. Al número de documento ' . $cleanData['document_number'];
 
+        if($bankChanged)
+            $action .= '. Al banco ' . $cleanData['bank'];
+
         if($activeChanged)
             $action .= '. Al estado activo ' . $cleanData['active'];
     }
     else{
         $message = 'Cuenta de transferencias registrada correctamente';
-        $action = 'Creo la cuenta de transferencias de numero de cuenta' . $cleanData['account_number'] . ' con el documento ' . $cleanData['document_letter'] . '-' . $cleanData['document_number'];
+        $action = 'Creo la cuenta de transferencias de numero de cuenta' . $cleanData['account_number'] . ' con el documento ' . $cleanData['document_letter'] . '-' . $cleanData['document_number'] . ' con el banco ' . $cleanData['bank'];
     }
     $transfer_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
 }

@@ -47,7 +47,6 @@
         checkoutContainer.classList.add('appear')
 
         FillCheckoutTable()
-        console.log(mobile_payments)
     }
 
     async function FillCheckoutTable(){
@@ -75,7 +74,7 @@
     }
 
     function SelectPaymentMethodType(paymentType){
-        ResetPaymentMethodInputs()
+        ResetPaymentMethodDisplay()
 
         if(paymentType === '' || !['mobile_payment', 'transfer'].includes(paymentType) )
             return
@@ -87,31 +86,30 @@
     function FillPaymentMethodSelection(paymentType){
         var targetMethods = paymentMethods[paymentType]
         FillSelectWithThisPaymentMethods(targetMethods)
+        ShowPaymentData()                
     }
 
-    function ResetPaymentMethodInputs(){
-        paymentMethodSelection.innerHTML = ''
+    function SelectPaymentMethod(paymentId, methodType){
+        HideInputs()
+        HidePaymentData()
+
+        if(paymentId !== ''){
+            DisplayPaymentMethodData(paymentId, methodType)        
+            ShowInputs()
+            ShowPaymentData()
+        }
+    }
+
+    function ResetPaymentMethodDisplay(){
+        methodSelect.innerHTML = ''
+        methodDataTable.innerHTML = ''
+        methodSelect.value = ''
         priceInput.value = ''
         refInput.value = ''
         cedulaInput.value = ''
+
+        HidePaymentData()
         HideInputs()
-        HideMethodSelection()
+        HideMethodSelection()        
     }
-
-    function ShowMethodSelection(){
-        paymentMethodSelection.classList.remove('d-none')
-    }
-
-    function HideMethodSelection(){
-        paymentMethodSelection.classList.add('d-none')
-    }
-
-    function ShowInputs(){
-        paymentMethodDisplayContainer.classList.remove('d-none')
-    }
-
-    function HideInputs(){
-        paymentMethodDisplayContainer.classList.add('d-none')
-    }
-
 </script>

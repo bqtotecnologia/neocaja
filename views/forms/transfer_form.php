@@ -33,6 +33,16 @@ foreach($rif_letters as $letter){
     ]);
 }
 
+include_once '../../utils/banks.php';
+$display_banks = [];
+foreach($banks as $bank){
+    array_push($display_banks,
+    [
+        'display' => $bank,
+        'value' => $bank
+    ]);
+}
+
 include_once '../common/header.php';
 include_once '../../utils/FormBuilder.php';
 
@@ -73,6 +83,19 @@ $fields = [
         'size' => 5,
         'required' => true,
         'value' => $edit ? $target_transfer['document_number'] : '',
+    ],
+    [
+        'name' => 'bank',
+        'display' => 'Banco',
+        'placeholder' => '',
+        'id' => 'bank',
+        'type' => 'select',
+        'min' => 5,
+        'max' => 60,
+        'size' => 6,
+        'required' => true,
+        'value' => $edit ? $target_transfer['bank'] : '',
+        'elements' => $display_banks
     ],
     [
         'name' => 'active',
