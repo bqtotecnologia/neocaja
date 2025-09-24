@@ -81,8 +81,10 @@ if($error === ''){
         if(in_array($product['code'], $post['codes']))
             array_push($result, $product);
     }
-}
 
+    if(count($result) === 0)
+        $error = 'No se encontraron los productos seleccionados';
+}
 
 
 if($error === ''){

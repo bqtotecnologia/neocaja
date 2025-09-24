@@ -103,12 +103,12 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
                     </select>
                 </div>
 
-                <div class="row m-0 p-0 col-12 text-center mt-3 d-none justify-content-center" id="payment-method-display">
+                <div class="row m-0 p-0 col-12 text-center my-3 mt-5 d-none justify-content-center" id="payment-method-display">
                     <table class="col-lg-5 table text-center h5" id="payment-method-table">                        
                     </table>
                 </div>        
 
-                <div class="row m-0 p-0 col-12 col-lg-5 mt-5 d-none" id="checkout-inputs-container">
+                <div class="row m-0 p-0 col-12 col-lg-5 my-3 d-none" id="checkout-inputs-container">
                     <div class="row col-12 m-0 p-0 align-items-center my-1">
                         <h3 class="col-12 text-center h3">Tras realizar la transacción registre los siguientes datos</h3>
                     </div>
@@ -125,6 +125,12 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
                     <div class="row col-12 m-0 p-0 align-items-center my-1">
                         <label class="col-12 col-lg-4 text-right align-middle m-0 h6" for="price">Monto de la transacción</label>
                         <input class="col-12 col-lg-8 form-control" id="price" type="text" placeholder="Usar punto en vez de coma" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46">
+                    </div>
+
+                    <div class="row col-12 m-0 p-0 align-items-center mt-5">
+                        <button class="btn btn-success m-0 mx-auto" onclick="RegisterPayment()">
+                            Confirmar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -170,7 +176,7 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
             </div>
         </section>
 
-        <section class="row col-12 justify-content-center align-items-center pt-4 animated">
+        <section class="row col-12 justify-content-center align-items-center pt-4 animated" id="proceed-container">
             <button class="btn btn-success m-0" onclick="ConfirmProceed()">
                 Proceder
             </button>

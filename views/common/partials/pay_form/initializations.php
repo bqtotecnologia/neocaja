@@ -6,6 +6,7 @@
     const checkoutContainer = document.getElementById('checkout-container')    
     const productContainer = document.getElementById('product-container')    
     const cartContainer = document.getElementById('cart-container')
+    const proceedContainer = document.getElementById('proceed-container')
     const checkoutInputContainer = document.getElementById('checkout-inputs-container')    
 
     const totalUSDLabel = document.getElementById('total-usd')
@@ -23,6 +24,8 @@
     const refInput = document.getElementById('ref')
     
     const usdValue = parseFloat('<?= $usdValue['price'] ?>')
+
+    const availablePaymentMethods = ['mobile_payment', 'transfer']
     
     let paymentMethods = {}
     const mobile_payments = []
