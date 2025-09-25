@@ -52,7 +52,7 @@
                       <li><a><i class="fa fa-usd"></i> Pagar <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/forms/pay_form.php">Pagar</a></li>
-                          <li><a href="<?= $base_url ?>/views/my_payments.php">Historial de pagos</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/my_payments.php">Historial de pagos</a></li>
                         </ul>
                       </li>
                     <?php } ?>

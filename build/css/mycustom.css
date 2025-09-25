@@ -143,6 +143,18 @@ td, th {
     
 }
 
+.revisar{
+    color: #1386d3 !important;
+}
+
+.Aprobado{
+    color:#6dff59;
+}
+
+.Rechazado{
+    color:#ff0000;
+}
+
 @keyframes hide-pay-form {
   0% {
     opacity: 1;

@@ -151,8 +151,7 @@
             var price = priceInput.value
             var to_pay = totalToPay.innerHTML.replace('.', '')
             var to_pay = to_pay.replace(',', '.')
-            console.log(price)
-            console.log(to_pay)
+            
             if(price !== to_pay)
                 error = 'El monto no coindice con el total a pagar'
         }
@@ -189,7 +188,7 @@
             'payment_method_type': methodTypeSelect.value,
         }
 
-        var result = FetchPayment(data)
+        var result = await FetchPayment(data)
         if(result.status === true){
             url = '<?= $base_url ?>/views/panel.php?message=' + result.message
             window.location.href = url
