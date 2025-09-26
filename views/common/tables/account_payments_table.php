@@ -1,4 +1,4 @@
-<table class="table table-striped table-bordered datatable-date-5" style="width:100%">
+<table class="table table-striped table-bordered datatable-date-5 w-100">
     <thead>
         <tr>
             <th class="text-center" style="padding-right:15px !important;">Nº</th>
@@ -29,12 +29,12 @@
                         echo 'Transferencia';
                      ?>
                 </td>
-                <td class="align-middle text-center"><?= $payment['price'] ?></td>
+                <td class="align-middle text-center"><?= GetPrettyCiphers($payment['price']) ?></td>
                 <td class="align-middle text-center"><?= $payment['created_at'] ?></td>
                 <td class="align-middle text-center fw-bold <?= $payment['state'] ?>"><?= $payment['state'] ?></td>
-                <td class="">
+                <td class="align-middle text-center">
                     <div class="row justify-content-around">
-                        <div class="col-3 text-center">
+                        <div class="col-12 text-center">
                             <a href="<?= $base_url ?>/views/detailers/payment_details.php?id=<?= $payment['id'] ?>" class="btn btn-success" title="Ver">
                                 <i class="fa fa-search"></i>
                             </a>

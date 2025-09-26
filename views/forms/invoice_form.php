@@ -399,9 +399,7 @@ $latest = $invoice_model->GetLatestNumbers();
         var paymentTotal = parseFloat(document.getElementById('payment-total').innerHTML)
 
         var invalidValues = [0, undefined]
-        console.log(typeof paymentTotal)
-        
-        console.log(paymentTotal in invalidValues)
+
         if(
             productTotal  in invalidValues || 
             paymentTotal in invalidValues ||
@@ -418,10 +416,18 @@ $latest = $invoice_model->GetLatestNumbers();
 
         if(error === ''){
             Swal.fire({
-              title: "Mensaje",
-              icon:'success',
-              html: 'Fino señores',
-            })
+            title: "Confirmación",
+            html: "¿Desea crear la factura?",
+            showCancelButton: true,
+            confirmButtonText: "Proceder",
+            denyButtonText: 'Cancelar',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    myForm.submit()
+                }
+            });
         }
         else{
             Swal.fire({

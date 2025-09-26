@@ -27,7 +27,7 @@ if($target_invoice === false){
     $error = 'Factura no encontrada';
 }
 
-if($_SESSION['neocaja_rol'] !== 'Estudiante'){
+if($_SESSION['neocaja_rol'] === 'Estudiante'){
     if($target_invoice['cedula'] !== $_SESSION['neocaja_cedula']){
         $error = 'Factura inválida';
     }

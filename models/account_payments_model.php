@@ -76,7 +76,25 @@ class AccountPaymentsModel extends SQLModel
 
     public function GetPaymentsOfAccount($cedula){
         $sql = $this->SELECT_TEMPLATE . " WHERE accounts.cedula = '$cedula'";
-        return parent::GetRows($sql);
+        return parent::GetRows($sql, true);
+    }
+
+    public function GetPaymentsOfState($state){
+        $sql = $this->SELECT_TEMPLATE . " WHERE account_payments.state = '$state'";
+        return parent::GetRows($sql, true);
+    }
+
+    public function GetPaymentsOfDate($date){
+        $sql = $this->SELECT_TEMPLATE . " WHERE DATE(account_payments.created_at) = '$date'";
+        return parent::GetRows($sql, true);
+    }
+
+    public function ProcessPayment($id, $data){
+        $state = $data['state'];
+        $response = $data['response'];
+
+        $sql = "UPDATE account_payments SET state = '$state', response = '$response' WHERE id = $id";
+        return parent::DoQuery($sql);
     }
 
     /**

@@ -148,11 +148,11 @@ td, th {
 }
 
 .Aprobado{
-    color:#6dff59;
+    color:#50d33e !important;
 }
 
 .Rechazado{
-    color:#ff0000;
+    color:#ff0000 !important;
 }
 
 @keyframes hide-pay-form {

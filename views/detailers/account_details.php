@@ -3,7 +3,7 @@ $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 include_once '../../utils/Validator.php';
-include_once '../../utils/months_data.php';
+include_once '../../utils/prettyCiphers.php';
 
 $id = Validator::ValidateRecievedId();
 $error = '';
@@ -15,10 +15,12 @@ if(is_string($id)){
 include_once '../../models/invoice_model.php';
 include_once '../../models/account_model.php';
 include_once '../../models/siacad_model.php';
+include_once '../../models/account_payments_model.php';
 
 $invoice_model = new InvoiceModel();
 $account_model = new AccountModel();
 $siacad = new SiacadModel();
+$payment_model = new AccountPaymentsModel();
 
 $target_account = $account_model->GetAccount($id);
 if($target_account === false){
@@ -32,6 +34,7 @@ if($error !== ''){
 
 $invoices = $invoice_model->GetInvoicesOfAccount($target_account['id']);
 $target_student = $siacad->GetEstudianteByCedula($target_account['cedula']);
+$payments = $payment_model->GetPaymentsOfAccount($target_student['cedula']);
 
 include '../../views/common/header.php';
 
@@ -162,6 +165,18 @@ include '../../views/common/header.php';
             <div class="row col-12 justify-content-center">
                 <div class="table-responsive">
                     <?php include_once '../common/tables/invoice_table.php'; ?>
+                </div>
+            </div>
+        </section>
+
+        <section class="col-12 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
+            <div class="row col-12 text-center">
+                <h2 class="w-100 text-center h2">Pagos remotos del estudiante</h2>
+            </div>
+
+            <div class="row col-12 justify-content-center">
+                <div class="table-responsive">
+                    <?php include_once '../common/tables/account_payments_table.php'; ?>
                 </div>
             </div>
         </section>
