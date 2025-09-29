@@ -289,7 +289,8 @@ class InvoiceModel extends SQLModel
             FROM
             invoices
             INNER JOIN concepts ON concepts.invoice = invoices.id
-            INNER JOIN products ON products.id = concepts.product
+            INNER JOIN product_history ON product_history.id = concepts.product
+	        INNER JOIN products ON products.id = product_history.product
             INNER JOIN accounts ON accounts.id = invoices.account
             WHERE
             accounts.cedula = '$cedula' AND
@@ -303,65 +304,74 @@ class InvoiceModel extends SQLModel
         $concepts = parent::GetRows($sql, true);
         
         $ordered_concepts = [];
-        foreach($periodMonths as $month){
+        foreach($periodMonths as $month){            
             $ordered_concepts[$month] = [
                 'concepts' => [],
                 'paid' => 0,
                 'debt' => 0,
                 'partial' => 0,
-                'valid' => 0,
             ];
-        }
+        }        
 
         
-        
-        foreach($concepts as $concept){           
-            $target_month = $this->month_translate[strval($concept['month'])];
-            if(!isset($ordered_concepts[$target_month]))
+        foreach($concepts as $concept){         
+            $month_name = $this->month_translate[strval($concept['month'])];
+            
+            if(!isset($ordered_concepts[$month_name]))
                 continue;
             
-            $ordered_concepts[$target_month]['invoice'] = $concept['invoice'];
-            $ordered_concepts[$target_month]['date'] = $concept['created_at'];
-            $ordered_concepts[$target_month]['valid'] = 1;
+            $ordered_concepts[$month_name]['invoice'] = $concept['invoice'];
 
-            $ordered_concepts[$target_month]['concepts'][$concept['product']] = $concept['price'];
+            $ordered_concepts[$month_name]['concepts'][$concept['product']] = $concept['price'];
         }     
         $result = [];
+        $lastMonth = null;
+        $currentYear = intval(date('Y'));
 
         if($concepts !== []){
             foreach($ordered_concepts as $key => $value){
                 if(!in_array($key, $periodMonths)){
                     continue;
                 }
+
+                $currentMonthNumber = $this->GetMonthNumberByName($key);
+
+                if($lastMonth === 12 && $currentMonthNumber === 1)
+                    $currentYear++;
+
+                $lastMonth = $currentMonthNumber;
                 $result[$key] = $value; 
 
                 if(array_key_exists('Mensualidad', $value['concepts']) || array_key_exists('Saldo Mensualidad', $value['concepts'])){
                     // El mes está pagado
+                    //echo 'Mes pagado: ' . $key . '<br>';
                     $result[$key]['paid'] = 1;
                 }
+
+                if(array_key_exists('Diferencia Mensualidad', $value['concepts']))
+                    // Pagó la mora, lo que implica que estuvo moroso
+                    $result[$key]['debt'] = 1;
     
-                if($result[$key]['paid'] === 1){
-                    if(array_key_exists('Diferencia Mensualidad', $value['concepts']))
-                        $result[$key]['debt'] = 1;
-                }
-                else if(isset($result[$key]['invoice'])){
+                if($result[$key]['paid'] === 0 && $result[$key]['debt'] === 0){
+                    // Si no ha pagado y no ha pagado la mora, verificamos si está moroso
+                    //echo 'Mes sin pagar: ' . $key . '<br>';
                     $timezone = new DateTimeZone('America/Caracas');
-                    $invoice_date = new DateTime($value['date'], $timezone);
-                    $invoice_month = intval($invoice_date->format('m'));
-                    $invoice_year = $invoice_date->format('Y');
-    
-                    $retard_date = "$invoice_year-$invoice_month-" . intval($global_vars['Dia tope mora']);
+                    $now = new DateTime('now', $timezone);
+                    $now->setTime(0, 0, 0, 0);
+
+                    $retard_date = "$currentYear-$lastMonth-" . intval($global_vars['Dia tope mora']);
                     $retard_date = new DateTime($retard_date, $timezone);
                     
-                    if(intval($key) < $invoice_month){
-                        $result[$key]['debt'] = 1;
-                    }
-                    else if(intval($key) === $invoice_month && $invoice_date > $retard_date){
+                    if($now > $retard_date){
+                        //echo 'Mes moroso: ' . $key . '<br>';
                         $result[$key]['debt'] = 1;
                     }
                 }
+                
     
                 if(array_key_exists('Abono Mensualidad', $value['concepts'])){
+                    // Abonó al mes
+                    //echo 'Mes abonado: ' . $key . '<br>';
                     $result[$key]['partial'] = 1;
                 }
             }
@@ -369,7 +379,7 @@ class InvoiceModel extends SQLModel
         else{
             $result = $ordered_concepts;
         }
-
+        
         return $result;
     }
 

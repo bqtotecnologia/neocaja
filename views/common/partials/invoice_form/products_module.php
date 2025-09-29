@@ -100,8 +100,8 @@
             }
             var discount = parseFloat(productScholarship.value.trim('%'))
 
-            var productTotal = (productBasePrice - (productBasePrice * (discount / 100))).toFixed(2)
-            document.getElementById('product-total-' + String(i)).value = productTotal          
+            var productTotal = productBasePrice - (productBasePrice * (discount / 100))
+            document.getElementById('product-total-' + String(i)).value = productTotal.toFixed(2)       
         }
         
         UpdateProductTotal()

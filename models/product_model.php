@@ -104,7 +104,8 @@ class ProductModel extends SQLModel
             $to_add = [
                 'name' => 'FOC',
                 'price' => floatval($foc['price']),
-                'code' => sha1($cedula . 'F')
+                'code' => sha1($cedula . 'F'),
+                'month' => null,
             ];
             array_push($nonPaid, $to_add);
         }
@@ -114,15 +115,17 @@ class ProductModel extends SQLModel
                 continue;
 
             $monthFinalPrice = floatval($monthly['price']);
-            $monthNumber = $this->GetMonthNumberByName($month);
+            $monthNumber = intval($this->GetMonthNumberByName($month));
 
             $to_add = [
                 'name' => 'Mensualidad ' . $month,
-                'code' => $cedula . 'M' . $monthNumber
+                'code' => $cedula . 'M' . $monthNumber,
+                'month' => $monthNumber,
             ];
 
             if($value['partial'] === 1){                
                 $remaining = $invoice_model->GetRemainingPriceOfMonthOfStudent($monthNumber, $cedula, $period);
+                $to_add['name'] = 'Restante ' . $to_add['name'];
                 $monthFinalPrice -= $remaining;
                 $to_add['code'] .= 'P';
             }

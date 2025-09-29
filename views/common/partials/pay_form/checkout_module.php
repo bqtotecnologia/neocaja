@@ -1,10 +1,32 @@
 <script>
     async function ConfirmProceed(){
+        var error = ''
         if(selectedProducts.length === 0){
+            error = 'Debe seleccinar al menos un producto para proceder'            
+        }
+
+        // youngestPayableMonth
+        // focExists
+        var nextMonth = youngestPayableMonth
+        var ready = false
+        while(ready === false){
+            for(let i = 0; i < selectedProducts.length; i++){
+                var product = selectedProducts[i]
+
+                if(product.name === 'FOC')
+                    continue
+
+                if(product.month === nextMonth)
+                    nextMonth++
+            }
+        }
+
+
+        if(error !== ''){
             Swal.fire({
                 title: "Acción inválida",
                 icon: 'warning',
-                html: "Debe seleccinar al menos un producto para proceder",
+                html: error,
                 confirmButtonText: "Entendido",
             })
         }

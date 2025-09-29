@@ -51,7 +51,23 @@ if($error === ''){
     
 }
 
-// binnacle
+if($error === ''){
+    // Creando al bitácora
+    $action = 'Actualizó el estado del pago remoto ' . $target_payment['id'] . ' perteneciente al cliente ' . $target_payment['fullname'];
+    $action .= ' cédula: ' . $target_payment['cedula']  . ' al estado: ' . $_POST['state'] . ' por motivo: ' . $_POST['response'];
+    $payments_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
+
+    // Creando la notificación
+    include_once '../models/notification_model.php';
+    $notification = 'Tu pago remoto realizado el ' . date('d/m/Y', strtotime($target_payment['created_at']));
+    $notification .= ' fue actualizado al estado "' . $_POST['state'] . '"' . '. Respuesta: ' . $_POST['response'];
+    $data = [
+        'message' => $notification,
+        'cedula' => $target_payment['cedula']
+    ];
+
+    $notification_model->CreateNotification($data);    
+}
 
 if($error === ''){    
     header("Location: $base_url/views/detailers/payment_details.php?message=$message&id=" . $target_payment['id']);

@@ -4,39 +4,39 @@ include_once '../utils/validate_user_type.php';
 
 include_once 'common/header.php';
 
-if($_SESSION['neocaja_rol'] === 'Estudiante'){
-    include_once '../models/siacad_model.php';
-    include_once '../models/global_vars_model.php';
-    include_once '../models/product_model.php';
-    include_once '../models/coin_model.php';
-    include_once '../models/invoice_model.php';
-
-    $global_vars_model = new GlobalVarsModel();
-    $global_vars = $global_vars_model->GetGlobalVars(true);
-
-    $siacad = new SiacadModel();
-    $currentPeriod = $siacad->GetCurrentPeriodo();
-
-    $product_model = new ProductModel();
-    $focProduct = $product_model->GetProductByName('FOC');
-
-    $invoice_model = new InvoiceModel();
-    $monthStates = $invoice_model->GetAccountState($_SESSION['neocaja_cedula'], $currentPeriod['idperiodo']);
-    $debtState = $invoice_model->GetDebtOfAccountOfPeriod($_SESSION['neocaja_cedula'], $currentPeriod['idperiodo']);
-
-    $coin_model = new CoinModel();
-    $usd = $coin_model->GetCoinByName('Dólar');
-    $coin_date = date('Y-m-d', strtotime($usd['price_created_at']));
-    $today = date('Y-m-d');
-    $usdUpdated = strtotime($today) === strtotime($coin_date);
-    $total_debt = $debtState['months'] + $debtState['retard'];
-
-    if($debtState['foc'] === false)
-        $total_debt += $focProduct['price'];
-}
 ?>
 
 <?php if($_SESSION['neocaja_rol'] === 'Estudiante'){ ?>
+    <?php 
+        include_once '../models/siacad_model.php';
+        include_once '../models/global_vars_model.php';
+        include_once '../models/product_model.php';
+        include_once '../models/coin_model.php';
+        include_once '../models/invoice_model.php';
+
+        $global_vars_model = new GlobalVarsModel();
+        $global_vars = $global_vars_model->GetGlobalVars(true);
+
+        $siacad = new SiacadModel();
+        $currentPeriod = $siacad->GetCurrentPeriodo();
+
+        $product_model = new ProductModel();
+        $focProduct = $product_model->GetProductByName('FOC');
+
+        $invoice_model = new InvoiceModel();
+        $monthStates = $invoice_model->GetAccountState($_SESSION['neocaja_cedula'], $currentPeriod['idperiodo']);
+        $debtState = $invoice_model->GetDebtOfAccountOfPeriod($_SESSION['neocaja_cedula'], $currentPeriod['idperiodo']);
+
+        $coin_model = new CoinModel();
+        $usd = $coin_model->GetCoinByName('Dólar');
+        $coin_date = date('Y-m-d', strtotime($usd['price_created_at']));
+        $today = date('Y-m-d');
+        $usdUpdated = strtotime($today) === strtotime($coin_date);
+        $total_debt = $debtState['months'] + $debtState['retard'];
+
+        if($debtState['foc'] === false)
+            $total_debt += $focProduct['price'];
+    ?>
     <div class="x_panel row col-12 m-0 p-0 justify-content-center align-items-center pt-2">              
         <div class="row col-12 p-0 m-0 my-2 justify-content-center">
             <h1 class="h1 text-center w-100">Su estado de cuenta en el periodo <?= $currentPeriod['nombreperiodo'] ?></h1>

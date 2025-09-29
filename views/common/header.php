@@ -47,8 +47,22 @@
                 <ul class="nav side-menu">
                   <?php if(isset($_SESSION['neocaja_rol'])){ ?>
 
-                    <!-- Student -->
+                    <!-- Student -->                  
                     <?php if(Auth::UserLevelIn(['Estudiante', 'Super'])){ ?>
+                      <?php 
+                        include_once $_SERVER['DOCUMENT_ROOT'] . '/neocaja/models/notification_model.php';
+                        $pendingNotifications = $notification_model->GetPendingNotifications($_SESSION['neocaja_cedula']);
+                        ?>
+                      <li><a><i class="fa fa-bell"></i> Notificaciones 
+                        <?php if(count($pendingNotifications) > 0) { ?>
+                          <span class="mx-2 rounded-circle bg-danger px-2 py-1 text-center fw-bold"><?= count($pendingNotifications) ?></span>
+                        <?php } ?>
+                      <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/tables/search_notifications.php">Ver notificaciones</a></li>
+                        </ul>
+                      </li>
+
                       <li><a><i class="fa fa-usd"></i> Pagar <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/forms/pay_form.php">Pagar</a></li>
