@@ -98,7 +98,8 @@ if($error === ''){
             array_push($final_products, $product);
     }
 
-    if(count($final_products) === 0)
+    $productCounts = count($final_products);
+    if($productCounts === 0)
         $error = 'No se encontraron los productos seleccionados';
 }
 
@@ -124,6 +125,51 @@ if($error === ''){
         if($target_payment_method === false)
             $error = 'Cuenta de transferencia seleccionada no encontrada';
     }
+}
+
+if($error === 0){
+    // Verificamos si seleccionó FOC
+    $hasFOC = false;    
+    $youngestPayableMonth = null;
+    foreach($final_products as $product){
+        if($product['name'] === 'FOC'){
+            $hasFOC = true;
+        }
+        else if($youngestPayableMonth === null)
+            $youngestPayableMonth = $product['month'];
+    }
+
+    // Validamos que haya escogido meses consecutivos empezando por el primero
+    $nextMonth = intval($youngestPayableMonth);
+    $consecutiveMonths = 0;
+    $cyclesMade = -1;
+
+    while(true){
+        $cyclesMade++;
+        foreach($final_products as $product){
+            if(intval($product['month']) === $nextMonth){
+                $nextMonth++;
+                if($nextMonth === 13)
+                    $nextMonth = 1;
+                
+                $consecutiveMonths++;
+                break;
+            }
+
+        }
+
+        if($cyclesMade > $productCounts)
+            break;
+    }
+
+    if($hasFOC){
+            if($productCounts !== $consecutiveMonths + 1)
+                $error = 'Debes seleccionar meses consecutivos';
+        }
+        else{
+            if($productCounts !== $consecutiveMonths)
+                $error = 'Debes seleccionar meses consecutivos';
+        }
 }
 
 

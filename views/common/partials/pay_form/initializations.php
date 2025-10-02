@@ -34,7 +34,6 @@
     let productList = []
     let proceedToPay = false
     let youngestPayableMonth = null
-    let focExists = false
 
     methodTypeSelect.addEventListener('change', function(e) { SelectPaymentMethodType(e.target.value) })
     methodSelect.addEventListener('change', function(e) { SelectPaymentMethod(e.target.value, methodTypeSelect.value) })
@@ -50,9 +49,6 @@
             'month': '<?= $product['month'] ?>'
         }
         productList.push(product)
-
-        if(product['name'] === 'FOC')
-            focExists = true
 
         if(youngestPayableMonth === null && product.name !== 'FOC')
             youngestPayableMonth = product.month

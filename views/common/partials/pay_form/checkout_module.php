@@ -5,19 +5,46 @@
             error = 'Debe seleccinar al menos un producto para proceder'            
         }
 
-        // youngestPayableMonth
-        // focExists
-        var nextMonth = youngestPayableMonth
-        var ready = false
-        while(ready === false){
+        if(error === '' && false){
+            // Comprovamos si seleccionó FOC
+            var hasFOC = false
             for(let i = 0; i < selectedProducts.length; i++){
                 var product = selectedProducts[i]
-
-                if(product.name === 'FOC')
-                    continue
-
-                if(product.month === nextMonth)
-                    nextMonth++
+                if(product.name === 'FOC'){
+                    hasFOC = true
+                    break
+                }
+            }
+    
+            // Validamos que haya escogido meses consecutivos empezando por el primero
+            var nextMonth = parseInt(youngestPayableMonth)
+            var consecutiveMonths = 0
+            var cyclesMade = -1
+            while(true){
+                cyclesMade++
+                for(let i = 0; i < selectedProducts.length; i++){
+                    var product = selectedProducts[i]
+                    if(parseInt(product.month) === nextMonth){
+                        nextMonth++
+                        if(nextMonth === 13)
+                            nextMonth = 1
+                        
+                        consecutiveMonths++
+                        break
+                    }
+                }
+    
+                if(cyclesMade > selectedProducts.length)
+                    break;
+            }
+    
+            if(hasFOC){
+                if(selectedProducts.length !== consecutiveMonths + 1)
+                    error = 'Debes seleccionar meses consecutivos'
+            }
+            else{
+                if(selectedProducts.length !== consecutiveMonths)
+                    error = 'Debes seleccionar meses consecutivos'
             }
         }
 
