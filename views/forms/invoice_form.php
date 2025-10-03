@@ -208,6 +208,9 @@ $latest = $invoice_model->GetLatestNumbers();
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="row col-12 m-0 p-2 justify-content-center d-none text-success h3" id="scholarship">
+                    </div>
                 </div>
             </div>
 

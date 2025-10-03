@@ -89,8 +89,6 @@ if($error === ''){
         $error = 'Ocurrió un error al intentar obtener los productos disponibles';
 }
 
-
-
 if($error === ''){
     $final_products = [];
     foreach($products as $product){
@@ -102,8 +100,6 @@ if($error === ''){
     if($productCounts === 0)
         $error = 'No se encontraron los productos seleccionados';
 }
-
-
 
 if($error === ''){
     if(!in_array($post['payment_method_type'], $availablePaymentMethods))
@@ -127,27 +123,31 @@ if($error === ''){
     }
 }
 
-if($error === 0){
+if($error === ''){
     // Verificamos si seleccionó FOC
     $hasFOC = false;    
     $youngestPayableMonth = null;
+    $product_total = 0;
+
     foreach($final_products as $product){
         if($product['name'] === 'FOC'){
             $hasFOC = true;
         }
         else if($youngestPayableMonth === null)
             $youngestPayableMonth = $product['month'];
+
+        $product_total += $product['price'];
     }
 
     // Validamos que haya escogido meses consecutivos empezando por el primero
     $nextMonth = intval($youngestPayableMonth);
     $consecutiveMonths = 0;
-    $cyclesMade = -1;
+    $cyclesMade = -1;    
 
     while(true){
         $cyclesMade++;
         foreach($final_products as $product){
-            if(intval($product['month']) === $nextMonth){
+            if(intval($product['month']) === $nextMonth && $product['name'] !== 'FOC'){
                 $nextMonth++;
                 if($nextMonth === 13)
                     $nextMonth = 1;
@@ -155,7 +155,6 @@ if($error === 0){
                 $consecutiveMonths++;
                 break;
             }
-
         }
 
         if($cyclesMade > $productCounts)
@@ -170,6 +169,19 @@ if($error === 0){
             if($productCounts !== $consecutiveMonths)
                 $error = 'Debes seleccionar meses consecutivos';
         }
+}
+
+if($error === ''){
+    // Verificamos el monto
+    include_once '../models/coin_model.php';
+    $coin_model = new CoinModel();
+
+    $usd = $coin_model->GetCoinByName('Dólar');
+    $total_bs = round($product_total * $usd['price'], 2);
+
+    // Lo comparamos con un margen de error de 0.2bs debido al cálculo de decimales
+    if((($total_bs - 0.2 < $post['price']) && ($total_bs + 0.2 > $post['price'])) === false)
+        $error = 'El monto no coincide';   
 }
 
 

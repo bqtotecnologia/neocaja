@@ -1,4 +1,12 @@
 <script>     
+    ////////////////////////// ACCOUNTS //////////////////////////
+    function ShowScholarship(){
+        if(scholarshipped){
+            scholarshipContainer.classList.remove('d-none')
+            scholarshipContainer.innerHTML = 'Beca ' + targetAccount['scholarship'] + ' ' + targetAccount['scholarship_coverage'] + '%'
+        }
+    }
+    
     ////////////////////////// INVOICE //////////////////////////
 
     function DisplayCoinHistory(coin){
@@ -37,8 +45,6 @@
         if(invoice.paid === 0 && monthReached === false){
             monthReached = true
             
-            
-            //lastMonth = Object.keys(monthNumberToName).find(key => monthNumberToName[key] === String(month));
             lastMonth = GetMonthNumberByName(month)
             if(lastMonth === 1 && month === 'Enero')
                 yearOfNextMonth += 1
@@ -104,17 +110,19 @@
         }
         invoicePartialCol.appendChild(partialSymbol)
         
-
         var seeCol = document.createElement('td')
-        AddBorderToTD(seeCol)
-        AddInvoiceClassToTD(seeCol)
-        var seeLink = document.createElement('a')
-        seeLink.classList.add('h6')
-        seeLink.href = '<?= $base_url ?>/views/detailers/invoice_details.php?id=' + invoice.invoice
-        seeLink.target = '_blank'
-        seeLink.innerHTML = 'Ver'
-        seeLink.classList.add('fw-bold')
-        seeCol.appendChild(seeLink)
+        if(invoice.invoice !== undefined){
+            seeCol = document.createElement('td')
+            AddBorderToTD(seeCol)
+            AddInvoiceClassToTD(seeCol)
+            var seeLink = document.createElement('a')
+            seeLink.classList.add('h6')
+            seeLink.href = '<?= $base_url ?>/views/detailers/invoice_details.php?id=' + invoice.invoice
+            seeLink.target = '_blank'
+            seeLink.innerHTML = 'Ver'
+            seeLink.classList.add('fw-bold')
+            seeCol.appendChild(seeLink)
+        }
 
         var row = document.createElement('tr')
         row.classList.add('text-center')
@@ -137,7 +145,6 @@
         var productCol = GetNewProductColumn(productId)        
         var monthCol = GetNewMonthColumn(productId)
         var basePriceCol = GetNewBasePriceColumn(productId)
-        var scholarshipCol = GetNewScholarshipDiscountColumn(productId)
         var totalCol = GetNewTotalColumn(productId)
         var eraseCol = GetNewEraseButtonColumn(productId)      
 
@@ -147,7 +154,6 @@
         row.appendChild(productCol)
         row.appendChild(monthCol)
         row.appendChild(basePriceCol)
-        row.appendChild(scholarshipCol)
         row.appendChild(totalCol)
         row.appendChild(eraseCol)
 
@@ -192,14 +198,16 @@
         monthSelect.name = buffer
         
         periodMonths.forEach((month) => {
-            var option = document.createElement('option')
-            option.value = GetMonthNumberByName(month)
-            var span = document.createElement('span')
-            span.innerHTML = month
-            span.classList.add('bg-primary')
-            option.appendChild(span)
-
-            monthSelect.appendChild(option)
+            if(!paidMonths.includes(month)){
+                var option = document.createElement('option')
+                option.value = GetMonthNumberByName(month)
+                var span = document.createElement('span')
+                span.innerHTML = month
+                span.classList.add('bg-primary')
+                option.appendChild(span)
+    
+                monthSelect.appendChild(option)
+            }
         })
 
         div.appendChild(monthSelect)
@@ -217,17 +225,6 @@
         basePriceCol.appendChild(basePriceInput)
         basePriceInput.addEventListener('change', function(e){ UpdateProductsPrice() })
         return basePriceCol
-    }
-
-    function GetNewScholarshipDiscountColumn(productId){
-        var scholarshipCol = document.createElement('td')
-        var scholarshipInput = document.createElement('input')
-        scholarshipInput.type = 'text'
-        scholarshipInput.disabled = true
-        scholarshipInput.id = "product-scholarship-" + productId
-        scholarshipInput.classList.add('form-control', 'scholarship-input')
-        scholarshipCol.appendChild(scholarshipInput)
-        return scholarshipCol
     }
 
     function GetNewTotalColumn(productId){
@@ -320,28 +317,41 @@
         AddBorderToTD(retardUSD)
         retardCol.innerHTML = 'Mora'
 
-        if(retardDebt > 0 && !scholarshipped){
-            // Tiene mora y NO está becado
-            retardVES.classList.add('text-danger')  
-            retardUSD.classList.add('text-danger')  
-            retardVES.innerHTML = 'Bs. ' + GetPrettyCiphers(retardDebt * coinValues['Dólar'])
-            retardUSD.innerHTML = GetPrettyCiphers(retardDebt) + '$'
+        if(retardDebt > 0){
+            if(scholarshipped){
+                if(scholarship_with_retard){
+                    retardVES.classList.add('text-danger')  
+                    retardUSD.classList.add('text-danger')  
+                    retardVES.innerHTML = 'Bs. ' + GetPrettyCiphers(retardDebt * coinValues['Dólar'])
+                    retardUSD.innerHTML = GetPrettyCiphers(retardDebt) + '$'
+                }
+                else{
+                    retardVES.classList.add('text-success')  
+                retardUSD.classList.add('text-success') 
+                    retardVES.innerHTML = 'SIN MORA'
+                    retardUSD.innerHTML = 'SIN MORA'
+                }
+            }
+            else{
+                retardVES.classList.add('text-danger')  
+                retardUSD.classList.add('text-danger')  
+                retardVES.innerHTML = 'Bs. ' + GetPrettyCiphers(retardDebt * coinValues['Dólar'])
+                retardUSD.innerHTML = GetPrettyCiphers(retardDebt) + '$'
+            }
         }
         else{
             retardVES.classList.add('text-success')  
-            retardUSD.classList.add('text-success')  
-            if(scholarshipped){
-                retardVES.innerHTML = 'BECADO'
-                retardUSD.innerHTML = 'BECADO'
-            }
-            else{
-                retardVES.innerHTML = 'SIN DEUDA'
-                retardUSD.innerHTML = 'SIN DEUDA'
-            }
+            retardUSD.classList.add('text-success') 
+            retardVES.innerHTML = 'SIN MORA'
+            retardUSD.innerHTML = 'SIN MORA'
         }
+
         retardRow.appendChild(retardCol)
         retardRow.appendChild(retardVES)
         retardRow.appendChild(retardUSD)
+
+        
+        
 
         return retardRow
     }

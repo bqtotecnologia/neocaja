@@ -5,7 +5,7 @@
             error = 'Debe seleccinar al menos un producto para proceder'            
         }
 
-        if(error === '' && false){
+        if(error === ''){
             // Comprovamos si seleccionó FOC
             var hasFOC = false
             for(let i = 0; i < selectedProducts.length; i++){
@@ -24,7 +24,7 @@
                 cyclesMade++
                 for(let i = 0; i < selectedProducts.length; i++){
                     var product = selectedProducts[i]
-                    if(parseInt(product.month) === nextMonth){
+                    if(parseInt(product.month) === nextMonth && product.name !== 'FOC'){
                         nextMonth++
                         if(nextMonth === 13)
                             nextMonth = 1

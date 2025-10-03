@@ -4,6 +4,7 @@
     const debtContainer = document.getElementById('debt-container')
     const debtContent = document.getElementById('debt-content')
     const focContent = document.getElementById('foc-content')
+    const scholarshipContainer = document.getElementById('scholarship')
 
 
     // TABLES
@@ -21,6 +22,7 @@
     const productIds = {}
     const retardMaxDay = parseInt('<?= $global_vars['Dia tope mora'] ?>')
     const retardPercent = parseFloat('<?= $global_vars['Porcentaje mora'] ?>')
+    const scholarship_with_retard = '<?= $global_vars['Becados pagan mora'] ?>' === '1' ? true : false
     const igtf_rate = 0.03
     
     
@@ -28,8 +30,7 @@
     const payment_methods = []
     const coins = []
     const banks = []
-    const sale_points = [] 
-    const periodMonths = []
+    const sale_points = []     
     
 
     // INPUTS    
@@ -44,7 +45,7 @@
 
 
     // LABELS
-    const igtf_total_label = document.getElementById('igtf-total-label')
+    const igtf_total_label = document.getElementById('igtf-total-label')    
 
 
     // CONTROL VARS
@@ -52,6 +53,7 @@
     let nextProduct = 1
     let targetAccount = {}
     let paidMonths = []
+    let periodMonths = []
     let debtData = ''   
     var currentDate = new Date()
     let currentMonth = currentDate.getMonth()

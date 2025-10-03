@@ -90,14 +90,23 @@ class ProductModel extends SQLModel
     public function GetAvailableProductsOfStudent($cedula, $period){
         include_once 'invoice_model.php';
         include_once 'global_vars_model.php';
+        include_once 'account_model.php';
 
         $invoice_model = new InvoiceModel();
         $global_vars_model = new GlobalVarsModel();
+        $account_model = new AccountModel();
 
         $global_vars = $global_vars_model->GetGlobalVars(true);        
         $monthly = $this->GetProductByName('Mensualidad');
+        $monthlyPrice = floatval($monthly['price']);
         $foc = $this->GetProductByName('FOC');
 
+        $target_account = $account_model->GetAccountByCedula($cedula);
+        $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === 0);
+        if($scholarshipped){
+            $monthlyPrice = $monthlyPrice - ($monthlyPrice * (floatval($target_account['scholarship_coverage']) / 100));
+        }             
+        
         $monthStates = $invoice_model->GetAccountState($cedula, $period);
         $nonPaid = [];
         if($invoice_model->AccountPaidFOCOnPeriod($cedula, $period) === false){
@@ -114,7 +123,8 @@ class ProductModel extends SQLModel
             if($value['paid'] === 1)
                 continue;
 
-            $monthFinalPrice = floatval($monthly['price']);
+            $monthFinalPrice = $monthlyPrice;
+
             $monthNumber = intval($this->GetMonthNumberByName($month));
 
             $to_add = [

@@ -29,6 +29,7 @@
             await DisplayDebt(e.target.value, '<?= $periodId ?>')
             await DisplayInvoices(accountMonths.data)
 
+            ShowScholarship()
             AddProduct()
             DisplayDefaultProduct()        
             if(typeof debtData !== "string"){
