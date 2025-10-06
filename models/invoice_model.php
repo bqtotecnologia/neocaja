@@ -280,7 +280,7 @@ class InvoiceModel extends SQLModel
         $account_model = new AccountModel();
 
         $target_account = $account_model->GetAccountByCedula($cedula);
-        $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === 0);
+        $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
         $periodMonths = $siacad->GerMonthsOfPeriodo($periodId, true);
         $global_vars = $global_model->GetGlobalVars(true);
 
@@ -352,16 +352,20 @@ class InvoiceModel extends SQLModel
                     $result[$key]['paid'] = 1;
                 }
 
-                if(
-                    (!$scholarshipped) ||
-                    ($scholarshipped && intval($global_vars['Becados pagan mora']) === 1)){
-                    // Si no eres becado siempre podrás estar moroso
-                    // Si es becado, dependerá de la variable global "Becados pagan mora"
-
-                    if(array_key_exists('Diferencia Mensualidad', $value['concepts']))
-                        // Pagó la mora, lo que implica que estuvo moroso
-                        $result[$key]['debt'] = 1;
-        
+                $may_retard = false;
+                if(array_key_exists('Diferencia Mensualidad', $value['concepts']))
+                    // Pagó la mora, lo que implica que estuvo moroso
+                    $result[$key]['debt'] = 1;
+                else{
+                    if($scholarshipped){
+                        if(intval($global_vars['Becados pagan mora']) === 1)
+                            $may_retard = true;
+                    }
+                    else
+                        $may_retard = true;
+                }
+                
+                if($may_retard){
                     if($result[$key]['paid'] === 0 && $result[$key]['debt'] === 0){
                         // Si no ha pagado y no ha pagado la mora, verificamos si está moroso
                         //echo 'Mes sin pagar: ' . $key . '<br>';
@@ -377,8 +381,7 @@ class InvoiceModel extends SQLModel
                             $result[$key]['debt'] = 1;
                         }
                     }
-                }
-                
+                }                
     
                 if(array_key_exists('Abono Mensualidad', $value['concepts'])){
                     // Abonó al mes
@@ -400,7 +403,6 @@ class InvoiceModel extends SQLModel
      * También verifica que el estudiante haya pagado FOC.
      */
     public function GetDebtOfAccountOfPeriod($cedula, $periodId){
-        // TODO varificar esta parte con los becados
         include_once 'siacad_model.php';
         include_once 'global_vars_model.php';
         include_once 'product_model.php';
@@ -417,7 +419,7 @@ class InvoiceModel extends SQLModel
         $target_period = $siacad->GetPeriodoById($periodId);
 
         $target_account = $account_model->GetAccountByCedula($cedula);
-        $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === 0);
+        $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
         if($scholarshipped){
             $monthlyPrice = $monthlyPrice - ($monthlyPrice * (floatval($target_account['scholarship_coverage']) / 100));
         }   
@@ -443,7 +445,10 @@ class InvoiceModel extends SQLModel
         $cleanState = [];
 
         $debt_data = [
-            'months' => 0,
+            'months' => [
+                'total' => 0,
+                'detail' => []
+            ],
             'retard' => 0,
             'foc' => true
         ];
@@ -455,8 +460,7 @@ class InvoiceModel extends SQLModel
         
         $real_today = new DateTime('now', $timezone);
         $fake_today = new DateTime('now', $timezone);
-        $fake_today->setDate($fake_today->format('Y'), $fake_today->format('m'), '1');        
-        
+        $fake_today->setDate($fake_today->format('Y'), $fake_today->format('m'), '1');                
 
         foreach($periodDates as $periodDate){
             $date = new DateTime($periodDate, $timezone);
@@ -473,12 +477,15 @@ class InvoiceModel extends SQLModel
             $monthValue = $cleanState[$monthName];
 
             $monthly_debt = $monthlyPrice;
+            
             if($monthValue['partial'] === 0)
-                $debt_data['months'] += $monthly_debt;
+                $debt_data['months']['total'] += $monthly_debt;
             else{
                 $monthly_debt -= floatval($monthValue['concepts']['Abono Mensualidad']);
-                $debt_data['months'] += $monthly_debt;
+                $debt_data['months']['total'] += $monthly_debt;
             }    
+
+            $debt_data['months']['detail'][$monthName] = $monthly_debt;
 
             $retard_applies = false;
             if($month === intval($fake_today->format('m'))){
@@ -490,8 +497,16 @@ class InvoiceModel extends SQLModel
             }
 
             if($retard_applies){
-                $retard = round($monthly_debt * ($global_vars['Porcentaje mora'] / 100), 2);
-                $debt_data['retard'] += $retard;
+                if($scholarshipped){
+                    if(intval($global_vars['Becados pagan mora']) === 1){
+                        $retard = round($monthly_debt * ($global_vars['Porcentaje mora'] / 100), 2);
+                        $debt_data['retard'] += $retard;    
+                    }
+                }
+                else{
+                    $retard = round($monthly_debt * ($global_vars['Porcentaje mora'] / 100), 2);
+                    $debt_data['retard'] += $retard;
+                }
             }            
         }
 

@@ -183,7 +183,7 @@ $latest = $invoice_model->GetLatestNumbers();
                                     <th>Dólares</th>
                                 </tr>
                             </thead>
-                            <tbody id="debt-table">
+                            <tbody class="h5" id="debt-table">
                             </tbody>
                         </table>
                     </div>
@@ -227,24 +227,19 @@ $latest = $invoice_model->GetLatestNumbers();
                     <table class="col-12 table table-bordered">
                         <thead class="text-center">
                             <tr class="bg-theme text-white">
-                                <th class="p-1 col-3 align-middle">Producto</th>
+                                <th class="p-1 col-4 align-middle">Producto</th>
                                 <th class="p-1 col-2 align-middle">Mes</th>
                                 <th class="p-1 align-middle">Monto base ($)</th>
-                                <th class="p-1 align-middle">Descuento de beca</th>
-                                <th class="p-1 align-middle">Total</th>
+                                <th class="p-1 align-middle">Total (Bs)</th>
                                 <th class="p-1 align-middle">Borrar</th>
                             </tr>
                         </thead>
                         <tbody id="product-table">
                         </tbody>
                         <tr>
-                            <td class="text-right h5 fw-bold p-1" colspan="4">Total</td>
+                            <td class="text-right h5 fw-bold p-1" colspan="2">Total</td>
                             <td class="text-center fw-bold h4 p-1" id="products-total"></td>
-                        </tr>
-                        <tr>
-                            <td class="text-right h5 fw-bold p-1" colspan="4">Total en Bs.</td>
                             <td class="text-center fw-bold h4 p-1" id="products-total-bs"></td>
-                        </tr>
                     </table>
                 </div>
             </div>

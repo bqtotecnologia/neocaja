@@ -12,7 +12,7 @@
         targetAccount = await GetAccountData(e.target.value)
         if(targetAccount.status !== false){
             targetAccount = targetAccount.data
-            scholarshipped = targetAccount['scholarship_coverage'] !== null && targetAccount['scholarship_coverage'] !== undefined
+            scholarshipped = !(targetAccount['scholarship_coverage'] === null && targetAccount['scholarship_coverage'] === null)
         }
         else
             error = true
@@ -30,10 +30,10 @@
             await DisplayInvoices(accountMonths.data)
 
             ShowScholarship()
-            AddProduct()
+            //AddProduct()
             DisplayDefaultProduct()        
             if(typeof debtData !== "string"){
-                UpdateDefaultProducts(debtData.data)
+                //UpdateDefaultProducts(debtData.data)
             }
             UpdateProductsPrice()
         }

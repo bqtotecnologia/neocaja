@@ -32,15 +32,15 @@
                 </td>
                 <td class="align-middle text-center"><?= $account['created_at'] ?></td>
                 <td class="">
-                    <div class="row justify-content-around">
-                        <div class="col-3 text-center">
-                            <a href="<?= $base_url ?>/views/forms/account_form.php?id=<?= $account['id'] ?>" class="btn btn-success" title="Editar">
+                    <div class="row justify-content-around align-items-center">
+                        <div class=" text-center">
+                            <a href="<?= $base_url ?>/views/forms/account_form.php?id=<?= $account['id'] ?>" class="btn btn-success m-0" title="Editar">
                                 <i class="fa fa-pencil"></i>
                             </a>
                         </div>
 
-                        <div class="col-3 text-center">
-                            <a href="<?= $base_url ?>/views/detailers/account_details.php?id=<?= $account['id'] ?>" class="btn btn-info" title="Ver detalles">
+                        <div class=" text-center">
+                            <a href="<?= $base_url ?>/views/detailers/account_details.php?id=<?= $account['id'] ?>" class="btn btn-info m-0" title="Ver detalles">
                                 <i class="fa fa-search"></i>
                             </a>
                         </div>

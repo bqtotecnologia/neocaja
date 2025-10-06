@@ -67,7 +67,7 @@ class AccountModel extends SQLModel
     }
 
     public function GetAccountByCedula($cedula){
-        $sql = "SELECT * FROM accounts WHERE cedula = '$cedula'";
+        $sql =  $this->SELECT_TEMPLATE . " WHERE accounts.cedula = '$cedula'";
         return parent::GetRow($sql);
     }
 

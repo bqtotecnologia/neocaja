@@ -163,11 +163,11 @@ if($error === ''){
 
     if($hasFOC){
             if($productCounts !== $consecutiveMonths + 1)
-                $error = 'Debes seleccionar meses consecutivos';
+                $error = 'Debes seleccionar meses consecutivos y empezar por el primero';
         }
         else{
             if($productCounts !== $consecutiveMonths)
-                $error = 'Debes seleccionar meses consecutivos';
+                $error = 'Debes seleccionar meses consecutivos y empezar por el primero';
         }
 }
 

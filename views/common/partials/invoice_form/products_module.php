@@ -6,7 +6,6 @@
         if(debt.months > 0) // No ha pagado el mes            
             firstProduct.value = debt.months
         
-        console.log(debt.retard)
         if(debt.retard > 0) // Tiene mora
             secondProduct.value = debt.retard
 
@@ -40,24 +39,24 @@
             }
         }
 
-        var total = 0
+        var totalUsd = 0
 
-        if(productName === '&nbsp;')
-            price = 0
-        else
-            price = productPrices[productName]
+        if(productName !== '&nbsp;')
+            totalUsd = parseFloat(productPrices[productName])       
+
+        if(scholarshipped){
+            if(productName === 'Mensualidad'){
+                var  discount = parseFloat(totalUsd) * (parseFloat(targetAccount['scholarship_coverage']) / 100)
+                totalUsd = totalUsd - discount
+            }
+        }
 
         var priceInput = document.getElementById('product-baseprice-' + String(oldId))
-        priceInput.value = price
-        total = price
-        
-        if(scholarshipped){
-            if(productName === 'Mensualidad')
-                total = parseFloat(price) * (parseFloat(targetAccount['scholarship_coverage']) / 100)
-        }
+        priceInput.value = totalUsd
         
         var productTotalInput = document.getElementById('product-total-' + String(oldId))
-        productTotalInput.value = total    
+        var totalVes = totalUsd * coinValues['Dólar']
+        productTotalInput.value = totalVes    
         UpdateProductsPrice()
     }
 
@@ -73,7 +72,7 @@
             if(productName === '&nbsp;' || productName === '')
                 continue
 
-            var productBasePrice = productPrices[productName]
+            var productBasePrice = productPrices[productName]            
 
             if(!forceUpdatePrice)
                 productBasePrice = parseFloat(productBasePriceInput.value)
@@ -95,7 +94,7 @@
                 productBasePrice = 0
             }
 
-            var productTotal = productBasePrice
+            var productTotal = productBasePrice * coinValues['Dólar']
             document.getElementById('product-total-' + String(i)).value = productTotal.toFixed(2)       
         }
         
@@ -106,12 +105,12 @@
     function UpdateProductTotal(){
         var productsTotal = document.getElementById('products-total')
         var productsTotalBs = document.getElementById('products-total-bs')
-        var usdRate = document.getElementById('Dólar-rate').innerHTML
+        var usdRate = coinValues['Dólar']
         var total = 0
         
         // adding all totals of products
         for (let i = 0; i <= nextProduct; i++) {
-            var priceInput = document.getElementById('product-total-' + i)
+            var priceInput = document.getElementById('product-baseprice-' + i)
             if(priceInput === null || priceInput.value === "")
                 continue
             
@@ -119,15 +118,35 @@
             total += price
         }
 
+        console.log(total)
+
         productsTotal.innerHTML = total + '$'
         productsTotalBs.innerHTML = (total * parseFloat(usdRate)).toFixed(2)
         UpdatePaymentMethodsDiffWithProducts()
     }
 
     function DisplayDefaultProduct(){      
-        if(nextProduct !== 2)
-            return
+        //if(nextProduct !== 2)
+            //return
 
+        if(debtData.data.foc === false){
+            AddProduct()
+            ChangeProduct(nextProduct - 1, productIds['FOC'])
+        }
+
+        periodMonths.forEach((pmonth) => {
+            if(!paidMonths.includes(pmonth)){
+                var monthNumber = GetMonthNumberByName(pmonth)
+                AddProduct()
+                ChangeMonth(monthNumber, nextProduct - 1)
+                ChangeProduct(nextProduct - 1, productIds['Mensualidad'])
+            }
+        })
+
+        console.log(debtData)
+        
+
+        /*
         var nextMonth = parseInt(lastMonth)
         
         if(GetMonthIsRetarded(nextMonth)){
@@ -143,7 +162,7 @@
 
         ChangeMonth(nextMonth, nextProduct - 1)
         ChangeProduct(nextProduct - 1, productIds['Mensualidad'])        
-
+        */
         UpdateProductsPrice(true)
     }
 

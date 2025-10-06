@@ -8,11 +8,13 @@ include_once 'common/header.php';
 
 <?php if($_SESSION['neocaja_rol'] === 'Estudiante'){ ?>
     <?php 
+        include_once '../models/account_model.php';
         include_once '../models/siacad_model.php';
         include_once '../models/global_vars_model.php';
         include_once '../models/product_model.php';
         include_once '../models/coin_model.php';
         include_once '../models/invoice_model.php';
+        include_once '../utils/prettyCiphers.php';
 
         $global_vars_model = new GlobalVarsModel();
         $global_vars = $global_vars_model->GetGlobalVars(true);
@@ -32,7 +34,11 @@ include_once 'common/header.php';
         $coin_date = date('Y-m-d', strtotime($usd['price_created_at']));
         $today = date('Y-m-d');
         $usdUpdated = strtotime($today) === strtotime($coin_date);
-        $total_debt = $debtState['months'] + $debtState['retard'];
+        $total_debt = $debtState['months']['total'] + $debtState['retard'];
+
+        $account_model = new AccountModel();
+        $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula']);
+        $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
 
         if($debtState['foc'] === false)
             $total_debt += $focProduct['price'];
@@ -80,43 +86,61 @@ include_once 'common/header.php';
                     <thead>
                         <tr class="bg-theme text-white fw-bold">
                             <th>Deuda</th>
-                            <th>Dólares</th>
                             <th>Bolívares</th>
+                            <th>Dólares</th>
                         </tr>
                     </thead>
                     <tbody id="debt-table">
                         <tr>
-                            <td class="p-1 border border-black bg-theme text-white fw-bold">Mensualidad</td>
-                            <td class="p-1 border border-black text-<?= $debtState['months'] > 0 ? 'danger' : 'success' ?>">
-                                <?= $debtState['months'] > 0 ? ($debtState['months'] . '$') : 'SIN DEUDA' ?>
+                            <td class="p-1 border border-black bg-theme text-white fw-bold align-middle">Mensualidad</td>
+                            <td class="p-1 border border-black text-<?= $debtState['months']['total'] > 0 ? 'danger' : 'success' ?>">
+                                <div class="d-flex justify-content-center flex-wrap">
+                                    <?php if($debtState['months']['total'] > 0) { ?>
+                                        <?php foreach($debtState['months']['detail'] as $month => $debt) { ?>
+                                            <span class="col-6 p-0"><?= $month ?></span>
+                                            <span class="col-6 p-0">Bs. <?= $debt * $usd['price'] ?></span>
+                                        <?php } ?>
+                                    <?php } else { ?>
+                                        SIN DEUDA
+                                    <?php } ?>
+                                </div>
                             </td>
-                            <td class="p-1 border border-black text-<?= $debtState['months'] > 0 ? 'danger' : 'success' ?>">
-                                <?= $debtState['months'] > 0 ? ('Bs. ' . $debtState['months'] * $usd['price']) : 'SIN DEUDA' ?>
+                            <td class="p-1 border border-black text-<?= $debtState['months']['total'] > 0 ? 'danger' : 'success' ?>">
+                                <div class="d-flex justify-content-center flex-wrap">
+                                    <?php if($debtState['months']['total'] > 0) { ?>
+                                        <?php foreach($debtState['months']['detail'] as $month => $debt) { ?>
+                                            <span class="col-6 p-0"><?= $month ?></span>
+                                            <span class="col-6 p-0"><?= $debt ?>$</span>
+                                        <?php } ?>
+                                    <?php } else { ?>
+                                        SIN DEUDA
+                                    <?php } ?>
+                                </div>
                             </td>
                         </tr>
                         <tr>
                             <td class="p-1 border border-black bg-theme text-white fw-bold">Mora</td>
                             <td class="p-1 border border-black text-<?= $debtState['retard'] > 0 ? 'danger' : 'success' ?>">
-                                <?= $debtState['retard'] > 0 ? ($debtState['retard'] . '$') : 'SIN DEUDA' ?>
+                                <?= $debtState['retard'] > 0 ? ('Bs. ' . $debtState['retard'] * $usd['price']) : 'SIN DEUDA' ?>
                             </td>
                             <td class="p-1 border border-black text-<?= $debtState['retard'] > 0 ? 'danger' : 'success' ?>">
-                                <?= $debtState['retard'] > 0 ? ('Bs. ' . $debtState['retard'] * $usd['price']) : 'SIN DEUDA' ?>
+                                <?= $debtState['retard'] > 0 ? ($debtState['retard'] . '$') : 'SIN DEUDA' ?>
                             </td>
                     </tr>
                     <tr>
                         <td class="p-1 border border-black bg-theme text-white fw-bold">FOC</td>
                         <?php if($debtState['foc']) { ?> 
-                            <td class="p-1 border border-black text-success" colspan="2">SIN DEUDA</td>
+                            <td class="p-1 border border-black text-success" colspan="2">PAGADO</td>
                         <?php } else { ?>
-                            <td class="p-1 border border-black text-danger"><?= $focProduct['price'] ?>$</td>
                             <td class="p-1 border border-black text-danger">Bs. <?= $focProduct['price'] * $usd['price'] ?></td>
+                            <td class="p-1 border border-black text-danger"><?= $focProduct['price'] ?>$</td>
                         <?php } ?>
                     </tr>
                         <tr>
                             <td class="p-1 border border-black bg-theme text-white fw-bold">TOTAL</td>
                             <?php if($total_debt > 0) { ?>                                
-                                <td class="p-1 border border-black fw-bold text-danger"><?= $total_debt ?>$</td>
-                                <td class="p-1 border border-black fw-bold text-danger">Bs. <?= $total_debt * $usd['price'] ?></td>
+                                <td class="p-1 border border-black fw-bold text-danger">Bs. <?= GetPrettyCiphers($total_debt * $usd['price']) ?></td>
+                                <td class="p-1 border border-black fw-bold text-danger"><?= GetPrettyCiphers($total_debt) ?>$</td>
                             <?php } else { ?>
                                 <td class="p-1 border border-black fw-bold text-success" colspan="2">SIN DEUDA</td>
                             <?php } ?>
@@ -124,6 +148,12 @@ include_once 'common/header.php';
                     </tbody>
                 </table>
             </div>
+
+            <?php  if($scholarshipped) { ?>
+                <div class="row col-12 m-0 p-2 justify-content-center text-success h3" id="scholarship">
+                    <?= 'Beca ' . $target_account['scholarship'] . ' ' . $target_account['scholarship_coverage'] . '%' ?>
+                </div>
+            <?php } ?>
         </div>
 
         <div class="row m-0 p-0 col-12 col-md-6 my-2 justify-content-start">

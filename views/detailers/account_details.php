@@ -45,7 +45,7 @@ $usd = $coin_model->GetCoinByName('Dólar');
 $coin_date = date('Y-m-d', strtotime($usd['price_created_at']));
 $today = date('Y-m-d');
 $usdUpdated = strtotime($today) === strtotime($coin_date);
-$total_debt = $debtState['months'] + $debtState['retard'];
+$total_debt = $debtState['months']['total'] + $debtState['retard'];
 
 if($debtState['foc'] === false)
     $total_debt += $focProduct['price'];
@@ -194,7 +194,7 @@ include '../../views/common/header.php';
                                     <?= $debtState['months'] > 0 ? ($debtState['months'] . '$') : 'SIN DEUDA' ?>
                                 </td>
                                 <td class="p-1 border border-black text-<?= $debtState['months'] > 0 ? 'danger' : 'success' ?>">
-                                    <?= $debtState['months'] > 0 ? ('Bs. ' . $debtState['months'] * $usd['price']) : 'SIN DEUDA' ?>
+                                    <?= $debtState['months'] > 0 ? ('Bs. ' . $debtState['months']['total'] * $usd['price']) : 'SIN DEUDA' ?>
                                 </td>
                             </tr>
                             <tr>

@@ -55,6 +55,13 @@ $fields_config = [
         'type' => 'integer',
         'suspicious' => true,
     ],
+    'phone' => [
+        'min' => 11,
+        'max' => 11,
+        'required' => true,
+        'type' => 'string',
+        'suspicious' => true,
+    ],
     'scholarship_coverage' => [
         'min' => 1,
         'max' => 11,
@@ -128,7 +135,16 @@ if($error === ''){
 if($error === ''){    
     $cleanData['is_student'] = isset($_POST['is_student']) ? '1' : '0';
     $cleanData['scholarship'] = ($cleanData['scholarship'] === 0 ? 'NULL' : $target_scholarship['id']);
-    $cleanData['scholarship_coverage'] = ($cleanData['scholarship_coverage'] === 0 ? 'NULL' : $cleanData['scholarship_coverage']);
+
+    if($cleanData['scholarship'] === 'NULL')
+        $cleanData['scholarship_coverage'] = 'NULL';
+    else
+        $cleanData['scholarship_coverage'] = ($cleanData['scholarship_coverage'] === 0 ? 'NULL' : $cleanData['scholarship_coverage']);
+
+    if($cleanData['scholarship_coverage'] === 'NULL')
+        $cleanData['scholarship'] = 'NULL';
+
+    
 
     if($cleanData['scholarship'] === 'NULL')
         $cleanData['scholarship_coverage'] = 'NULL';

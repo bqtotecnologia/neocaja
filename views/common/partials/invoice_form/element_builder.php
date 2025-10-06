@@ -262,7 +262,7 @@
         var monthlyRow = BuildDebtMonthlyRow(debtData.months)
         var retardRow = BuildDebtRetardRow(debtData.retard)
         var focRow = BuildDebtFOCRow(debtData.foc)
-        var total = debtData.months + debtData.retard
+        var total = debtData.months.total + debtData.retard
         if (!debtData.foc)
             total += productPrices['FOC']
 
@@ -279,6 +279,8 @@
         var monthlyCol = document.createElement('td')
         var monthlyVES = document.createElement('td')
         var monthlyUSD = document.createElement('td')
+        var vesContainer = document.createElement('div')
+        var usdContainer = document.createElement('div')
 
         monthlyCol.innerHTML = 'Mensualidad'
 
@@ -286,12 +288,33 @@
         AddDebtHeaderStyle(monthlyCol)
         AddBorderToTD(monthlyVES)
         AddBorderToTD(monthlyUSD)
+        monthlyVES.appendChild(vesContainer)
+        monthlyUSD.appendChild(usdContainer)
+        AddStylesToDebtSpanContainer(vesContainer)
+        AddStylesToDebtSpanContainer(usdContainer)
 
-        if(monnthlyDebt > 0){
+        if(monnthlyDebt.total > 0){            
             monthlyVES.classList.add('text-danger')  
             monthlyUSD.classList.add('text-danger')  
-            monthlyVES.innerHTML = 'Bs. ' + GetPrettyCiphers(monnthlyDebt * coinValues['Dólar'])
-            monthlyUSD.innerHTML = GetPrettyCiphers(monnthlyDebt) + '$'
+            
+            for(let key in monnthlyDebt.detail){
+                var debt = monnthlyDebt.detail[key]
+
+                var monthVesSpan = GetDebtSpan()
+                var priceVesSpan = GetDebtSpan()
+                var monthUsdSpan = GetDebtSpan()
+                var priceUsdSpan = GetDebtSpan()
+
+                monthVesSpan.innerHTML = key
+                priceVesSpan.innerHTML = 'Bs.' + String(GetPrettyCiphers(debt * coinValues['Dólar']))
+                vesContainer.appendChild(monthVesSpan)
+                vesContainer.appendChild(priceVesSpan)
+
+                monthUsdSpan.innerHTML = key
+                priceUsdSpan.innerHTML = String(GetPrettyCiphers(debt)) + '$'
+                usdContainer.appendChild(monthUsdSpan)
+                usdContainer.appendChild(priceUsdSpan)
+            }            
         }
         else{
             monthlyVES.classList.add('text-success')  
@@ -619,11 +642,21 @@
         td.classList.add('p-1', 'border', 'border-black')
     }
 
+    function AddStylesToDebtSpanContainer(element){
+        element.classList.add('d-flex', 'justify-content-around', 'flex-wrap')
+    }
+
     function AddDebtHeaderStyle(td){
-        td.classList.add('bg-theme', 'text-white', 'fw-bold')
+        td.classList.add('bg-theme', 'text-white', 'fw-bold', 'align-middle')
     }
 
     function AddSelect2Style(select){
         select.classList.add('form-control', 'col-12', 'col-md-8', 'select2')
+    }
+
+    function GetDebtSpan(){
+        var span = document.createElement('span')
+        span.classList.add('col-6', 'p-0')
+        return span
     }
 </script>

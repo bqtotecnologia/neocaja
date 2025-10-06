@@ -40,11 +40,11 @@
     
             if(hasFOC){
                 if(selectedProducts.length !== consecutiveMonths + 1)
-                    error = 'Debes seleccionar meses consecutivos'
+                    error = 'Debes seleccionar meses consecutivos y empezar por el primero'
             }
             else{
                 if(selectedProducts.length !== consecutiveMonths)
-                    error = 'Debes seleccionar meses consecutivos'
+                    error = 'Debes seleccionar meses consecutivos y empezar por el primero'
             }
         }
 
