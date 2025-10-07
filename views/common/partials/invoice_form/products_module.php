@@ -118,9 +118,7 @@
             total += price
         }
 
-        console.log(total)
-
-        productsTotal.innerHTML = total + '$'
+        productsTotal.innerHTML = total.toFixed(2) + '$'
         productsTotalBs.innerHTML = (total * parseFloat(usdRate)).toFixed(2)
         UpdatePaymentMethodsDiffWithProducts()
     }
@@ -129,41 +127,50 @@
         //if(nextProduct !== 2)
             //return
 
+        var prcice = 0
         if(debtData.data.foc === false){
             AddProduct()
+            price = productPrices['FOC']
             ChangeProduct(nextProduct - 1, productIds['FOC'])
+            ChangeProductPrice(nextProduct - 1, price)
         }
 
         periodMonths.forEach((pmonth) => {
             if(!paidMonths.includes(pmonth)){
+                price = productPrices['Mensualidad']
+
+                if(scholarshipped){
+                    price = price - (price * (targetAccount['scholarship_coverage'] / 100))
+                }
                 var monthNumber = GetMonthNumberByName(pmonth)
+
+                if(Object.keys(debtData.data.months.detail).includes(pmonth)){
+                    price = debtData.data.months.detail[pmonth]
+                }
+
+                if(Object.keys(debtData.data.retard.detail).includes(pmonth)){
+                    var retardPrice = debtData.data.retard.detail[pmonth]
+                    AddProduct()
+                    ChangeMonth(monthNumber, nextProduct - 1)
+                    ChangeProduct(nextProduct - 1, productIds['Diferencia Mensualidad'])    
+                    ChangeProductPrice(nextProduct - 1, retardPrice)
+                }
+
                 AddProduct()
                 ChangeMonth(monthNumber, nextProduct - 1)
-                ChangeProduct(nextProduct - 1, productIds['Mensualidad'])
+                if(partialMonths.includes(pmonth)){
+                    ChangeProduct(nextProduct - 1, productIds['Saldo Mensualidad'])                    
+                }
+                else                
+                    ChangeProduct(nextProduct - 1, productIds['Mensualidad'])
+                
+
+                ChangeProductPrice(nextProduct - 1, price)
             }
         })
 
-        console.log(debtData)
         
-
-        /*
-        var nextMonth = parseInt(lastMonth)
-        
-        if(GetMonthIsRetarded(nextMonth)){
-            // Se le aplica mora
-            if((scholarshipped && scholarship_with_retard) || !scholarshipped){
-                // Si no es becado se aplica mora
-                // Igual se le aplica si así lo dice la variable global
-                ChangeMonth(nextMonth, nextProduct - 1)
-                ChangeProduct(nextProduct - 1, productIds['Diferencia Mensualidad'])
-                AddProduct()
-            }
-        }
-
-        ChangeMonth(nextMonth, nextProduct - 1)
-        ChangeProduct(nextProduct - 1, productIds['Mensualidad'])        
-        */
-        UpdateProductsPrice(true)
+        //UpdateProductsPrice(true)
     }
 
     function ChangeMonth(month, id){      
@@ -174,13 +181,20 @@
         $('#product-id-' + position).select2("val", String(productId))
     }
 
+    function ChangeProductPrice(position, price){
+        const input = document.getElementById('product-baseprice-' + position)
+        input.value = price
+    }
+
     function CleanProducts(){
         lastMonth = currentMonth
         monthReached = false
         productTable.innerHTML = ''
         nextProduct = 1
         paidMonths = []
+        partialMonths = []
         periodMonths = []
+        youngestPayableMonth = null
         updatePricesAccordToDebt = false
         scholarshipContainer.innerHTML = ''
         scholarshipContainer.classList.add('d-none')

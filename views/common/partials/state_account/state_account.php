@@ -11,7 +11,7 @@
         debtTable.innerHTML = ''
 
         var monthlyRow = BuildDebtMonthlyRow(debtData.months)
-        var retardRow = BuildDebtRetardRow(debtData.retard)
+        var retardRow = BuildDebtMonthlyRow(debtData.retard)
         var focRow = BuildDebtFOCRow(debtData.foc)
         var total = debtData.months + debtData.retard
         if (!debtData.foc)

@@ -48,7 +48,7 @@
                   <?php if(isset($_SESSION['neocaja_rol'])){ ?>
 
                     <!-- Student -->                  
-                    <?php if(Auth::UserLevelIn(['Estudiante', 'Super'])){ ?>
+                    <?php if(Auth::UserLevelIn(['Estudiante'])){ ?>
                       <?php 
                         include_once $_SERVER['DOCUMENT_ROOT'] . '/neocaja/models/notification_model.php';
                         $pendingNotifications = $notification_model->GetPendingNotifications($_SESSION['neocaja_cedula']);

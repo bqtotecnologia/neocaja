@@ -1,5 +1,5 @@
 <?php
-$admitted_user_types = ['Super', 'Estudiante'];
+$admitted_user_types = ['Estudiante'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 include_once '../../utils/Auth.php';
@@ -35,6 +35,7 @@ $current_period = $siacad->GetCurrentPeriodo();
 
 $usdValue = $coin_model->GetCoinByName('Dólar');
 $products = $product_model->GetAvailableProductsOfStudent($_SESSION['neocaja_cedula'], $current_period['idperiodo']);
+    
 $global_vars = $global_vars_model->GetGlobalVars(true);
 $transfers = $transfers_model->GetActiveTransfers();
 $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();

@@ -101,6 +101,7 @@
         partialSymbol.classList.add('fa')
 
         if(invoice.partial === 1){
+            partialMonths.push(month)
             partialSymbol.classList.add('fa-check')
             partialSymbol.classList.add('text-success')
         }
@@ -259,10 +260,10 @@
         debtContainer.classList.remove('d-none')
         debtTable.innerHTML = ''
 
-        var monthlyRow = BuildDebtMonthlyRow(debtData.months)
-        var retardRow = BuildDebtRetardRow(debtData.retard)
+        var monthlyRow = BuildDebtMonthlyRow('Mensualidad', debtData.months)
+        var retardRow = BuildDebtMonthlyRow('Mora', debtData.retard)
         var focRow = BuildDebtFOCRow(debtData.foc)
-        var total = debtData.months.total + debtData.retard
+        var total = debtData.months.total + debtData.retard.total
         if (!debtData.foc)
             total += productPrices['FOC']
 
@@ -274,7 +275,7 @@
         debtTable.appendChild(totalRow)
     }
 
-    function BuildDebtMonthlyRow(monnthlyDebt){
+    function BuildDebtMonthlyRow(title, monnthlyDebt){
         var monthlyRow = document.createElement('tr')
         var monthlyCol = document.createElement('td')
         var monthlyVES = document.createElement('td')
@@ -282,7 +283,7 @@
         var vesContainer = document.createElement('div')
         var usdContainer = document.createElement('div')
 
-        monthlyCol.innerHTML = 'Mensualidad'
+        monthlyCol.innerHTML = title
 
         AddBorderToTD(monthlyCol)
         AddDebtHeaderStyle(monthlyCol)
@@ -327,56 +328,6 @@
         monthlyRow.appendChild(monthlyUSD)
 
         return monthlyRow
-    }
-
-    function BuildDebtRetardRow(retardDebt){
-        var retardRow = document.createElement('tr')
-        var retardCol = document.createElement('td')
-        var retardVES = document.createElement('td')
-        var retardUSD = document.createElement('td')
-        AddBorderToTD(retardCol)
-        AddDebtHeaderStyle(retardCol)
-        AddBorderToTD(retardVES)
-        AddBorderToTD(retardUSD)
-        retardCol.innerHTML = 'Mora'
-
-        if(retardDebt > 0){
-            if(scholarshipped){
-                if(scholarship_with_retard){
-                    retardVES.classList.add('text-danger')  
-                    retardUSD.classList.add('text-danger')  
-                    retardVES.innerHTML = 'Bs. ' + GetPrettyCiphers(retardDebt * coinValues['Dólar'])
-                    retardUSD.innerHTML = GetPrettyCiphers(retardDebt) + '$'
-                }
-                else{
-                    retardVES.classList.add('text-success')  
-                retardUSD.classList.add('text-success') 
-                    retardVES.innerHTML = 'SIN MORA'
-                    retardUSD.innerHTML = 'SIN MORA'
-                }
-            }
-            else{
-                retardVES.classList.add('text-danger')  
-                retardUSD.classList.add('text-danger')  
-                retardVES.innerHTML = 'Bs. ' + GetPrettyCiphers(retardDebt * coinValues['Dólar'])
-                retardUSD.innerHTML = GetPrettyCiphers(retardDebt) + '$'
-            }
-        }
-        else{
-            retardVES.classList.add('text-success')  
-            retardUSD.classList.add('text-success') 
-            retardVES.innerHTML = 'SIN MORA'
-            retardUSD.innerHTML = 'SIN MORA'
-        }
-
-        retardRow.appendChild(retardCol)
-        retardRow.appendChild(retardVES)
-        retardRow.appendChild(retardUSD)
-
-        
-        
-
-        return retardRow
     }
 
     function BuildDebtFOCRow(focDebt){
@@ -491,6 +442,7 @@
             methodSelect.appendChild(option)
         })
         methodSelect.classList.add('form-control', 'col-11')
+        methodSelect.addEventListener('change', function(e) { PaymentMethodSelecting(paymentId, e) })
         methodCol.appendChild(methodSelect)
         div.appendChild(methodSelect)
         return methodCol
@@ -516,7 +468,7 @@
             coinSelect.appendChild(option)
         })
         coinSelect.classList.add('form-control', 'col-11')
-        coinSelect.addEventListener('click', function(e) { CoinSelecting(paymentId, e) })
+        coinSelect.addEventListener('change', function(e) { CoinSelecting(paymentId, e) })
         coinCol.appendChild(coinSelect)
         div.appendChild(coinSelect)
         return coinCol
@@ -622,20 +574,21 @@
 
     function UpdatePaymentMethodsDiffWithProducts(){
         const diffElement = document.getElementById('payment-diff')
+        const diffUSDElement = document.getElementById('payment-diff-usd')
         const productsTotal = document.getElementById('products-total-bs').innerHTML
         const paymentsTotal = document.getElementById('payment-total').innerHTML
         
         if(productsTotal !== '' && paymentsTotal !== ''){
             var diff = (parseFloat(productsTotal) - parseFloat(paymentsTotal)).toFixed(2)
             diffElement.innerHTML = diff
-
+            diffUSDElement.innerHTML = (diff / coinValues['Dólar']) .toFixed(4) + ' $'
         }
     }
     
 
     ////////////////////////// STYLE FUNCTIONS //////////////////////////
     function AddInvoiceClassToTD(td){
-        td.classList.add('bg-white', 'text-black')
+        td.classList.add('bg-white', 'text-black', 'align-middle')
     }
 
     function AddBorderToTD(td){

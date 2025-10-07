@@ -449,7 +449,10 @@ class InvoiceModel extends SQLModel
                 'total' => 0,
                 'detail' => []
             ],
-            'retard' => 0,
+            'retard' => [
+                'total' => 0,
+                'detail' => []
+            ],
             'foc' => true
         ];
 
@@ -497,17 +500,21 @@ class InvoiceModel extends SQLModel
             }
 
             if($retard_applies){
+                $retard_applies = false;
+
                 if($scholarshipped){
-                    if(intval($global_vars['Becados pagan mora']) === 1){
-                        $retard = round($monthly_debt * ($global_vars['Porcentaje mora'] / 100), 2);
-                        $debt_data['retard'] += $retard;    
-                    }
+                    if(intval($global_vars['Becados pagan mora']) === 1)
+                        $retard_applies = true;
                 }
-                else{
-                    $retard = round($monthly_debt * ($global_vars['Porcentaje mora'] / 100), 2);
-                    $debt_data['retard'] += $retard;
-                }
-            }            
+                else
+                    $retard_applies = true;
+            }
+
+            if($retard_applies){
+                $retard = round($monthly_debt * ($global_vars['Porcentaje mora'] / 100), 2);
+                $debt_data['retard']['detail'][$monthName] = $retard;
+                $debt_data['retard']['total'] += $retard;
+            }
         }
 
         $debt_data['foc'] = $this->AccountPaidFOCOnPeriod($cedula, $periodId);

@@ -34,7 +34,7 @@ include_once 'common/header.php';
         $coin_date = date('Y-m-d', strtotime($usd['price_created_at']));
         $today = date('Y-m-d');
         $usdUpdated = strtotime($today) === strtotime($coin_date);
-        $total_debt = $debtState['months']['total'] + $debtState['retard'];
+        $total_debt = $debtState['months']['total'] + $debtState['retard']['total'];
 
         $account_model = new AccountModel();
         $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula']);
@@ -118,15 +118,39 @@ include_once 'common/header.php';
                                 </div>
                             </td>
                         </tr>
+
                         <tr>
-                            <td class="p-1 border border-black bg-theme text-white fw-bold">Mora</td>
-                            <td class="p-1 border border-black text-<?= $debtState['retard'] > 0 ? 'danger' : 'success' ?>">
-                                <?= $debtState['retard'] > 0 ? ('Bs. ' . $debtState['retard'] * $usd['price']) : 'SIN DEUDA' ?>
+                            <td class="p-1 border border-black bg-theme text-white fw-bold align-middle">Mora</td>
+                            <td class="p-1 border border-black text-<?= $debtState['retard']['total'] > 0 ? 'danger' : 'success' ?>">
+                                <div class="d-flex justify-content-center flex-wrap">
+                                    <?php if($debtState['retard']['total'] > 0) { ?>
+                                        <?php foreach($debtState['retard']['detail'] as $month => $debt) { ?>
+                                            <span class="col-6 p-0"><?= $month ?></span>
+                                            <span class="col-6 p-0">Bs. <?= $debt * $usd['price'] ?></span>
+                                        <?php } ?>
+                                    <?php } else { ?>
+                                        SIN DEUDA
+                                    <?php } ?>
+                                </div>
                             </td>
-                            <td class="p-1 border border-black text-<?= $debtState['retard'] > 0 ? 'danger' : 'success' ?>">
-                                <?= $debtState['retard'] > 0 ? ($debtState['retard'] . '$') : 'SIN DEUDA' ?>
+                            <td class="p-1 border border-black text-<?= $debtState['retard']['total'] > 0 ? 'danger' : 'success' ?>">
+                                <div class="d-flex justify-content-center flex-wrap">
+                                    <?php if($debtState['retard']['total'] > 0) { ?>
+                                        <?php foreach($debtState['retard']['detail'] as $month => $debt) { ?>
+                                            <span class="col-6 p-0"><?= $month ?></span>
+                                            <span class="col-6 p-0"><?= $debt ?>$</span>
+                                        <?php } ?>
+                                    <?php } else { ?>
+                                        SIN DEUDA
+                                    <?php } ?>
+                                </div>
                             </td>
-                    </tr>
+                        </tr>
+
+
+
+
+                        
                     <tr>
                         <td class="p-1 border border-black bg-theme text-white fw-bold">FOC</td>
                         <?php if($debtState['foc']) { ?> 

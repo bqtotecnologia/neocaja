@@ -277,6 +277,7 @@ $latest = $invoice_model->GetLatestNumbers();
                         <tr>
                             <td class="text-right h5 fw-bold p-1" colspan="6">Diferencia</td>
                             <td class="text-center fw-bold h4 p-1" id="payment-diff"></td>
+                            <td class="text-center fw-bold h4 p-1" id="payment-diff-usd"></td>
                         </tr>
                     </table>
                 </div>
@@ -407,9 +408,49 @@ $latest = $invoice_model->GetLatestNumbers();
         }
 
         
-        if(paymentTotal > productTotal){
-            error = 'No se puede facturar un monto inferior al total de los métodos de pago'
-            
+        if(error === ''){
+            if(paymentTotal > productTotal)
+                error = 'No se puede facturar un monto inferior al total de los métodos de pago'
+        }
+
+        if(error === ''){
+            // Validamos que haya escogido meses consecutivos empezando por el primero
+            var nextMonth = parseInt(youngestPayableMonth)            
+            var selectedMonths = []
+            var consecutiveMonths = 0
+            var cyclesMade = -1
+    
+            for(let i = 0; i <= nextProduct; i++){
+                const input = document.getElementById('product-month-' + i)
+                if(input === null)
+                    continue
+
+                if(input.value !== '' && !selectedMonths.includes(input.value)){
+                    selectedMonths.push(input.value)
+                }
+            }
+
+            while(true){
+                cyclesMade++;
+                for(let i = 0; i < selectedMonths.length; i++){
+                    currentMonth = selectedMonths[i]
+                    if(parseInt(currentMonth) === nextMonth){
+                        nextMonth++;
+                        if(nextMonth === 13)
+                            nextMonth = 1
+                        
+                        consecutiveMonths++
+                        break;
+                    }
+    
+                }
+    
+                if(cyclesMade > selectedMonths.length)
+                    break;
+            }
+    
+            if(selectedMonths.length !== consecutiveMonths)
+                error = 'Debes seleccionar meses consecutivos y empezar por el primero';
         }
 
         if(error === ''){
@@ -431,7 +472,7 @@ $latest = $invoice_model->GetLatestNumbers();
             Swal.fire({
                 title: "Error",
                 icon:'error',
-                html: 'No se puede facturar un monto inferior al total de los métodos de pago',
+                html: error,
             })            
         }
 

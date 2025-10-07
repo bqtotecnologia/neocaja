@@ -45,7 +45,7 @@ $usd = $coin_model->GetCoinByName('Dólar');
 $coin_date = date('Y-m-d', strtotime($usd['price_created_at']));
 $today = date('Y-m-d');
 $usdUpdated = strtotime($today) === strtotime($coin_date);
-$total_debt = $debtState['months']['total'] + $debtState['retard'];
+$total_debt = $debtState['months']['total'] + $debtState['retard']['total'];
 
 if($debtState['foc'] === false)
     $total_debt += $focProduct['price'];
@@ -179,53 +179,7 @@ include '../../views/common/header.php';
         <section class="col-12 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
             <div class="row col-12 col-md-6 m-0 p-0 justify-content-center">
                 <div class="row m-0 p-0 col-12 justify-content-center my-2 p-2" id="debt-container">
-                    <table class="col-12 col-md-10 table table-bordered border border-black text-center h6">
-                        <thead>
-                            <tr class="bg-theme text-white fw-bold">
-                                <th>Deuda</th>
-                                <th>Dólares</th>
-                                <th>Bolívares</th>
-                            </tr>
-                        </thead>
-                        <tbody id="debt-table">
-                            <tr>
-                                <td class="p-1 border border-black bg-theme text-white fw-bold">Mensualidad</td>
-                                <td class="p-1 border border-black text-<?= $debtState['months'] > 0 ? 'danger' : 'success' ?>">
-                                    <?= $debtState['months'] > 0 ? ($debtState['months'] . '$') : 'SIN DEUDA' ?>
-                                </td>
-                                <td class="p-1 border border-black text-<?= $debtState['months'] > 0 ? 'danger' : 'success' ?>">
-                                    <?= $debtState['months'] > 0 ? ('Bs. ' . $debtState['months']['total'] * $usd['price']) : 'SIN DEUDA' ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="p-1 border border-black bg-theme text-white fw-bold">Mora</td>
-                                <td class="p-1 border border-black text-<?= $debtState['retard'] > 0 ? 'danger' : 'success' ?>">
-                                    <?= $debtState['retard'] > 0 ? ($debtState['retard'] . '$') : 'SIN DEUDA' ?>
-                                </td>
-                                <td class="p-1 border border-black text-<?= $debtState['retard'] > 0 ? 'danger' : 'success' ?>">
-                                    <?= $debtState['retard'] > 0 ? ('Bs. ' . $debtState['retard'] * $usd['price']) : 'SIN DEUDA' ?>
-                                </td>
-                        </tr>
-                        <tr>
-                            <td class="p-1 border border-black bg-theme text-white fw-bold">FOC</td>
-                            <?php if($debtState['foc']) { ?> 
-                                <td class="p-1 border border-black text-success" colspan="2">SIN DEUDA</td>
-                            <?php } else { ?>
-                                <td class="p-1 border border-black text-danger"><?= $focProduct['price'] ?>$</td>
-                                <td class="p-1 border border-black text-danger">Bs. <?= $focProduct['price'] * $usd['price'] ?></td>
-                            <?php } ?>
-                        </tr>
-                            <tr>
-                                <td class="p-1 border border-black bg-theme text-white fw-bold">TOTAL</td>
-                                <?php if($total_debt > 0) { ?>                                
-                                    <td class="p-1 border border-black fw-bold text-danger"><?= $total_debt ?>$</td>
-                                    <td class="p-1 border border-black fw-bold text-danger">Bs. <?= $total_debt * $usd['price'] ?></td>
-                                <?php } else { ?>
-                                    <td class="p-1 border border-black fw-bold text-success" colspan="2">SIN DEUDA</td>
-                                <?php } ?>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <?php include_once "../common/tables/account_debt_table.php"; ?>                    
                 </div>
             </div>
 
@@ -243,14 +197,14 @@ include '../../views/common/header.php';
                         <tbody id="invoice-table">
                             <?php foreach($monthStates as $month => $state) { ?>
                                 <tr class="text-center fs-5 text-black">
-                                    <td class="p-1 border border-black bg-white text-black"><?= $month ?></td>
-                                    <td class="p-1 border border-black bg-white">
+                                    <td class="p-1 border border-black bg-white align-middle text-black"><?= $month ?></td>
+                                    <td class="p-1 border border-black bg-white align-middle">
                                         <i class="fa text-<?= $state['paid'] ? 'success fa-check' : 'danger fa-close' ?>"></i>
                                     </td>
-                                    <td class="p-1 border border-black bg-white">
+                                    <td class="p-1 border border-black bg-white align-middle">
                                         <i class="fa text-<?= $state['debt'] ? 'success fa-check' : 'danger fa-close' ?>"></i>
                                     </td>
-                                    <td class="p-1 border border-black bg-white">
+                                    <td class="p-1 border border-black bg-white align-middle">
                                         <i class="fa text-<?= $state['partial'] ? 'success fa-check' : 'danger fa-close' ?>"></i>
                                     </td>
                                 </tr>                                    

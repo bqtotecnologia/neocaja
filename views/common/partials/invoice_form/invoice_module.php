@@ -3,6 +3,9 @@
         if(Object.keys(invoices).length > 0){
             invoiceContainer.classList.remove('d-none')
             for(let key in invoices){
+                if(youngestPayableMonth === null)
+                    youngestPayableMonth = GetMonthNumberByName(key)
+
                 AddInvoice(key, invoices[key])
             }
         }

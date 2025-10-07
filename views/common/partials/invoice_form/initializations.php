@@ -24,6 +24,13 @@
     const retardPercent = parseFloat('<?= $global_vars['Porcentaje mora'] ?>')
     const scholarship_with_retard = '<?= $global_vars['Becados pagan mora'] ?>' === '1' ? true : false
     const igtf_rate = 0.03
+    const payment_method_blockable_fields = ['payment-bank', 'payment-salepoint', 'payment-document']
+    const payment_method_field_block = {
+        'Efectivo': ['payment-bank', 'payment-salepoint', 'payment-document'],
+        'Pago Móvil': ['payment-salepoint'],
+        'Transferencia': ['payment-salepoint'],
+        'Tarjeta de débito': [],
+    }
     
     
     // LISTS
@@ -53,11 +60,13 @@
     let nextProduct = 1
     let targetAccount = {}
     let paidMonths = []
+    let partialMonths = []
     let periodMonths = []
     let debtData = ''   
     var currentDate = new Date()
     let currentMonth = currentDate.getMonth()
     let lastMonth = currentMonth
+    let youngestPayableMonth = null
     let yearOfNextMonth = currentDate.getFullYear()
     let monthReached = false
     let nextPaymentMethod = 1
