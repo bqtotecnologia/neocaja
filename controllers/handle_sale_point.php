@@ -15,9 +15,16 @@ if(empty($_POST)){
 $fields_config = [
     'code' => [
         'min' => 1,
-        'max' => 8,
+        'max' => 9,
         'required' => true,
         'type' => 'string',
+        'suspicious' => true,
+    ],
+    'bank' => [
+        'min' => 0,
+        'max' => 11,
+        'required' => false,
+        'type' => 'integer',
         'suspicious' => true,
     ],
 ];
@@ -48,10 +55,25 @@ if($error === ''){
 
 if($error === ''){
     if($edit){
-        if($target_sale_point['id'] !== $cleanData['id'] && $target_sale_point['code'] === $cleanData['code'])
+        if(intval($target_sale_point['id']) !== intval($cleanData['id']) && $target_sale_point['code'] === $cleanData['code'])
             $error = 'El código ingresado ya está registrado';
     }
 }  
+
+if($error === ''){
+    include_once '../models/bank_model.php';
+    $bank_model = new BankModel();
+
+    $bankId = Validator::ValidateRecievedId('bank', 'POST');
+    if(is_string($bankId))
+        $error = $bankId;
+}
+
+if($error === ''){
+    $target_bank = $bank_model->GetBankById($bankId);
+    if($target_bank === false)
+        $error = 'Banco no encontrado';
+}
 
 // Creating / updating the sale point
 if($error === ''){    

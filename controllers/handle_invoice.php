@@ -11,6 +11,13 @@ if(empty($_POST)){
     $error = 'POST vacío';
 }
 
+$payment_method_field_block = [
+    'Efectivo' => ['bank', 'salepoint', 'document'],
+    'Pago móvil' => ['salepoint'],
+    'Transferencia' => ['salepoint'],
+    'Tarjeta de débito' => [],
+];
+
 $fields_config = [
     'invoice_number' => [
         'min' => 1,
@@ -176,14 +183,26 @@ if($error === ''){
     for ($i=1; $i <= $last_payment_method_number; $i++) { 
         if(!isset($_POST['payment-method-' . $i]))
             continue;
+
+        $target_bank = null;
+        $target_sale_point = null;
+        $target_document = null;
         
         $payment_method_id = $_POST['payment-method-' . $i];
+
+        $target_price = $_POST["payment-price-$i"];
+        if(!is_numeric($target_price)){
+            $error = 'El precio de un método de pago es inválido';
+            break;
+        }
         
         $target_payment_method = $payment_method_model->GetPaymentMethodType($payment_method_id);
         if($target_payment_method === false){
             $error = "Método de pago de id $payment_method_id no encontrado";
             break;
         }
+
+        $blocked_fields = $payment_method_field_block[$target_payment_method['name']];
 
         $coin_id = $_POST['payment-coin-' . $i];
         $target_coin = $coin_model->GetCoin($coin_id);
@@ -197,35 +216,64 @@ if($error === ''){
                 $error = 'No existe una tasa para la moneda ' . $target_coin['name'] . ' en la fecha ' . $cleanData['rate-date']->format('d/m/Y');
         }
 
-        $bank_id = $_POST['payment-bank-' . $i];
-        if($bank_id !== ''){
-            $target_bank = $bank_model->GetBankById($bank_id);
-            if($target_bank === false){
-                $error = "Banco de id $bank_id no encontrado";
+        if(!in_array('bank', $blocked_fields)){
+            if(!isset($_POST['payment-bank-' . $i])){
+                $error = 'El banco en requerido en uno de los métodos de pago';
+                break;
+            }
+
+            $bank_id = $_POST['payment-bank-' . $i];
+            if($bank_id !== ''){
+                $target_bank = $bank_model->GetBankById($bank_id);
+                if($target_bank === false){
+                    $error = "Banco de id $bank_id no encontrado";
+                    break;
+                }
+            }        
+        }
+
+        if(!in_array('salepoint', $blocked_fields)){
+            if(!isset($_POST['payment-salepoint-' . $i])){
+                $error = 'El punto de venta es requerido en uno de los métodos de pago';
+                break;
+            }
+            
+            $sale_point_id = $_POST['payment-salepoint-' . $i];
+            if($sale_point_id !== ''){
+                $target_sale_point = $sale_point_model->GetSalePoint($sale_point_id);
+                if($target_sale_point === false){
+                    $error = "Punto de venta de id $sale_point_id no encontrado";
+                    break;
+                }   
+            }
+        }       
+        
+        if($target_sale_point !== null && $target_bank !== null){
+            if(intval($target_sale_point['bank_id']) !== intval($target_bank['id'])){
+                $error = 'El banco seleccionado no coincide con el punto de venta escogido';
+                break;
+            }
+        }
+
+        if(!in_array('document', $blocked_fields)){
+            if(!isset($_POST['payment-document-' . $i])){
+                $error = 'El documento es requerido en uno de los métodos de pago';
+                break;
+            }
+            $target_document = $_POST["payment-document-$i"];
+            if(Validator::HasSuspiciousCharacters($target_document)){
+                $error = 'Uno de los números de documento ingresados tiene caracteres sospechosos';
                 break;
             }
         }        
-        else
-            $target_bank = null;
-        
-        $sale_point_id = $_POST['payment-salepoint-' . $i];
-        if($sale_point_id !== ''){
-            $target_sale_point = $sale_point_model->GetSalePoint($sale_point_id);
-            if($target_sale_point === false){
-                $error = "Punto de venta de id $sale_point_id no encontrado";
-                break;
-            }   
-        }
-        else
-            $target_sale_point = null;
 
         $to_add = [
             'method' => $target_payment_method['id'],
             'coin' => $target_coin['history_id'],
             'salepoint' => $target_sale_point['id'] ?? 'NULL',
             'bank' => $target_bank['id'] ?? 'NULL',
-            'document_number' => $_POST["payment-document-$i"] === '' ? 'NULL' : ("'" . $_POST["payment-document-$i"] . "'"),
-            'price' => $_POST["payment-price-$i"] ?? 'NULL',
+            'document_number' => $target_document['id'] ?? 'NULL',
+            'price' => $target_price,
             'igtf' => '0',
         ];
 
@@ -234,50 +282,93 @@ if($error === ''){
 }
 
 // Processing the IGTF
-if($error === '' && isset($_POST['igtf-price'])){
-    $payment_method_id = $_POST['igtf-method'];
-        
-    $target_payment_method = $payment_method_model->GetPaymentMethodType($payment_method_id);
-    if($target_payment_method === false){
-        $error = "Método de pago de id $payment_method_id no encontrado";
-    }
-
-    $coin_id = $_POST['igtf-coin'];
-    $target_coin = $coin_model->GetCoin($coin_id);
-    if($target_coin === false){
-        $error = "Moneda de id $coin_id no encontrada";
-    }
-
-    $bank_id = $_POST['igtf-bank'];
-    if($bank_id !== ''){
-        $target_bank = $bank_model->GetBankById($bank_id);
-        if($target_bank === false){
-            $error = "Banco de id $bank_id no encontrado";
+while(true){
+    if($error === '' && isset($_POST['igtf-price'])){
+        $payment_method_id = $_POST['igtf-method'];
+            
+        $target_payment_method = $payment_method_model->GetPaymentMethodType($payment_method_id);
+        if($target_payment_method === false){
+            $error = "Método de pago de id $payment_method_id no encontrado para el IGTF";
+            break;
         }
-    }        
-    else
-        $target_bank = null;
+
+        $target_price = $_POST["igtf-price"];
+        if(!is_numeric($target_price)){
+            $error = 'El precio de un método de pago del IGTF es inválido';
+            break;
+        }
     
-    $sale_point_id = $_POST['igtf-salepoint'];
-    if($sale_point_id !== ''){
-        $target_sale_point = $sale_point_model->GetSalePointByCode($sale_point_id);
-        if($target_sale_point === false){
-            $error = "Punto de venta de código $sale_point_id no encontrado";
-        }   
+        $target_bank = null;
+        $target_sale_point = null;
+        $target_document = null;
+    
+        $blocked_fields = $payment_method_field_block[$target_payment_method['name']];
+    
+        $coin_id = $_POST['igtf-coin'];
+        $target_coin = $coin_model->GetCoin($coin_id);
+        if($target_coin === false){
+            $error = "Moneda de id $coin_id no encontrada para el IGTF";
+            break;
+        }    
+    
+        if(!in_array('bank', $blocked_fields)){
+            if(!isset($_POST['igtf-bank'])){
+                $error = 'El banco del IGTF es necesario';
+                break;
+            }
+    
+            $bank_id = $_POST['igtf-bank'];
+            if($bank_id !== ''){
+                $target_bank = $bank_model->GetBankById($bank_id);
+                if($target_bank === false){
+                    $error = "Banco de id $bank_id no encontrado en el IGTF";
+                    break;
+                }
+            }        
+        }
+        
+        if(!in_array('salepoint', $blocked_fields)){
+            if(!isset($_POST['igtf-salepoint'])){
+                $error = 'El punto de venta del IGTF es necesario';
+                break;
+            }
+
+            $sale_point_id = $_POST['igtf-salepoint'];
+            if($sale_point_id !== ''){
+                $target_sale_point = $sale_point_model->GetSalePointByCode($sale_point_id);
+                if($target_sale_point === false){
+                    $error = "Punto de venta de código $sale_point_id no encontrado en el IGTF";
+                    break;
+                }   
+            }
+        }
+
+        if(!in_array('document', $blocked_fields)){
+            if(!isset($_POST['igtf-document'])){
+                $error = 'El punto de venta del IGTF es necesario';
+                break;
+            }
+
+            $target_document = $_POST['igtf-document'];
+            if(Validator::HasSuspiciousCharacters($target_document)){
+                $error = 'El numero de documento del IGTF contiene caracteres sospechosos';
+                break;
+            }
+        }
     }
-    else
-        $target_sale_point = null;        
+
+    break;
 }
 
 
 if($error === '' && isset($_POST['igtf-price'])){
     $to_add = [
-        'method' => $_POST['igtf-method'],
-        'coin' => $_POST['igtf-coin'],
-        'salepoint' => $_POST["igtf-salepoint"] === '' ? 'NULL' : ("'" . $target_sale_point['id'] . "'"),
-        'bank' => $_POST['igtf-bank'] ?? 'NULL',
-        'document_number' => $_POST["igtf-document"] === '' ? 'NULL' : ("'" . $_POST["igtf-document"] . "'"),
-        'price' => $_POST["igtf-price"] ?? 'NULL',
+        'method' => $target_payment_method['id'],
+        'coin' => $target_coin['history_id'],
+        'salepoint' => $target_sale_point['id'] ?? 'NULL',
+        'bank' => $target_bank['id'] ?? 'NULL',
+        'document_number' => $target_document['id'] ?? 'NULL',
+        'price' => $target_price,
         'igtf' => '1',
     ];
     

@@ -31,6 +31,44 @@
         igtf_total.value = total
     }
 
+    function IGTFPaymentMethodSelecting(e){       
+        // Desbloqueamos los inputs
+        payment_method_blockable_fields.forEach((field) => {
+            var fieldId = 'igtf-' + field
+            var to_unblock = document.getElementById(fieldId)
+            to_unblock.disabled = false
+
+            if(document.getElementById('select2-' + fieldId + '-container') !== null){
+                $('#' + fieldId).select2({disabled: false})
+            }
+        })
+
+        // Buscamos el tipo de método de pago seleccionado
+        var methodSelected = null
+        for(let i = 0; i < e.target.childNodes.length; i++){
+            var node = e.target.childNodes[i]
+            if(node.selected){
+                methodSelected = node.innerHTML
+                break
+            }
+        }
+
+        // Bloqueamos los inputs correspondientes
+        if(Object.keys(payment_method_field_block).includes(methodSelected)){
+            var to_block = payment_method_field_block[methodSelected]
+            to_block.forEach((block) => {
+                fieldId = 'igtf-' + block
+                const input = document.getElementById(fieldId)
+                input.disabled = true
+                input.value = ''
+                if(document.getElementById('select2-' + fieldId + '-container') !== null){
+                    $('#' + fieldId).select2({disabled: true})
+                    $('#' + fieldId).select2("val", -1)
+                }
+            })
+        }        
+    }
+
     function DisableIGTF(){
         igtf_table.classList.add('d-none')
         HandleIGTF(true)

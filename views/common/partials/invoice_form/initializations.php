@@ -24,11 +24,11 @@
     const retardPercent = parseFloat('<?= $global_vars['Porcentaje mora'] ?>')
     const scholarship_with_retard = '<?= $global_vars['Becados pagan mora'] ?>' === '1' ? true : false
     const igtf_rate = 0.03
-    const payment_method_blockable_fields = ['payment-bank', 'payment-salepoint', 'payment-document']
+    const payment_method_blockable_fields = ['bank', 'salepoint', 'document']
     const payment_method_field_block = {
-        'Efectivo': ['payment-bank', 'payment-salepoint', 'payment-document'],
-        'Pago Móvil': ['payment-salepoint'],
-        'Transferencia': ['payment-salepoint'],
+        'Efectivo': ['bank', 'salepoint', 'document'],
+        'Pago móvil': ['salepoint'],
+        'Transferencia': ['salepoint'],
         'Tarjeta de débito': [],
     }
     
@@ -71,6 +71,9 @@
     let monthReached = false
     let nextPaymentMethod = 1
     let scholarshipped = false
+
+    // EVENTS
+    igtf_method.addEventListener('change', function(e) { IGTFPaymentMethodSelecting(e) })
 </script>
 
 
@@ -149,6 +152,7 @@
         sale_point = {
             'code': '<?= $sale_point['code'] ?>',
             'id': '<?= $sale_point['id'] ?>',
+            'bank': '<?= $sale_point['bank_id'] ?>'
         }
         sale_points.push(sale_point)
     </script>

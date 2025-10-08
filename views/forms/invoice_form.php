@@ -308,7 +308,7 @@ $latest = $invoice_model->GetLatestNumbers();
                             <tr>
                                 <td>
                                     <div class="d-flex justify-content-center m-0">
-                                        <select class="select2" name="igtf-method" id="igtf-method" disabled>
+                                        <select class="form-control" name="igtf-method" id="igtf-method" disabled>
                                             <option value=""></option>
                                             <?php foreach($payment_methods as $payment_method) { ?>
                                                 <option value="<?= $payment_method['id'] ?>"><?= $payment_method['name'] ?></option>
@@ -318,7 +318,7 @@ $latest = $invoice_model->GetLatestNumbers();
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center m-0">
-                                        <select class="select2" name="igtf-coin" id="igtf-coin" disabled>
+                                        <select class="form-control" name="igtf-coin" id="igtf-coin" disabled>
                                             <option value=""></option>
                                             <?php foreach($coins as $coin) { ?>
                                                 <option value="<?= $coin['id'] ?>"><?= $coin['name'] ?></option>
@@ -338,7 +338,7 @@ $latest = $invoice_model->GetLatestNumbers();
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center m-0">
-                                        <select class="select2" name="igtf-salepoint" id="igtf-salepoint" disabled>
+                                        <select class="form-control" name="igtf-salepoint" id="igtf-salepoint" disabled>
                                             <option value=""></option>
                                             <?php foreach($sale_points as $sale_point) { ?>
                                                 <option value="<?= $sale_point['code'] ?>"><?= $sale_point['code'] ?></option>

@@ -1,8 +1,9 @@
-<table class="table table-striped table-bordered datatable-date-2" style="width:100%">
+<table class="table table-striped table-bordered datatable-date-3" style="width:100%">
     <thead>
         <tr>
             <th class="text-center" style="padding-right:15px !important;">Nº</th>
             <th class="text-center">Código</th>
+            <th class="text-center">Banco</th>
             <th class="text-center">Fecha de creación</th>
             <th class="text-center">Acción</th>
         </tr>
@@ -16,6 +17,7 @@
             <tr class="h6">
                 <td class="align-middle text-center"><?php echo $count; $count++; ?></td>
                 <td class="align-middle text-center"><?= $sale_point['code'] ?></td>
+                <td class="align-middle text-center"><?= $sale_point['bank'] ?></td>
                 <td class="align-middle text-center"><?= $sale_point['created_at'] ?></td>
                 <td class="">
                     <div class="row justify-content-around">

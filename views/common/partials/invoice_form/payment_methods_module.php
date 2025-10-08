@@ -49,10 +49,28 @@
         UpdatePaymentTotal()
     }
 
+    function SalePointSelecting(oldId, e){
+        const salePointSelect = document.getElementById('payment-salepoint-' + oldId)
+
+        var targetSalePoint = null
+
+        for(let i = 0; i < sale_points.length; i++){
+            if(parseInt(sale_points[i].id) === parseInt(e.target.value)){
+                targetSalePoint = sale_points[i]
+                break
+            }
+        }
+
+        if(targetSalePoint !== null)
+            $('#payment-bank-' + oldId).val(targetSalePoint.bank).trigger('change')
+        else
+            $('#payment-bank-' + oldId).val('').trigger('change')
+    }
+
     function PaymentMethodSelecting(oldId, e){       
         // Desbloqueamos los inputs
         payment_method_blockable_fields.forEach((field) => {
-            var fieldId = field + '-' + oldId
+            var fieldId = 'payment-' + field + '-' + oldId
             var to_unblock = document.getElementById(fieldId)
             to_unblock.disabled = false
 
@@ -75,7 +93,7 @@
         if(Object.keys(payment_method_field_block).includes(methodSelected)){
             var to_block = payment_method_field_block[methodSelected]
             to_block.forEach((block) => {
-                fieldId = block + '-' + oldId
+                fieldId = 'payment-' + block + '-' + oldId
                 const input = document.getElementById(fieldId)
                 input.disabled = true
                 input.value = ''

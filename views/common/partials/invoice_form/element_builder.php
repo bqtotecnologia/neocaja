@@ -514,6 +514,7 @@
             option.innerHTML = sale_point['code']
             salePointSelect.appendChild(option)
         })
+        salePointSelect.addEventListener('change', function(e) { SalePointSelecting(paymentId, e) })
         salePointSelect.classList.add('form-control', 'col-11')
         salePointCol.appendChild(salePointSelect)
         div.appendChild(salePointSelect)

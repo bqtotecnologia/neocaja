@@ -11,8 +11,13 @@ if($edit){
     }   
 
     include_once '../../models/sale_point_model.php';
+    include_once '../../models/bank_model.php';
+
     $sale_point_model = new SalePointModel();
+    $bank_model = new BankModel();
+
     $target_sale_point = $sale_point_model->GetSalePoint($_GET['id']);
+    $banks = $bank_model->GetAllbanks();
     if($target_sale_point === false){
         header("Location: $base_url/views/tables/search_sale_point.php?error=Punto de venta no encontrado");
         exit;
@@ -21,6 +26,16 @@ if($edit){
 
 include_once '../common/header.php';
 include_once '../../utils/FormBuilder.php';
+
+$display_banks = [];
+
+foreach($banks as $bank){
+    array_push($display_banks,
+    [
+        'display' => $bank['name'],
+        'value' => $bank['id']
+    ]);
+}
 
 $fields = [
     [
@@ -31,10 +46,21 @@ $fields = [
         'type' => 'text',
         'size' => 5,
         'min' => 1,
-        'max' => 8,
+        'max' => 9,
         'required' => true,
         'value' => $edit ? $target_sale_point['code'] : ''
     ],    
+    [
+        'name' => 'bank',
+        'display' => 'Banco',
+        'placeholder' => '',
+        'id' => 'bank',
+        'type' => 'select',
+        'size' => 8,
+        'required' => true,
+        'value' => $edit ? $target_sale_point['bank_id'] : '',
+        'elements' => $display_banks
+    ],
 ];
 
 if($edit){

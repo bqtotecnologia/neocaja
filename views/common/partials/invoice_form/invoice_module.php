@@ -2,11 +2,13 @@
     async function DisplayInvoices(invoices){
         if(Object.keys(invoices).length > 0){
             invoiceContainer.classList.remove('d-none')
-            for(let key in invoices){
-                if(youngestPayableMonth === null)
-                    youngestPayableMonth = GetMonthNumberByName(key)
-
+            for(let key in invoices){               
                 AddInvoice(key, invoices[key])
+            }
+
+            for(let key in invoices){               
+                if(youngestPayableMonth === null && !paidMonths.includes(key))
+                        youngestPayableMonth = GetMonthNumberByName(key)
             }
         }
     }
