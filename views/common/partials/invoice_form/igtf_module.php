@@ -69,14 +69,45 @@
         }        
     }
 
-    function DisableIGTF(){
-        igtf_table.classList.add('d-none')
-        HandleIGTF(true)
+    function IGTFSalePointSelecting(salePointId){
+        var targetSalePoint = null
+        console.log(salePointId)
+
+        for(let i = 0; i < sale_points.length; i++){
+            if(parseInt(sale_points[i].code) === parseInt(salePointId)){
+                targetSalePoint = sale_points[i]
+                break
+            }
+        }
+
+        if(targetSalePoint !== null)
+            $('#igtf-bank').val(targetSalePoint.bank).trigger('change')
+        else
+            $('#igtf-bank').val('').trigger('change')
     }
 
-    function EnableIGTF(){        
-        igtf_table.classList.remove('d-none')
-        HandleIGTF(false)
+    function DisableIGTF(){
+        if(igtfVisible === true){
+            igtf_table.classList.add('d-none')
+            HandleIGTF(true)
+            igtfVisible = false
+
+            igtf_price.value = null
+            igtf_coin.value = null
+            igtf_method.value = null
+            igtf_bank.value = null
+            $('#igtf-bank').select2('val', -1)
+            igtf_salepoint.value = null
+            igtf_document.value = null
+        }
+    }
+
+    function EnableIGTF(){   
+        if(igtfVisible === false)     {
+            igtf_table.classList.remove('d-none')
+            HandleIGTF(false)
+            igtfVisible = true
+        }
         
     }
 

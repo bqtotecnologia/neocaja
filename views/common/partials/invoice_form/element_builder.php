@@ -411,8 +411,8 @@
         row.id = "payment-row-" + paymentId
         row.appendChild(paymentMethodCol)
         row.appendChild(coinCol)
-        row.appendChild(bankCol)
         row.appendChild(salePointCol)
+        row.appendChild(bankCol)
         row.appendChild(documentNumberCol)
         row.appendChild(priceCol)
         row.appendChild(totalCol)

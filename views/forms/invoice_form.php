@@ -260,8 +260,8 @@ $latest = $invoice_model->GetLatestNumbers();
                             <tr class="bg-theme text-white">
                                 <th class="p-1 align-middle" style="width:11%">Método</th>
                                 <th class="p-1 align-middle px-5" style="width:10%">Moneda</th>
-                                <th class="p-1 align-middle" style="width:17%">Banco</th>
                                 <th class="p-1 align-middle px-5" style="width:13%">Pto de venta</th>
+                                <th class="p-1 align-middle" style="width:17%">Banco</th>
                                 <th class="p-1 align-middle px-5" style="width:13%">Nº Doc.</th>
                                 <th class="p-1 align-middle" style="width:12%">Monto</th>
                                 <th class="p-1 align-middle" style="width:12%">Total</th>
@@ -288,7 +288,7 @@ $latest = $invoice_model->GetLatestNumbers();
                     <h2 class="h2 col-6">
                         IGTF
                     </h2>
-                    <h4 class="h4 col-6 text-right text-black" id="igtf-total-label">
+                    <h4 class="h4 col-6 text-right text-black fw-bold" id="igtf-total-label">
                     </h4>
                 </div>
                 <div class="col-12">
@@ -297,8 +297,8 @@ $latest = $invoice_model->GetLatestNumbers();
                             <tr class="bg-theme text-white">
                                 <th class="p-1 align-middle" style="width:11%">Método</th>
                                 <th class="p-1 align-middle px-5" style="width:10%">Moneda</th>
-                                <th class="p-1 align-middle" style="width:17%">Banco</th>
                                 <th class="p-1 align-middle px-5" style="width:13%">Pto de venta</th>
+                                <th class="p-1 align-middle" style="width:17%">Banco</th>
                                 <th class="p-1 align-middle px-5" style="width:13%">Nº Doc.</th>
                                 <th class="p-1 align-middle" style="width:12%">Monto</th>
                                 <th class="p-1 align-middle" style="width:12%">Total</th>
@@ -325,23 +325,23 @@ $latest = $invoice_model->GetLatestNumbers();
                                             <?php } ?>
                                         </select>
                                     </div>
-                                </td>
+                                </td>                               
                                 <td>
+                                    <div class="d-flex justify-content-center m-0">
+                                        <select class="form-control" name="igtf-salepoint" id="igtf-salepoint" disabled onchange="IGTFSalePointSelecting(this.value)">
+                                            <option value=""></option>
+                                            <?php foreach($sale_points as $sale_point) { ?>
+                                                <option value="<?= $sale_point['code'] ?>"><?= $sale_point['code'] ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </td>
+                                 <td>
                                     <div class="d-flex justify-content-center m-0">
                                         <select class="select2" name="igtf-bank" id="igtf-bank" disabled>
                                             <option value=""></option>
                                             <?php foreach($banks as $bank) { ?>
                                                 <option value="<?= $bank['id'] ?>"><?= $bank['name'] ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex justify-content-center m-0">
-                                        <select class="form-control" name="igtf-salepoint" id="igtf-salepoint" disabled>
-                                            <option value=""></option>
-                                            <?php foreach($sale_points as $sale_point) { ?>
-                                                <option value="<?= $sale_point['code'] ?>"><?= $sale_point['code'] ?></option>
                                             <?php } ?>
                                         </select>
                                     </div>

@@ -261,7 +261,9 @@ class InvoiceModel extends SQLModel
         INNER JOIN product_history ON product_history.id = concepts.product
         INNER JOIN products ON products.id = product_history.product
         WHERE
-        concepts.invoice = $id";
+        concepts.invoice = $id
+        ORDER BY 
+        products.name";
 
         return parent::GetRows($sql);
     }
@@ -511,9 +513,11 @@ class InvoiceModel extends SQLModel
             }
 
             if($retard_applies){
-                $retard = round($monthly_debt * ($global_vars['Porcentaje mora'] / 100), 2);
-                $debt_data['retard']['detail'][$monthName] = $retard;
-                $debt_data['retard']['total'] += $retard;
+                if(!isset($monthValue['concepts']['Diferencia Mensualidad'])){
+                    $retard = round($monthly_debt * ($global_vars['Porcentaje mora'] / 100), 2);
+                    $debt_data['retard']['detail'][$monthName] = $retard;
+                    $debt_data['retard']['total'] += $retard;
+                }
             }
         }
 

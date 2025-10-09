@@ -167,9 +167,7 @@
 
                 ChangeProductPrice(nextProduct - 1, price)
             }
-        })
-
-        
+        })        
         //UpdateProductsPrice(true)
     }
 

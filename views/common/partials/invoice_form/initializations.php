@@ -71,6 +71,7 @@
     let monthReached = false
     let nextPaymentMethod = 1
     let scholarshipped = false
+    let igtfVisible = false
 
     // EVENTS
     igtf_method.addEventListener('change', function(e) { IGTFPaymentMethodSelecting(e) })

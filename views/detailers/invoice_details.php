@@ -99,6 +99,21 @@ include '../../views/common/header.php';
                     </span>
                 </div>
 
+                <div class="row col-10 justify-content-start align-items-middle">
+                    <label class="fw-bold mx-2">
+                        Beca:
+                    </label>
+                    <?php if($target_account['scholarship'] !== NULL && $target_account['scholarship_coverage'] !== NULL) { ?>
+                        <span class="text-success">
+                            <?= $target_account['scholarship'] . ' ' . $target_account['scholarship_coverage'] ?>%
+                        </span>
+                    <?php } else { ?>
+                        <span class="text-danger">
+                            NO TIENE
+                        </span>
+                    <?php } ?>
+                </div>
+
                 <?php if($target_account['company'] !== null) { ?>
                     <div class="row col-10 justify-content-start align-items-middle">
                         <label class="fw-bold mx-2">
@@ -198,7 +213,6 @@ include '../../views/common/header.php';
                                 <th>Monto ($)</th>
                                 <th>Tasa</th>
                                 <th>Subtotal</th>
-                                <th>Descuento</th>
                                 <th>Total</th>
                             </tr>
                         </thead>
@@ -207,12 +221,7 @@ include '../../views/common/header.php';
                             <?php foreach($concepts as $concept) { ?>
                                 <?php 
                                     $subtotal = round($concept['price'] * $coinValues['Dólar'], 2); 
-                                    $disccount_percent = 0;
-                                    if($target_account['scholarship'] !== null && intval($target_account['scholarship_coverage']) > 0){
-                                        $disccount_percent = intval($target_account['scholarship_coverage']);
-                                    }
-
-                                    $total = $subtotal - ($subtotal * ($disccount_percent / 100));
+                                    $total = $subtotal;
                                     $products_total += $total; 
                                 ?>
                                 <tr class="text-center">
@@ -227,12 +236,11 @@ include '../../views/common/header.php';
                                     <td class="text-right"><?= $concept['price'] ?></td>
                                     <td class="text-right"><?= $coinValues['Dólar'] ?></td>
                                     <td class="text-right"><?= $subtotal ?></td>
-                                    <td class="text-right"><?= $disccount_percent ?>%</td>
                                     <td class="text-right">Bs. <?= round($total, 2) ?></td>
                                 </tr>
                             <?php } ?>
                             <tr class="fw-bold text-right">
-                                <td colspan="6">Total:</td>
+                                <td colspan="5">Total:</td>
                                 <td>Bs. <?= round($products_total, 2) ?></td>
                             </tr>
                         </tbody>

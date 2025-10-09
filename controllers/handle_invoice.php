@@ -218,10 +218,10 @@ if($error === ''){
 
         if(!in_array('bank', $blocked_fields)){
             if(!isset($_POST['payment-bank-' . $i])){
-                $error = 'El banco en requerido en uno de los métodos de pago';
+                $error = 'No se recibió ningún banco en uno de los métodos de pago';
                 break;
             }
-
+            
             $bank_id = $_POST['payment-bank-' . $i];
             if($bank_id !== ''){
                 $target_bank = $bank_model->GetBankById($bank_id);
@@ -229,12 +229,13 @@ if($error === ''){
                     $error = "Banco de id $bank_id no encontrado";
                     break;
                 }
-            }        
+            }else
+                $error = 'El banco es requerido en uno de los métodos de pago';
         }
 
         if(!in_array('salepoint', $blocked_fields)){
             if(!isset($_POST['payment-salepoint-' . $i])){
-                $error = 'El punto de venta es requerido en uno de los métodos de pago';
+                $error = 'No se recibió ningún punto de venta en uno de los métodos de pago';
                 break;
             }
             
@@ -246,21 +247,34 @@ if($error === ''){
                     break;
                 }   
             }
+            else
+                $error = 'El punto de venta es requerido en uno de los métodos de pago';
         }       
         
-        if($target_sale_point !== null && $target_bank !== null){
+        if($target_sale_point !== null){
+            if($target_bank === null){
+                $error = 'El banco es obligatorio si se seleccionó un punto de venta';
+                break;
+            }
+                
             if(intval($target_sale_point['bank_id']) !== intval($target_bank['id'])){
-                $error = 'El banco seleccionado no coincide con el punto de venta escogido';
+                $error = 'El banco seleccionado no coicide con el punto de venta escogido';
                 break;
             }
         }
 
         if(!in_array('document', $blocked_fields)){
             if(!isset($_POST['payment-document-' . $i])){
-                $error = 'El documento es requerido en uno de los métodos de pago';
+                $error = 'No se recibió ningún número de documento en uno de los métodos de pago';
                 break;
             }
+
             $target_document = $_POST["payment-document-$i"];
+            if($target_document === ''){
+                $error = 'El número de documento es necesario';
+                break;
+            }
+            
             if(Validator::HasSuspiciousCharacters($target_document)){
                 $error = 'Uno de los números de documento ingresados tiene caracteres sospechosos';
                 break;
@@ -294,7 +308,7 @@ while(true){
 
         $target_price = $_POST["igtf-price"];
         if(!is_numeric($target_price)){
-            $error = 'El precio de un método de pago del IGTF es inválido';
+            $error = 'El precio del método de pago del IGTF es inválido';
             break;
         }
     
@@ -313,7 +327,7 @@ while(true){
     
         if(!in_array('bank', $blocked_fields)){
             if(!isset($_POST['igtf-bank'])){
-                $error = 'El banco del IGTF es necesario';
+                $error = 'No se recibió el banco del IGTF';
                 break;
             }
     
@@ -324,12 +338,14 @@ while(true){
                     $error = "Banco de id $bank_id no encontrado en el IGTF";
                     break;
                 }
-            }        
+            } 
+            else
+                $error = 'El banco del IGTF es necesario';
         }
         
         if(!in_array('salepoint', $blocked_fields)){
             if(!isset($_POST['igtf-salepoint'])){
-                $error = 'El punto de venta del IGTF es necesario';
+                $error = 'No se recibió el punto de venta del IGTF';
                 break;
             }
 
@@ -341,15 +357,22 @@ while(true){
                     break;
                 }   
             }
+            else
+                $error = 'El punto de venta del IGTF es necesario';
         }
 
         if(!in_array('document', $blocked_fields)){
             if(!isset($_POST['igtf-document'])){
-                $error = 'El punto de venta del IGTF es necesario';
+                $error = 'No se recibió el numero de documento del IGTF';
                 break;
             }
 
             $target_document = $_POST['igtf-document'];
+            if($target_document === ''){
+                $error = 'El numero de cocumento del IGTF es necesario';
+                break;
+            }
+
             if(Validator::HasSuspiciousCharacters($target_document)){
                 $error = 'El numero de documento del IGTF contiene caracteres sospechosos';
                 break;
@@ -359,7 +382,6 @@ while(true){
 
     break;
 }
-
 
 if($error === '' && isset($_POST['igtf-price'])){
     $to_add = [

@@ -155,19 +155,22 @@ $baseY = 91;
 $rowPosition = 1;
 $productsTotal = 0;
 
+
+
 for($i = 0; $i < count($concepts); $i++){
     $currentConcept = $concepts[$i];
-    $productName = $currentConcept['product'];
+    $originalProductName = $currentConcept['product'];    
+    $productName = $originalProductName;
     $productUnitPrice = $currentConcept['price'] * $coinValues['Dólar'];
     $productQuantity = 1;
 
     $monthlies = [];
 
-    if($productName === 'Mensualidad'){
+    if(strpos($originalProductName, 'Mensualidad') !== false){
         array_push($monthlies, $currentConcept);
 
         while(isset($concepts[$i + 1])){
-            if($concepts[$i + 1]['product'] === 'Mensualidad'){
+            if($concepts[$i + 1]['product'] === $originalProductName){
                 array_push($monthlies, $concepts[$i + 1]);
                 $i++;
                 $productQuantity++;
@@ -176,8 +179,8 @@ for($i = 0; $i < count($concepts); $i++){
                 break;
         }
 
-        if(count($monthlies) > 1){
-            $productName = 'Mensualidad ';
+        if(count($monthlies) > 0){
+            $productName = $originalProductName . ' ';
             foreach($monthlies as $month){
                 $productName .= $month_translate[$month['month']] . ' ';
             }
@@ -185,8 +188,6 @@ for($i = 0; $i < count($concepts); $i++){
         
         $productName .= ' ' . $target_period['nombreperiodo'];
     }
-
-
 
     $productPrice = $coinValues['Dólar'] * $currentConcept['price'];
     $productTotal = $productUnitPrice * $productQuantity;
@@ -207,12 +208,12 @@ $pdf->Cell(138, 4, MyDecode('Métodos de pago'), 'T', 0, 'L');
 
 $rowPosition += 5;
 $pdf->SetXY(10, $upper_margin + 23 + $rowPosition);
-$pdf->Cell(20, 4, 'Tipo', 0, 0, 'L');
+$pdf->Cell(25, 4, 'Tipo', 0, 0, 'L');
 $pdf->Cell(18, 4, 'Moneda', 0, 0, 'L');
 $pdf->Cell(16, 4, 'Monto', 0, 0, 'L');
 $pdf->Cell(16, 4, 'Tasa', 0, 0, 'L');
-$pdf->Cell(36, 4, 'Banco', 0, 0, 'L');
-$pdf->Cell(16, 4, 'No. Doc.', 0, 0, 'L');
+$pdf->Cell(32, 4, 'Banco', 0, 0, 'L');
+$pdf->Cell(15, 4, 'No. Doc.', 0, 0, 'L');
 $pdf->Cell(16, 4, 'Monto Bs.', 0, 0, 'L');
 
 $igtf = null;
@@ -225,12 +226,12 @@ foreach($payment_methods as $payment_method){
         continue;
     }
     $pdf->SetXY(10, $upper_margin + 21 + $rowPosition);
-    $pdf->Cell(20, 4, MyDecode($payment_method['payment_method']), 0, 0, 'L');
+    $pdf->Cell(25, 4, MyDecode($payment_method['payment_method']), 0, 0, 'L');
     $pdf->Cell(18, 4, MyDecode($payment_method['coin']), 0, 0, 'L');
     $pdf->Cell(16, 4, MyDecode($payment_method['price']), 0, 0, 'R');
     $pdf->Cell(16, 4, MyDecode($coinValues[$payment_method['coin']]), 0, 0, 'C');
-    $pdf->Cell(36, 4, MyDecode($payment_method['bank']), 0, 0, 'L');
-    $pdf->Cell(16, 4, $payment_method['document_number'], 0, 0, 'L');
+    $pdf->Cell(32, 4, MyDecode($payment_method['bank']), 0, 0, 'L');
+    $pdf->Cell(15, 4, $payment_method['document_number'], 0, 0, 'L');
     $pdf->Cell(16, 4, MyDecode($payment_method['price'] * $coinValues[$payment_method['coin']]), 0, 0, 'R');
     $rowPosition += 3;
 }
