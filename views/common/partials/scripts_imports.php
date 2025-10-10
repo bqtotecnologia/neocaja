@@ -37,6 +37,9 @@
 <!-- Sweetalert2 -->
 <script src="<?= $base_url ?>/vendors/sweetalert2/sweetalert2.min.js"></script>
 
+<!-- Excel reader -->
+<script lang="javascript" src="<?= $base_url ?>/vendors/xlsx/xlsx.full.min.js"></script>
+
 <!-- Custom Theme Scripts -->
 <script src="<?= $base_url ?>/build/js/custom.min.js"></script>
 <script src="<?= $base_url ?>/build/js/mycustom.js"></script>

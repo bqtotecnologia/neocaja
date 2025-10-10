@@ -47,7 +47,7 @@ include_once 'common/header.php';
         <div class="row col-12 p-0 m-0 my-2 justify-content-center">
             <h1 class="h1 text-center w-100">Su estado de cuenta en el periodo <?= $currentPeriod['nombreperiodo'] ?></h1>
         </div>
-        <div class="row col-12 p-0 m-0 my-2 justify-content-center">
+        <div class="row col-12 p-0 m-0 my-2 justify-content-center align-items-center">
             <div class="col-12 col-md-6">
                 <?php if($usdUpdated) { ?>
                     <h2 class="h2 text-center w-100">Tasas del día de hoy <?php date('d/m/Y') ?></h2>

@@ -108,6 +108,14 @@
                         </ul>
                       </li>
 
+                      <li><a><i class="fa fa-question"></i> Ingresos no identificados <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/tables/search_unknown_incomes_by_date.php">Buscar por fecha</a></li>
+                          <li><a href="<?= $base_url ?>/views/forms/import_unknown_incomes.php">Importar</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_identified_incomes.php">Ingresos identificados</a></li>                          
+                        </ul>
+                      </li>
+
                       <li><a><i class="fa fa-cubes"></i> Productos <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/forms/product_form.php">Crear producto</a></li>
