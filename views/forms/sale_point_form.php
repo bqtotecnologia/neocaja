@@ -10,14 +10,10 @@ if($edit){
         exit;
     }   
 
-    include_once '../../models/sale_point_model.php';
-    include_once '../../models/bank_model.php';
+    include_once '../../models/sale_point_model.php';    
 
-    $sale_point_model = new SalePointModel();
-    $bank_model = new BankModel();
-
+    $sale_point_model = new SalePointModel();    
     $target_sale_point = $sale_point_model->GetSalePoint($_GET['id']);
-    $banks = $bank_model->GetAllbanks();
     if($target_sale_point === false){
         header("Location: $base_url/views/tables/search_sale_point.php?error=Punto de venta no encontrado");
         exit;
@@ -26,6 +22,11 @@ if($edit){
 
 include_once '../common/header.php';
 include_once '../../utils/FormBuilder.php';
+
+include_once '../../models/bank_model.php';
+$bank_model = new BankModel();
+
+$banks = $bank_model->GetAllbanks();
 
 $display_banks = [];
 

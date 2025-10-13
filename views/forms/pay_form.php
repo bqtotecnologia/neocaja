@@ -97,17 +97,22 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
                         <option value="mobile_payment">Pago móvil</option>
                         <option value="transfer">Transferencia</option>
                     </select>
-                </div>
+                </div>                
 
                  <div class="row m-0 p-0 col-12 text-center mt-3 d-none justify-content-center" id="payment-method-container">
                     <select class="form-control col-12 col-lg-5" id="payment-method">
                     </select>
                 </div>
 
-                <div class="row m-0 p-0 col-12 text-center my-3 mt-5 d-none justify-content-center" id="payment-method-display">
+                <div class="row m-0 p-0 col-12 text-center mt-5 justify-content-center h2 text-black text-center" id="payment-method-header">
+                </div>
+
+                <div class="row m-0 p-0 col-12 text-center my-3 d-none justify-content-center" id="payment-method-display">
                     <table class="col-lg-5 table text-center h5" id="payment-method-table">                        
                     </table>
                 </div>        
+
+
 
                 <div class="row m-0 p-0 col-12 col-lg-5 my-3 d-none" id="checkout-inputs-container">
                     <div class="row col-12 m-0 p-0 align-items-center my-1">

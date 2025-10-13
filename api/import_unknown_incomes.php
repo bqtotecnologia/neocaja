@@ -23,8 +23,6 @@ if($error === ''){
     }
 }
 
-$response = ['status' => false, 'message' => $post['payments'][0]['description']];
-
 if($error === ''){
     include_once '../models/unknown_incomes_model.php';
     $unknown_model = new UnknownIncomesModel();
@@ -44,13 +42,16 @@ if($error === ''){
         $month   = substr($payment['date'], 2, 2);
         $year  = substr($payment['date'], 4, 4);
 
-        // Validar que sea una fecha válida (por ejemplo, mes entre 1 y 12, día dentro del mes)
-        if (!checkdate((int)$year, (int)$month, (int)$year))
-            $error = 'Se recibió una fecha inválida: ' . $payment['date'];
+        $tentative_date = "$year-$month-$day";
 
+        try {
+            $date = new DateTime($tentative_date, new DateTimeZone('America/Caracas'));
+        } catch (\Throwable $th) {
+            $error = 'Se recibió una fecha inválida: ' . $payment['date'];
+        }
 
         if($error === ''){
-            $post['payment'][$i] = sprintf("%04d-%02d-%02d", $anio, $mes, $dia);
+            $post['payments'][$i]['date'] = $tentative_date;
         }
         else{
             break;
@@ -59,16 +60,29 @@ if($error === ''){
 }
 
 if($error === ''){
-    $inserted = $unknown_model->InsertUnknownIncomes($post['payments']);
+    $inserted = $unknown_model->InsertUnknownIncomes($post['payments'], $target_generation['id']);
+    $response = ['status' => false, 'message' => $error];
+
+    if($inserted === false)
+        $error = 'Ocurrió un error al intentar insertar los ingresos no identificados';
 }
 
 
-$json_data = json_encode($response, JSON_UNESCAPED_UNICODE); // Para que acepte las tildes
-header('Content-Type: application/json');
-echo $json_data;
-exit;
+if($error === ''){
+    $response = [
+        'status' => true,
+        'message' => 'Ingresos no identificados registrados correctamente'
+    ];
 
-// BINNACLE
+    $action = 'Importó ' . count($post['payments']) . ' ingresos no identificados';
+    $unknown_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
+}else{
+    $response = [
+        'status' => false,
+        'message' => $error
+    ];
+}
+
 
 $json_data = json_encode($response, JSON_UNESCAPED_UNICODE); // Para que acepte las tildes
 header('Content-Type: application/json');

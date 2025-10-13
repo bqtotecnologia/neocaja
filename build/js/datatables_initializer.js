@@ -48,6 +48,29 @@ $('.datatable-date-2').DataTable({
     
 }); 
 
+$('.datatable-date-2-datetime-5').DataTable({    
+    language: spanish,
+    dom: "Blfrtip",
+        buttons: [
+            {
+                extend: "excel",
+                className: "btn-sm"
+            },
+        ],
+    columnDefs: [
+      {
+        targets: [5],
+        render: $.fn.dataTable.render.moment('YYYY-MM-DD HH:mm:ss', 'DD/MM/YYYY HH:mm:ss')
+      },
+      {
+        targets: [2],
+        render: $.fn.dataTable.render.moment('YYYY-MM-DD', 'DD/MM/YYYY')
+      }
+    ],
+    responsive: true
+    
+}); 
+
 $('.datatable-date-3').DataTable({    
     language: spanish,
     dom: "Blfrtip",

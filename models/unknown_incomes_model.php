@@ -3,6 +3,23 @@ include_once 'SQL_model.php';
 
 class UnknownIncomesModel extends SQLModel
 { 
+    public $SELECT_TEMPLATE = "SELECT
+        unknown_incomes_generations.id as generation,
+        unknown_incomes_generations.created_at,
+        unknown_incomes.id,
+        unknown_incomes.date,
+        unknown_incomes.price,
+        unknown_incomes.ref,
+        unknown_incomes.description,
+        accounts.names,
+        accounts.surnames,
+        accounts.cedula,
+        accounts.id as account_id
+        FROM 
+        unknown_incomes_generations 
+        INNER JOIN unknown_incomes ON unknown_incomes.generation = unknown_incomes_generations.id
+        LEFT JOIN accounts ON accounts.id = unknown_incomes.account
+        ";
     /**
      * Crea una generación de ingresos no identificados y retorna el registro creado
      */
@@ -26,18 +43,37 @@ class UnknownIncomesModel extends SQLModel
     /**
      * Inserta en la base de datos los ingresos no identificados dados
      */
-    public function InsertUnknownIncomes($payments){
-        $sql = "INSERT INTO unknown_incomes (date, price, ref, description) VALUES ";
-        foreach($payments as $payment){
+    public function InsertUnknownIncomes($payments, $generation){
+        $sql = "INSERT INTO unknown_incomes (date, price, ref, description, generation) VALUES ";
+
+
+        foreach($payments as $payment){           
             $date = $payment['date'];
             $ref = $payment['ref'];
             $description = $payment['description'];
             $price = $payment['price'];
-            $sql .= "('$date', '$price', '$ref', '$description'), ";            
+            $sql .= "('$date', '$price', '$ref', '$description', $generation), ";            
         }
 
-        $sql = trim($sql, ', ');
-        return parent::DoQuery($sql);
+        $sql = trim($sql, ', ');    
+        
+        
+        return parent::DoQuery($sql);                  
+    }
+
+    public function GetUnknownIncome($id){
+        return parent::GetRow($this->SELECT_TEMPLATE . " WHERE unknown_incomes.id = $id");
+    }
+
+    public function GetUnknownIncomesByDate($date, $identified = false){
+        $sql = $this->SELECT_TEMPLATE . " WHERE DATE(unknown_incomes.date) = '$date'";
+
+        if($identified)
+            $sql .= ' AND unknown_incomes.account IS NOT NULL';
+        else
+            $sql .= ' AND unknown_incomes.account IS NULL';
+
+        return parent::GetRows($sql, true);
     }
 
     public function DeleteIncomesGeneration($id){

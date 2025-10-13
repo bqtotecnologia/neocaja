@@ -124,4 +124,11 @@ $formBuilder = new FormBuilder(
     </div>
 </div>
 
+<?php if($edit) { ?>
+    <script>
+        document.getElementById('name').readOnly = true
+    </script>
+<?php } ?>
+
+
 <?php include_once '../common/footer.php'; ?>

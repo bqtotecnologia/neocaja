@@ -20,7 +20,7 @@
                 <td class="">
                     <div class="row justify-content-around">
                         <div class="col-3 text-center">
-                            <a href="<?= $base_url ?>/views/forms/payment_method_type_form.php?id=<?= $payment_method_type['id'] ?>" class="btn btn-success" title="Editar">
+                            <a href="<?= $base_url ?>/views/forms/payment_method_form.php?id=<?= $payment_method_type['id'] ?>" class="btn btn-success" title="Editar">
                                 <i class="fa fa-pencil"></i>
                             </a>
                         </div>                      

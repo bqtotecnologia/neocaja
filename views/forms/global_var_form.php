@@ -75,7 +75,7 @@ $formBuilder = new FormBuilder(
 
 <div class="row justify-content-center">
     <div class="col-12 row justify-content-center x_panel">
-        <?php $btn_url = '../tables/search_global_vars.php'; include_once '../layouts/backButton.php'; ?>
+        <?php $btn_url = '../tables/search_global_var.php'; include_once '../layouts/backButton.php'; ?>
     </div>
     
     <div class="col-12 justify-content-center px-5 mt-4">            

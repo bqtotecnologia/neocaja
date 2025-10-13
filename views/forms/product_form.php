@@ -96,4 +96,13 @@ $formBuilder = new FormBuilder(
     </div>
 </div>
 
+
+<script>
+    const nameInput = document.getElementById('name')
+    if(nameInput.value !== ''){
+        if(nameInput.value.includes('Mensualidad'))
+            nameInput.readOnly = true
+    }
+</script>
+
 <?php include_once '../common/footer.php'; ?>

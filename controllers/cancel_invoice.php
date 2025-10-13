@@ -35,7 +35,7 @@ if($error === ''){
 
 if($error === ''){
     $action = 'Anuló la factura Nº ' . $target_invoice['invoice_number'];
-    $invoice_model->CreateBinnacle($_SESSION['neocaja_id'], '');
+    $invoice_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
 }
 
 if($error === ''){

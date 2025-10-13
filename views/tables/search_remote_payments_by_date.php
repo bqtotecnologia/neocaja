@@ -39,7 +39,7 @@ include '../../views/common/header.php';
         <form class="col-12 row justify-content-center x_panel" method="POST" action="<?= $base_url ?>/views/tables/search_remote_payments_by_date.php">
             <div class="row col-12 m-0 p-0 my-2">
                 <div class="col-3 col-md-5 text-right align-middle d-flex align-items-center justify-content-end p-0">
-                    <label class="fw-bold h6" for="fecha_nacimiento">
+                    <label class="fw-bold h6" for="date">
                         Fecha:
                     </label>
                 </div>

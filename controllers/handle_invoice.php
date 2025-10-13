@@ -416,8 +416,6 @@ if($error === ''){
 if($error === ''){
     // Agregamos los conceptos de la factura
     foreach($payment_methods as $payment_method){
-        var_dump($payment_method);
-        echo '<br>';
         $created = $invoice_model->AddPaymentMethodToInvoice($payment_method, strval($target_invoice['id']));
         if($created === false){
             $error = 'Ocurrió un error al intentar agregar el método de pago de monto ' . $payment_method['price'];
@@ -431,7 +429,7 @@ if($error === ''){
     $action = "Creó la factura Nº $invoice_number, Numero de control: $control_number. Al cliente " . $target_account['names'] . ' ' . $target_account['surnames'] . ' de cédula ' . $target_account['cedula'];
     $invoice_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
     $message = 'Factura creada correctamente';
-    $redirect = $base_url . '/views/panel.php?message=' . $message;
+    $redirect = $base_url . '/views/detailers/invoice_details.php?id=' . $target_invoice['id'] . '&message=' . $message;
 }
 else{
     if(isset($target_invoice)){

@@ -74,6 +74,12 @@
             }
         })
 
+        const fieldTranslate = {
+            'mobile_payment': 'l Pago móvil',
+            'transfer': ' la Transferencia'
+        }
+
+        methodHeader.innerHTML = 'Datos de' + fieldTranslate[methodType]
         BuildPaymentMethodSelected(targetPayment)                
     }
 
@@ -112,10 +118,12 @@
     }
 
     function ShowPaymentData(){
+        methodHeader.classList.remove('d-none')
         methodDataContainer.classList.remove('d-none')
     }
 
     function HidePaymentData(){
+        methodHeader.classList.add('d-none')
         methodDataContainer.classList.add('d-none')
     }
 

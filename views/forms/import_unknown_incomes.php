@@ -85,9 +85,9 @@ include_once '../common/header.php';
             const rows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
 
             const result = rows.map(row => ({
-                    date: row['FECHA'] || row['Fecha'] || row['fecha'] || '',
+                    date: String(row['FECHA']) || String(row['Fecha']) || String(row['fecha']) || '',
                     price: row['MONTO BS.'] || row['Monto Bs.'] || row['monto bs.'] || '',
-                    ref: row['REFERENCIA'] || row['Referencia'] || row['referencia'] || '',
+                    ref: String(row['REFERENCIA']) || String(row['Referencia']) || String(row['referencia']) || '',
                     description: row['DESCRIPCIÓN'] || row['Descripción'] || row['descripción'] || row['DESCRIPCION'] || row['Descripcion'] || row['descripcion'] || '',
             }));
 
@@ -182,8 +182,8 @@ include_once '../common/header.php';
         result = await TryFetch(url, fetchConfig)
 
         if(result.status === true){
-            url = '<?= $base_url ?>/views/panel.php?message=' + result.message
-            window.location.href = url
+            var redirect = '<?= $base_url ?>/views/panel.php?message=' + result.message
+            window.location.href = redirect
         }
     }
 

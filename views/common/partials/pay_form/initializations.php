@@ -18,6 +18,7 @@
     const methodSelect = document.getElementById('payment-method')
     const methodDataContainer = document.getElementById('payment-method-display')
     const methodDataTable = document.getElementById('payment-method-table')
+    const methodHeader = document.getElementById('payment-method-header')
 
     const cedulaInput = document.getElementById('cedula')
     const priceInput = document.getElementById('price')
