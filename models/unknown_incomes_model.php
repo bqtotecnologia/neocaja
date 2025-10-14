@@ -3,7 +3,7 @@ include_once 'SQL_model.php';
 
 class UnknownIncomesModel extends SQLModel
 { 
-    public $SELECT_TEMPLATE = "SELECT
+    public $INCOME_SELECT_TEMPLATE = "SELECT
         unknown_incomes_generations.id as generation,
         unknown_incomes_generations.created_at,
         unknown_incomes.id,
@@ -18,8 +18,15 @@ class UnknownIncomesModel extends SQLModel
         FROM 
         unknown_incomes_generations 
         INNER JOIN unknown_incomes ON unknown_incomes.generation = unknown_incomes_generations.id
-        LEFT JOIN accounts ON accounts.id = unknown_incomes.account
-        ";
+        LEFT JOIN accounts ON accounts.id = unknown_incomes.account ";
+
+    public $GENERATION_SELECT_TEMPLATE = "SELECT
+        unknown_incomes_generations.id,
+        unknown_incomes_generations.created_at,
+        COUNT(unknown_incomes.id) as created
+        FROM
+        unknown_incomes_generations
+        INNER JOIN unknown_incomes ON unknown_incomes.generation = unknown_incomes_generations.id ";
     /**
      * Crea una generación de ingresos no identificados y retorna el registro creado
      */
@@ -61,12 +68,38 @@ class UnknownIncomesModel extends SQLModel
         return parent::DoQuery($sql);                  
     }
 
+    public function GetUnknownIncomesByDateAndReference($date, $ref){
+        $sql = $this->INCOME_SELECT_TEMPLATE . " WHERE DATE(unknown_incomes.date) = DATE('$date') AND unknown_incomes.ref LIKE '%$ref%'";
+        return parent::GetRows($sql, true);
+    }
+
+    public function GetUnknownIncomesGeneration($id){
+        return parent::GetRow($this->GENERATION_SELECT_TEMPLATE . " WHERE unknown_incomes_generations.id = $id");
+    }
+
+    public function GetUnknownIncomesGenerations(){
+        $sql = $this->GENERATION_SELECT_TEMPLATE . " ORDER BY unknown_incomes_generations.created_at DESC";
+        return parent::GetRows($sql);
+    }
+
+    public function GetUnknownIncomesOfGeneration($id){
+        return parent::GetRows($this->INCOME_SELECT_TEMPLATE . " WHERE unknown_incomes_generations.id = $id");
+    }
+
     public function GetUnknownIncome($id){
-        return parent::GetRow($this->SELECT_TEMPLATE . " WHERE unknown_incomes.id = $id");
+        return parent::GetRow($this->INCOME_SELECT_TEMPLATE . " WHERE unknown_incomes.id = $id");
+    }
+
+    public function GetIdentifiedIncomesBetweenDates($start_date, $end_date){
+        $sql = $this->INCOME_SELECT_TEMPLATE . " WHERE 
+            unknown_incomes.date BETWEEN '$start_date' AND '$end_date' AND
+            unknown_incomes.account IS NOT NULL";
+
+        return parent::GetRows($sql);
     }
 
     public function GetUnknownIncomesByDate($date, $identified = false){
-        $sql = $this->SELECT_TEMPLATE . " WHERE DATE(unknown_incomes.date) = '$date'";
+        $sql = $this->INCOME_SELECT_TEMPLATE . " WHERE DATE(unknown_incomes.date) = '$date'";
 
         if($identified)
             $sql .= ' AND unknown_incomes.account IS NOT NULL';

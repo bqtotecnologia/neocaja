@@ -191,7 +191,8 @@ if($error === ''){
     include_once '../models/account_payments_model.php';
     $payments_model = new AccountPaymentsModel();
     $insertData = [
-        'account' => $target_account['id'],
+        'related_id' => $target_account['id'],
+        'related_with' => 'client',
         'payment_method_type' => $post['payment_method_type'],
         'payment_method' => $post['payment_method'],
         'price' => $post['price'],

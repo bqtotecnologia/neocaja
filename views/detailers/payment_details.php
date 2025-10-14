@@ -16,11 +16,13 @@ include_once '../../models/account_payments_model.php';
 include_once '../../models/account_model.php';
 include_once '../../models/product_model.php';
 include_once '../../models/coin_model.php';
+include_once '../../models/unknown_incomes_model.php';
 
 $payment_model = new AccountPaymentsModel();
 $account_model = new AccountModel();
 $siacad = new ProductModel();
 $coin_model = new CoinModel();
+$unknown_model = new UnknownIncomesModel();
 
 $target_payment = $payment_model->GetAccountPayment($id);
 if($target_payment === false){
@@ -45,7 +47,7 @@ $target_account = $account_model->GetAccount($target_payment['account_id']);
 $payment_method = $payment_model->GetPaymentMethodOfPayment($target_payment);
 $products = $payment_model->GetProductsOfPayment($id);
 $coinValues = $coin_model->GetCoinValuesOfDate(date('Y-m-d', strtotime($target_payment['created_at'])));
-
+$coincidences = $unknown_model->GetUnknownIncomesByDateAndReference($target_payment['created_at'], $target_payment['ref']);
 include '../../views/common/header.php';
 
 ?>
@@ -57,7 +59,7 @@ include '../../views/common/header.php';
         if($_SESSION['neocaja_rol'] === 'Estudiante')
             $btn_url = $base_url . '/views/tables/my_payments.php'; 
         else
-            $btn_url = $base_url . '/views/panel.php'; 
+            $btn_url = $base_url . '/views/tables/search_remote_payments.php?state=' . $target_payment['state']; 
         include_once '../layouts/backButton.php'; 
         ?>
     </div>
@@ -212,52 +214,124 @@ include '../../views/common/header.php';
     </div>
 
     <?php if($_SESSION['neocaja_rol'] !== 'Estudiante') { ?>
-        <section class="col-10 col-lg-6 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
-            <form class="row col-12 justify-content-center my-5 confirm-form" method="POST" action="<?=$base_url?>/controllers/update_account_payment.php">
-                <input type="hidden" name="id" value="<?= $target_payment['id'] ?>">
-                <div class="row col-10 justify-content-center align-items-center my-2">
-                    <label class="fw-bold col-12 col-lg-4 text-right m-0 align-middle" for="state">
-                        Actualiar estado a:
-                    </label>
-                    <select class="form-control col-6" name="state" id="state" required onchange="DispalyDefaultResponse(this)">
-                        <option value=""></option>
-                        <option value="Aprobado">Aprobado</option>
-                        <option value="Rechazado">Rechazado</option>
-                    </select>
+        <form class="col-12 row m-0 p-0" method="POST" action="<?=$base_url?>/controllers/update_account_payment.php">
+            <section class="col-10 col-lg-6 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
+                <div class="row col-12 justify-content-center my-5 confirm-form" >
+                    <input type="hidden" name="id" value="<?= $target_payment['id'] ?>">
+                    <div class="row col-10 justify-content-center align-items-center my-2">
+                        <label class="fw-bold col-12 col-lg-4 text-right m-0 align-middle" for="state">
+                            Actualizar estado a:
+                        </label>
+                        <select class="form-control col-6" name="state" id="state" required onchange="DispalyDefaultResponse(this)">
+                            <option value=""></option>
+                            <option value="Aprobado">Aprobado</option>
+                            <option value="Rechazado">Rechazado</option>
+                        </select>
+                    </div>
+    
+                    <div class="row col-10 justify-content-start align-items-start my-2">
+                        <label class="fw-bold mx-2" for="response">
+                            Respuesta:
+                        </label>
+                        <textarea class="col-12 form-control" name="response" id="response" required></textarea>
+                    </div>
+    
+                    <div class="row col-10 justify-content-start align-items-start my-2">
+                        <button class="btn btn-success mx-auto">
+                            Procesar pago
+                        </button>
+                    </div>
                 </div>
-
-                <div class="row col-10 justify-content-start align-items-start my-2">
-                    <label class="fw-bold mx-2" for="response">
-                        Respuesta:
-                    </label>
-                    <textarea class="col-12 form-control" name="response" id="response" required></textarea>
+            </section>
+    
+            <section class="col-10 col-lg-6 row justify-content-center align-items-start h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
+                <div class="col-12 row m-0 p-0 justify-content-center mt-3">
+                    <h3>Coincidencias por fecha y referencia</h3>
                 </div>
-
-                <div class="row col-10 justify-content-start align-items-start my-2">
-                    <button class="btn btn-success mx-auto">
-                        Procesar pago
-                    </button>
+                <div class="col-12 row m-0 p-0 justify-content-center" id="unknown_incomes_container">
+                    <?php if($coincidences === []) { ?>
+                        <h3 class="col-12 text-center text-danger">No se encontraron coincidencias</h3>
+                    <?php } else { ?>
+                        <div class="col-12 row m-0 p-0 mt-3 justify-content-center">
+                            <table class="table table-bordered shadowed">
+                                <tr>
+                                    <td class="bg-theme text-white fw-bold align-middle col-3">
+                                        <label class="m-0 p-0" style="padding-right:10px !important" for="no-coincidance">Sin coincidencias</label>
+                                    </td>
+                                    <td>
+                                        <input class="flat" type="radio" name="unknown-income" id="no-coincidance" value="0" checked>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <?php foreach($coincidences as $coincidence) { ?>
+                            <div class="col-12 row m-0 p-0 my-2">
+                                <table class="table table-bordered shadowed">
+                                    <tr>
+                                        <td class="bg-theme text-white fw-bold align-middle col-3">Referencia</td>
+                                        <td><?= $coincidence['ref'] ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-theme text-white fw-bold align-middle col-3">Fecha</td>
+                                        <td><?= date('d/m/Y', strtotime($coincidence['date'])) ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-theme text-white fw-bold align-middle col-3">Monto</td>
+                                        <td><?= GetPrettyCiphers($coincidence['price']) ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-theme text-white fw-bold align-middle col-3">Propietario</td>
+                                        <td>
+                                            <?php 
+                                            if($coincidence['account_id'] === null){
+                                                echo 'Sin identificar';
+                                            }
+                                            else{
+                                                echo $coincidence['surnames'] . ' ' . $coincidence['names'] . ' (' . $coincidence['cedula'] .  ')';
+                                            }
+                                            ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-theme text-white fw-bold align-middle col-3">Descripción</td>
+                                        <td><?= $coincidence['description'] ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bg-theme text-white fw-bold align-middle col-3">
+                                            <label class="m-0 p-0" style="padding-right:10px !important" for="r-<?= $coincidence['id'] ?>">Seleccionar</label>
+                                        </td>
+                                        <td>
+                                            <input class="flat" type="radio" name="unknown-income" id="r-<?= $coincidence['id'] ?>" value="<?= $coincidence['id'] ?>" <?= $coincidence['account_id'] === $target_payment['account_id'] ? 'checked' : '' ?>>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        <?php } ?>
+                    <?php } ?>
                 </div>
-            </form>
-        </section>
+            </section>
+        </form>
     <?php } ?>
 </div>
 
 
 <?php include '../common/footer.php'; ?>
-<script>
-    document.getElementById('price').innerHTML = 'Bs. ' + GetPrettyCiphers('<?= $target_payment['price'] ?>')
 
-    function DispalyDefaultResponse(select){
-        const value = select.value
-        const textarea = document.getElementById('response')
+<?php if($_SESSION['neocaja_rol'] !== 'Estudiante') { ?>    
+    <script>
+        document.getElementById('price').innerHTML = 'Bs. ' + GetPrettyCiphers('<?= $target_payment['price'] ?>')
 
-        textarea.value = ''
-        if(select.value === '')
-            return
+        function DispalyDefaultResponse(select){
+            const value = select.value
+            const textarea = document.getElementById('response')
 
-        
-        if(select.value === 'Aprobado')
-            textarea.value = 'Pago verificado exitosamente. Acuda al instituto para retirar su factura.'
-    }
-</script>
+            textarea.value = ''
+            if(select.value === '')
+                return
+
+            
+            if(select.value === 'Aprobado')
+                textarea.value = 'Pago verificado exitosamente. Acuda al instituto para retirar su factura.'
+        }
+    </script>
+<?php } ?>

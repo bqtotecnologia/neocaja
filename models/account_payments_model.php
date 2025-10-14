@@ -4,9 +4,11 @@ include_once 'SQL_model.php';
 class AccountPaymentsModel extends SQLModel
 { 
     public $SELECT_TEMPLATE = "SELECT
-        CONCAT(accounts.surnames, ' ', accounts.names) as fullname,
-        accounts.cedula,
-        accounts.id as account_id,
+        polymorph.fullname,
+        polymorph.cedula,
+        polymorph.account_id,
+        polymorph.invoice_id,
+        polymorph.invoice_number,
         account_payments.id,
         account_payments.payment_method_type,
         account_payments.payment_method,
@@ -18,7 +20,24 @@ class AccountPaymentsModel extends SQLModel
         account_payments.created_at
         FROM
         account_payments
-        INNER JOIN accounts ON accounts.id = account_payments.account";
+        INNER JOIN 
+        (
+            SELECT 
+            CONCAT(accounts.surnames, ' ', accounts.names) as fullname,
+            accounts.cedula,
+            accounts.id as account_id,
+            invoices.id as invoice_id,
+            invoices.invoice_number
+            FROM
+            accounts
+            LEFT JOIN invoices ON invoices.account = accounts.id
+        )
+        as polymorph ON
+        (polymorph.account_id = account_payments.related_id AND account_payments.related_with = 'client') 
+        OR
+        (polymorph.invoice_id = account_payments.related_id AND account_payments.related_with = 'invoice') 
+        -- Here yo need to place GROUP BY account_payments.id before writting a WHERE statement
+        ";
 
     public function CreatePayment($data){        
         $created = parent::SimpleInsert('account_payments', $data);
@@ -33,7 +52,7 @@ class AccountPaymentsModel extends SQLModel
     }
 
     public function GetAccountPayment($id){
-        $sql = $this->SELECT_TEMPLATE . " WHERE account_payments.id = $id";
+        $sql = $this->SELECT_TEMPLATE . " WHERE account_payments.id = $id GROUP BY account_payments.id";
         return parent::GetRow($sql);
     }
 
@@ -75,17 +94,17 @@ class AccountPaymentsModel extends SQLModel
     }    
 
     public function GetPaymentsOfAccount($cedula){
-        $sql = $this->SELECT_TEMPLATE . " WHERE accounts.cedula = '$cedula'";
+        $sql = $this->SELECT_TEMPLATE . " WHERE polymorph.cedula = '$cedula' GROUP BY account_payments.id";
         return parent::GetRows($sql, true);
     }
 
     public function GetPaymentsOfState($state){
-        $sql = $this->SELECT_TEMPLATE . " WHERE account_payments.state = '$state'";
+        $sql = $this->SELECT_TEMPLATE . " WHERE account_payments.state = '$state' GROUP BY account_payments.id";
         return parent::GetRows($sql, true);
     }
 
     public function GetPaymentsOfDate($date){
-        $sql = $this->SELECT_TEMPLATE . " WHERE DATE(account_payments.created_at) = '$date'";
+        $sql = $this->SELECT_TEMPLATE . " WHERE DATE(account_payments.created_at) = '$date' GROUP BY account_payments.id";
         return parent::GetRows($sql, true);
     }
 
@@ -98,7 +117,7 @@ class AccountPaymentsModel extends SQLModel
     }
 
     /**
-     * Borra un pago realizado por un estudiante, solo se ejecuta cuando tras crearlo, ocurre un error al insertar los productos
+     * Borra un pago realizado por un estudiante, solo se ejecuta cuando ocurre un error en la creación
      */
     public function DeletePayment($id){
         return parent::DoQuery("DELETE FROM account_payments WHERE id = $id");

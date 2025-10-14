@@ -36,7 +36,21 @@ if($error === ''){
     $target_payment = $payments_model->GetAccountPayment($id);
     if($target_payment === false)
         $error = 'Pago no encontrado';
+}
 
+if($error === '' && $_POST['unknown-income'] !== "0"){
+    $income_id = Validator::ValidateRecievedId('unknown-income', 'POST');
+    if(is_string($id))
+        $error = $income_id;
+}
+
+if($error === '' && isset($income_id)){
+    include_once '../models/unknown_incomes_model.php';
+    $unknown_model = new UnknownIncomesModel();
+
+    $target_income = $unknown_model->GetUnknownIncome($income_id);
+    if($target_income === false)
+        $error = 'El ingreso no identificado seleccionado no pudo ser encontrado';
 }
 
 if($error === ''){
@@ -48,7 +62,13 @@ if($error === ''){
     $updated = $payments_model->ProcessPayment($id, $data);
     if($updated === false)
         $error = 'Hubo un error al intentar actualizar el estado del pago';
-    
+}
+
+if($error === '' && isset($income_id)){
+    if($_POST['state'] === 'Aprobado'){
+        $data = ['account' => $target_payment['account_id']];
+        $unknown_model->SimpleUpdate('unknown_incomes', $data, $target_income['id']);
+    }
 }
 
 if($error === ''){
@@ -70,7 +90,7 @@ if($error === ''){
 }
 
 if($error === ''){    
-    header("Location: $base_url/views/detailers/payment_details.php?message=$message&id=" . $target_payment['id']);
+    header("Location: $base_url/views/detailers/payment_details.php?message=Pago remoto actualizado correctamente&id=" . $target_payment['id']);
 }
 else{
     if($target_payment === false)

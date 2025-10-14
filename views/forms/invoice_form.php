@@ -25,12 +25,13 @@ include_once '../../models/product_model.php';
 include_once '../../models/siacad_model.php';
 include_once '../../models/invoice_model.php';
 include_once '../../models/global_vars_model.php';
+include_once '../../models/unknown_incomes_model.php';
 
 $account_model = new AccountModel();
 $bank_model = new BankModel();
 $sale_point_model = new SalePointModel();
 $payment_method_model = new PaymentMethodModel();
-
+$unknown_model = new UnknownIncomesModel();
 $product_model = new ProductModel();
 $siacad = new SiacadModel();
 $invoice_model = new InvoiceModel();
@@ -47,6 +48,7 @@ $global_vars = $global_vars_model->GetGlobalVars(true);
 
 $period = $siacad->GetCurrentPeriodo();
 $periodId = $period['idperiodo'];
+$incomes = $unknown_model->GetIdentifiedIncomesBetweenDates($period['fechainicio'], $period['fechafin']);
 
 $latest = $invoice_model->GetLatestNumbers();
 
@@ -150,68 +152,98 @@ $latest = $invoice_model->GetLatestNumbers();
             </div>
 
             <div class="x_panel row col-12 m-0 p-0 justify-content-center align-items-center pt-2">              
-                <div class="row col-12 col-md-6 my-2 justify-content-start">
-                    <div class="row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-3">
-                        <label class="h6 m-0 fw-bold px-2" for="account">Cliente</label>
-                    </div>
-                    <div class=" row col-12 col-md-9 m-0 p-0 justify-content-center justify-content-md-start ">
-                        <div class="row m-0 p-0 col-12 col-md-10">
-                            <select id="account" name="account" class="form-control col-10 col-md-8 select2" required>
-                                <option value="">&nbsp;</option>
-                                <?php foreach($accounts as $account) { ?>
-                                    <option value="<?= $account['id'] ?>">
-                                        <?= '(' . $account['cedula'] . ') ' . $account['names'] . ' ' . $account['surnames'] ?>
-                                    </option>
-                                <?php } ?>
-                            </select>
+                <div class="row col-12 my-2 justify-content-start">
+                    <div class="row m-0 p-0 col-6 justify-content-center align-items-center">
+                        <div class="row col-12 justify-content-center align-items-center">
+                            <div class="row m-0 h-100 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-3">
+                                <label class="h6 m-0 fw-bold px-2 my-auto" for="account">Cliente</label>
+                            </div>
+
+                            <div class="row m-0 p-0 col-12 col-md-8">
+                                <select id="account" name="account" class="form-control col-10 col-md-8 select2" required>
+                                    <option value="">&nbsp;</option>
+                                    <?php foreach($accounts as $account) { ?>
+                                        <option value="<?= $account['id'] ?>">
+                                            <?= '(' . $account['cedula'] . ') ' . $account['names'] . ' ' . $account['surnames'] ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+
                         </div>
+                        <div class=" row col-12 col-md-9 m-0 p-0 justify-content-center justify-content-md-start ">                           
+                            <div class="row m-0 p-0 col-12 justify-content-center my-2">
+                                <a class="d-none" href="<?= $base_url . '/views/detailers/client_details.php?id=' ?>" target="_blank" id="account-link">
+                                    <button class="btn btn-info" type="button">
+                                        Ver cliente
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
-                    </div>
-                    <div class="row m-0 p-0 col-12 justify-content-center my-2">
-                        <a class="d-none" href="<?= $base_url . '/views/detailers/client_details.php?id=' ?>" target="_blank" id="account-link">
-                            <button class="btn btn-info" type="button">
-                                Ver cliente
-                            </button>
-                        </a>
-                    </div>
-                    <div class="row m-0 p-0 col-12 justify-content-center my-2 d-none" id="debt-container">
-                        <table class="col-10 table table-bordered border border-black text-center h4">
-                            <thead>
-                                <tr class="bg-theme text-white fw-bold">
-                                    <th>Deuda</th>
-                                    <th>Bolívares</th>
-                                    <th>Dólares</th>
-                                </tr>
-                            </thead>
-                            <tbody class="h5" id="debt-table">
-                            </tbody>
-                        </table>
+                    <div class="row m-0 p-0 col-6 justify-content-center align-items-center">
+                        <div class="row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-3">
+                            <label class="h6 m-0 fw-bold px-2 text-right" for="known-incomes">Ingresos identificados</label>
+                        </div>
+                        <div class=" row col-12 col-md-9 m-0 p-0 justify-content-center justify-content-md-start ">
+                            <div class="row m-0 p-0 col-12 col-md-10">
+                                <select id="known-incomes" name="known-incomes" class="form-control col-10 col-md-8 select2">
+                                    <option value="">&nbsp;</option>
+                                    <?php foreach($incomes as $income) { ?>
+                                        <option value="<?= $income['id'] ?>">
+                                            <?= '(' . $income['cedula'] . ') ' . $income['names'] . ' ' . $income['surnames'] ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="row col-12 col-md-6 my-2 justify-content-start">
-                    <div class="row col-12 m-0 p-2 justify-content-center d-none" id="invoices">
-                        <table class="table table-bordered border border-black">
-                            <thead class="text-center bg-theme text-white">
-                                <tr class="h4 m-0">
-                                    <th class="border border-black" colspan="5">Estado de cuenta en este periodo</th>
-                                </tr>
-                                <tr class="h5 m-0">
-                                    <th class="border border-black">Mes</th>
-                                    <th class="border border-black">Pagado</th>
-                                    <th class="border border-black">Moroso</th>
-                                    <th class="border border-black">Abonado</th>
-                                    <th class="border border-black">Ver</th>
-                                </tr>
-                            </thead>
-                            <tbody id="invoice-table">                        
-                            </tbody>
-                        </table>
-                    </div>
 
-                    <div class="row col-12 m-0 p-2 justify-content-center d-none text-success h3" id="scholarship">
+                <div class="row col-12 my-2 justify-content-start">
+                    <div class="row col-12 col-md-6 my-2 justify-content-start">                    
+                        <div class="row m-0 p-0 col-12 justify-content-center my-2 d-none" id="debt-container">
+                            <table class="col-10 table table-bordered border border-black text-center h4">
+                                <thead>
+                                    <tr class="bg-theme text-white fw-bold">
+                                        <th>Deuda</th>
+                                        <th>Bolívares</th>
+                                        <th>Dólares</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="h5" id="debt-table">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+    
+                    <div class="row col-12 col-md-6 my-2 justify-content-start">
+                        <div class="row col-12 m-0 p-2 justify-content-center d-none" id="invoices">
+                            <table class="table table-bordered border border-black">
+                                <thead class="text-center bg-theme text-white">
+                                    <tr class="h4 m-0">
+                                        <th class="border border-black" colspan="5">Estado de cuenta en este periodo</th>
+                                    </tr>
+                                    <tr class="h5 m-0">
+                                        <th class="border border-black">Mes</th>
+                                        <th class="border border-black">Pagado</th>
+                                        <th class="border border-black">Moroso</th>
+                                        <th class="border border-black">Abonado</th>
+                                        <th class="border border-black">Ver</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoice-table">                        
+                                </tbody>
+                            </table>
+                        </div>
+    
+                        <div class="row col-12 m-0 p-2 justify-content-center d-none text-success h3" id="scholarship">
+                        </div>
                     </div>
                 </div>
+
             </div>
 
             <div class="x_panel row col-12 m-0 p-0 justify-content-center align-items-start pt-2 my-2 border-top">
