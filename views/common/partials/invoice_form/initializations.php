@@ -63,6 +63,7 @@
     let partialMonths = []
     let periodMonths = []
     let debtData = ''   
+    let target_payment = ''
     var currentDate = new Date()
     let currentMonth = currentDate.getMonth()
     let lastMonth = currentMonth

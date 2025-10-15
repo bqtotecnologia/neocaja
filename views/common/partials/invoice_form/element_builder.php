@@ -345,7 +345,8 @@
         if(focDebt === true){
             focVES.classList.add('text-success')  
             focVES.colSpan = 2
-            focVES.innerHTML = 'PAGADO'            
+            focVES.innerHTML = 'PAGADO'      
+            focVES.classList.add('align-middle')      
             focRow.appendChild(focVES)
         }
         else{

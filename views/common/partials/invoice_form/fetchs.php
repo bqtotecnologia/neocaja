@@ -35,8 +35,20 @@
         return await TryFetch(url, fetchConfig)
     }
 
-    async function GetDebtOfAccountOfPeriod(account,period){
+    async function GetDebtOfAccountOfPeriod(account, period){
         var url = '<?= $base_url ?>/api/get_account_debt.php?account=' + account + '&period=' + period
+        var fetchConfig = {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+
+        return await TryFetch(url, fetchConfig)
+    }
+
+    async function GetAccountPayment(id){
+        var url = '<?= $base_url ?>/api/get_account_payment.php?id=' + id
         var fetchConfig = {
             method: 'GET', 
             headers: {

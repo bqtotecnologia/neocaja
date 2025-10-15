@@ -1,15 +1,12 @@
-<script>
-    $('#account').on('select2:select', async function (e) {
+<script>    
+    async function AccountSelecting(id){
+        if(id === '')
+            return
+
         ClearInvoices()
-        if(e.target.value !== ''){
-            await AccountSelecting(e)
-        }
-    });
-    
-    async function AccountSelecting(e){
         CleanProducts()
         var error = false
-        targetAccount = await GetAccountData(e.target.value)
+        targetAccount = await GetAccountData(id)
         if(targetAccount.status !== false){
             targetAccount = targetAccount.data
             scholarshipped = !(targetAccount['scholarship_coverage'] === null && targetAccount['scholarship_coverage'] === null)
@@ -24,18 +21,110 @@
             accountButton.classList.remove('d-none')
             accountButton.href  = '<?= $base_url ?>' + '/views/detailers/account_details.php?id=' + targetAccount.id
 
-            var accountMonths = await GetAccountState(e.target.value, '<?= $periodId ?>')
+            var accountMonths = await GetAccountState(id, '<?= $periodId ?>')
             invoiceTable.innerHTML = ''
-            await DisplayDebt(e.target.value, '<?= $periodId ?>')
+            await DisplayDebt(id, '<?= $periodId ?>')
             await DisplayInvoices(accountMonths.data)
 
             ShowScholarship()
             //AddProduct()
-            DisplayDefaultProduct()        
-            if(typeof debtData !== "string"){
-                //UpdateDefaultProducts(debtData.data)
-            }
+            DisplayDefaultProduct()
             UpdateProductsPrice()
         }
     }    
+
+    async function PaymentSelecting(select){
+        target_payment = ''
+        var found = await GetAccountPayment(select.value)
+        if(found.status === false)
+            return
+
+        target_payment = found.data
+        $('#account').val(target_payment.payment.account_id).trigger('change')
+
+        await new Promise(r => setTimeout(r, 500))
+        CleanProducts()
+        UpdateProductsPrice()
+        
+        // Colocando los productos de la compra
+        target_payment.products.forEach((product) => {
+            AddProduct()
+            var productName = product.product
+            var productPrice = product.price
+            var monthNumber = ''
+            if(product.product.includes('Mensualidad')){
+                var month = ''
+                for(let key in monthNumberToName){
+                    var currentMonth = monthNumberToName[key]
+                    if(product.product.includes(currentMonth)){
+                        month = currentMonth
+                    }
+                }
+                var monthNumber = GetMonthNumberByName(month)
+                
+                if(product.product.includes('con mora')){
+                    ChangeProduct(nextProduct - 1, productIds['Diferencia Mensualidad']) 
+                    ChangeMonth(nextProduct - 1, monthNumber)
+                    ChangeProductPrice(nextProduct - 1, debtData.data.retard.detail[month])
+                    AddProduct()
+
+                    if(product.product.includes('Restante'))
+                        productName = 'Saldo Mensualidad'
+                        else
+                    productName = 'Mensualidad'
+                }
+                else if(product.product.includes('Restante')){
+                    ChangeProduct(nextProduct - 1, productIds['Saldo Mensualidad']) 
+                    ChangeMonth(nextProduct - 1, monthNumber)
+                    ChangeProductPrice(nextProduct - 1, debtData.data.months.detail[month])
+                    AddProduct()
+                }
+                else if(product.product === 'Mensualidad ' + month){
+                    productName = 'Mensualidad'
+                }
+                
+                productPrice = debtData.data.months.detail[month]
+            }                
+
+            console.log(monthNumber)
+            if(monthNumber !== '')
+                ChangeMonth(nextProduct - 1, monthNumber)
+
+            ChangeProduct(nextProduct - 1, productIds[productName])
+            ChangeProductPrice(nextProduct - 1, productPrice)
+        })
+
+        UpdateProductsPrice()
+
+        // Colocando el método de pago
+        var target_payment_method = ''
+        if(target_payment.payment.payment_method_type === 'mobile_payment')
+            target_payment_method = 'Pago móvil'
+        else if(target_payment.payment.payment_method_type === 'transfer')
+            target_payment_method = 'Transferencia'
+
+        payment_methods.forEach((method) => {
+            if(method.name === target_payment_method)
+                target_payment_method = method.id
+        })
+
+        ChangePaymentMethod(nextPaymentMethod - 1, target_payment_method)
+
+        // Colocando la moneda
+        var target_coin = 'Bolívar'
+
+        coins.forEach((method) => {
+            if(method.name === target_payment_method)
+                target_payment_method = method.id
+        })
+
+        ChangeCoin(nextPaymentMethod - 1, target_coin)
+
+        ChangeSalePoint(nextPaymentMethod - 1, '')
+        ChangeBank(nextPaymentMethod - 1, bankId)
+        
+        ChangeDocumentNumber(nextPaymentMethod - 1, target_payment.ref)
+        ChangePrice(nextPaymentMethod - 1, target_payment.price)
+    }
+
 </script>

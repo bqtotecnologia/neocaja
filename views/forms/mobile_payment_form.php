@@ -33,13 +33,17 @@ foreach($rif_letters as $letter){
     ]);
 }
 
-include_once '../../utils/banks.php';
+include_once '../../models/bank_model.php';
+$bank_model = new BankModel();
+$banks = $bank_model->GetActivebanks();
+
+
 $display_banks = [];
 foreach($banks as $bank){
     array_push($display_banks,
     [
-        'display' => $bank,
-        'value' => $bank
+        'display' => $bank['name'],
+        'value' => $bank['id']
     ]);
 }
 

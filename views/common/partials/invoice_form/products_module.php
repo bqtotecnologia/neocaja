@@ -1,20 +1,4 @@
 <script>
-    function UpdateDefaultProducts(debt){
-        var firstProduct = document.getElementById('product-baseprice-1')
-        var secondProduct = document.getElementById('product-baseprice-2')
-
-        if(debt.months > 0) // No ha pagado el mes            
-            firstProduct.value = debt.months
-        
-        if(debt.retard > 0) // Tiene mora
-            secondProduct.value = debt.retard
-
-        if(debt.months > 0){
-            // Aún debe el mes pero no tiene mora
-            firstProduct.value = debt.months
-        }
-    }
-
     function AddProduct(){
         BuildProductRow()
         $(".select2").select2({width:'100%'});
@@ -124,9 +108,6 @@
     }
 
     function DisplayDefaultProduct(){      
-        //if(nextProduct !== 2)
-            //return
-
         var prcice = 0
         if(debtData.data.foc === false){
             AddProduct()
@@ -151,13 +132,13 @@
                 if(Object.keys(debtData.data.retard.detail).includes(pmonth)){
                     var retardPrice = debtData.data.retard.detail[pmonth]
                     AddProduct()
-                    ChangeMonth(monthNumber, nextProduct - 1)
+                    ChangeMonth(nextProduct - 1, monthNumber)
                     ChangeProduct(nextProduct - 1, productIds['Diferencia Mensualidad'])    
                     ChangeProductPrice(nextProduct - 1, retardPrice)
                 }
 
                 AddProduct()
-                ChangeMonth(monthNumber, nextProduct - 1)
+                ChangeMonth(nextProduct - 1, monthNumber)
                 if(partialMonths.includes(pmonth)){
                     ChangeProduct(nextProduct - 1, productIds['Saldo Mensualidad'])                    
                 }
@@ -171,8 +152,8 @@
         //UpdateProductsPrice(true)
     }
 
-    function ChangeMonth(month, id){      
-        $('#product-month-' + (nextProduct - 1)).val(String(month)) 
+    function ChangeMonth(position, month){      
+        $('#product-month-' + position).val(String(month)) 
     }
 
     function ChangeProduct(position, productId){
@@ -184,18 +165,20 @@
         input.value = price
     }
 
-    function CleanProducts(){
+    function CleanProducts(cleanPeriodMonths = false){
         lastMonth = currentMonth
         monthReached = false
         productTable.innerHTML = ''
         nextProduct = 1
         paidMonths = []
-        partialMonths = []
-        periodMonths = []
+        partialMonths = []        
         youngestPayableMonth = null
         updatePricesAccordToDebt = false
         scholarshipContainer.innerHTML = ''
         scholarshipContainer.classList.add('d-none')
+
+        if(cleanPeriodMonths === true)
+            periodMonths = []
     }
 
     function DeleteProductRow(id){

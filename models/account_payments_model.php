@@ -17,7 +17,9 @@ class AccountPaymentsModel extends SQLModel
         account_payments.document,
         account_payments.state,
         account_payments.response,
-        account_payments.created_at
+        account_payments.created_at,
+        account_payments.related_id,
+        account_payments.related_with
         FROM
         account_payments
         INNER JOIN 
@@ -58,6 +60,15 @@ class AccountPaymentsModel extends SQLModel
 
     public function GetProductsOfPayment($id){
         $sql = "SELECT * FROM account_payment_products WHERE payment = $id";
+        return parent::GetRows($sql, true);
+    }
+
+    public function GetAccountPaymentsBetweenDatesWihtoutInvoice($start_date, $end_date){
+        $sql = $this->SELECT_TEMPLATE . " WHERE 
+            DATE(account_payments.created_at) BETWEEN '$start_date' AND '$end_date' 
+            AND            
+            account_payments.related_with != 'invoice'
+            GROUP BY account_payments.id";
         return parent::GetRows($sql, true);
     }
 

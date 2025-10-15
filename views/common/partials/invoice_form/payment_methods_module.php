@@ -168,6 +168,30 @@
         UpdatePaymentMethodsDiffWithProducts()
     }
 
+    function ChangePaymentMethod(position, methodId){
+        document.getElementById('payment-method-' + position).value = methodId
+    }
+
+    function ChangeCoin(position, coinId){
+        document.getElementById('payment-coin-' + position).value = coinId
+    }
+
+    function ChangeSalePoint(position, salepointId){
+        document.getElementById('payment-salepoint-' + position).value = salepointId
+    }
+
+    function ChangeBank(position, bankId){
+        $('#payment-bank-' + position).val(String(bankId))
+    }
+
+    function ChangeDocumentNumber(position, documentNumber){
+        document.getElementById('payment-document-' + position).value = documentNumber
+    }
+
+    function ChangePrice(position, price){
+        document.getElementById('payment-price-' + position).value = price
+    }
+
     function DeletePaymentRow(id){
         document.getElementById('payment-row-' + id).remove()
         UpdatePaymentTotal()

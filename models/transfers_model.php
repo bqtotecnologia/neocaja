@@ -3,6 +3,20 @@ include_once 'SQL_model.php';
 
 class TransfersModel extends SQLModel
 { 
+    public $SELECT_TEMPLATE = "SELECT
+        transfers.id,
+        transfers.phone,
+        transfers.bank,
+        transfers.document_letter,
+        transfers.document_number,
+        transfers.active,
+        transfers.created_at,
+        bank.name as bank,
+        bank.id as bank_id
+        FROM 
+        transfers
+        INNER JOIN banks ON banks.id = transfers.bank ";
+
     public function CreateTransfer($data){
         $created = parent::SimpleInsert('transfers', $data);
         if($created === true){
@@ -16,16 +30,16 @@ class TransfersModel extends SQLModel
     }
     
     public function GetTransfer($id){
-        return parent::GetRow("SELECT * FROM transfers WHERE id = $id");
+        return parent::GetRow($this->SELECT_TEMPLATE . " WHERE transfers.id = $id");
     }
 
     public function GetAllTransfers(){
-        $sql = "SELECT * FROM transfers ORDER BY document_number";
+        $sql = $this->SELECT_TEMPLATE . " ORDER BY transfers.document_number";
         return parent::GetRows($sql, true);
     }
 
     public function GetActiveTransfers(){
-        $sql = "SELECT * FROM transfers WHERE active = 1 ORDER BY document_number";
+        $sql = $this->SELECT_TEMPLATE . " WHERE transfers.active = 1 ORDER BY transfers.document_number";
         return parent::GetRows($sql, true);
     }
 }

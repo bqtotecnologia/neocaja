@@ -25,13 +25,13 @@ include_once '../../models/product_model.php';
 include_once '../../models/siacad_model.php';
 include_once '../../models/invoice_model.php';
 include_once '../../models/global_vars_model.php';
-include_once '../../models/unknown_incomes_model.php';
+include_once '../../models/account_payments_model.php';
 
 $account_model = new AccountModel();
 $bank_model = new BankModel();
 $sale_point_model = new SalePointModel();
 $payment_method_model = new PaymentMethodModel();
-$unknown_model = new UnknownIncomesModel();
+$account_payments_model = new AccountPaymentsModel();
 $product_model = new ProductModel();
 $siacad = new SiacadModel();
 $invoice_model = new InvoiceModel();
@@ -48,7 +48,7 @@ $global_vars = $global_vars_model->GetGlobalVars(true);
 
 $period = $siacad->GetCurrentPeriodo();
 $periodId = $period['idperiodo'];
-$incomes = $unknown_model->GetIdentifiedIncomesBetweenDates($period['fechainicio'], $period['fechafin']);
+$payments = $account_payments_model->GetAccountPaymentsBetweenDatesWihtoutInvoice($period['fechainicio'], $period['fechafin']);
 
 $latest = $invoice_model->GetLatestNumbers();
 
@@ -160,7 +160,7 @@ $latest = $invoice_model->GetLatestNumbers();
                             </div>
 
                             <div class="row m-0 p-0 col-12 col-md-8">
-                                <select id="account" name="account" class="form-control col-10 col-md-8 select2" required>
+                                <select id="account" name="account" class="form-control col-10 col-md-8 select2" required onchange="AccountSelecting(this.value)">
                                     <option value="">&nbsp;</option>
                                     <?php foreach($accounts as $account) { ?>
                                         <option value="<?= $account['id'] ?>">
@@ -184,15 +184,15 @@ $latest = $invoice_model->GetLatestNumbers();
 
                     <div class="row m-0 p-0 col-6 justify-content-center align-items-center">
                         <div class="row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-3">
-                            <label class="h6 m-0 fw-bold px-2 text-right" for="known-incomes">Ingresos identificados</label>
+                            <label class="h6 m-0 fw-bold px-2 text-right" for="known-incomes">Pagos remotos</label>
                         </div>
                         <div class=" row col-12 col-md-9 m-0 p-0 justify-content-center justify-content-md-start ">
                             <div class="row m-0 p-0 col-12 col-md-10">
-                                <select id="known-incomes" name="known-incomes" class="form-control col-10 col-md-8 select2">
+                                <select id="known-incomes" name="known-incomes" class="form-control col-10 col-md-8 select2" onchange="PaymentSelecting(this)">
                                     <option value="">&nbsp;</option>
-                                    <?php foreach($incomes as $income) { ?>
-                                        <option value="<?= $income['id'] ?>">
-                                            <?= '(' . $income['cedula'] . ') ' . $income['names'] . ' ' . $income['surnames'] ?>
+                                    <?php foreach($payments as $payment) { ?>
+                                        <option value="<?= $payment['id'] ?>">
+                                            <?= '(' . $payment['cedula'] . ') ' . $payment['fullname'] . ' Bs. ' . $payment['price'] ?>
                                         </option>
                                     <?php } ?>
                                 </select>
