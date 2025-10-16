@@ -71,7 +71,6 @@
 
     function IGTFSalePointSelecting(salePointId){
         var targetSalePoint = null
-        console.log(salePointId)
 
         for(let i = 0; i < sale_points.length; i++){
             if(parseInt(sale_points[i].code) === parseInt(salePointId)){

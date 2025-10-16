@@ -289,6 +289,8 @@
         AddDebtHeaderStyle(monthlyCol)
         AddBorderToTD(monthlyVES)
         AddBorderToTD(monthlyUSD)
+        monthlyVES.classList.add('align-middle')
+        monthlyUSD.classList.add('align-middle')
         monthlyVES.appendChild(vesContainer)
         monthlyUSD.appendChild(usdContainer)
         AddStylesToDebtSpanContainer(vesContainer)
@@ -337,6 +339,8 @@
         var focUSD = document.createElement('td')
         AddBorderToTD(focCol)
         AddDebtHeaderStyle(focCol)
+        focVES.classList.add('align-middle')
+        focUSD.classList.add('align-middle')
         AddBorderToTD(focVES)
         AddBorderToTD(focUSD)
         focCol.innerHTML = 'FOC'
@@ -372,6 +376,8 @@
         AddBorderToTD(totalCol)
         AddDebtHeaderStyle(totalCol)
         AddBorderToTD(vesCol)
+        vesCol.classList.add('align-middle')
+        usdCol.classList.add('align-middle')
         AddBorderToTD(usdCol)
 
         totalRow.appendChild(totalCol)
@@ -492,6 +498,7 @@
             bankSelect.appendChild(option)
         })
         AddSelect2Style(bankSelect)  
+        bankSelect.classList.remove('col-md-8')
         bankCol.appendChild(bankSelect)
         return bankCol
     }

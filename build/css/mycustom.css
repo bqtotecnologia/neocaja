@@ -155,6 +155,10 @@ td, th {
     color:#ff0000 !important;
 }
 
+.bg-notification{
+    background-color: rgb(168, 241, 168);
+}
+
 @keyframes hide-pay-form {
   0% {
     opacity: 1;

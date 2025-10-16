@@ -33,6 +33,21 @@ if($error === ''){
         $error = 'Hubo un error al intentar anular la factura';
 }
 
+// Revirtiendo los pagos remotos de la factura
+if($error === ''){
+    include_once '../models/account_payments_model.php';
+    $account_payments_model = new AccountPaymentsModel();
+
+    $incomes = $account_payments_model->GetIncomesOfInvoice($target_invoice['id']);
+    foreach($incomes as $income){
+        $data = [
+            'related_with' => 'client',
+            'related_id' => $target_invoice['account_id']
+        ];
+        $account_payments_model->SimpleUpdate('account_payments', $data, $income['id']);
+    }
+}
+
 if($error === ''){
     $action = 'Anuló la factura Nº ' . $target_invoice['invoice_number'];
     $invoice_model->CreateBinnacle($_SESSION['neocaja_id'], $action);

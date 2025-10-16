@@ -35,10 +35,10 @@ $fields_config = [
         'suspicious' => true,
     ],
     'bank' => [
-        'min' => 5,
-        'max' => 60,
+        'min' => 1,
+        'max' => 11,
         'required' => true,
-        'type' => 'string',
+        'type' => 'integer',
         'suspicious' => true,
     ],
 ];
@@ -60,6 +60,15 @@ if($error === ''){
         if($target_mobile_payment === false)
             $error = 'Pago móvil no encontrado';
     }
+}
+
+if($error === ''){
+    include_once '../models/bank_model.php';
+    $bank_model = new BankModel();
+
+    $target_bank = $bank_model->GetBankById($cleanData['bank']);
+    if($target_bank === false)
+        $error = 'Banco no encontrado';
 }
 
 
@@ -122,7 +131,7 @@ if($error === ''){
 else{
     if($edit){
         if($target_mobile_payment === false)
-            header("Location: $base_url/views/tables/search_mobile_payment.php?error=$error");
+            header("Location: $base_url/views/tables/search_mobile_payments.php?error=$error");
         else
             header("Location: $base_url/views/forms/mobile_payment_form.php?error=$error&id=" . $target_mobile_payment['id']);
     }

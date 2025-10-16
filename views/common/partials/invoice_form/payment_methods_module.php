@@ -169,7 +169,9 @@
     }
 
     function ChangePaymentMethod(position, methodId){
-        document.getElementById('payment-method-' + position).value = methodId
+        const input = document.getElementById('payment-method-' + position)
+        input.value = methodId
+        input.dispatchEvent(new Event('change'))
     }
 
     function ChangeCoin(position, coinId){
@@ -181,7 +183,7 @@
     }
 
     function ChangeBank(position, bankId){
-        $('#payment-bank-' + position).val(String(bankId))
+        $('#payment-bank-' + position).val(String(bankId)).trigger('change')
     }
 
     function ChangeDocumentNumber(position, documentNumber){

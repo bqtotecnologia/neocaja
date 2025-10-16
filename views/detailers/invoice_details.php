@@ -4,6 +4,7 @@ include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 include_once '../../utils/Validator.php';
 include_once '../../utils/months_data.php';
+include_once '../../utils/prettyCiphers.php';
 
 $id = Validator::ValidateRecievedId();
 $error = '';
@@ -235,13 +236,13 @@ include '../../views/common/header.php';
                                     </td>
                                     <td class="text-right"><?= $concept['price'] ?></td>
                                     <td class="text-right"><?= $coinValues['Dólar'] ?></td>
-                                    <td class="text-right"><?= $subtotal ?></td>
-                                    <td class="text-right">Bs. <?= round($total, 2) ?></td>
+                                    <td class="text-right"><?= GetPrettyCiphers($subtotal) ?></td>
+                                    <td class="text-right">Bs. <?= GetPrettyCiphers(round($total, 2)) ?></td>
                                 </tr>
                             <?php } ?>
                             <tr class="fw-bold text-right">
                                 <td colspan="5">Total:</td>
-                                <td>Bs. <?= round($products_total, 2) ?></td>
+                                <td>Bs. <?= GetPrettyCiphers(round($products_total, 2)) ?></td>
                             </tr>
                         </tbody>
                     </table>
@@ -307,12 +308,12 @@ include '../../views/common/header.php';
                                     </td>
                                     <td class="text-right"><?= $method['price'] ?></td>
                                     <td class="text-right"><?= $coinValues[$method['coin']] ?></td>
-                                    <td class="text-right">Bs. <?= $total ?></td>
+                                    <td class="text-right">Bs. <?= GetPrettyCiphers($total) ?></td>
                                 </tr>
                             <?php } ?>
                             <tr class="fw-bold text-right">
                                 <td colspan="7">Total:</td>
-                                <td>Bs. <?= $payments_total ?></td>
+                                <td>Bs. <?= GetPrettyCiphers($payments_total) ?></td>
                             </tr>
                         </tbody>
                     </table>

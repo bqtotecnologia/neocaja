@@ -5,14 +5,14 @@ class TransfersModel extends SQLModel
 { 
     public $SELECT_TEMPLATE = "SELECT
         transfers.id,
-        transfers.phone,
+        transfers.account_number,
         transfers.bank,
         transfers.document_letter,
         transfers.document_number,
         transfers.active,
         transfers.created_at,
-        bank.name as bank,
-        bank.id as bank_id
+        banks.name as bank,
+        banks.id as bank_id
         FROM 
         transfers
         INNER JOIN banks ON banks.id = transfers.bank ";

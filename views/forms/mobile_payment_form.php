@@ -98,7 +98,7 @@ $fields = [
         'max' => 60,
         'size' => 6,
         'required' => true,
-        'value' => $edit ? $target_mobile_payment['bank'] : '',
+        'value' => $edit ? $target_mobile_payment['bank_id'] : '',
         'elements' => $display_banks
     ],
     [

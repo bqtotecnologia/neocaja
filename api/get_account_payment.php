@@ -30,7 +30,7 @@ if($error === ''){
 
 if($error === ''){
     $products = $account_payments_model->GetProductsOfPayment($id);
-    $payment_method = $account_payments_model->GetPaymentMethodOfPayment($id);
+    $payment_method = $account_payments_model->GetPaymentMethodOfPayment($target_payment);
     $response = [
         'status' => true,
         'data' => [

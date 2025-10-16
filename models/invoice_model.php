@@ -111,8 +111,6 @@ class InvoiceModel extends SQLModel
         $igtf
         )";
 
-        var_dump($sql);
-        echo '<br>';
         return parent::DoQuery($sql);
     }
 

@@ -35,10 +35,10 @@ $fields_config = [
         'suspicious' => true,
     ],
     'bank' => [
-        'min' => 5,
-        'max' => 60,
+        'min' => 1,
+        'max' => 11,
         'required' => true,
-        'type' => 'string',
+        'type' => 'integer',
         'suspicious' => true,
     ],
 ];
@@ -60,6 +60,15 @@ if($error === ''){
         if($target_transfer === false)
             $error = 'Cuenta de transferencias no encontrada';
     }
+}
+
+if($error === ''){
+    include_once '../models/bank_model.php';
+    $bank_model = new BankModel();
+
+    $target_bank = $bank_model->GetBankById($cleanData['bank']);
+    if($target_bank === false)
+        $error = 'Banco no encontrado';
 }
 
 // Creating / updating the transfer

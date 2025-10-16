@@ -18,6 +18,7 @@ class AccountPaymentsModel extends SQLModel
         account_payments.state,
         account_payments.response,
         account_payments.created_at,
+        DATE(account_payments.created_at) as date,
         account_payments.related_id,
         account_payments.related_with
         FROM
@@ -67,8 +68,14 @@ class AccountPaymentsModel extends SQLModel
         $sql = $this->SELECT_TEMPLATE . " WHERE 
             DATE(account_payments.created_at) BETWEEN '$start_date' AND '$end_date' 
             AND            
+            account_payments.state = 'Aprobado' AND
             account_payments.related_with != 'invoice'
             GROUP BY account_payments.id";
+        return parent::GetRows($sql, true);
+    }
+
+    public function GetIncomesOfInvoice($id){
+        $sql = $this->SELECT_TEMPLATE . " WHERE account_payments.related_with = 'client' AND account_payments.related_id = $id";
         return parent::GetRows($sql, true);
     }
 
@@ -85,7 +92,7 @@ class AccountPaymentsModel extends SQLModel
         else if($target_payment['payment_method_type'] === 'transfer'){
             include_once 'transfers_model.php';   
             $transfer_model = new TransfersModel(); 
-            $target_payment_method = $transfer_model->GetTransfer($target_payment['payment_method_type']);
+            $target_payment_method = $transfer_model->GetTransfer($target_payment['payment_method']);
         }
 
         return $target_payment_method;

@@ -20,7 +20,7 @@ $payments = $payment_model->GetPaymentsOfAccount($_SESSION['neocaja_cedula']);
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">            
             <?php 
-            $btn_url = 'search_coin.php'; 
+            $btn_url = $base_url . '/views/panel.php'; 
             include_once '../layouts/backButton.php';
             ?>
             <div class="table-responsive">

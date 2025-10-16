@@ -86,15 +86,8 @@ if($error === ''){
 
 // Managing feedback message and binnacle
 if($error === ''){
-    $message = "Tasa del " . $coin['name'] . " ha sido actualizada ";
-    if($today){
-        $message .= "al día de hoy manualmente";
-        $action = "Actualizó la tasa del " . $coin['name'] . " al día en curso con un valor de " . $cleanData['price'];
-    }else{
-        $message .= "en la fecha dada";
-        $action = 'Atualizó la tasa del ' . $coin['name'] . " de la fecha " . $cleanData['date']->format('d/m/Y') . " con un valor de " . $cleanData['price'];
-    }
-
+    $message = "Tasa del " . $target_coin['name'] . " ha sido actualizada ";
+    $action = 'Atualizó la tasa del ' . $target_coin['name'] . " con un valor de " . $cleanData['price'] . " para la fecha " . $cleanData['date']->format('d/m/Y');
     $coin_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
 }
 

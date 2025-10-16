@@ -65,15 +65,15 @@ include_once 'common/header.php';
             </div>
 
             <div class="col-12 col-md-6">
-                <h2 class="h2 text-center w-100">Datos sobre la mora</h2>
+                <h2 class="h2 text-center w-100">Datos sobre la diferencia de la mensualidad</h2>
                 <div class="row p-0 m-0 col-12 justify-content-center">
                     <table class="table table-bordered col-12 h5 text-center">
                         <tr>
-                            <td class="bg-theme text-white">Día límite antes de aplicar mora</td>
+                            <td class="bg-theme text-white">Día límite antes de aplicar la diferencia de mensualidad</td>
                             <td><?= intval($global_vars['Dia tope mora']) ?></td>
                         </tr>
                         <tr>
-                            <td class="bg-theme text-white">Porcentaje de la mora</td>
+                            <td class="bg-theme text-white">Porcentaje de la diferencia de mensualidad</td>
                             <td><?= intval($global_vars['Porcentaje mora']) ?>%</td>
                         </tr>
                     </table>
@@ -85,7 +85,7 @@ include_once 'common/header.php';
                 <table class="col-12 col-md-10 table table-bordered border border-black text-center h6">
                     <thead>
                         <tr class="bg-theme text-white fw-bold">
-                            <th>Deuda</th>
+                            <th>Producto</th>
                             <th>Bolívares</th>
                             <th>Dólares</th>
                         </tr>
@@ -120,7 +120,7 @@ include_once 'common/header.php';
                         </tr>
 
                         <tr>
-                            <td class="p-1 border border-black bg-theme text-white fw-bold align-middle">Mora</td>
+                            <td class="p-1 border border-black bg-theme text-white fw-bold align-middle">Diferencia mensualidad</td>
                             <td class="p-1 border border-black text-<?= $debtState['retard']['total'] > 0 ? 'danger' : 'success' ?>">
                                 <div class="d-flex justify-content-center flex-wrap">
                                     <?php if($debtState['retard']['total'] > 0) { ?>

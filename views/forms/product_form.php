@@ -100,7 +100,7 @@ $formBuilder = new FormBuilder(
 <script>
     const nameInput = document.getElementById('name')
     if(nameInput.value !== ''){
-        if(nameInput.value.includes('Mensualidad'))
+        if(nameInput.value.includes('Mensualidad') || nameInput.value === 'FOC')
             nameInput.readOnly = true
     }
 </script>

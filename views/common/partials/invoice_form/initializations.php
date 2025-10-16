@@ -49,6 +49,7 @@
     const igtf_price = document.getElementById('igtf-price')
     const igtf_coin = document.getElementById('igtf-coin')
     const igtf_total = document.getElementById('igtf-total')
+    const incomesInput = document.getElementById('known-incomes')
 
 
     // LABELS

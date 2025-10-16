@@ -53,6 +53,13 @@ $fields_config = [
         'required' => false,
         'type' => 'string',
         'suspicious' => true,
+    ],
+    'known-income' => [
+        'min' => 1,
+        'max' => 11,
+        'required' => false,
+        'type' => 'integer',
+        'suspicious' => true,
     ]
 ];
 
@@ -100,6 +107,15 @@ if($error === ''){
         $error = 'Cliente no encontrado';
 }
 
+if($error === '' && isset($_POST['known-income'])){
+    include_once '../models/account_payments_model.php';
+    $account_payments_model = new AccountPaymentsModel();
+
+    $target_payment = $account_payments_model->GetAccountPayment($cleanData['known-income']);
+    if($target_payment === false)
+        $error = 'El ingreso identificado seleccionado no pudo ser encontrado';
+}
+
 if($error === ''){
     include_once '../models/siacad_model.php';
     $siacad = new SiacadModel();
@@ -113,6 +129,8 @@ if($error === ''){
     if($target_invoice === false)
         $error = 'Hubo un error al intentar crear la factura';
 }
+
+
 
 if($error === ''){
     $last_product_number = 0;
@@ -422,6 +440,14 @@ if($error === ''){
             break;
         }
     }
+}
+
+if($error === '' && isset($_POST['known-income'])){
+    $data = [
+        'related_with' => 'invoice',
+        'related_id' => $target_invoice['id']
+    ];
+    $account_payments_model->SimpleUpdate('account_payments', $data, $target_payment['id']);
 }
 
 

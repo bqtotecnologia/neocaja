@@ -284,7 +284,7 @@ include '../../views/common/header.php';
                                         <td>
                                             <?php 
                                             if($coincidence['account_id'] === null){
-                                                echo 'Sin identificar';
+                                                echo '<span class="text-danger">Sin identificar</span>';
                                             }
                                             else{
                                                 echo $coincidence['surnames'] . ' ' . $coincidence['names'] . ' (' . $coincidence['cedula'] .  ')';
@@ -331,7 +331,7 @@ include '../../views/common/header.php';
 
             
             if(select.value === 'Aprobado')
-                textarea.value = 'Pago verificado exitosamente. Acuda al instituto para retirar su factura.'
+                textarea.value = 'Su pago ha sido conciliado, acuda al instituto para retirar su factura.'
         }
     </script>
 <?php } ?>

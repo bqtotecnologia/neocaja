@@ -92,6 +92,7 @@ $latest = $invoice_model->GetLatestNumbers();
             <?php } ?>
         </div>
     </div>
+
     <div class="col-12 justify-content-center px-5 mt-4">
         <div class="d-flex justify-content-center align-items-center flex-column">
             <div class="col-12 text-center">
@@ -182,33 +183,36 @@ $latest = $invoice_model->GetLatestNumbers();
                         </div>
                     </div>
 
-                    <div class="row m-0 p-0 col-6 justify-content-center align-items-center">
-                        <div class="row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-3">
-                            <label class="h6 m-0 fw-bold px-2 text-right" for="known-incomes">Pagos remotos</label>
-                        </div>
-                        <div class=" row col-12 col-md-9 m-0 p-0 justify-content-center justify-content-md-start ">
-                            <div class="row m-0 p-0 col-12 col-md-10">
-                                <select id="known-incomes" name="known-incomes" class="form-control col-10 col-md-8 select2" onchange="PaymentSelecting(this)">
-                                    <option value="">&nbsp;</option>
-                                    <?php foreach($payments as $payment) { ?>
-                                        <option value="<?= $payment['id'] ?>">
-                                            <?= '(' . $payment['cedula'] . ') ' . $payment['fullname'] . ' Bs. ' . $payment['price'] ?>
-                                        </option>
-                                    <?php } ?>
-                                </select>
+                    <div class="row m-0 p-0 col-6 justify-content-center align-items-start">
+                        <div class="row col-12 justify-content-center align-items-center">
+                            <div class="row m-0 h-100 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-3">
+                                <label class="h6 m-0 fw-bold px-2 my-auto" for="known-incomes">Pagos remotos</label>
                             </div>
-                        </div>
+
+                            <div class="row m-0 p-0 col-12 col-md-9">
+                                <div class="row m-0 p-0 col-12 col-md-10">
+                                    <select id="known-incomes" name="known-income" class="form-control col-10 col-md-8 select2" onchange="PaymentSelecting(this)">
+                                        <option value="">&nbsp;</option>
+                                        <?php foreach($payments as $payment) { ?>
+                                            <option value="<?= $payment['id'] ?>">
+                                                <?= '(' . $payment['cedula'] . ') ' . $payment['fullname'] . ' Bs. ' . $payment['price'] ?>
+                                            </option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>                        
                     </div>
                 </div>
 
 
-                <div class="row col-12 my-2 justify-content-start">
+                <div class="row col-12 my-2 justify-content-start align-items-start">
                     <div class="row col-12 col-md-6 my-2 justify-content-start">                    
                         <div class="row m-0 p-0 col-12 justify-content-center my-2 d-none" id="debt-container">
                             <table class="col-10 table table-bordered border border-black text-center h4">
                                 <thead>
                                     <tr class="bg-theme text-white fw-bold">
-                                        <th>Deuda</th>
+                                        <th>Producto</th>
                                         <th>Bolívares</th>
                                         <th>Dólares</th>
                                     </tr>
@@ -445,6 +449,7 @@ $latest = $invoice_model->GetLatestNumbers();
                 error = 'No se puede facturar un monto inferior al total de los métodos de pago'
         }
 
+        console.log('mes más jóven ' + youngestPayableMonth)
         if(error === ''){
             // Validamos que haya escogido meses consecutivos empezando por el primero
             var nextMonth = parseInt(youngestPayableMonth)            

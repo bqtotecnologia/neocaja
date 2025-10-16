@@ -33,13 +33,17 @@ foreach($rif_letters as $letter){
     ]);
 }
 
-include_once '../../utils/banks.php';
+include_once '../../models/bank_model.php';
+$bank_model = new BankModel();
+$banks = $bank_model->GetActivebanks();
+
+
 $display_banks = [];
 foreach($banks as $bank){
     array_push($display_banks,
     [
-        'display' => $bank,
-        'value' => $bank
+        'display' => $bank['name'],
+        'value' => $bank['id']
     ]);
 }
 
@@ -94,7 +98,7 @@ $fields = [
         'max' => 60,
         'size' => 6,
         'required' => true,
-        'value' => $edit ? $target_transfer['bank'] : '',
+        'value' => $edit ? $target_transfer['bank_id'] : '',
         'elements' => $display_banks
     ],
     [
@@ -126,7 +130,7 @@ if($edit){
 $formBuilder = new FormBuilder(
     '../../controllers/handle_transfer.php',    
     'POST',
-    ($edit ? 'Editar' : 'Registrar nueva') . ' cuenta bancaria',
+    ($edit ? 'Editar' : 'Registrar nueva') . ' cuenta bancaria para transferencias',
     ($edit ? 'Editar' : 'Registrar'),
     '',
     $fields

@@ -66,4 +66,12 @@ $formBuilder = new FormBuilder(
     </div>
 </div>
 
+<?php if($edit) { ?>
+    <?php if(in_array($target_payment_method['name'], ['Efectivo', 'Pago móvil', 'Transferencia', 'Tarjeta de débito'])) { ?>
+        <script>
+            document.getElementById('name').readOnly = true
+        </script>
+    <?php } ?>
+<?php } ?>
+
 <?php include_once '../common/footer.php'; ?>

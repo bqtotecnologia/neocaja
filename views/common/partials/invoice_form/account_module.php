@@ -28,7 +28,10 @@
 
             ShowScholarship()
             //AddProduct()
-            DisplayDefaultProduct()
+            
+            if(incomesInput.value === '')
+                DisplayDefaultProduct()
+
             UpdateProductsPrice()
         }
     }    
@@ -42,9 +45,9 @@
         target_payment = found.data
         $('#account').val(target_payment.payment.account_id).trigger('change')
 
+        rateDate.value = target_payment.payment.date
+        rateDate.dispatchEvent(new Event('change'))
         await new Promise(r => setTimeout(r, 500))
-        CleanProducts()
-        UpdateProductsPrice()
         
         // Colocando los productos de la compra
         target_payment.products.forEach((product) => {
@@ -84,9 +87,15 @@
                 }
                 
                 productPrice = debtData.data.months.detail[month]
+                if(productPrice === undefined){
+                    // Es el precio normal de la mensualidad
+                    productPrice = productPrices['Mensualidad']
+                    if(scholarshipped)
+                        productPrice = productPrice - (productPrice * (targetAccount.scholarship_coverage / 100))
+                }
+                
             }                
 
-            console.log(monthNumber)
             if(monthNumber !== '')
                 ChangeMonth(nextProduct - 1, monthNumber)
 
@@ -95,6 +104,7 @@
         })
 
         UpdateProductsPrice()
+        
 
         // Colocando el método de pago
         var target_payment_method = ''
@@ -108,23 +118,27 @@
                 target_payment_method = method.id
         })
 
+        
         ChangePaymentMethod(nextPaymentMethod - 1, target_payment_method)
 
         // Colocando la moneda
         var target_coin = 'Bolívar'
 
-        coins.forEach((method) => {
-            if(method.name === target_payment_method)
-                target_payment_method = method.id
+        coins.forEach((coin) => {
+            if(coin.name === target_coin)
+                target_coin = coin.id
         })
 
         ChangeCoin(nextPaymentMethod - 1, target_coin)
 
         ChangeSalePoint(nextPaymentMethod - 1, '')
-        ChangeBank(nextPaymentMethod - 1, bankId)
         
-        ChangeDocumentNumber(nextPaymentMethod - 1, target_payment.ref)
-        ChangePrice(nextPaymentMethod - 1, target_payment.price)
+        ChangeBank(nextPaymentMethod - 1, target_payment.payment_method.bank_id)
+        
+        ChangeDocumentNumber(nextPaymentMethod - 1, target_payment.payment.ref)
+        ChangePrice(nextPaymentMethod - 1, target_payment.payment.price)
+        UpdatePaymentPrice(nextPaymentMethod - 1)
+        UpdatePaymentTotal()
     }
 
 </script>

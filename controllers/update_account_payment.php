@@ -38,10 +38,12 @@ if($error === ''){
         $error = 'Pago no encontrado';
 }
 
-if($error === '' && $_POST['unknown-income'] !== "0"){
-    $income_id = Validator::ValidateRecievedId('unknown-income', 'POST');
-    if(is_string($id))
-        $error = $income_id;
+if($error === '' && isset($_POST['unknown-income'])){
+    if($_POST['unknown-income']  !== "0"){
+        $income_id = Validator::ValidateRecievedId('unknown-income', 'POST');
+        if(is_string($id))
+            $error = $income_id;
+    }
 }
 
 if($error === '' && isset($income_id)){

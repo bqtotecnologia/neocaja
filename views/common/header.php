@@ -146,7 +146,7 @@
 
                       <li><a><i class="fa fa-sitemap"></i> Métodos de pago <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/tables/payment_method_form.php">Crear método de pago</a></li>
+                          <li><a href="<?= $base_url ?>/views/forms/payment_method_form.php">Crear método de pago</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_payment_method.php">Ver métodos de pago</a></li>
                         </ul>
                       </li>
