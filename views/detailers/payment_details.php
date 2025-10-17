@@ -214,7 +214,7 @@ include '../../views/common/header.php';
     </div>
 
     <?php if($_SESSION['neocaja_rol'] !== 'Estudiante') { ?>
-        <form class="col-12 row m-0 p-0" method="POST" action="<?=$base_url?>/controllers/update_account_payment.php">
+        <form class="col-12 row m-0 p-0 confirm-form" method="POST" action="<?=$base_url?>/controllers/update_account_payment.php">
             <section class="col-10 col-lg-6 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
                 <div class="row col-12 justify-content-center my-5 confirm-form" >
                     <input type="hidden" name="id" value="<?= $target_payment['id'] ?>">
@@ -253,20 +253,33 @@ include '../../views/common/header.php';
                         <h3 class="col-12 text-center text-danger">No se encontraron coincidencias</h3>
                     <?php } else { ?>
                         <div class="col-12 row m-0 p-0 mt-3 justify-content-center">
-                            <table class="table table-bordered shadowed">
+                            <table class="table table-bordered shadowed coincidence-table" id="coincidence-0">
                                 <tr>
                                     <td class="bg-theme text-white fw-bold align-middle col-3">
-                                        <label class="m-0 p-0" style="padding-right:10px !important" for="no-coincidance">Sin coincidencias</label>
+                                        <label class="m-0 p-0" style="padding-right:10px !important" for="r-0">Sin coincidencias</label>
                                     </td>
                                     <td>
-                                        <input class="flat" type="radio" name="unknown-income" id="no-coincidance" value="0" checked>
+                                        <input style="transform:scale(1.4)" type="radio" name="unknown-income" id="r-0" value="0" checked onchange="SelectUnknownPayment(this.id)">
                                     </td>
                                 </tr>
                             </table>
                         </div>
+                        <script>
+                            SelectUnknownPayment('r-0')
+
+                            function SelectUnknownPayment(inputId){
+                                const tables = document.getElementsByClassName('coincidence-table')
+                                for(let i = 0; i < tables.length; i++){
+                                    tables[i].classList.remove('border-success')
+                                }
+
+                                const id = inputId.split('-')[1]
+                                document.getElementById('coincidence-' + id).classList.add('border-success')
+                            } 
+                        </script>
                         <?php foreach($coincidences as $coincidence) { ?>
                             <div class="col-12 row m-0 p-0 my-2">
-                                <table class="table table-bordered shadowed">
+                                <table class="table table-bordered shadowed coincidence-table" id="coincidence-<?= $coincidence['id'] ?>">
                                     <tr>
                                         <td class="bg-theme text-white fw-bold align-middle col-3">Referencia</td>
                                         <td><?= $coincidence['ref'] ?></td>
@@ -301,8 +314,21 @@ include '../../views/common/header.php';
                                             <label class="m-0 p-0" style="padding-right:10px !important" for="r-<?= $coincidence['id'] ?>">Seleccionar</label>
                                         </td>
                                         <td>
-                                            <input class="flat" type="radio" name="unknown-income" id="r-<?= $coincidence['id'] ?>" value="<?= $coincidence['id'] ?>" <?= $coincidence['account_id'] === $target_payment['account_id'] ? 'checked' : '' ?>>
+                                            <input 
+                                            style="transform:scale(1.4)"
+                                            type="radio" 
+                                            name="unknown-income" 
+                                            id="r-<?= $coincidence['id'] ?>" 
+                                            value="<?= $coincidence['id'] ?>" 
+                                            <?= $coincidence['account_id'] === $target_payment['account_id'] ? 'checked' : '' ?>   
+                                            onchange="SelectUnknownPayment(this.id)"
+                                            >
                                         </td>
+                                        <?php if($coincidence['account_id'] === $target_payment['account_id']) { ?>
+                                            <script>
+                                                SelectUnknownPayment('r-<?= $coincidence['id'] ?>')
+                                            </script>
+                                        <?php } ?>
                                     </tr>
                                 </table>
                             </div>
@@ -332,6 +358,6 @@ include '../../views/common/header.php';
             
             if(select.value === 'Aprobado')
                 textarea.value = 'Su pago ha sido conciliado, acuda al instituto para retirar su factura.'
-        }
+        }       
     </script>
 <?php } ?>

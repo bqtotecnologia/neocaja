@@ -109,6 +109,7 @@ class ProductModel extends SQLModel
         }             
         
         $monthStates = $invoice_model->GetAccountState($cedula, $period);
+        
         $nonPaid = [];
         if($invoice_model->AccountPaidFOCOnPeriod($cedula, $period) === false){
             $to_add = [

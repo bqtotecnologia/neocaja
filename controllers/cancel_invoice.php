@@ -42,7 +42,8 @@ if($error === ''){
     foreach($incomes as $income){
         $data = [
             'related_with' => 'client',
-            'related_id' => $target_invoice['account_id']
+            'related_id' => $target_invoice['account_id'],
+            'state' => 'Por revisar'
         ];
         $account_payments_model->SimpleUpdate('account_payments', $data, $income['id']);
     }

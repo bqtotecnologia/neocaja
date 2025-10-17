@@ -159,6 +159,11 @@ td, th {
     background-color: rgb(168, 241, 168);
 }
 
+.border-success{
+    /* border: 3px rgb(67, 255, 67) solid !important; */
+    background-color: rgb(184, 255, 184) !important;
+}
+
 @keyframes hide-pay-form {
   0% {
     opacity: 1;

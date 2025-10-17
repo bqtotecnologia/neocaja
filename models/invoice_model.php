@@ -315,8 +315,7 @@ class InvoiceModel extends SQLModel
                 'debt' => 0,
                 'partial' => 0,
             ];
-        }        
-
+        }
         
         foreach($concepts as $concept){         
             $month_name = $this->month_translate[strval($concept['month'])];
@@ -332,7 +331,7 @@ class InvoiceModel extends SQLModel
         $lastMonth = null;
         $currentYear = intval(date('Y'));
 
-        if($concepts !== []){
+        //if($concepts !== []){
             foreach($ordered_concepts as $key => $value){
                 if(!in_array($key, $periodMonths)){
                     continue;
@@ -389,10 +388,10 @@ class InvoiceModel extends SQLModel
                     $result[$key]['partial'] = 1;
                 }
             }
-        }
-        else{
-            $result = $ordered_concepts;
-        }
+        //}
+        //else{
+            //$result = $ordered_concepts;
+        //}
         
         return $result;
     }
