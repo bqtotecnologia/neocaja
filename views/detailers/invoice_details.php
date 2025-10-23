@@ -65,19 +65,31 @@ include '../../views/common/header.php';
         ?>
     </div>
 
+
+    <?php if($_SESSION['neocaja_rol'] !== 'Estudiante') { ?>
+        <div class="row col-12 mb-5 justify-content-around">
+            <a class="mx-3" target="_blank" href="<?= $base_url . '/views/exports/export_invoice_as_pdf.php?id=' . $target_invoice['id'] ?>">
+                <button class="btn btn-success">
+                    Imprimir por estudiante
+                </button>
+            </a>
+
+            <?php if($target_account['company'] !== NULL) { ?>
+                <a class="mx-3" target="_blank" href="<?= $base_url . '/views/exports/export_invoice_as_pdf.php?id=' . $target_invoice['id'] ?>&company=1">
+                    <button class="btn btn-success">
+                        Imprimir por empresa
+                    </button>
+                </a>
+            <?php } ?>
+        </div>
+
+    <?php } ?>
+
     <div class="col-12 text-center mt-4">
         <h1 class="h1 text-black">Factura Nº <?= $target_invoice['invoice_number'] ?></h1>
     </div>
 
-    <?php if($_SESSION['neocaja_rol'] !== 'Estudiante') { ?>
-        <div class="row col-12 mb-5">
-            <a target="_blank" href="<?= $base_url . '/views/exports/export_invoice_as_pdf.php?id=' . $target_invoice['id'] ?>">
-                <button class="btn btn-success">
-                    Imprimir
-                </button>
-            </a>
-        </div>
-    <?php } ?>
+    
 
     <div class="col-12 row justify-content-center px-4">
         <section class="col-12 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">

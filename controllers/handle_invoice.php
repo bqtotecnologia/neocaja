@@ -55,7 +55,7 @@ $fields_config = [
         'suspicious' => true,
     ],
     'known-income' => [
-        'min' => 1,
+        'min' => 0,
         'max' => 11,
         'required' => false,
         'type' => 'integer',
@@ -107,7 +107,7 @@ if($error === ''){
         $error = 'Cliente no encontrado';
 }
 
-if($error === '' && isset($_POST['known-income'])){
+if($error === '' && $_POST['known-income'] !== ''){
     include_once '../models/account_payments_model.php';
     $account_payments_model = new AccountPaymentsModel();
 
@@ -124,6 +124,8 @@ if($error === ''){
         $cleanData['observation'] = 'NULL';
     else
         $cleanData['observation'] = "'" . $cleanData['obaservation'] . "'";
+
+    $cleanData['account'] = $target_account['account_company_history_id'];
     
     $target_invoice = $invoice_model->CreateInvoice($cleanData, strval($period['idperiodo']));
     if($target_invoice === false)
@@ -442,7 +444,7 @@ if($error === ''){
     }
 }
 
-if($error === '' && isset($_POST['known-income'])){
+if($error === '' && $_POST['known-income'] !== ''){
     $data = [
         'related_with' => 'invoice',
         'related_id' => $target_invoice['id']

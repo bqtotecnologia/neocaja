@@ -101,6 +101,7 @@ class SiacadModel extends PGSQLModel
             participantes.apellido1,
             participantes.apellido2,
             participantes.direccion,
+            participantes.telefonocontacto
             carreras.nombrecarrera as carrera,
             secciones.nombreseccion as seccion,
             semestres.abreviado as semestre

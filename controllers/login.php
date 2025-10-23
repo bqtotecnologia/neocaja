@@ -80,6 +80,16 @@ if($error === ''){
         $account = $account_model->GetAccountByCedula($cedula);
         if($account === false){
             $student = $my_user['data'];
+
+            /*
+             Los telefonos en el sigea los registran así "telefono de casa" / "telefono personal"
+             Los dividimos por / y tomamos el segundo valor
+             El detalle es que no siempre lo escriben así, a veces escriben el numero tal cual a veces con un + o sin el 0
+             */
+            $splits = explode('/', $student['telefonocontacto']);
+            $splits = array_values(array_filter($splits, 'strlen'));
+            $phone = isset($splits[1]) ? $splits[1] : $splits[0];
+            $phone = trim($phone, ' ');
             
             $data = [
                 'names' => $student['nombres'],
@@ -87,6 +97,7 @@ if($error === ''){
                 'cedula' => $cedula,
                 'address' => $student['direccion'],
                 'is_student' => 1,
+                'phone' => $phone,
                 'scholarship' => 'NULL',
                 'scholarship_coverage' => 'NULL',
                 'company' => 'NULL'

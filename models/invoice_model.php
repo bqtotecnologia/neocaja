@@ -18,7 +18,8 @@ class InvoiceModel extends SQLModel
         accounts.id as account_id
         FROM
         invoices
-        INNER JOIN accounts ON accounts.id = invoices.account 
+        INNER JOIN account_company_history ON account_company_history.id = invoices.account 
+        INNER JOIN accounts ON accounts.id = account_company_history.account 
     ";
 
     public function CreateInvoice(array $data, string $period_id){
@@ -185,7 +186,8 @@ class InvoiceModel extends SQLModel
             inv.observation
             FROM
             invoices inv
-            INNER JOIN accounts ON accounts.id = inv.account 
+            INNER JOIN account_company_history ON account_company_history.id = inv.account 
+            INNER JOIN accounts ON accounts.id = account_company_history.account 
             WHERE 
             accounts.id = $account AND 
             inv.period = $period AND
@@ -214,7 +216,8 @@ class InvoiceModel extends SQLModel
             inv.observation
             FROM
             invoices inv
-            INNER JOIN accounts ON accounts.id = inv.account 
+            INNER JOIN account_company_history ON account_company_history.id = inv.account 
+            INNER JOIN accounts ON accounts.id = account_company_history.account 
             WHERE 
             accounts.id = $account AND
             inv.active = 1
@@ -294,8 +297,9 @@ class InvoiceModel extends SQLModel
             invoices
             INNER JOIN concepts ON concepts.invoice = invoices.id
             INNER JOIN product_history ON product_history.id = concepts.product
-	        INNER JOIN products ON products.id = product_history.product
-            INNER JOIN accounts ON accounts.id = invoices.account
+	        INNER JOIN products ON products.id = product_history.product            
+            INNER JOIN account_company_history ON account_company_history.id = invoices.account 
+            INNER JOIN accounts ON accounts.id = account_company_history.account 
             WHERE
             accounts.cedula = '$cedula' AND
             invoices.period = $periodId AND
@@ -532,7 +536,8 @@ class InvoiceModel extends SQLModel
             invoices
             INNER JOIN concepts ON concepts.invoice = invoices.id
             INNER JOIN products ON products.id = concepts.product
-            INNER JOIN accounts ON accounts.id = invoices.account
+            INNER JOIN account_company_history ON account_company_history.id = invoices.account 
+            INNER JOIN accounts ON accounts.id = account_company_history.account 
             WHERE
             accounts.cedula = '$cedula' AND
             invoices.period = $period AND
@@ -558,7 +563,8 @@ class InvoiceModel extends SQLModel
             invoices
             INNER JOIN concepts ON concepts.invoice = invoices.id
             INNER JOIN products ON products.id = concepts.product
-            INNER JOIN accounts ON accounts.id = invoices.account
+            INNER JOIN account_company_history ON account_company_history.id = invoices.account 
+            INNER JOIN accounts ON accounts.id = account_company_history.account 
             WHERE
             accounts.cedula = '$cedula' AND
             invoices.period = $periodId AND

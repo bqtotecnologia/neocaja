@@ -78,6 +78,10 @@ $payment_methods = $invoice_model->GetPaymentMethodsOfInvoice($id);
 $concepts = $invoice_model->GetConceptsOfInvoice($id);
 $coinValues = $coin_model->GetCoinValuesOfDate($target_invoice['rate_date']);
 
+if(isset($_GET['company'])){
+    $target_company = $account_model->GetCompanyHistory($target_account['account_company_history_id']);
+}
+
 $upper_margin = 45;
 include_once '../../vendors/fpdf/fpdf.php';
 $pdf = new FPDF();
@@ -107,9 +111,17 @@ $pdf->Cell(142, 4, MyDecode('Nombre o razón social:'), 0, 0, 'L');
 $pdf->Cell(52, 4, 'C.I/RIF:', 1, 0, 'C');
 $pdf->SetXY(150, $upper_margin + 13);
 $pdf->SetFont('Times', '', 9);
-$pdf->Cell(52, 4, $target_account['cedula'], 1, 0, 'C');
-$pdf->SetXY(8, $upper_margin + 12);
-$pdf->Cell(135, 6, MyDecode($target_account['surnames'] . ' ' . $target_account['names']), 0, 0, 'L');
+
+if(!isset($_GET['company'])){
+    $pdf->Cell(52, 4, $target_account['cedula'], 1, 0, 'C');
+    $pdf->SetXY(8, $upper_margin + 12);
+    $pdf->Cell(135, 6, MyDecode($target_account['surnames'] . ' ' . $target_account['names']), 0, 0, 'L');
+}
+else{
+    $pdf->Cell(52, 4, $target_company['rif_letter'] . '-' . $target_company['rif_number'], 1, 0, 'C');
+    $pdf->SetXY(8, $upper_margin + 12);
+    $pdf->Cell(135, 6, MyDecode($target_company['name']), 0, 0, 'L');
+}
 
 // Address, phone and contact people fields
 $pdf->SetXY(8, $upper_margin + 17);
@@ -119,14 +131,23 @@ $pdf->SetFont('Times', 'B', 9);
 $pdf->Cell(142, 4, 'Domicilio Fiscal', 0, 0, 'L');
 $pdf->Cell(26, 5, MyDecode('Teléfono:'), 1, 0, 'C');
 $pdf->SetFont('Times', '', 9);
-$pdf->Cell(26, 5, $target_account['phone'], 1, 0, 'C');
+
+if(!isset($_GET['company']))
+    $pdf->Cell(26, 5, $target_account['phone'], 1, 0, 'C');
+else
+    $pdf->Cell(26, 5, '', 1, 0, 'C');
+
 $pdf->SetFont('Times', 'B', 9);
 $pdf->SetXY(150, $upper_margin + 22);
 $pdf->Cell(26, 7, MyDecode('Persona contacto:'), 1, 0, 'C');
 $pdf->SetFont('Times', '', 9);
 $pdf->Cell(26, 7, '', 1, 0, 'C');
 $pdf->SetXY(8, $upper_margin + 20);
-$pdf->Cell(142, 4, MyDecode($target_account['address']), 0, 0, 'L');
+
+if(!isset($_GET['company']))
+    $pdf->Cell(142, 4, MyDecode($target_account['address']), 0, 0, 'L');
+else
+    $pdf->Cell(142, 4, MyDecode($target_company['address']), 0, 0, 'L');
 
 // Products and payment methods header
 $pdf->SetFont('Times', 'B', 9);

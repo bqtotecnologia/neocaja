@@ -85,6 +85,8 @@ else
     $cleanData = $result;
 
 $edit = isset($_POST['id']);
+$updateCompany = false;
+if($edit === false) $updateCompany = true;
 
 if($error === ''){
     include_once '../models/account_model.php';
@@ -158,12 +160,27 @@ if($error === ''){
         $updated = $account_model->UpdateAccount($cleanData['id'], $cleanData);
         if($updated === false)
             $error = 'Hubo un error al intentar actualizar el cliente';
+        else{
+            if(intval($target_account['company_id']) !== intval($cleanData['company']))
+                $updateCompany = true;
+        }
     }
     else{
         $created = $account_model->CreateAccount($cleanData);
         if($created === false)
             $error = 'Hubo un error al intentar registrar el cliente';
     }
+}
+
+if($error === '' && $updateCompany){
+    if($edit)
+        $account_id = $cleanData['id'];
+    else
+        $account_id = $created['id'];
+
+    $company_history = $account_model->UpdateAccountCompany($account_id, $cleanData['company']);
+    if($company_history === false)
+        $error = 'Hubo un error al intentar crear el historial de empresa del estudiante';
 }
 
 // Managing feedback message and binnacle
