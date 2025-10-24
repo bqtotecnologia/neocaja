@@ -70,17 +70,9 @@ include '../../views/common/header.php';
         <div class="row col-12 mb-5 justify-content-around">
             <a class="mx-3" target="_blank" href="<?= $base_url . '/views/exports/export_invoice_as_pdf.php?id=' . $target_invoice['id'] ?>">
                 <button class="btn btn-success">
-                    Imprimir por estudiante
+                    Imprimir
                 </button>
-            </a>
-
-            <?php if($target_account['company'] !== NULL) { ?>
-                <a class="mx-3" target="_blank" href="<?= $base_url . '/views/exports/export_invoice_as_pdf.php?id=' . $target_invoice['id'] ?>&company=1">
-                    <button class="btn btn-success">
-                        Imprimir por empresa
-                    </button>
-                </a>
-            <?php } ?>
+            </a>            
         </div>
 
     <?php } ?>
@@ -117,11 +109,11 @@ include '../../views/common/header.php';
                         Beca:
                     </label>
                     <?php if($target_account['scholarship'] !== NULL && $target_account['scholarship_coverage'] !== NULL) { ?>
-                        <span class="text-success">
+                        <span class="text-success fw-bold">
                             <?= $target_account['scholarship'] . ' ' . $target_account['scholarship_coverage'] ?>%
                         </span>
                     <?php } else { ?>
-                        <span class="text-danger">
+                        <span class="text-danger fw-bold">
                             NO TIENE
                         </span>
                     <?php } ?>
@@ -132,7 +124,7 @@ include '../../views/common/header.php';
                         <label class="fw-bold mx-2">
                             Empresa:
                         </label>
-                        <span class="">
+                        <span class="text-info fw-bold">
                             <?= $target_account['company'] ?>
                         </span>
                     </div> 
@@ -141,7 +133,7 @@ include '../../views/common/header.php';
                         <label class="fw-bold mx-2">
                             RIF:
                         </label>
-                        <span class="">
+                        <span class="text-info fw-bold">
                             <?= $target_account['rif_letter'] . $target_account['rif_number'] ?>
                         </span>
                     </div> 

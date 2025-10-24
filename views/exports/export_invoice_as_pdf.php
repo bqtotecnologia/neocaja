@@ -78,9 +78,9 @@ $payment_methods = $invoice_model->GetPaymentMethodsOfInvoice($id);
 $concepts = $invoice_model->GetConceptsOfInvoice($id);
 $coinValues = $coin_model->GetCoinValuesOfDate($target_invoice['rate_date']);
 
-if(isset($_GET['company'])){
-    $target_company = $account_model->GetCompanyHistory($target_account['account_company_history_id']);
-}
+
+$target_company = $account_model->GetCompanyHistory($target_account['account_company_history_id']);
+$hasCompany = $target_company !== false;
 
 $upper_margin = 45;
 include_once '../../vendors/fpdf/fpdf.php';
@@ -112,15 +112,15 @@ $pdf->Cell(52, 4, 'C.I/RIF:', 1, 0, 'C');
 $pdf->SetXY(150, $upper_margin + 13);
 $pdf->SetFont('Times', '', 9);
 
-if(!isset($_GET['company'])){
-    $pdf->Cell(52, 4, $target_account['cedula'], 1, 0, 'C');
-    $pdf->SetXY(8, $upper_margin + 12);
-    $pdf->Cell(135, 6, MyDecode($target_account['surnames'] . ' ' . $target_account['names']), 0, 0, 'L');
-}
-else{
+if($hasCompany){
     $pdf->Cell(52, 4, $target_company['rif_letter'] . '-' . $target_company['rif_number'], 1, 0, 'C');
     $pdf->SetXY(8, $upper_margin + 12);
     $pdf->Cell(135, 6, MyDecode($target_company['name']), 0, 0, 'L');
+}
+else{
+    $pdf->Cell(52, 4, $target_account['cedula'], 1, 0, 'C');
+    $pdf->SetXY(8, $upper_margin + 12);
+    $pdf->Cell(135, 6, MyDecode($target_account['surnames'] . ' ' . $target_account['names']), 0, 0, 'L');
 }
 
 // Address, phone and contact people fields
@@ -132,10 +132,10 @@ $pdf->Cell(142, 4, 'Domicilio Fiscal', 0, 0, 'L');
 $pdf->Cell(26, 5, MyDecode('Teléfono:'), 1, 0, 'C');
 $pdf->SetFont('Times', '', 9);
 
-if(!isset($_GET['company']))
-    $pdf->Cell(26, 5, $target_account['phone'], 1, 0, 'C');
-else
+if($hasCompany)
     $pdf->Cell(26, 5, '', 1, 0, 'C');
+else
+    $pdf->Cell(26, 5, $target_account['phone'], 1, 0, 'C');
 
 $pdf->SetFont('Times', 'B', 9);
 $pdf->SetXY(150, $upper_margin + 22);
@@ -144,10 +144,10 @@ $pdf->SetFont('Times', '', 9);
 $pdf->Cell(26, 7, '', 1, 0, 'C');
 $pdf->SetXY(8, $upper_margin + 20);
 
-if(!isset($_GET['company']))
-    $pdf->Cell(142, 4, MyDecode($target_account['address']), 0, 0, 'L');
-else
+if($hasCompany)
     $pdf->Cell(142, 4, MyDecode($target_company['address']), 0, 0, 'L');
+else
+    $pdf->Cell(142, 4, MyDecode($target_account['address']), 0, 0, 'L');
 
 // Products and payment methods header
 $pdf->SetFont('Times', 'B', 9);
@@ -249,8 +249,8 @@ foreach($payment_methods as $payment_method){
     $pdf->SetXY(10, $upper_margin + 21 + $rowPosition);
     $pdf->Cell(25, 4, MyDecode($payment_method['payment_method']), 0, 0, 'L');
     $pdf->Cell(18, 4, MyDecode($payment_method['coin']), 0, 0, 'L');
-    $pdf->Cell(16, 4, MyDecode($payment_method['price']), 0, 0, 'R');
-    $pdf->Cell(16, 4, MyDecode($coinValues[$payment_method['coin']]), 0, 0, 'C');
+    $pdf->Cell(16, 4, MyDecode($payment_method['price']), 0, 0, 'L');
+    $pdf->Cell(16, 4, MyDecode($coinValues[$payment_method['coin']]), 0, 0, 'L');
     $pdf->Cell(32, 4, MyDecode($payment_method['bank']), 0, 0, 'L');
     $pdf->Cell(15, 4, $payment_method['document_number'], 0, 0, 'L');
     $pdf->Cell(16, 4, MyDecode($payment_method['price'] * $coinValues[$payment_method['coin']]), 0, 0, 'R');
@@ -266,12 +266,12 @@ if($igtf !== null){
     $pdf->SetFont('Times', '', 9);
     $rowPosition += 4;
     $pdf->SetXY(10, $upper_margin + 34 + $rowPosition);
-    $pdf->Cell(20, 4, MyDecode($igtf['payment_method']), 0, 0, 'L');
+    $pdf->Cell(25, 4, MyDecode($igtf['payment_method']), 0, 0, 'L');
     $pdf->Cell(18, 4, MyDecode($igtf['coin']), 0, 0, 'L');
-    $pdf->Cell(16, 4, MyDecode($igtf['price']), 0, 0, 'R');
-    $pdf->Cell(16, 4, MyDecode($coinValues[$igtf['coin']]), 0, 0, 'C');
-    $pdf->Cell(36, 4, MyDecode($igtf['bank']), 0, 0, 'L');
-    $pdf->Cell(16, 4, $igtf['document_number'], 0, 0, 'L');
+    $pdf->Cell(16, 4, MyDecode($igtf['price']), 0, 0, 'L');
+    $pdf->Cell(16, 4, MyDecode($coinValues[$igtf['coin']]), 0, 0, 'L');
+    $pdf->Cell(32, 4, MyDecode($igtf['bank']), 0, 0, 'L');
+    $pdf->Cell(15, 4, $igtf['document_number'], 0, 0, 'L');
     $igtfTotal = $igtf['price'] * $coinValues[$igtf['coin']];
     $pdf->Cell(16, 4, MyDecode($igtfTotal), 0, 0, 'R');
     $rowPosition += 3;

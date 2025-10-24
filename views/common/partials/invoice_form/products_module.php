@@ -176,6 +176,8 @@
         updatePricesAccordToDebt = false
         scholarshipContainer.innerHTML = ''
         scholarshipContainer.classList.add('d-none')
+        companyContainer.innerHTML = ''
+        companyContainer.classList.add('d-none')
 
         if(cleanPeriodMonths === true)
             periodMonths = []

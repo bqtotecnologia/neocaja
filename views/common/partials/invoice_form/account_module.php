@@ -27,6 +27,7 @@
             await DisplayInvoices(accountMonths.data)
 
             ShowScholarship()
+            ShowCompany()
             //AddProduct()
             
             if(incomesInput.value === '')

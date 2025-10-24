@@ -6,6 +6,13 @@
             scholarshipContainer.innerHTML = 'Beca ' + targetAccount['scholarship'] + ' ' + targetAccount['scholarship_coverage'] + '%'
         }
     }
+
+    function ShowCompany(){
+        if(targetAccount['company'] !== null){
+            companyContainer.classList.remove('d-none')
+            companyContainer.innerHTML = ' A nombre de ' + targetAccount['company'] + ' ' + targetAccount['rif_letter'] + '-' + targetAccount['rif_number']
+        }
+    }
     
     ////////////////////////// INVOICE //////////////////////////
 

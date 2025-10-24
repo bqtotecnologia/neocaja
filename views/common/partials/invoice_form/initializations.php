@@ -5,6 +5,7 @@
     const debtContent = document.getElementById('debt-content')
     const focContent = document.getElementById('foc-content')
     const scholarshipContainer = document.getElementById('scholarship')
+    const companyContainer = document.getElementById('company')
 
 
     // TABLES
