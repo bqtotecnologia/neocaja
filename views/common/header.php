@@ -5,7 +5,6 @@
       session_start();
 
   include_once  $_SERVER['DOCUMENT_ROOT'] . '/neocaja/utils/base_url.php';
-
   include_once $_SERVER['DOCUMENT_ROOT'] . '/neocaja/utils/Auth.php';
 ?>
 
