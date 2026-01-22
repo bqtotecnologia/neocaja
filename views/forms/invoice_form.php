@@ -11,7 +11,7 @@ $latest = $coin_model->GetCoinByName('Dólar');
 $lastRateDate = new DateTime($latest['price_created_at'], new DateTimeZone('America/Caracas'));
 $today = new DateTime('now', new DateTimeZone('America/Caracas'));
 if($lastRateDate->format('Y-m-d') !== $today->format('Y-m-d')){
-    header("Location: $base_url/views/forms/update_coin_price.php?error=Antes de facturar, se requiere que la tasa del dólar esté actualizada al día de hoy");
+    header("Location: $base_url/views/forms/update_coin_price.php?error=Antes de nada, se requiere que la tasa del dólar esté actualizada al día de hoy");
     exit;
 }
 

@@ -101,7 +101,7 @@ class SiacadModel extends PGSQLModel
             participantes.apellido1,
             participantes.apellido2,
             participantes.direccion,
-            participantes.telefonocontacto
+            participantes.telefonocontacto,
             carreras.nombrecarrera as carrera,
             secciones.nombreseccion as seccion,
             semestres.abreviado as semestre
@@ -117,7 +117,7 @@ class SiacadModel extends PGSQLModel
             INNER JOIN pensums ON pensums.idpensum = semestres.idpensum
             INNER JOIN carreras ON carreras.idcarrera = pensums.idcarrera
             WHERE
-            participantes.cedula = $cedula";
+            participantes.cedula = '$cedula'";
 
         return parent::GetRow($sql);
     }

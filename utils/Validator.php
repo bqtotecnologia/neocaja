@@ -15,32 +15,48 @@ class Validator
     public static function ValidatePOSTFields(array $fields_config){
         $cleanData = [];
         $error = '';
-        foreach($fields_config as $field => $currentField){            
-            if(!isset($_POST[$field])){
-                $error = 'El campo ' . $field . ' no existe';
-                break;
+        foreach($fields_config as $f){
+
+            $field = $f['name'];
+            $currentField = $f;
+            
+            if(isset($_POST[$field])){
+                // Si recibimos un campo múltiple lo obviamos ya que esos se validan manualmente
+                if(is_array($_POST[$field]))
+                    continue;
+            }
+            else{
+                if($currentField['required'] === true){
+                    $error = 'El campo ' . $field . ' no existe';
+                    break;
+                }else
+                    continue;
             }
 
             $recievedData = $_POST[$field];
-    
+            
             if($recievedData === '' && $currentField['required'] === true){
                 $error = 'El campo ' . $field . ' no puede estar vacío';
                 break;
             }
     
-            if(strlen(strval($recievedData)) > $currentField['max']){
-                $error = 'El campo ' . $field . ' supera el máximo de caracteres (' . $currentField['max'] . ')';
-                break;
+            if(isset($currentField['max'])){
+                if(strlen(strval($recievedData)) > $currentField['max']){
+                    $error = 'El campo ' . $field . ' supera el máximo de caracteres (' . $currentField['max'] . ')';
+                    break;
+                }
             }
     
-            if(strlen(strval($recievedData)) < $currentField['min']){
-                $error = 'El campo ' . $field . ' no alcanza el mínimo de caracteres (' . $currentField['min'] . ')';
-                break;
+            if(isset($currentField['min'])){
+                if(strlen(strval($recievedData)) < $currentField['min']){
+                    $error = 'El campo ' . $field . ' no alcanza el mínimo de caracteres (' . $currentField['min'] . ')';
+                    break;
+                }
             }
 
-            if($currentField['suspicious']){
+            if($currentField['suspicious'] && $currentField['type'] !== 'date'){
                 if(Validator::HasSuspiciousCharacters($recievedData)){
-                    $error = 'El campo ' . $field . ' contiene caracteres sospechosos: < > / \\ ; " { } [ ] $ & | ¿ ? ! = -   ';
+                    $error = 'El campo ' . $field . ' contiene caracteres sospechosos';
                     break;
                 }
             }
@@ -55,12 +71,17 @@ class Validator
             if($currentField['type'] === 'date'){
                 $timezone = new DateTimeZone('America/Caracas');
                 try{
-                    $recievedData = new DateTime($recievedData, $timezone);
+                    $tentativeDate = new DateTime($recievedData, $timezone);
                 }
                 catch(Exception $e){
                     $error = 'El campo ' . $field . ' debe ser una fecha válida';
                     break;
                 }
+
+                if($recievedData === '')
+                    $recievedData = null;
+                else
+                    $recievedData = $tentativeDate;
             }
 
             if($currentField['type'] === 'integer')
@@ -89,16 +110,21 @@ class Validator
     /**
      * Retorna true si un string tiene caracteres sospechosos o false si no
      * 
-     * Los caracteres que revisa son los siguientes < > / \\ ; " { } [ ] $ & | ¿ ? ! = -   
+     * Los caracteres que revisa son los siguientes < > / \\ ; ' " { } [ ] & | ¿ ? ! = -   
      * 
      * @param string $field el campo a revisar
+     * @param bool $soft si recibe true hace la validación menos estricta
      * @return bool true si es sospechoso, false si no
      */
-    public static function HasSuspiciousCharacters(string $field):bool{
-        // < > / \\ ; " { } [ ] $ & | ¿ ? ! = -   
-        $regex = '/[<>\-\/;"\'(){}\[\]$\\\|&\?\¿\¡!=]/u';
+    public static function HasSuspiciousCharacters(string $field, bool $soft = false):bool{
+        if($soft)
+            $regex = '/[\/;"\'\\!=]/u';
+        else
+            $regex = '/[<>\-\/;"\'(){}\[\]\\\|&\?\¿\¡!=]/u';
         return preg_match($regex, $field);
     }
+
+    
     
     /**
      * Verifica si existe un valor 'id' en el método HTTP escogido
@@ -112,6 +138,7 @@ class Validator
             'POST' => $_POST
         ];
 
+
         $result = true;
         if(empty($data[$method]))
             $result = "$method vacío";        
@@ -119,15 +146,28 @@ class Validator
         if($result === true){
             if(!isset($data[$method][$key_name]))
                 $result = "Id no recibido ($key_name)";
+            else
+                $target_value = $data[$method][$key_name];
         }
 
         if($result === true){
-            if(!is_numeric($data[$method][$key_name]))
+            $result = Validator::ValueIsInteger($target_value);
+            if($result === false)
                 $result = "Id inválido ($key_name)";
         }
 
+        return $result;
+    }
+
+    public static function ValueIsInteger($value){
+        $result = true;
+        if($result === true){
+            if(!is_numeric($value))
+                $result = false;
+        }
+
         if($result === true)
-            $result = intval($data[$method][$key_name]);
+            $result = intval($value);
 
         return $result;
     }

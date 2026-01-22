@@ -23,7 +23,7 @@ foreach($coins as $coin){
 
 $focusUSD = false;
 if(isset($_GET['error'])){
-    if($_GET['error'] === 'Antes de facturar, se requiere que la tasa del dólar esté actualizada al día de hoy')
+    if($_GET['error'] === 'Antes de nada, se requiere que la tasa del dólar esté actualizada al día de hoy')
         $focusUSD = true;
 }
 

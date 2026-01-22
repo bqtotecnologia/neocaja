@@ -2,81 +2,51 @@
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
 
-include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
 $error = '';
+$edit = isset($_POST['id']);
 $target_company = false;
 
 if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'name' => [
-        'min' => 1,
-        'max' => 255,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'rif_letter' => [
-        'min' => 1,
-        'max' => 1,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'rif_number' => [
-        'min' => 9,
-        'max' => 9,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'address' => [
-        'min' => 1,
-        'max' => 1000,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => false,
-    ],
-];
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
-
-$edit = isset($_POST['id']);
+if($error === '' && $edit){
+    $id = Validator::ValidateRecievedId('id', 'POST');
+    if(is_string($id))
+        $error = $id;
+}
 
 if($error === ''){
     include_once '../models/company_model.php';
     $company_model = new CompanyModel();
 
     if($edit){
-        $target_company = $company_model->GetCompany($cleanData['id']);
+        $target_company = $company_model->GetCompany($id);
         if($target_company === false)
             $error = 'Empresa no encontrada';
     }
-    else{
-        $target_company = $company_model->GetCompanyByRif($cleanData['rif_letter'], $cleanData['rif_number']);
-        if($target_company !== false)
-            $error = 'El rif de la empresa está repetido';
-    }   
 }
 
 if($error === ''){
-    if($edit){
-        if(
-        $target_company['rif_letter'] === $cleanData['rif_letter'] && 
-        $target_company['rif_number'] === $cleanData['rif_number'] && 
-        intval($target_company['id']) !== $cleanData['id']
-        )
+    include_once '../fields_config/companies.php';
+    $cleanData = Validator::ValidatePOSTFields($companyFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
+}
+
+if($error === ''){
+    $exists = $company_model->GetCompanyByRif($cleanData['rif_letter'], $cleanData['rif_number']);
+    if($exists !== false){
+        if($edit){
+            if(intval($exists['id']) !== intval($id))
+                $error = 'El rif de la empresa está repetido';
+        }
+        else
             $error = 'El rif de la empresa está repetido';
-    }    
-}    
+    }        
+}  
 
 // Creating / updating the company
 if($error === ''){    

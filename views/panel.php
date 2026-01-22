@@ -1,6 +1,21 @@
 <?php 
 $admitted_user_types = ['Cajero', 'Supervisor', 'Estudiante', 'Super'];
 include_once '../utils/validate_user_type.php';
+include_once '../utils/Auth.php';
+
+if(Auth::UserLevelIn(['Cajero', 'Super'])){
+    // Verificamos si la tasa del día de hoy ya está puesta
+    include_once '../models/coin_model.php';
+    $coin_model = new CoinModel();
+    $usd = $coin_model->GetCoinByName('Dólar');
+    $coin_date = date('Y-m-d', strtotime($usd['price_created_at']));
+    $today = date('Y-m-d');
+    $usdUpdated = strtotime($today) === strtotime($coin_date);
+    if($usdUpdated === false){
+        header("Location: $base_url/views/forms/update_coin_price.php?error=Antes de nada, se requiere que la tasa del dólar esté actualizada al día de hoy");
+        exit;
+    }
+}
 
 include_once 'common/header.php';
 
@@ -146,10 +161,6 @@ include_once 'common/header.php';
                                 </div>
                             </td>
                         </tr>
-
-
-
-
                         
                     <tr>
                         <td class="p-1 border border-black bg-theme text-white fw-bold">FOC</td>

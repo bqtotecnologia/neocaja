@@ -61,7 +61,7 @@ if($error === ''){
 
     include_once '../models/siacad_model.php';
     $siacad = new SiacadModel();
-    var_dump($target_user);
+    
     if(isset($target_user['super_admin'])){
         // Es un super administrador
         $admin_id = '1';
@@ -71,6 +71,7 @@ if($error === ''){
         $my_user = $siacad->GetUserTypeByCedula($cedula);
         $user_role = $my_user['role'];
     }
+
 
     if($user_role === 'Estudiante'){
         // Si es un estudiante, vamos a verificar que tenga cuenta, si no la tiene, la creamos

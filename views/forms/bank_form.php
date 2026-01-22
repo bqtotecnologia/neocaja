@@ -4,6 +4,7 @@ include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 
 $edit = isset($_GET['id']);
+$form = true;
 if($edit){
     if(!is_numeric($_GET['id'])){
         header("Location: $base_url/views/tables/search_bank.php?error=Id inválido");
@@ -20,46 +21,10 @@ if($edit){
 }
 
 include_once '../common/header.php';
+include_once '../../fields_config/banks.php';
 include_once '../../utils/FormBuilder.php';
 
-$fields = [
-    [
-        'name' => 'name',
-        'display' => 'Nombre y código',
-        'placeholder' => 'Nombre y código del banco',
-        'id' => 'name',
-        'type' => 'text',
-        'size' => 8,
-        'max' => 255,
-        'min' => 5,
-        'required' => true,
-        'value' => $edit ? $target_bank['name'] : ''
-    ],
-    [
-        'name' => 'active',
-        'display' => 'Activo',
-        'placeholder' => '',
-        'id' => 'active',
-        'type' => 'checkbox',
-        'size' => 4,
-        'required' => false,
-        'value' => $edit ? [$target_bank['active']] : ['1'],
-        'elements' => [
-            [
-                'display' => 'Activo',
-                'value' => '1'
-            ]
-        ]
-    ],
-];
 
-if($edit){
-    $id_field = [
-        'name' => 'id',
-        'value' => $target_bank['id']
-    ];
-    array_push($fields, $id_field);
-}
 
 $formBuilder = new FormBuilder(
     '../../controllers/handle_bank.php',    
@@ -67,7 +32,7 @@ $formBuilder = new FormBuilder(
     ($edit ? 'Editar' : 'Registrar nuevo') . ' banco',
     ($edit ? 'Editar' : 'Registrar'),
     '',
-    $fields
+    $bankFields
 );
 
 ?>

@@ -1,8 +1,6 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
-
-include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
 $error = '';
@@ -12,33 +10,30 @@ if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'name' => [
-        'min' => 1,
-        'max' => 255,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-];
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
-
 $edit = isset($_POST['id']);
+
+if($error === '' && $edit){
+    $id = Validator::ValidateRecievedId('id', 'POST');
+    if(is_string($id))
+        $error = $id;
+}
 
 if($error === ''){
     include_once '../models/bank_model.php';
     $bank_model = new BankModel();
 
     if($edit){
-        $target_bank = $bank_model->GetBankById($cleanData['id']);
+        $target_bank = $bank_model->GetBankById($id);
         if($target_bank === false)
             $error = 'Banco no encontrado';
     }
+}
+
+if($error === ''){
+    include_once '../fields_config/banks.php';
+    $cleanData = Validator::ValidatePOSTFields($bankFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
 }
 
 if($error === ''){
