@@ -1,69 +1,49 @@
 <?php
 $admitted_user_types = ['Super'];
 include_once '../utils/validate_user_type.php';
-
-include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
 $error = '';
+$form = false;
 if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'cedula' => [
-        'min' => 7,
-        'max' => 11,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'name' => [
-        'min' => 5,
-        'max' => 50,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'role' => [
-        'min' => 1,
-        'max' => 11,
-        'required' => true,
-        'type' => 'integer',
-        'suspicious' => true,
-    ],
-];
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
-
-$edit = isset($cleanData['id']);
+$edit = isset($_POST['id']);
+if($error === '' && $edit){
+    $id = Validator::ValidateRecievedId('id', 'POST');
+    if(is_string($id))
+        $error = $id;
+}
 
 if($error === ''){
     include_once '../models/admin_model.php';
     $admin_model = new AdminModel();
 
     if($edit){
-        $target_admin = $admin_model->GetAdminById($cleanData['id']);
+        $target_admin = $admin_model->GetAdminById($id);
         if($target_admin === false)
             $error = 'Admin no encontrado';
     }
-    else{
-        $target_admin = $admin_model->GetAdminByCedula($cleanData['cedula']);
-        if($target_admin !== false)
-            $error = 'La cédula ya está registrada';
-    }   
 }
 
 if($error === ''){
-    if($edit){
-        $same_cedula = $admin_model->GetAdminByCedula($cleanData['cedula']);
-        if($same_cedula['cedula'] === $target_admin['cedula'] && intval($target_admin['admin_id']) !== $cleanData['id'])
+    include_once '../fields_config/admins.php';
+    $cleanData = Validator::ValidatePOSTFields($adminFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
+}
+
+if($error === ''){
+    $exists = $admin_model->GetAdminByCedula($cleanData['cedula']);
+    if($exists !== false){
+        if($edit){
+            if(intval($exists['id']) !== intval($id))
+                $error = 'La cédula ya está registrada';
+        }    
+        else
             $error = 'La cédula ya está registrada';
-    }    
+    }
 }    
 
 if($error === ''){

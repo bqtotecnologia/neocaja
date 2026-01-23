@@ -1,8 +1,6 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
-
-include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
 $error = '';
@@ -12,37 +10,26 @@ if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'id' => [
-        'min' => 1,
-        'max' => 50,
-        'required' => true,
-        'type' => 'numeric',
-        'suspicious' => true,
-    ],
-    'value' => [
-        'min' => 1,
-        'max' => 14,
-        'required' => true,
-        'type' => 'float',
-        'suspicious' => true,
-    ],
-];
-
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
+if($error === ''){
+    $id = Validator::ValidateRecievedId('id', 'POST');
+    if(is_string($id))
+        $error = $id;
+}
 
 if($error === ''){
     include_once '../models/global_vars_model.php';
     $global_var_model = new GlobalVarsModel();
 
-    $target_global_var = $global_var_model->GetGlobalVar($cleanData['id']);
+    $target_global_var = $global_var_model->GetGlobalVar($id);
     if($target_global_var === false)
         $error = 'Variable global no encontrada';
+}
+
+if($error === ''){
+    include_once '../fields_config/global_vars.php';
+    $cleanData = Validator::ValidatePOSTFields($globalVarFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
 }
 
 // Updating the price

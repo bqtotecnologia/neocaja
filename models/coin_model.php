@@ -169,13 +169,11 @@ class CoinModel extends SQLModel
     }
 
     public function UpdateCoin($id, $data){
-        $name = $data['name'];
         $url = $data['url'];
         $active = $data['active'];
         $auto_update = $data['auto_update'];
 
         $sql = "UPDATE coins SET
-            name = '$name',
             url = '$url',
             active = $active,
             auto_update = $auto_update

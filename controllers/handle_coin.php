@@ -3,9 +3,9 @@
 /**
  * For register a new coin you need a API service that returns 2 values 'success' and 'value'
  * The 'success' are True or False
- * The 'value' if 'success' is True, will be the coin price, otherwise will be a error message
+ * The 'value' if 'success' is True, will be the coin price, otherwise will be a string error message
  */
-$admitted_user_types = ['Tecnología', 'Super'];
+$admitted_user_types = ['Tecnología', 'Super', 'Cajero'];
 include_once '../utils/validate_user_type.php';
 
 include_once '../utils/base_url.php';
@@ -13,71 +13,57 @@ include_once '../utils/Validator.php';
 
 $error = '';
 $target_coin = false;
+$edit = isset($_POST['id']);
 
 if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'name' => [
-        'min' => 1,
-        'max' => 50,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'url' => [
-        'min' => 1,
-        'max' => 255,
-        'required' => true,
-        'type' => 'text',
-        'suspicious' => false,
-    ],
-];
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
-
-$edit = isset($_POST['id']);
+if($error === '' && $edit){
+    $id = Validator::ValidateRecievedId('id', 'POST');
+    if(is_string($id))
+        $error = $id;
+}
 
 if($error === ''){
     include_once '../models/coin_model.php';
     $coin_model = new CoinModel();
 
     if($edit){
-        $target_coin = $coin_model->GetCoin($cleanData['id']);
+        $target_coin = $coin_model->GetCoin($id);
         if($target_coin === false)
             $error = 'Moneda no encontrada';
     }
     else{
-        $target_coin = $coin_model->GetCoinByName($cleanData['name']);
-        if($target_coin !== false)
+        $exists = $coin_model->GetCoinByName($cleanData['name']);
+        if($exists !== false)
             $error = 'El nombre de la moneda está repetido';
     }   
 }
 
 if($error === ''){
-    if($edit){
-        if($cleanData['name'] === $target_coin['name'] && intval($target_coin['id']) !== $cleanData['id'])
-            $error = 'El nombre de la moneda está repetido';
-    }    
-}    
+    include_once '../utils/Auth.php';
+    include_once '../fields_config/coins.php';
+    $cleanData = Validator::ValidatePOSTFields($coinFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
+}
 
 if($error === ''){    
     $checkAPI = false;
     if($edit){
         $urlChanged = false;
         if($cleanData['url'] !== $target_coin['url']){
-            $urlChanced = true;
+            $urlChanged = true;
             $checkAPI = true;
         }
     }
     else{
         $checkAPI = true;
     }
+
+    // Como la API no funciona, siempre se va a obviar la validación de la API, si se desea habilitar, comente la siguiente línea de código
+    $checkAPI = false;
 }
 
 // Checking if the url API works
@@ -101,6 +87,7 @@ if($error === ''){
 // Creating / updating the coin
 if($error === ''){        
     $cleanData['active'] = isset($_POST['active']) ? '1' : '0';    
+    $cleanData['url'] = $_POST['url'] ?? '';
 
     if($edit){
         $updated = $coin_model->UpdateCoin($cleanData['id'], $cleanData);
@@ -118,8 +105,8 @@ if($error === ''){
 if($error === ''){
     $priceChanged = false;
     if($edit){
-        if($urlChanced){
-            if($coinValue !== floatval($target_coin['price'])){
+        if($urlChanged && isset($API_result)){
+            if(floatval($coinValue) !== floatval($target_coin['price'])){
                 $priceChanged = true;
     
                 $updated = $coin_model->UpdateCoinPrice($coinValue, $cleanData['id']);
@@ -142,7 +129,7 @@ if($error === ''){
 
         $activeChanged = $cleanData['active'] !== $target_coin['active'];
         $nameChanged = $cleanData['name'] !== $target_coin['name'];
-        $urlChanced = $cleandata['url'] !== $target_coin['url'];
+        $urlChanged = $cleandata['url'] !== $target_coin['url'];
 
         $action = 'Actualizó la moneda ' . $target_coin['name'];
         if($nameChanged)
@@ -151,7 +138,7 @@ if($error === ''){
         if($activeChanged)
             $action .= '. Al estado activo ' . ($cleanData['active'] === '1' ? 'Si' : 'No');
 
-        if($urlChanced)
+        if($urlChanged)
             $action .= '. A la url ' . $cleanData['url'];
 
         if($priceChanged)
@@ -168,7 +155,7 @@ if($error === ''){
 
 if($error === ''){    
     if($edit)
-        header("Location: $base_url/views/forms/coin_form.php?message=$message&id=" . $cleanData['id']);
+        header("Location: $base_url/views/forms/coin_form.php?message=$message&id=" . $id);
     else
         header("Location: $base_url/views/forms/coin_form.php?message=$message&id=" . $created['id']);
 }
@@ -177,7 +164,7 @@ else{
         if($target_coin === false)
             header("Location: $base_url/views/tables/search_coin.php?error=$error");
         else
-            header("Location: $base_url/views/forms/coin_form.php?error=$error&id=" . $target_coin['id']);
+            header("Location: $base_url/views/forms/coin_form.php?error=$error&id=" . $id);
     }
     else
         header("Location: $base_url/views/forms/coin_form.php?error=$error");

@@ -2,7 +2,6 @@
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
 
-include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
 $error = '';
@@ -12,48 +11,45 @@ if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'name' => [
-        'min' => 1,
-        'max' => 100,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-];
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
-
 $edit = isset($_POST['id']);
+$form = false;
+if($error === '' && $edit){
+    $id = Validator::ValidateRecievedId('id', 'POST');
+    if(is_string($id))
+        $error = $id;
+}
 
 if($error === ''){
     include_once '../models/scholarship_model.php';
     $scholarship_model = new ScholarshipModel();
 
     if($edit){
-        $target_scholarship = $scholarship_model->GetScholarship($cleanData['id']);
+        $target_scholarship = $scholarship_model->GetScholarship($id);
         if($target_scholarship === false)
             $error = 'Beca no encontrada';
     }
-    else{
-        $target_scholarship = $scholarship_model->GetScholarshipByName($cleanData['name']);
-        if($target_scholarship !== false)
-            $error = 'El nombre de la beca está repetido';
-    }   
 }
 
 if($error === ''){
-    if($edit){
-        if($target_scholarship['id'] !== $cleanData['id'] && $target_scholarship['name'] === $cleanData['name'])
+    include_once '../fields_config/scholarships.php';
+    $cleanData = Validator::ValidatePOSTFields($scholarshipFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
+}
+
+if($error === ''){
+    $exists = $scholarship_model->GetScholarshipByName($cleanData['name']);
+    if($exists !== false){
+        if($edit){
+            if(intval($exists['id']) !== intval($id))
+                $error = 'El nombre ingresado ya está registrado';
+        }
+        else
             $error = 'El nombre ingresado ya está registrado';
     }
-}  
+}
 
-// Creating / updating the account
+// Creating / updating the scholarship
 if($error === ''){    
     if($edit){
         $updated = $scholarship_model->UpdateScholarship($cleanData['id'], $cleanData);

@@ -1,38 +1,24 @@
 <?php
 include_once '../utils/base_url.php';
+include_once '../utils/Validator.php';
+
 $error = '';
-$redirect = 'Location: ' . $base_url . '/views/forms/login.php';
 
 if(empty($_POST))
     $error = 'POST vacío';
 
+
 if($error === ''){
-    if(!isset($_POST['neocaja_user']) || !isset($_POST['neocaja_password']))
-        $error = 'No se recibió ni un usuario ni una contraseña';
-}
-
-if($error === ''){    
-    if($_POST['neocaja_user'] === '' || $_POST['neocaja_password'] === '')
-        $error = 'Usuario o contraseña vacíos';
-}
-
-if($error !== ''){
-    header($redirect . '?error=' . $error);
-    exit;
+    include_once '../fields_config/login.php';
+    $cleanData = Validator::ValidatePOSTFields($loginFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
 }
 
 if($error === ''){
-    $user = $_POST['neocaja_user'];
-    $password = sha1($_POST['neocaja_password']);
-    
-    // < > / \\ ; " ( ) { } [ ] $ & | ¿ ? ¡ ! = -   
-    $regex = '/[<>\-\/;"\'(){}\[\]$\\\|&\?\¿\¡!=]/u';
-    if(preg_match($regex, $user)){
-        $error = 'El campo usuario contiene caracteres sospechosos';
-    }
-}
+    $user = $cleanData['neocaja_user'];
+    $password = sha1($cleanData['neocaja_password']);
 
-if($error === ''){
     include_once '../models/bdusuarios_model.php';
     $bdusuarios = new BdusuariosModel();
     if(!$bdusuarios->UserExists($user))
@@ -69,10 +55,14 @@ if($error === ''){
     }
     else{
         $my_user = $siacad->GetUserTypeByCedula($cedula);
-        $user_role = $my_user['role'];
-    }
+        if($my_user === [])
+            $error = 'Su usuario no está registrado';
+        else
+            $user_role = $my_user['role'];
+    }    
+}
 
-
+if($error === ''){
     if($user_role === 'Estudiante'){
         // Si es un estudiante, vamos a verificar que tenga cuenta, si no la tiene, la creamos
         include_once '../models/account_model.php';
@@ -86,6 +76,7 @@ if($error === ''){
              Los telefonos en el sigea los registran así "telefono de casa" / "telefono personal"
              Los dividimos por / y tomamos el segundo valor
              El detalle es que no siempre lo escriben así, a veces escriben el numero tal cual a veces con un + o sin el 0
+             Así que existe un gran margen de error.
              */
             $splits = explode('/', $student['telefonocontacto']);
             $splits = array_values(array_filter($splits, 'strlen'));

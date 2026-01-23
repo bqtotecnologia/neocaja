@@ -4,6 +4,7 @@ include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 
 $edit = isset($_GET['id']);
+$form = true;
 if($edit){
     if(!is_numeric($_GET['id'])){
         header("Location: $base_url/views/tables/search_scholarship.php?error=Id inválido");
@@ -21,29 +22,8 @@ if($edit){
 
 include_once '../common/header.php';
 include_once '../../utils/FormBuilder.php';
+include_once '../../fields_config/scholarships.php';
 
-$fields = [
-    [
-        'name' => 'name',
-        'display' => 'Nombre',
-        'placeholder' => 'Nombre de la beca',
-        'id' => 'name',
-        'type' => 'text',
-        'size' => 8,
-        'min' => 5,
-        'max' => 100,
-        'required' => true,
-        'value' => $edit ? $target_scholarship['name'] : ''
-    ],    
-];
-
-if($edit){
-    $id_field = [
-        'name' => 'id',
-        'value' => $target_scholarship['id']
-    ];
-    array_push($fields, $id_field);
-}
 
 $formBuilder = new FormBuilder(
     '../../controllers/handle_scholarship.php',    
@@ -51,7 +31,7 @@ $formBuilder = new FormBuilder(
     ($edit ? 'Editar' : 'Registrar nueva') . ' beca',
     ($edit ? 'Editar' : 'Registrar'),
     '',
-    $fields
+    $scholarshipFields
 );
 
 ?>

@@ -5,6 +5,7 @@ include_once '../../utils/base_url.php';
 
 
 $edit = isset($_GET['id']);
+$form = true;
 if($edit){
     include_once '../../utils/Validator.php';
     $id = Validator::ValidateRecievedId();
@@ -49,83 +50,7 @@ foreach($banks as $bank){
 
 include_once '../common/header.php';
 include_once '../../utils/FormBuilder.php';
-
-$fields = [
-    [
-        'name' => 'account_number',
-        'display' => 'Número de cuenta',
-        'placeholder' => 'Número de cuenta',
-        'id' => 'phone',
-        'type' => 'text',
-        'size' => 8,
-        'max' => 20,
-        'min' => 20,
-        'required' => true,
-        'value' => $edit ? $target_transfer['account_number'] : ''
-    ],
-    [
-        'name' => 'document_letter',
-        'display' => 'Letra de documento',
-        'placeholder' => '',
-        'id' => 'document_letter',
-        'type' => 'select',
-        'min' => 1,
-        'max' => 1,
-        'size' => 3,
-        'required' => true,
-        'value' => $edit ? $target_transfer['document_letter'] : 'V',
-        'elements' => $display_rif_letters
-    ],
-    [
-        'name' => 'document_number',
-        'display' => 'Documento',
-        'placeholder' => 'Número de Rif/Cédula',
-        'id' => 'document-number',
-        'type' => 'text',
-        'min' => 7,
-        'max' => 45,
-        'size' => 5,
-        'required' => true,
-        'value' => $edit ? $target_transfer['document_number'] : '',
-    ],
-    [
-        'name' => 'bank',
-        'display' => 'Banco',
-        'placeholder' => '',
-        'id' => 'bank',
-        'type' => 'select',
-        'min' => 5,
-        'max' => 60,
-        'size' => 6,
-        'required' => true,
-        'value' => $edit ? $target_transfer['bank_id'] : '',
-        'elements' => $display_banks
-    ],
-    [
-        'name' => 'active',
-        'display' => 'Activo',
-        'placeholder' => '',
-        'id' => 'active',
-        'type' => 'checkbox',
-        'size' => 4,
-        'required' => false,
-        'value' => $edit ? [$target_transfer['active']] : ['1'],
-        'elements' => [
-            [
-                'display' => 'Activo',
-                'value' => '1'
-            ]
-        ]
-    ],
-];
-
-if($edit){
-    $id_field = [
-        'name' => 'id',
-        'value' => $target_transfer['id']
-    ];
-    array_push($fields, $id_field);
-}
+include_once '../../fields_config/transfers.php';
 
 $formBuilder = new FormBuilder(
     '../../controllers/handle_transfer.php',    
@@ -133,7 +58,7 @@ $formBuilder = new FormBuilder(
     ($edit ? 'Editar' : 'Registrar nueva') . ' cuenta bancaria para transferencias',
     ($edit ? 'Editar' : 'Registrar'),
     '',
-    $fields
+    $transferFields
 );
 
 ?>

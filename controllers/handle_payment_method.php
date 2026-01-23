@@ -1,8 +1,6 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
-
-include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
 $error = '';
@@ -12,43 +10,40 @@ if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'name' => [
-        'min' => 1,
-        'max' => 255,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-];
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
-
 $edit = isset($_POST['id']);
+$form = false;
+if($error === '' && $edit){
+    $id = Validator::ValidateRecievedId('id', 'POST');
+    if(is_string($id))
+        $error = $id;
+}
 
 if($error === ''){
     include_once '../models/payment_method_model.php';
     $payment_method_model = new PaymentMethodModel();
 
     if($edit){
-        $target_payment_method = $payment_method_model->GetPaymentMethodType($cleanData['id']);
+        $target_payment_method = $payment_method_model->GetPaymentMethodType($id);
         if($target_payment_method === false)
             $error = 'Método de pago no encontrado';
     }
-    else{
-        $target_payment_method = $payment_method_model->GetPaymentMethodTypeByName($cleanData['name']);
-        if($target_payment_method !== false)
-            $error = 'El método de pago está repetido';
-    }   
 }
 
 if($error === ''){
-    if($edit){
-        if($target_payment_method['id'] !== $cleanData['id'] && $target_payment_method['name'] === $cleanData['name'])
+    include_once '../fields_config/payment_methods.php';
+    $cleanData = Validator::ValidatePOSTFields($paymentMethodFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
+}
+
+if($error === ''){
+    $exists = $payment_method_model->GetPaymentMethodTypeByName($cleanData['name']);
+    if($exists !== false){
+        if($edit){
+            if(intval($exists['id']) !== intval($id))
+                $error = 'El nombre ingresado ya está registrado';
+        }
+        else
             $error = 'El nombre ingresado ya está registrado';
     }
 }  

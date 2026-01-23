@@ -1,8 +1,6 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
-
-include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
 $error = '';
@@ -12,54 +10,30 @@ if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'phone' => [
-        'min' => 11,
-        'max' => 11,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'document_letter' => [
-        'min' => 1,
-        'max' => 1,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'document_number' => [
-        'min' => 7,
-        'max' => 45,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'bank' => [
-        'min' => 1,
-        'max' => 11,
-        'required' => true,
-        'type' => 'integer',
-        'suspicious' => true,
-    ],
-];
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
-
 $edit = isset($_POST['id']);
+$form = false;
+if($error === '' && $edit){
+    $id = Validator::ValidateRecievedId('id', 'POST');
+    if(is_string($id))
+        $error = $id;
+}
 
 if($error === ''){
     include_once '../models/mobile_payments_model.php';
     $mobile_payment_model = new MobilePaymentsModel();
 
     if($edit){
-        $target_mobile_payment = $mobile_payment_model->GetMobilePayment($cleanData['id']);
+        $target_mobile_payment = $mobile_payment_model->GetMobilePayment($id);
         if($target_mobile_payment === false)
             $error = 'Pago móvil no encontrado';
     }
+}
+
+if($error === ''){
+    include_once '../fields_config/mobile_payments.php';
+    $cleanData = Validator::ValidatePOSTFields($mobilePaymentFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
 }
 
 if($error === ''){
@@ -70,7 +44,6 @@ if($error === ''){
     if($target_bank === false)
         $error = 'Banco no encontrado';
 }
-
 
 // Creating / updating the mobile_payment
 if($error === ''){

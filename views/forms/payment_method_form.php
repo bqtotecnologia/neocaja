@@ -4,6 +4,7 @@ include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 
 $edit = isset($_GET['id']);
+$form = true;
 if($edit){
     if(!is_numeric($_GET['id'])){
         header("Location: $base_url/views/tables/search_payment_method.php?error=Id inválido");
@@ -21,29 +22,9 @@ if($edit){
 
 include_once '../common/header.php';
 include_once '../../utils/FormBuilder.php';
+include_once '../../fields_config/payment_methods.php';
 
-$fields = [
-    [
-        'name' => 'name',
-        'display' => 'Nombre',
-        'placeholder' => '',
-        'id' => 'name',
-        'type' => 'text',
-        'size' => 8,
-        'max' => 255,
-        'min' => 5,
-        'required' => true,
-        'value' => $edit ? $target_payment_method['name'] : ''
-    ],    
-];
 
-if($edit){
-    $id_field = [
-        'name' => 'id',
-        'value' => $target_payment_method['id']
-    ];
-    array_push($fields, $id_field);
-}
 
 $formBuilder = new FormBuilder(
     '../../controllers/handle_payment_method.php',    
@@ -51,7 +32,7 @@ $formBuilder = new FormBuilder(
     ($edit ? 'Editar' : 'Registrar nuevo') . ' método de pago',
     ($edit ? 'Editar' : 'Registrar'),
     '',
-    $fields
+    $paymentMethodFields
 );
 
 ?>

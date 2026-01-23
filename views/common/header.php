@@ -188,7 +188,12 @@
                           <?php } ?>
 
                           <li><a href="<?= $base_url ?>/views/tables/search_coin.php">Ver monedas</a></li>
-                          <li><a href="<?= $base_url ?>/views/forms/refresh_coins.php">Consultar API</a></li>
+                          <!-- 
+                          La siguiente vista se usa para actualizar todas las monedas mediante su
+                          respectiva API y que tengan marcado auto_update.
+                          Está comentado porque actualmente esta función no se usa
+                          <li><a href="<?= $base_url ?>/views/forms/refresh_coins.php">Consultar API</a></li> 
+                          -->
                           
                           <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
                             <li><a href="<?= $base_url ?>/views/forms/update_coin_price.php">Cambiar tasa manualmente</a></li>

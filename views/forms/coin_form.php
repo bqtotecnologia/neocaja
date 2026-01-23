@@ -1,10 +1,14 @@
 <?php
-$admitted_user_types = ['Tecnología', 'Super'];
+$edit = isset($_GET['id']);
+if($edit)
+    $admitted_user_types = ['Super', 'Cajero'];
+else
+    $admitted_user_types = ['Super', 'Tecnologia'];
+
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 
 
-$edit = isset($_GET['id']);
 if($edit){
     include_once '../../utils/Validator.php';
     $id = Validator::ValidateRecievedId();
@@ -24,6 +28,9 @@ if($edit){
 }
 
 include_once '../common/header.php';
+
+$form = true;
+include_once '../../fields_config/coins.php';
 include_once '../../utils/FormBuilder.php';
 
 
@@ -34,7 +41,7 @@ $formBuilder = new FormBuilder(
     ($edit ? 'Editar' : 'Registrar nueva') . ' moneda',
     ($edit ? 'Editar' : 'Registrar'),
     '',
-    $fields
+    $coinFields
 );
 
 ?>

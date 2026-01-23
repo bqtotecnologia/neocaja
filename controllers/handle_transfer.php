@@ -1,8 +1,6 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
-
-include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
 $error = '';
@@ -12,54 +10,30 @@ if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'account_number' => [
-        'min' => 20,
-        'max' => 20,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'document_letter' => [
-        'min' => 1,
-        'max' => 1,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'document_number' => [
-        'min' => 7,
-        'max' => 45,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'bank' => [
-        'min' => 1,
-        'max' => 11,
-        'required' => true,
-        'type' => 'integer',
-        'suspicious' => true,
-    ],
-];
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
-
 $edit = isset($_POST['id']);
+$form = false;
+if($error === '' && $edit){
+    $id = Validator::ValidateRecievedId('id', 'POST');
+    if(is_string($id))
+        $error = $id;
+}
 
 if($error === ''){
     include_once '../models/transfers_model.php';
     $transfer_model = new TransfersModel();
 
     if($edit){
-        $target_transfer = $transfer_model->GetTransfer($cleanData['id']);
+        $target_transfer = $transfer_model->GetTransfer($id);
         if($target_transfer === false)
             $error = 'Cuenta de transferencias no encontrada';
     }
+}
+
+if($error === ''){
+    include_once '../fields_config/transfers.php';
+    $cleanData = Validator::ValidatePOSTFields($transferFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
 }
 
 if($error === ''){

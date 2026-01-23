@@ -1,6 +1,6 @@
 <?php
 
-$fields = [
+$coinFields = [
     [
         'name' => 'name',
         'display' => 'Nombre',
@@ -10,8 +10,9 @@ $fields = [
         'size' => 8,
         'max' => 50,
         'min' => 3,
-        'required' => true,
-        'value' => $edit ? $target_coin['name'] : ''
+        'required' => !$edit,
+        'value' => $edit ? $target_coin['name'] : '',
+        'disabled' => $edit
     ],
     [
         'name' => 'price',
@@ -26,16 +27,6 @@ $fields = [
         'disabled' => $edit
     ],
     [
-        'name' => 'url',
-        'display' => 'URL',
-        'placeholder' => 'URL que da como respuesta JSON la tasa actual de la moneda',
-        'id' => 'url',
-        'type' => 'text',
-        'size' => 12,
-        'required' => true,
-        'value' => $edit ? $target_coin['url'] : ''
-    ],
-    [
         'name' => 'active',
         'display' => 'Activo',
         'placeholder' => '',
@@ -44,13 +35,24 @@ $fields = [
         'size' => 4,
         'required' => false,
         'value' => $edit ? [$target_coin['active']] : ['1'],
-        'elements' => [
-            [
-                'display' => 'Activo',
-                'value' => '1'
-            ]
-        ]
+        'elements' => [['display' => 'Activo','value' => '1']]
     ],
+];
+
+if($edit && Auth::UserLevelIn(['Tecnologia', 'Super']) || Auth::UserLevelIn(['Super'])){
+    array_push($coinFields, 
+    // URL de la API que se consulta automáticamente para la tasa
+    [
+        'name' => 'url',
+        'display' => 'URL',
+        'placeholder' => 'URL que da como respuesta JSON la tasa actual de la moneda',
+        'id' => 'url',
+        'type' => 'text',
+        'size' => 12,
+        'required' => false,
+        'value' => $edit ? $target_coin['url'] : ''
+    ],
+    // Checkbox que habilita la actualización automática de la tasa de la moneda mediante una API
     [
         'name' => 'auto_update',
         'display' => 'Actualizar automáticamente',
@@ -60,19 +62,14 @@ $fields = [
         'size' => 4,
         'required' => false,
         'value' => $edit ? [$target_coin['auto_update']] : ['1'],
-        'elements' => [
-            [
-                'display' => 'Actualizar al ingresar al sistema',
-                'value' => '1'
-            ]
-        ]
-    ],
-];
+        'elements' => [['display' => 'Actualizar al ingresar al sistema','value' => '1']]
+    ],);
+}
 
-if($edit){
+if($edit && $form){
     $id_field = [
         'name' => 'id',
         'value' => $target_coin['id']
     ];
-    array_push($fields, $id_field);
+    array_push($coinFields, $id_field);
 }

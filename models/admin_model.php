@@ -41,7 +41,7 @@ class AdminModel extends SQLModel
     }
 
     public function GetAdmins(){
-        $sql = $this->ADMIN_SELECT;
+        $sql = $this->ADMIN_SELECT . " WHERE roles.name != 'Super'";
         return parent::GetRows($sql, true);
     }
 
