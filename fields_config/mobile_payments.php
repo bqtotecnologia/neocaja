@@ -53,7 +53,7 @@ $mobilePaymentFields = [
         'required' => true,
         'suspicious' => true,
         'value' => $edit ? $target_mobile_payment['bank_id'] : '',
-        'elements' => $display_banks
+        'elements' => $display_banks ?? ''
     ],
     [
         'name' => 'active',

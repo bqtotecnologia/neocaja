@@ -1,63 +1,50 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
-
-include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
 $error = '';
+$form = false;
+$edit = isset($_POST['id']);
 $target_product = false;
 
 if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'name' => [
-        'min' => 1,
-        'max' => 255,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'price' => [
-        'min' => 1,
-        'max' => 12,
-        'required' => true,
-        'type' => 'float',
-        'suspicious' => true,
-    ],
-];
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
-
-$edit = isset($_POST['id']);
+if($error === '' && $edit){
+    $id = Validator::ValidateRecievedId('id', 'POST');
+    if(is_string($id))
+        $error = $id;
+}
 
 if($error === ''){
     include_once '../models/product_model.php';
     $product_model = new ProductModel();
 
     if($edit){
-        $target_product = $product_model->GetProduct($cleanData['id']);
+        $target_product = $product_model->GetProduct($id);
         if($target_product === false)
             $error = 'Producto no encontrado';
     }
-    else{
-        $target_product = $product_model->GetProductByName($cleanData['name']);
-        if($target_product !== false)
-            $error = 'El nombre del producto está repetido';
-    }   
 }
 
 if($error === ''){
-    if($edit){
-        if($cleanData['name'] === $target_product['name'] && intval($target_product['id']) !== $cleanData['id'])
+    include_once '../fields_config/products.php';
+    $cleanData = Validator::ValidatePOSTFields($productFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
+}
+
+if($error === ''){
+    $exists = $product_model->GetProductByName($cleanData['name']);
+    if($exists !== false){
+        if($edit){
+            if(intval($exists['id']) !== intval($id))
+                $error = 'El nombre del producto está repetido';
+        }else
             $error = 'El nombre del producto está repetido';
-    }    
+    }
 }    
 
 // Creating / updating the product

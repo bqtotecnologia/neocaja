@@ -5,19 +5,28 @@ include_once '../../utils/base_url.php';
 
 $edit = isset($_GET['id']);
 $form = true;
-if($edit){
-    if(!is_numeric($_GET['id'])){
-        header("Location: $base_url/views/tables/search_scholarship.php?error=Id inválido");
-        exit;
-    }   
 
+$error = '';
+if($edit){
+    include_once '../../utils/Validator.php';
+    $id = Validator::ValidateRecievedId();
+
+    if(is_string($id))
+        $error = $id;
+}
+
+if($error === '' && $edit){
     include_once '../../models/scholarship_model.php';
     $scholarship_model = new ScholarshipModel();
-    $target_scholarship = $scholarship_model->GetScholarship($_GET['id']);
+    $target_scholarship = $scholarship_model->GetScholarship($id);
     if($target_scholarship === false){
-        header("Location: $base_url/views/tables/search_scholarship.php?error=Beca no encontrada");
-        exit;
+        $error = 'Beca no encontrada';
     }
+}
+
+if($error !== ''){
+    header("Location: $base_url/views/tables/search_scholarship.php?error=$error");
+    exit;
 }
 
 include_once '../common/header.php';

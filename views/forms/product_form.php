@@ -1,79 +1,37 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 
 
 $edit = isset($_GET['id']);
+$form = true;
+$error = '';
+
 if($edit){
     include_once '../../utils/Validator.php';
     $id = Validator::ValidateRecievedId();
 
-    if(is_string($id)){
-        header("Location: $base_url/views/tables/search_product.php?error=$id");
-        exit;
-    }   
+    if(is_string($id))
+        $error = $id;
+}
 
+if($error === '' && $edit){
     include_once '../../models/product_model.php';
     $product_model = new ProductModel();
     $target_product = $product_model->GetProduct($id);
-    if($target_product === false){
-        header("Location: $base_url/views/tables/search_product.php?error=Producto no encontrado");
-        exit;
-    }
+    if($target_product === false)
+        $error = 'Producto no encontrado';
+}
+
+if($error !== ''){
+    header("Location: $base_url/views/tables/search_product.php?error=$error");
+    exit;
 }
 
 include_once '../common/header.php';
 include_once '../../utils/FormBuilder.php';
+include_once '../../fields_config/products.php';
 
-$fields = [
-    [
-        'name' => 'name',
-        'display' => 'Nombre',
-        'placeholder' => 'Nombre del producto',
-        'id' => 'name',
-        'type' => 'text',
-        'size' => 8,
-        'max' => 255,
-        'min' => 1,
-        'required' => true,
-        'value' => $edit ? $target_product['name'] : ''
-    ],
-    [
-        'name' => 'price',
-        'display' => 'Precio',
-        'placeholder' => 'Precio ($)',
-        'id' => 'price',
-        'type' => 'decimal',
-        'size' => 4,
-        'required' => true,
-        'value' => $edit ? $target_product['price'] : ''
-    ],
-    [
-        'name' => 'active',
-        'display' => 'Activo',
-        'placeholder' => '',
-        'id' => 'active',
-        'type' => 'checkbox',
-        'size' => 4,
-        'required' => false,
-        'value' => $edit ? [$target_product['active']] : ['1'],
-        'elements' => [
-            [
-                'display' => 'Activo',
-                'value' => '1'
-            ]
-        ]
-    ],
-];
-
-if($edit){
-    $id_field = [
-        'name' => 'id',
-        'value' => $target_product['id']
-    ];
-    array_push($fields, $id_field);
-}
 
 $formBuilder = new FormBuilder(
     '../../controllers/handle_product.php',    
@@ -81,7 +39,7 @@ $formBuilder = new FormBuilder(
     ($edit ? 'Editar' : 'Registrar nuevo') . ' producto',
     ($edit ? 'Editar' : 'Registrar'),
     '',
-    $fields
+    $productFields
 );
 
 ?>

@@ -4,20 +4,28 @@ include_once '../../utils/validate_user_type.php';
 include_once '../../utils/base_url.php';
 
 $edit = isset($_GET['id']);
+$form = true;
+
+$error = '';
 if($edit){
-    if(!is_numeric($_GET['id'])){
-        header("Location: $base_url/views/tables/search_sale_point.php?error=Id inválido");
-        exit;
-    }   
+    include_once '../../utils/Validator.php';
+    $id = Validator::ValidateRecievedId();
+    if(is_string($id))
+        $error = $id;
+}
 
+if($error === '' && $edit){
     include_once '../../models/sale_point_model.php';    
-
     $sale_point_model = new SalePointModel();    
-    $target_sale_point = $sale_point_model->GetSalePoint($_GET['id']);
-    if($target_sale_point === false){
-        header("Location: $base_url/views/tables/search_sale_point.php?error=Punto de venta no encontrado");
-        exit;
-    }
+
+    $target_sale_point = $sale_point_model->GetSalePoint($id);
+    if($target_sale_point === false)
+        $error = 'Punto de venta no encontrado';
+}
+
+if($error !== ''){
+    header("Location: $base_url/views/tables/search_sale_point.php?error$error");
+    exit;
 }
 
 include_once '../common/header.php';
@@ -38,39 +46,7 @@ foreach($banks as $bank){
     ]);
 }
 
-$fields = [
-    [
-        'name' => 'code',
-        'display' => 'Código',
-        'placeholder' => 'Código del punto de venta',
-        'id' => 'code',
-        'type' => 'text',
-        'size' => 5,
-        'min' => 1,
-        'max' => 9,
-        'required' => true,
-        'value' => $edit ? $target_sale_point['code'] : ''
-    ],    
-    [
-        'name' => 'bank',
-        'display' => 'Banco',
-        'placeholder' => '',
-        'id' => 'bank',
-        'type' => 'select',
-        'size' => 8,
-        'required' => true,
-        'value' => $edit ? $target_sale_point['bank_id'] : '',
-        'elements' => $display_banks
-    ],
-];
-
-if($edit){
-    $id_field = [
-        'name' => 'id',
-        'value' => $target_sale_point['id']
-    ];
-    array_push($fields, $id_field);
-}
+include_once '../../fields_config/sale_points.php';
 
 $formBuilder = new FormBuilder(
     '../../controllers/handle_sale_point.php',    
@@ -78,7 +54,7 @@ $formBuilder = new FormBuilder(
     ($edit ? 'Editar' : 'Registrar nuevo') . ' punto de venta',
     ($edit ? 'Editar' : 'Registrar'),
     '',
-    $fields
+    $salePointFields
 );
 
 ?>

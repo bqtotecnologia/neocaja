@@ -8,18 +8,21 @@ if($edit){
     include_once '../../utils/Validator.php';
     $id = Validator::ValidateRecievedId();
 
-    if(is_string($id)){
-        header("Location: $base_url/views/tables/search_company.php?error=$id");
-        exit;
-    }   
+    if(is_string($id))
+        $error = $id;
+}
 
-    include_once '../../models/company_model.php';
+if($error === '' && $edit){
+        include_once '../../models/company_model.php';
     $company_model = new CompanyModel();
     $target_company = $company_model->GetCompany($id);
-    if($target_company === false){
-        header("Location: $base_url/views/tables/search_company.php?error=Empresa no encontrada");
-        exit;
-    }
+    if($target_company === false)
+        $error = 'Empresa no encontrada';
+}
+
+if($error !== ''){
+    header("Location: $base_url/views/tables/search_company.php?error=$error");
+    exit;
 }
 
 $rif_letters = ['V', 'J', 'E', 'P', 'G'];

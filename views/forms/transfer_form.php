@@ -6,22 +6,28 @@ include_once '../../utils/base_url.php';
 
 $edit = isset($_GET['id']);
 $form = true;
+
+$error = '';
 if($edit){
     include_once '../../utils/Validator.php';
     $id = Validator::ValidateRecievedId();
 
-    if(is_string($id)){
-        header("Location: $base_url/views/tables/search_transfers.php?error=$id");
-        exit;
-    }   
+    if(is_string($id))
+        $error = $id;
+}
 
+if($error === '' && $edit){
     include_once '../../models/transfers_model.php';
     $transfers_model = new TransfersModel();
     $target_transfer = $transfers_model->GetTransfer($id);
     if($transfers_model === false){
-        header("Location: $base_url/views/tables/search_transfers.php?error=Transferencia no encontrada");
-        exit;
+        $error = 'Transferencia no encontrada';
     }
+}
+
+if($error !== ''){
+    header("Location: $base_url/views/tables/search_transfers.php?error=$error");
+    exit;
 }
 
 $rif_letters = ['V', 'J', 'E', 'P', 'G'];

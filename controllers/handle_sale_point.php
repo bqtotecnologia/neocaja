@@ -1,8 +1,6 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
-
-include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
 $error = '';
@@ -12,50 +10,40 @@ if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'code' => [
-        'min' => 1,
-        'max' => 9,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'bank' => [
-        'min' => 0,
-        'max' => 11,
-        'required' => false,
-        'type' => 'integer',
-        'suspicious' => true,
-    ],
-];
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
-
 $edit = isset($_POST['id']);
+$form = false;
+if($error === '' && $edit){
+    $id = Validator::ValidateRecievedId('id', 'POST');
+    if(is_string($id))
+        $error = $id;
+}
 
 if($error === ''){
     include_once '../models/sale_point_model.php';
     $sale_point_model = new SalePointModel();
 
     if($edit){
-        $target_sale_point = $sale_point_model->GetSalePoint($cleanData['id']);
+        $target_sale_point = $sale_point_model->GetSalePoint($id);
         if($target_sale_point === false)
             $error = 'Punto de venta no encontrada';
-    }
-    else{
-        $target_sale_point = $sale_point_model->GetSalePointByCode($cleanData['code']);
-        if($target_sale_point !== false)
-            $error = 'El código del punto de venta está repetido';
     }
 }
 
 if($error === ''){
-    if($edit){
-        if(intval($target_sale_point['id']) !== intval($cleanData['id']) && $target_sale_point['code'] === $cleanData['code'])
+    include_once '../fields_config/sale_points.php';
+    $cleanData = Validator::ValidatePOSTFields($salePointFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
+}
+
+if($error === ''){
+    $exists = $sale_point_model->GetSalePointByCode($cleanData['code']);
+    if($exists !== false){
+        if($edit){
+            if(intval($target_sale_point['id']) !== intval($exists['id']))
+                $error = 'El código ingresado ya está registrado';
+        }
+        else
             $error = 'El código ingresado ya está registrado';
     }
 }  
