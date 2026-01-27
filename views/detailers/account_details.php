@@ -1,40 +1,40 @@
 <?php 
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 include_once '../../utils/Validator.php';
 include_once '../../utils/prettyCiphers.php';
 
-$id = Validator::ValidateRecievedId();
 $error = '';
 
+$id = Validator::ValidateRecievedId();
 if(is_string($id)){
     $error = $id;    
 }
 
+if($error === ''){
+    include_once '../../models/account_model.php';
+    $account_model = new AccountModel();
+    $target_account = $account_model->GetAccount($id);
+    if($target_account === false)
+        $error = 'Cliente no encontrado';
+}
+
+if($error !== ''){
+    header("Location: $base_url/views/tables/search_account.php?error=$error");
+    exit;
+}
+
 include_once '../../models/invoice_model.php';
-include_once '../../models/account_model.php';
 include_once '../../models/siacad_model.php';
 include_once '../../models/account_payments_model.php';
 include_once '../../models/product_model.php';
 include_once '../../models/coin_model.php';
 
 $invoice_model = new InvoiceModel();
-$account_model = new AccountModel();
 $siacad = new SiacadModel();
 $payment_model = new AccountPaymentsModel();
 $product_model = new ProductModel();
 $coin_model = new CoinModel();
-
-$target_account = $account_model->GetAccount($id);
-if($target_account === false){
-    $error = 'Cliente no encontrado';
-}
-
-if($error !== ''){
-    header('Location: ' . $base_url . '/views/tables/search_account.php?error='. $error);
-    exit;
-}
 
 $currentPeriod = $siacad->GetCurrentPeriodo();
 $focProduct = $product_model->GetProductByName('FOC');

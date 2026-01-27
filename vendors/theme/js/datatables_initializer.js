@@ -1,3 +1,8 @@
+$('.generic-datatable').DataTable({    
+    language: spanish,
+    responsive: true    
+}); 
+
 $('.my-datatable-buttons').DataTable({
     language: spanish,
     dom: "Blfrtip",
@@ -102,8 +107,6 @@ $('.datatable-date-4').DataTable({
         render: $.fn.dataTable.render.moment('YYYY-MM-DD HH:mm:ss', 'DD/MM/YYYY HH:mm:ss')
       }],
     responsive: true,
-    scrollX: true,
-    
 }); 
 
 $('.datatable-date-5').DataTable({    
@@ -112,16 +115,13 @@ $('.datatable-date-5').DataTable({
         buttons: [
             {
                 extend: "excel",
-                className: "btn-sm"
             },
         ],
     columnDefs: [{
         targets: [5],
         render: $.fn.dataTable.render.moment('YYYY-MM-DD HH:mm:ss', 'DD/MM/YYYY HH:mm:ss')
       }],
-    //responsive: true,
-    scrollX: true,
-    
+    responsive: true,    
 }); 
 
 $('.datatable-date-6').DataTable({    

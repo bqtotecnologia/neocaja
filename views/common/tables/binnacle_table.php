@@ -1,7 +1,7 @@
-<table class="table table-striped table-bordered datatable-date-4" style="width:100%">
-    <thead>
+<table class="table table-striped col-12 datatable-date-4">
+    <thead class="bg-theme text-white fw-bold h6">
         <tr>
-            <th class="text-center" style="padding-right:15px !important;">Nº</th>
+            <th class="text-center">Nº</th>
             <th class="text-center">Cédula</th>
             <th class="text-center">Usuario</th>
             <th class="text-center">Acción</th>
@@ -20,7 +20,6 @@
                 <td class="align-middle text-center"><?= $event['name'] ?></td>
                 <td class="align-middle text-center"><?= $event['action'] ?></td>
                 <td class="align-middle text-center"><?= $event['created_at'] ?></td>
-                </td>
             </tr>
         <?php } ?>
     </tbody>

@@ -1,5 +1,5 @@
-<table class="table table-striped table-bordered datatable-date-2" style="width:100%">
-    <thead>
+<table class="table table-striped col-12 datatable-date-2">
+    <thead class="bg-theme text-white fw-bold h6">
         <tr>
             <th class="text-center" style="padding-right:15px !important;">Nº</th>
             <th class="text-center">Nombre</th>
@@ -18,8 +18,8 @@
                 <td class="align-middle text-center"><?php echo $count; $count++; ?></td>
                 <td class="align-middle text-center"><?= $bank['name'] ?></td>
                 <td class="align-middle text-center"><?= $bank['created_at'] ?></td>
-                <td class="align-middle text-center">
-                    <i class="fa fa-circle text-<?= $bank['active'] ? 'success' : 'danger' ?>"></i>                    
+                <td class="align-middle text-center fw-bold text-<?= $bank['active'] ? 'success' : 'danger' ?>">
+                    <?= $bank['active'] ? 'Sí' : 'No' ?>
                 </td>
                 <td class="">
                     <div class="row justify-content-around">

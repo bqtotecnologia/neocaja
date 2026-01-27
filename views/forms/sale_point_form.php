@@ -1,7 +1,6 @@
 <?php
 $admitted_user_types = ['Super', 'Cajero'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 
 $edit = isset($_GET['id']);
 $form = true;
@@ -24,7 +23,7 @@ if($error === '' && $edit){
 }
 
 if($error !== ''){
-    header("Location: $base_url/views/tables/search_sale_point.php?error$error");
+    header("Location: $base_url/views/tables/search_sale_point.php?error=$error");
     exit;
 }
 

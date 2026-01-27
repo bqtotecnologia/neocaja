@@ -176,8 +176,8 @@
                     <?php if(Auth::UserLevelIn(['Tecnología', 'Super', 'Cajero'])){ ?>
                       <li><a><i class="fa fa-code"></i> Bitácora <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/forms/binnacle_by_date_range.php">Buscar por rango de fechas</a></li>
-                          <li><a href="<?= $base_url ?>/views/forms/binnacle_by_admin.php">Buscar por usuario</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_binnacle_by_date_range.php">Buscar por rango de fechas</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_binnacle_by_admin.php">Buscar por usuario</a></li>
                         </ul>
                       </li>
 

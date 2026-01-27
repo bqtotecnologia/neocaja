@@ -1,7 +1,7 @@
-<table class="table table-striped table-bordered datatable-date-2-datetime-5" style="width:100%">
-    <thead>
+<table class="table table-striped col-12 datatable-date-2-datetime-5">
+    <thead class="bg-theme text-white fw-bold h6">
         <tr>
-            <th class="text-center" style="padding-right:15px !important;">Nº</th>
+            <th class="text-center">Nº</th>
             <th class="text-center">Referencia</th>
             <th class="text-center">Fecha</th>
             <th class="text-center">Monto</th>

@@ -1,7 +1,6 @@
 <?php
 $admitted_user_types = ['Super', 'Cajero'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 include_once '../../utils/Auth.php';
 
 include_once '../../models/coin_model.php';
@@ -11,7 +10,8 @@ $latest = $coin_model->GetCoinByName('Dólar');
 $lastRateDate = new DateTime($latest['price_created_at'], new DateTimeZone('America/Caracas'));
 $today = new DateTime('now', new DateTimeZone('America/Caracas'));
 if($lastRateDate->format('Y-m-d') !== $today->format('Y-m-d')){
-    header("Location: $base_url/views/forms/update_coin_price.php?error=Antes de nada, se requiere que la tasa del dólar esté actualizada al día de hoy");
+    $error = 'Antes de nada, se requiere que la tasa del dólar esté actualizada al día de hoy';
+    header("Location: $base_url/views/forms/update_coin_price.php?error=$error&usd=1");
     exit;
 }
 

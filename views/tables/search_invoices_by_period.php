@@ -88,11 +88,12 @@ $periods = $siacad->GetPeriodsByIdList($periods);
         else
             $invoices = $invoice_model->GetInvoicesOfPeriod($target_period['idperiodo']);
         ?>
+
         <div class="col-12 row justify-content-center px-4">
             <div class="col-12 row justify-content-center x_panel">
-                <?php 
-                include '../common/tables/invoice_table.php';
-                ?>
+                <div class="table-responsive">
+                    <?php include '../common/tables/invoice_table.php'; ?>
+                </div>
             </div>
         </div>
     <?php } ?>

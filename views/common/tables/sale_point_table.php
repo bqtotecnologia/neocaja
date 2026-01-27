@@ -1,4 +1,4 @@
-<table class="table table-striped table-bordered datatable-date-3" style="width:100%">
+<table class="table table-striped col-12 datatable-date-3" style="width:100%">
     <thead>
         <tr>
             <th class="text-center" style="padding-right:15px !important;">Nº</th>

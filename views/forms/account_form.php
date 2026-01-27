@@ -1,26 +1,32 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 
 
 $edit = isset($_GET['id']);
+$form = true;
+$error = '';
+
 if($edit){
     include_once '../../utils/Validator.php';
     $id = Validator::ValidateRecievedId();
 
     if(is_string($id)){
-        header("Location: $base_url/views/tables/search_account.php?error=$id");
-        exit;
-    }   
+        $error = $id;
+    }
+}
 
+if($error === '' && $edit){
     include_once '../../models/account_model.php';
     $account_model = new AccountModel();
     $target_account = $account_model->GetAccount($id);
-    if($target_account === false){
-        header("Location: $base_url/views/tables/search_account.php?error=Cliente no encontrado");
-        exit;
-    }
+    if($target_account === false)
+        $error = 'Cliente no encontrado';
+}
+
+if($error !== ''){
+    header("Location: $base_url/views/tables/search_account.php?error=$id");
+    exit;
 }
 
 include_once '../../models/scholarship_model.php';

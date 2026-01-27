@@ -40,8 +40,12 @@ class AdminModel extends SQLModel
         return $result;
     }
 
-    public function GetAdmins(){
-        $sql = $this->ADMIN_SELECT . " WHERE roles.name != 'Super'";
+    public function GetAdmins($include_super = false){
+        $sql = $this->ADMIN_SELECT;
+
+        if(!$include_super)
+            $sql .= " WHERE roles.name != 'Super'";
+        
         return parent::GetRows($sql, true);
     }
 

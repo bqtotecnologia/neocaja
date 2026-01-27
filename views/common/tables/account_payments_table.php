@@ -1,7 +1,9 @@
-<table class="table table-striped table-bordered datatable-date-5 w-100">
-    <thead>
+<!-- table table-striped col-12 -->
+<!-- class="bg-theme text-white fw-bold h6" -->
+<table class="table table-striped col-12 datatable-date-5">
+    <thead class="bg-theme text-white fw-bold h6">
         <tr>
-            <th class="text-center" style="padding-right:15px !important;">Nº</th>
+            <th class="text-center">Nº</th>
             <th class="text-center">Cédula</th>
             <th class="text-center">Nombre</th>
             <th class="text-center">Método de pago</th>

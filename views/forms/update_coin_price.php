@@ -1,13 +1,9 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
-
 include_once '../common/header.php';
-include_once '../../utils/FormBuilder.php';
 
 include_once '../../models/coin_model.php';
-
 $coin_model = new CoinModel();
 $coins = $coin_model->GetAllCoins();
 
@@ -22,55 +18,19 @@ foreach($coins as $coin){
 }
 
 $focusUSD = false;
-if(isset($_GET['error'])){
-    if($_GET['error'] === 'Antes de nada, se requiere que la tasa del dólar esté actualizada al día de hoy')
-        $focusUSD = true;
+if(isset($_GET['usd'])){
+    $focusUSD = true;
 }
 
-$fields = [
-    [
-        'name' => 'coin',
-        'display' => 'Moneda',
-        'placeholder' => '',
-        'id' => 'coin',
-        'type' => 'select',
-        'size' => 4,
-        'max' => 11,
-        'min' => 1,
-        'required' => true,
-        'value' => isset($_GET['id']) ? $_GET['id'] : '',
-        'elements' => $display_coins
-    ],
-    [
-        'name' => 'price',
-        'display' => 'Tasa',
-        'placeholder' => '',
-        'id' => 'price',
-        'type' => 'decimal',
-        'size' => 4,
-        'required' => true,
-        'value' => '0',
-    ],
-    [
-        'name' => 'date',
-        'display' => 'Fecha',
-        'placeholder' => '',
-        'id' => 'date',
-        'type' => 'date',
-        'size' => 4,
-        'required' => true,
-        'value' => date('Y-m-d'),
-        'max' => date('Y-m-d'),
-    ],
-];
-
+include_once '../../fields_config/coins_price.php';
+include_once '../../utils/FormBuilder.php';
 $formBuilder = new FormBuilder(
     '../../controllers/update_coin_price.php',    
     'POST',
     'Actualizar la tasa de una moneda manualmente',
     'Actualizar',
     '',
-    $fields
+    $coinPriceFields
 );
 
 ?>

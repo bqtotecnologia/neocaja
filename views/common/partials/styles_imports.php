@@ -19,5 +19,5 @@
 <link href="<?= $base_url ?>/vendors/datatable/css/jquery.dataTables.css" rel="stylesheet" />
 
 <!-- Custom Theme Style -->
-<link href="<?= $base_url ?>/build/css/custom.min.css" rel="stylesheet">
-<link href="<?= $base_url ?>/build/css/mycustom.css" rel="stylesheet">
+<link href="<?= $base_url ?>/vendors/theme/css/custom.min.css" rel="stylesheet">
+<link href="<?= $base_url ?>/vendors/theme/css/mycustom.css" rel="stylesheet">

@@ -1,5 +1,5 @@
-<table id="datatable-buttons" class="table table-striped table-bordered" style="width:100%">
-    <thead>
+<table class="table table-striped col-12 datatable-date-2">
+    <thead class="bg-theme text-white fw-bold h6">
         <tr>
             <th class="text-center">Nº</th>
             <th class="text-center">Mensaje</th>
@@ -15,7 +15,7 @@
             <tr class="h6" >
                 <td class="align-middle text-center"><?php echo $count; $count++; ?></td>
                 <td class="align-middle text-center <?= $notification['viewed'] === '0' ? 'bg-notification' : '' ?>"><?= $notification['message'] ?></td>
-                <td class="align-middle text-center"><?= date('d/m/Y', strtotime($notification['created_at'])) ?></td>
+                <td class="align-middle text-center"><?= $notification['created_at'] ?></td>
             </tr>
         <?php } ?>
     </tbody>

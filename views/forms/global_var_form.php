@@ -11,7 +11,6 @@ if($error === ''){
     $id = Validator::ValidateRecievedId();
     if(is_string($id))
         $error = $id;
-
 }
 
 if($error === ''){
@@ -23,7 +22,7 @@ if($error === ''){
 }
 
 if($error !== ''){
-    header("Location: $base_url/views/panel.php?error=$error");
+    header("Location: $base_url/views/tables/search_global_var.php?error=$error");
     exit;
 }
 

@@ -1,28 +1,28 @@
 <?php
 $admitted_user_types = ['Tecnología', 'Super'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
-
 include_once '../../utils/Validator.php';
 
+$error = '';
 $id = Validator::ValidateRecievedId();
-if(is_string($id)){
-    header("Location: $base_url/views/tables/search_unknown_incomes_by_date.php?error=" . $id);
-    exit;
+if(is_string($id))
+    $error = $id;
+
+if($error === ''){
+    include_once '../../models/unknown_incomes_model.php';    
+    $unknown_model = new UnknownIncomesModel();    
+    $target_income = $unknown_model->GetUnknownIncome($id);
+    if($target_income === false)
+        $error = 'Ingreso no identificado no encontrado';
 }
 
-include_once '../../models/unknown_incomes_model.php';    
-$unknown_model = new UnknownIncomesModel();
-
-$target_income = $unknown_model->GetUnknownIncome($id);
-if($target_income === false){
-    header("Location: $base_url/views/tables/search_unknown_incomes_by_date.php?error=Ingreso no identificado no encontrado");
+if($error !== ''){
+    header("Location: $base_url/views/tables/search_unknown_incomes_by_date.php?error=$error");
     exit;
 }
 
 include_once '../common/header.php';
 include_once '../../utils/FormBuilder.php';
-
 
 include_once '../../models/account_model.php';    
 $account_model = new AccountModel();
@@ -39,80 +39,14 @@ foreach($accounts as $account){
     array_push($display_accounts, $to_add);
 }
 
-
-$fields = [
-    [
-        'name' => 'price',
-        'display' => 'Monto',
-        'placeholder' => '',
-        'id' => 'price',
-        'type' => 'decimal',
-        'size' => 4,
-        'max' => 11,
-        'min' => 1,
-        'required' => false,
-        'value' => $target_income['price']
-    ],
-    [
-        'name' => 'date',
-        'display' => 'Fecha',
-        'placeholder' => '',
-        'id' => 'date',
-        'type' => 'date',
-        'size' => 4,
-        'required' => false,
-        'value' => $target_income['date'],
-    ],
-    [
-        'name' => 'ref',
-        'display' => 'Referencia',
-        'placeholder' => '',
-        'id' => 'ref',
-        'type' => 'text',
-        'size' => 4,
-        'max' => 100,
-        'min' => 1,
-        'required' => false,
-        'value' => $target_income['ref'],
-    ],
-    [
-        'name' => 'description',
-        'display' => 'Descripción',
-        'placeholder' => '',
-        'id' => 'description',
-        'type' => 'textarea',
-        'size' => 10,
-        'max' => 100,
-        'min' => 1,
-        'required' => false,
-        'value' => $target_income['description'],
-    ],
-    [
-        'name' => 'account',
-        'display' => 'Cliente relacionado',
-        'placeholder' => '',
-        'id' => 'account',
-        'type' => 'select',
-        'size' => 8,
-        'max' => 11,
-        'min' => 1,
-        'required' => false,
-        'value' => $target_income['account_id'],
-        'elements' => $display_accounts
-    ],
-    [
-        'name' => 'id',
-        'value' => $target_income['id']
-    ]
-];
-
+include_once '../../fields_config/unknown_incomes.php';
 $formBuilder = new FormBuilder(
     '../../controllers/update_unknown_income.php',    
     'POST',
     'Detalles de un ingreso no identificado',
     'Actualizar',
     '',
-    $fields
+    $unknownIncomeFields
 );
 
 ?>

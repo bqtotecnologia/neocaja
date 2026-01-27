@@ -1,7 +1,6 @@
 <?php
 $admitted_user_types = ['Super', 'Cajero'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 
 $edit = isset($_GET['id']);
 $form = true;
@@ -19,9 +18,8 @@ if($error === '' && $edit){
     include_once '../../models/scholarship_model.php';
     $scholarship_model = new ScholarshipModel();
     $target_scholarship = $scholarship_model->GetScholarship($id);
-    if($target_scholarship === false){
+    if($target_scholarship === false)
         $error = 'Beca no encontrada';
-    }
 }
 
 if($error !== ''){

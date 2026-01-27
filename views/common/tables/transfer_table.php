@@ -1,7 +1,7 @@
-<table class="table table-striped table-bordered datatable-date-4" style="width:100%">
-    <thead>
+<table class="table table-striped col-12 datatable-date-4">
+    <thead class="bg-theme text-white fw-bold h6">
         <tr>
-            <th class="text-center" style="padding-right:15px !important;">Nº</th>
+            <th class="text-center">Nº</th>
             <th class="text-center">Banco</th>
             <th class="text-center">Número de cuenta</th>
             <th class="text-center">Rif/Cédula</th>
@@ -22,8 +22,8 @@
                 <td class="align-middle text-center"><?= $transfer['account_number'] ?></td>
                 <td class="align-middle text-center"><?= $transfer['document_letter'] . $transfer['document_number'] ?></td>
                 <td class="align-middle text-center"><?= $transfer['created_at'] ?></td>
-                <td class="align-middle text-center">
-                    <i class="fa fa-circle text-<?= intval($transfer['active']) === 1 ? 'success' : 'danger' ?>"></i>
+                <td class="align-middle text-center fw-bold text-<?= intval($transfer['active']) === 1 ? 'success' : 'danger' ?>">
+                    <?= intval($transfer['active']) === 1 ? 'Sí' : 'No' ?>
                 </td>
                 <td class="">
                     <div class="row justify-content-around">

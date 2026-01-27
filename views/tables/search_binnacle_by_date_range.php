@@ -5,7 +5,7 @@ include_once '../../utils/base_url.php';
 
 if(!empty($_POST)){
     if(strtotime($_POST['start_date']) > strtotime($_POST['end_date'])){
-        header("Location: $base_url/views/forms/binnacle_by_date_range.php?error=La fecha final debe ser posterior o igual a la fecha inicial");
+        header("Location: $base_url/views/tables/search_binnacle_by_date_range.php?error=La fecha final debe ser posterior o igual a la fecha inicial");
         exit;
     }
 }

@@ -12,103 +12,41 @@ if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'cedula' => [
-        'min' => 7,
-        'max' => 10,
-        'required' => true,
-        'type' => 'integer',
-        'suspicious' => true,
-    ],
-    'names' => [
-        'min' => 1,
-        'max' => 100,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'surnames' => [
-        'min' => 1,
-        'max' => 100,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'address' => [
-        'min' => 10,
-        'max' => 255,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => false,
-    ],
-    'address' => [
-        'min' => 1,
-        'max' => 1000,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => false,
-    ],
-    'scholarship' => [
-        'min' => 0,
-        'max' => 11,
-        'required' => false,
-        'type' => 'integer',
-        'suspicious' => true,
-    ],
-    'phone' => [
-        'min' => 11,
-        'max' => 11,
-        'required' => true,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'scholarship_coverage' => [
-        'min' => 1,
-        'max' => 11,
-        'required' => true,
-        'type' => 'integer',
-        'suspicious' => true,
-    ],
-    'company' => [
-        'min' => 0,
-        'max' => 11,
-        'required' => false,
-        'type' => 'integer',
-        'suspicious' => true,
-    ],
-];
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
-
 $edit = isset($_POST['id']);
-$updateCompany = false;
-if($edit === false) $updateCompany = true;
+$form = false;
+
+if($error === '' && $edit){
+    $id = Validator::ValidateRecievedId('id', 'POST');
+    if(is_string($id))
+        $error = $id;
+}
 
 if($error === ''){
     include_once '../models/account_model.php';
     $account_model = new AccountModel();
 
     if($edit){
-        $target_account = $account_model->GetAccount($cleanData['id']);
+        $target_account = $account_model->GetAccount($id);
         if($target_account === false)
             $error = 'Cliente no encontrado';
     }
-    else{
-        $target_account = $account_model->GetAccountByCedula($cleanData['cedula']);
-        if($target_account !== false)
-            $error = 'La cédula del cliente está repetida';
-    }  
 }
 
 if($error === ''){
-    if($cleanData['company'] !== 0){
+    include_once '../fields_config/accounts.php';
+    $cleanData = Validator::ValidatePOSTFields($accountFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
+}
+
+if($error === ''){
+    $updateCompany = false;
+    if($edit === false) $updateCompany = true;
+
+    if($cleanData['company'] !== ''){
         include_once '../models/company_model.php';
         $company_model = new CompanyModel();
-    
+
         $target_company = $company_model->GetCompany($cleanData['company']);
         if($target_company === false)
             $error = 'Empresa no encontrada';
@@ -116,10 +54,11 @@ if($error === ''){
 }
 
 if($error === ''){
-    if($cleanData['scholarship'] !== 0){
+    if($cleanData['scholarship'] !== ''){
         include_once '../models/scholarship_model.php';
         $scholarship_model = new ScholarshipModel();
-    
+
+        
         $target_scholarship = $scholarship_model->GetScholarship($cleanData['scholarship']);
         if($target_scholarship === false)
             $error = 'Tipo de beca no encontrada';
@@ -127,8 +66,13 @@ if($error === ''){
 }
 
 if($error === ''){
-    if($edit){
-        if($target_account['id'] !== $cleanData['id'] && $target_account['cedula'] === $cleanData['cedula'])
+    $exists = $account_model->GetAccountByCedula($cleanData['cedula']);
+    if($exists !== false){
+        if($edit){
+            if(intval($exists['id']) !== intval($id))
+                $error = 'La cédula ingresada ya está repetida';    
+        }
+        else
             $error = 'La cédula ingresada ya está repetida';
     }
 }
@@ -136,25 +80,17 @@ if($error === ''){
 // Creating / updating the account
 if($error === ''){    
     $cleanData['is_student'] = isset($_POST['is_student']) ? '1' : '0';
-    $cleanData['scholarship'] = ($cleanData['scholarship'] === 0 ? 'NULL' : $target_scholarship['id']);
+    $cleanData['scholarship'] = ($cleanData['scholarship'] === '' ? 'NULL' : $target_scholarship['id']);
 
     if($cleanData['scholarship'] === 'NULL')
         $cleanData['scholarship_coverage'] = 'NULL';
     else
-        $cleanData['scholarship_coverage'] = ($cleanData['scholarship_coverage'] === 0 ? 'NULL' : $cleanData['scholarship_coverage']);
+        $cleanData['scholarship_coverage'] = ($cleanData['scholarship_coverage'] === '' ? 'NULL' : $cleanData['scholarship_coverage']);
 
     if($cleanData['scholarship_coverage'] === 'NULL')
-        $cleanData['scholarship'] = 'NULL';
+        $cleanData['scholarship'] = 'NULL';    
 
-    
-
-    if($cleanData['scholarship'] === 'NULL')
-        $cleanData['scholarship_coverage'] = 'NULL';
-
-    $cleanData['company'] = ($cleanData['company'] === 0 ? 'NULL' : $target_company['id']);
-
-    if($cleanData['scholarship'] === 0)
-        $cleanData['scholarship_coverage'] = 0;
+    $cleanData['company'] = ($cleanData['company'] === '' ? 'NULL' : $target_company['id']);
 
     if($edit){
         $updated = $account_model->UpdateAccount($cleanData['id'], $cleanData);

@@ -12,7 +12,8 @@ if(Auth::UserLevelIn(['Cajero', 'Super'])){
     $today = date('Y-m-d');
     $usdUpdated = strtotime($today) === strtotime($coin_date);
     if($usdUpdated === false){
-        header("Location: $base_url/views/forms/update_coin_price.php?error=Antes de nada, se requiere que la tasa del dólar esté actualizada al día de hoy");
+        $error = 'Antes de nada, se requiere que la tasa del dólar esté actualizada al día de hoy';
+        header("Location: $base_url/views/forms/update_coin_price.php?error=$error&usd=1");
         exit;
     }
 }

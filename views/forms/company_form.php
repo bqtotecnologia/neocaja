@@ -4,6 +4,8 @@ include_once '../../utils/validate_user_type.php';
 
 $edit = isset($_GET['id']);
 $form = true;
+$error = '';
+
 if($edit){
     include_once '../../utils/Validator.php';
     $id = Validator::ValidateRecievedId();
@@ -13,7 +15,7 @@ if($edit){
 }
 
 if($error === '' && $edit){
-        include_once '../../models/company_model.php';
+    include_once '../../models/company_model.php';
     $company_model = new CompanyModel();
     $target_company = $company_model->GetCompany($id);
     if($target_company === false)

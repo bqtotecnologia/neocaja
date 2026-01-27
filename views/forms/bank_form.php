@@ -1,30 +1,37 @@
 <?php
 $admitted_user_types = ['Super', 'Cajero'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 
 $edit = isset($_GET['id']);
 $form = true;
-if($edit){
-    if(!is_numeric($_GET['id'])){
-        header("Location: $base_url/views/tables/search_bank.php?error=Id inválido");
-        exit;
-    }   
+$error = '';
 
+if($edit){
+    include_once '../../utils/Validator.php';
+    $id = Validator::ValidateRecievedId();
+
+    if(is_string($id)){
+        $error = $id;
+    }  
+}
+
+if($error === '' && $edit){
     include_once '../../models/bank_model.php';
     $bank_model = new BankModel();
-    $target_bank = $bank_model->GetBankById($_GET['id']);
+    $target_bank = $bank_model->GetBankById($id);
     if($target_bank === false){
-        header("Location: $base_url/views/tables/search_bank.php?error=Banco no encontrado");
-        exit;
+        $error = 'Banco no encontrado';
     }
+}
+
+if($error !== ''){
+    header("Location: $base_url/views/tables/search_bank.php?error=$error");
+    exit;
 }
 
 include_once '../common/header.php';
 include_once '../../fields_config/banks.php';
 include_once '../../utils/FormBuilder.php';
-
-
 
 $formBuilder = new FormBuilder(
     '../../controllers/handle_bank.php',    

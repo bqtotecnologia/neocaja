@@ -113,7 +113,7 @@ $accountFields = [
     ],
 ];
 
-if($edit){
+if($edit && $form){
     $id_field = [
         'name' => 'id',
         'value' => $target_account['id']

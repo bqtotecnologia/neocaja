@@ -1,5 +1,6 @@
 <?php 
 include_once '../../utils/base_url.php';
+
 session_start();
 if(isset($_SESSION['neocaja_cedula']) && isset($_SESSION['neocaja_rol'])){
   if(in_array($_SESSION['neocaja_rol'], ['Cajero', 'Supervisor', 'Super', 'Estudiante'])){
@@ -35,8 +36,8 @@ if(isset($_SESSION['neocaja_cedula']) && isset($_SESSION['neocaja_rol'])){
     <link rel="shortcut icon" href="../../images/iujo.ico">
 
     <!-- Custom Theme Style -->
-    <link href="../../build/css/custom.min.css" rel="stylesheet">
-    <link href="../../build/css/mycustom.css" rel="stylesheet">
+    <link href="../../vendors/theme/css/custom.min.css" rel="stylesheet">
+    <link href="../../vendors/theme/css/mycustom.css" rel="stylesheet">
   </head>
 
   <body class="login">

@@ -1,30 +1,35 @@
 <?php
 $admitted_user_types = ['Super', 'Cajero'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 
 $edit = isset($_GET['id']);
 $form = true;
-if($edit){
-    if(!is_numeric($_GET['id'])){
-        header("Location: $base_url/views/tables/search_payment_method.php?error=Id inválido");
-        exit;
-    }   
+$error = '';
 
+if($edit){
+    include_once '../../utils/Validator.php';
+    $id = Validator::ValidateRecievedId();
+    if(is_string($id))
+        $error = $id;    
+}
+
+if($error === '' && $edit){
     include_once '../../models/payment_method_model.php';
     $payment_method_model = new PaymentMethodModel();
-    $target_payment_method = $payment_method_model->GetPaymentMethodType($_GET['id']);
+    $target_payment_method = $payment_method_model->GetPaymentMethodType($id);
     if($target_payment_method === false){
-        header("Location: $base_url/views/tables/search_payment_method.php?error=Método de pago no encontrado");
-        exit;
+        $error = 'Método de pago no encontrado';
     }
+}
+
+if($error !== ''){
+    header("Location: $base_url/views/tables/search_payment_method.php?error=$error");
+    exit;
 }
 
 include_once '../common/header.php';
 include_once '../../utils/FormBuilder.php';
 include_once '../../fields_config/payment_methods.php';
-
-
 
 $formBuilder = new FormBuilder(
     '../../controllers/handle_payment_method.php',    

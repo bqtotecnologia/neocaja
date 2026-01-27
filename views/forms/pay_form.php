@@ -1,7 +1,6 @@
 <?php
 $admitted_user_types = ['Estudiante'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 include_once '../../utils/Auth.php';
 
 include_once '../../models/coin_model.php';

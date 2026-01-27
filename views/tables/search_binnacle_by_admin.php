@@ -1,8 +1,6 @@
 <?php
 $admitted_user_types = ['Super', 'Supervisor'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
-
 include_once '../../models/admin_model.php';
 $admin_model = new AdminModel();
 
@@ -28,7 +26,7 @@ if(!empty($_POST)){
 include_once '../common/header.php';
 include_once '../../utils/FormBuilder.php';
 
-$admins = $admin_model->GetAdmins();
+$admins = $admin_model->GetAdmins(true);
 $display_admins = [];
 foreach($admins as $admin){
     $to_add = [

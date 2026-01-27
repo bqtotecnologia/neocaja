@@ -1,5 +1,5 @@
-<table class="table table-striped table-bordered datatable-date-3" style="width:100%">
-    <thead>
+<table class="table table-striped col-12 datatable-date-3">
+    <thead class="bg-theme text-white fw-bold h6">
         <tr>
             <th class="text-center" style="padding-right:15px !important;">Nº</th>
             <th class="text-center">Cédula</th>
@@ -20,8 +20,8 @@
                 <td class="align-middle text-center"><?= $admin['cedula'] ?></td>
                 <td class="align-middle text-center"><?= $admin['name'] ?></td>
                 <td class="align-middle text-center"><?= $admin['created_at'] ?></td>
-                <td class="align-middle text-center">
-                    <i class="fa fa-circle text-<?= $admin['active'] ? 'success' : 'danger' ?>"></i>                    
+                <td class="align-middle text-center fw-bold text-<?= $admin['active'] ? 'success' : 'danger' ?>">
+                    <?= $admin['active'] ? 'Sí' : 'No' ?>          
                 </td>
                 <td class="">
                     <div class="row justify-content-around">

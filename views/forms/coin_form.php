@@ -6,25 +6,30 @@ else
     $admitted_user_types = ['Super', 'Tecnologia'];
 
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 
+$error = '';
 
 if($edit){
     include_once '../../utils/Validator.php';
     $id = Validator::ValidateRecievedId();
 
     if(is_string($id)){
-        header("Location: $base_url/views/tables/search_coin.php?error=$id");
-        exit;
-    }   
+        $error = $id;
+    }  
+}
 
+if($error === '' && $edit){
     include_once '../../models/coin_model.php';
     $coin_model = new CoinModel();
     $target_coin = $coin_model->GetCoin($id);
     if($target_coin === false){
-        header("Location: $base_url/views/tables/search_coin.php?error=Moneda no encontrada");
-        exit;
+        $error = 'Moneda no encontrada';
     }
+}
+
+if($error !== ''){
+    header("Location: $base_url/views/tables/search_coin.php?error=$error");
+    exit;
 }
 
 include_once '../common/header.php';
@@ -32,8 +37,6 @@ include_once '../common/header.php';
 $form = true;
 include_once '../../fields_config/coins.php';
 include_once '../../utils/FormBuilder.php';
-
-
 
 $formBuilder = new FormBuilder(
     '../../controllers/handle_coin.php',    

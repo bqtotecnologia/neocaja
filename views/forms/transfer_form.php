@@ -1,8 +1,6 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
-
 
 $edit = isset($_GET['id']);
 $form = true;
@@ -20,9 +18,8 @@ if($error === '' && $edit){
     include_once '../../models/transfers_model.php';
     $transfers_model = new TransfersModel();
     $target_transfer = $transfers_model->GetTransfer($id);
-    if($transfers_model === false){
+    if($transfers_model === false)
         $error = 'Transferencia no encontrada';
-    }
 }
 
 if($error !== ''){

@@ -1,7 +1,7 @@
-<table class="table table-striped table-bordered datatable-date-3-4" style="width:100%">
-    <thead>
+<table class="table table-striped col-12 datatable-date-3-4">
+    <thead class="bg-theme text-white fw-bold h6">
         <tr>
-            <th class="text-center" style="padding-right:15px !important;">Nº</th>
+            <th class="text-center">Nº</th>
             <th class="text-center">Nombre</th>
             <th class="text-center">Precio($)</th>
             <th class="text-center">Fecha de creación</th>
@@ -22,8 +22,8 @@
                 <td class="align-middle text-center"><?= $product['price'] ?></td>
                 <td class="align-middle text-center"><?= $product['product_created_at'] ?></td>
                 <td class="align-middle text-center"><?= $product['price_created_at'] ?></td>
-                <td class="align-middle text-center">
-                    <i class="fa fa-circle text-<?= $product['active'] ? 'success' : 'danger' ?>"></i>                    
+                <td class="align-middle text-center fw-bold text-<?= $product['active'] ? 'success' : 'danger' ?>">
+                    <?= $product['active'] ? 'Sí' : 'No' ?>
                 </td>
                 <td class="">
                     <div class="row justify-content-around">

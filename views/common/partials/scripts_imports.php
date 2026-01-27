@@ -41,6 +41,6 @@
 <script lang="javascript" src="<?= $base_url ?>/vendors/xlsx/xlsx.full.min.js"></script>
 
 <!-- Custom Theme Scripts -->
-<script src="<?= $base_url ?>/build/js/custom.min.js"></script>
-<script src="<?= $base_url ?>/build/js/mycustom.js"></script>
-<script src="<?= $base_url ?>/build/js/datatables_initializer.js"></script>
+<script src="<?= $base_url ?>/vendors/theme/js/custom.min.js"></script>
+<script src="<?= $base_url ?>/vendors/theme/js/mycustom.js"></script>
+<script src="<?= $base_url ?>/vendors/theme/js/datatables_initializer.js"></script>

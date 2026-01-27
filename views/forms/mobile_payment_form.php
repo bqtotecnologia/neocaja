@@ -1,7 +1,6 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 
 
 $edit = isset($_GET['id']);
@@ -26,7 +25,7 @@ if($error === '' && $edit){
 }
 
 if($error !== ''){
-    header("Location: $base_url/views/tables/search_mobile_payments.php?$error");
+    header("Location: $base_url/views/tables/search_mobile_payments.php?error=$error");
     exit;
 }
 

@@ -12,37 +12,26 @@ if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'id' => [
-        'min' => 1,
-        'max' => 11,
-        'required' => true,
-        'type' => 'numeric',
-        'suspicious' => true,
-    ],
-    'account' => [
-        'min' => 1,
-        'max' => 11,
-        'required' => true,
-        'type' => 'numeric',
-        'suspicious' => true,
-    ],
-];
-
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
+if($error === ''){
+    $id = Validator::ValidateRecievedId('id', 'POST');
+    if(is_string($id))
+        $error = $id;
+}
 
 if($error === ''){
     include_once '../models/unknown_incomes_model.php';
     $unknown_model = new UnknownIncomesModel();
 
-    $target_income = $unknown_model->GetUnknownIncome($cleanData['id']);
+    $target_income = $unknown_model->GetUnknownIncome($id);
     if($target_income === false)
         $error = 'Ingreso no identificado no encontrado';
+}
+
+if($error === ''){
+    include_once '../fields_config/unknown_incomes.php';
+    $cleanData = Validator::ValidatePOSTFields($unknownIncomeFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
 }
 
 if($error === ''){
