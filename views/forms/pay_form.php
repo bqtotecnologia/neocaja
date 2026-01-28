@@ -129,7 +129,7 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
 
                     <div class="row col-12 m-0 p-0 align-items-center my-1">
                         <label class="col-12 col-lg-4 text-right align-middle m-0 h6" for="price">Monto de la transacción</label>
-                        <input class="col-12 col-lg-8 form-control" id="price" type="text" placeholder="Usar punto en vez de coma" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46">
+                        <input class="col-12 col-lg-8 form-control" id="price" type="text" placeholder="Diferenciar decimales con punto" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46">
                     </div>
 
                     <div class="row col-12 m-0 p-0 align-items-center mt-5">
@@ -148,7 +148,7 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
                 <div class="row m-0 p-0 my-3 col-12 justify-content-start align-items-start flex-wrap">
                     <?php foreach($products as $product) { ?>
                         <article class="row m-0 p-2 col-6 col-xl-3 align-self-stretch">
-                            <div class="w-100 border border-black rounded product-card text-black p-1" id="<?= $product['code'] ?>" onclick="SelectProduct(this)">
+                            <div class="w-100 border border-black rounded product-card cursor-pointer text-black p-1" id="<?= $product['code'] ?>" onclick="SelectProduct(this)">
                                 <h6 class="h5 fw-bold col-12 text-center p-0"><?= $product['name'] ?></h6>
                                 <p class="h5 fw-bold w-100 text-center m-0"><?= $product['price'] ?>$</p>
                             </div>

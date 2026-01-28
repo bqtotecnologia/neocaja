@@ -1,7 +1,6 @@
 <?php 
 $admitted_user_types = ['Estudiante'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 
 include '../../views/common/header.php';
 
@@ -18,9 +17,9 @@ $notification_model->SeeAllNotifications($_SESSION['neocaja_cedula']);
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <?php 
-            include '../common/tables/notification_table.php';
-            ?>
+            <div class="table-responsive">
+                <?php include '../common/tables/notification_table.php'; ?>
+            </div>
         </div>
     </div>
 </div>

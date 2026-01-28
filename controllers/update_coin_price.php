@@ -1,47 +1,22 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
-
-include_once '../utils/base_url.php';
 include_once '../utils/Validator.php';
 
 $error = '';
 $target_coin = false;
+$form = false;
 
 if(empty($_POST)){
     $error = 'POST vacío';
 }
 
-$fields_config = [
-    'coin' => [
-        'min' => 1,
-        'max' => 50,
-        'required' => true,
-        'type' => 'numeric',
-        'suspicious' => true,
-    ],
-    'price' => [
-        'min' => 1,
-        'max' => 14,
-        'required' => true,
-        'type' => 'float',
-        'suspicious' => true,
-    ],
-    'date' => [
-        'min' => 10,
-        'max' => 11,
-        'required' => true,
-        'type' => 'date',
-        'suspicious' => false,
-    ],
-];
-
-
-$result = Validator::ValidatePOSTFields($fields_config);
-if(is_string($result))
-    $error = $result;
-else
-    $cleanData = $result;
+if($error === ''){
+    include_once '../fields_config/coins_price.php';
+    $cleanData = Validator::ValidatePOSTFields($coinPriceFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
+}
 
 if($error === ''){
     include_once '../models/coin_model.php';

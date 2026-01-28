@@ -1,7 +1,6 @@
 <?php 
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 include_once '../../utils/Validator.php';
 include_once '../../utils/months_data.php';
 
@@ -12,27 +11,30 @@ if(is_string($id)){
     $error = $id;    
 }
 
-include_once '../../models/invoice_model.php';
+if($error === ''){
+    include_once '../../models/invoice_model.php';
+    $invoice_model = new InvoiceModel();
+
+    $target_invoice = $invoice_model->GetInvoice($id);
+    if($target_invoice === false){
+        $error = 'Factura no encontrada';
+    }
+}
+
+if($error !== ''){
+    header("Location: $base_url/views/tables/search_invoices_of_today.php?error=$error");
+    exit;
+}
+
 include_once '../../models/account_model.php';
 include_once '../../models/siacad_model.php';
 include_once '../../models/coin_model.php';
 include_once '../../models/selfdata_model.php';
 
-$invoice_model = new InvoiceModel();
 $account_model = new AccountModel();
 $siacad = new SiacadModel();
 $coin_model = new CoinModel();
 $self_data_model = new SelfDataModel();
-
-$target_invoice = $invoice_model->GetInvoice($id);
-if($target_invoice === false){
-    $error = 'Factura no encontrada';
-}
-
-if($error !== ''){
-    header('Location: ' . $base_url . '/views/tables/search_invoices_of_today.php?error='. $error);
-    exit;
-}
 
 function MyDecode($str){
     if(is_numeric($str)){
@@ -77,7 +79,6 @@ $target_account = $account_model->GetAccount($target_invoice['account_id']);
 $payment_methods = $invoice_model->GetPaymentMethodsOfInvoice($id);
 $concepts = $invoice_model->GetConceptsOfInvoice($id);
 $coinValues = $coin_model->GetCoinValuesOfDate($target_invoice['rate_date']);
-
 
 $target_company = $account_model->GetCompanyHistory($target_account['account_company_history_id']);
 $hasCompany = $target_company !== false;

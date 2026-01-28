@@ -22,6 +22,7 @@ if(isset($_GET['usd'])){
     $focusUSD = true;
 }
 
+$form = true;
 include_once '../../fields_config/coins_price.php';
 include_once '../../utils/FormBuilder.php';
 $formBuilder = new FormBuilder(

@@ -36,6 +36,23 @@ class NotificationModel extends SQLModel
         $sql = "UPDATE notifications SET viewed = 1 WHERE cedula = '$cedula'";
         return parent::DoQuery($sql);
     }
+
+    public function GetAccountsWithNotifications(){
+        $sql = "SELECT 
+            accounts.cedula,
+            accounts.id as account_id,
+            CONCAT(accounts.names, ' ', accounts.surnames) as fullname,
+            notifications.message,
+            notifications.created_at,
+            notifications.viewed
+            FROM 
+            notifications
+            INNER JOIN accounts ON accounts.cedula = notifications.cedula
+            ORDER BY
+            notifications.created_at DESC";
+
+        return parent::GetRows($sql, true);
+    }
 }
 
 $notification_model = new NotificationModel();

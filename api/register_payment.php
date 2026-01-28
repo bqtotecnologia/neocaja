@@ -1,50 +1,49 @@
 <?php
-include_once '../utils/Auth.php';
 $admitted_user_types = ['Estudiante', 'Super'];
+include_once '../utils/Auth.php';
 session_start();
-$userOk = Auth::UserLevelIn($admitted_user_types);
+
 $error = '';
-if($userOk === false)
+if(Auth::UserLevelIn($admitted_user_types) === false)
     $error = 'Permiso denegado. Cierre sesión e inicie nuevamente';
 
-include_once '../utils/Validator.php';
-
-$availablePaymentMethods = ['mobile_payment', 'transfer'];
-$inputJSON = file_get_contents('php://input');
-$post = json_decode($inputJSON, TRUE);
-
-
-
-
-if($post === NULL){
-    $error = 'POST vacío';
-}
-
-if(
-    !isset($post['cedula']) || 
-    !isset($post['document']) ||
-    !isset($post['ref']) ||
-    !isset($post['price']) ||
-    !isset($post['payment_method_type']) ||
-    !isset($post['payment_method']) ||
-    !isset($post['codes'])
-){
-    $error = 'Campos necesarios no recibidos';
-}
-
-
-
-foreach($post as $key => $value){
-    if($key === 'codes') 
-        continue;
-
-    $suspicious = Validator::HasSuspiciousCharacters($value);
-    if($suspicious === true){
-        $error = 'Campo ' . $key . ' inválido';
-        break;
+if($error === ''){
+    $availablePaymentMethods = ['mobile_payment', 'transfer'];
+    $inputJSON = file_get_contents('php://input');
+    $post = json_decode($inputJSON, TRUE);
+    
+    if($post === NULL){
+        $error = 'POST vacío';
     }
 }
 
+if($error === ''){
+    if(
+        !isset($post['cedula']) || 
+        !isset($post['document']) ||
+        !isset($post['ref']) ||
+        !isset($post['price']) ||
+        !isset($post['payment_method_type']) ||
+        !isset($post['payment_method']) ||
+        !isset($post['codes'])
+    ){
+        $error = 'Campos necesarios no recibidos';
+    }
+}
+
+if($error === ''){
+    include_once '../utils/Validator.php';
+    foreach($post as $key => $value){
+        if($key === 'codes') 
+            continue;
+    
+        $suspicious = Validator::HasSuspiciousCharacters($value);
+        if($suspicious === true){
+            $error = 'Campo ' . $key . ' inválido';
+            break;
+        }
+    }
+}
 
 if($error === ''){
     if(count($post['codes']) < 1){
@@ -58,9 +57,6 @@ if($error === ''){
     }
 }
 
-
-
-
 if($error === ''){
     include_once '../models/account_model.php';
     $account_model = new AccountModel();
@@ -69,14 +65,10 @@ if($error === ''){
         $error = 'Cuenta no encontrada';
 }
 
-
-
 if($error === ''){
     if($target_account['cedula'] !== $_SESSION['neocaja_cedula'])
         $error = 'Acción denegada';
 }
-
-
 
 if($error === ''){
     include_once '../models/product_model.php';
@@ -183,7 +175,6 @@ if($error === ''){
     if((($total_bs - 0.2 < $post['price']) && ($total_bs + 0.2 > $post['price'])) === false)
         $error = 'El monto no coincide';   
 }
-
 
 $created = false;
 if($error === ''){

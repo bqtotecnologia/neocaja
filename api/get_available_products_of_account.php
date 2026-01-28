@@ -1,27 +1,23 @@
 <?php
-include_once '../utils/Auth.php';
 $admitted_user_types = ['Estudiante', 'Super'];
+include_once '../utils/Auth.php';
 session_start();
-$userOk = Auth::UserLevelIn($admitted_user_types);
 
 $error = '';
-if($userOk === false)
+if(Auth::UserLevelIn($admitted_user_types) === false)
     $error = 'Permiso denegado. Cierre sesión e inicie nuevamente';
 
-include_once '../utils/Validator.php';
-
-if(empty($_POST)){
-    $error = 'POST vacío';
-}
-
-if(
-    !isset($_POST['cedula']) || 
-    !isset($_POST['period'])
-){
-    $error = 'Campos necesarios no recibidos';
+if($error === ''){
+    if(
+        !isset($_POST['cedula']) || 
+        !isset($_POST['period'])
+    ){
+        $error = 'Campos necesarios no recibidos';
+    }
 }
 
 if($error === ''){
+    include_once '../utils/Validator.php';
     $cedula = Validator::HasSuspiciousCharacters($_POST['cedula']);
     if($cedula === true)
         $error = 'Cédula inválida';

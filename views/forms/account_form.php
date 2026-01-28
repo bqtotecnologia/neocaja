@@ -2,7 +2,6 @@
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
 
-
 $edit = isset($_GET['id']);
 $form = true;
 $error = '';

@@ -3,9 +3,9 @@ $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
 
 include '../../views/common/header.php';
+
 include_once '../../models/product_model.php';
 $product_model = new ProductModel();
-
 $products = $product_model->GetAllProducts();
 ?>
 
@@ -16,11 +16,10 @@ $products = $product_model->GetAllProducts();
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <?php 
-            $btn_url = '../forms/product_form.php'; 
-            include_once '../layouts/addButton.php';
-            include '../common/tables/product_table.php'; 
-            ?>
+            <?php $btn_url = '../forms/product_form.php'; include_once '../layouts/addButton.php'; ?>
+            <div class="table-responsive">
+                <?php include '../common/tables/product_table.php'; ?>
+            </div>
         </div>
     </div>
 </div>

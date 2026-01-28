@@ -1,20 +1,20 @@
 <?php
-include_once '../utils/Auth.php';
 $admitted_user_types = ['Cajero', 'Super'];
+include_once '../utils/Auth.php';
 session_start();
-$userOk = Auth::UserLevelIn($admitted_user_types);
 
 $error = '';
-if($userOk === false)
+if(Auth::UserLevelIn($admitted_user_types) === false)
     $error = 'Permiso denegado. Cierre sesión e inicie nuevamente';
 
-include_once '../utils/Validator.php';
-
-if(empty($_GET)){
-    $error = 'GET vacío';
+if($error === ''){    
+    if(empty($_GET)){
+        $error = 'GET vacío';
+    }
 }
 
 if($error === ''){
+    include_once '../utils/Validator.php';
     $account = Validator::ValidateRecievedId('account');
     if(is_string($account))
         $error = 'Id del cliente inválido';
@@ -39,7 +39,6 @@ if($error === ''){
         'message' => $error
     ];
 }
-
 
 $json_data = json_encode($response, JSON_UNESCAPED_UNICODE); // Para que acepte las tildes
 header('Content-Type: application/json');

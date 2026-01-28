@@ -1,26 +1,31 @@
 <?php
-include_once '../utils/Auth.php';
 $admitted_user_types = ['Cajero', 'Super'];
+include_once '../utils/Auth.php';
 session_start();
-$userOk = Auth::UserLevelIn($admitted_user_types);
 
 $error = '';
-if($userOk === false)
+if(Auth::UserLevelIn($admitted_user_types) === false)
     $error = 'Permiso denegado. Cierre sesión e inicie nuevamente';
 
-if(empty($_GET)){
-    $error = 'GET vacío';
+if($error === ''){    
+    if(empty($_GET)){
+        $error = 'GET vacío';
+    }
 }
 
-if(!isset($_GET['date'])){
-    $error = 'Fecha no encontrada';
+if($error === ''){
+    if(!isset($_GET['date'])){
+        $error = 'Fecha no encontrada';
+    }
 }
 
-try{
-    $target_date = new DateTime($_GET['date']);
-}
-catch(Exception $e){
-    $error = 'Fecha inválida';
+if($error === ''){
+    try{
+        $target_date = new DateTime($_GET['date']);
+    }
+    catch(Exception $e){
+        $error = 'Fecha inválida';
+    }
 }
 
 if($error === ''){

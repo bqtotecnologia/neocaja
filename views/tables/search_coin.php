@@ -21,8 +21,10 @@ $coins = $coin_model->GetAllCoins();
                 $btn_url = '../forms/coin_form.php'; 
                 include_once '../layouts/addButton.php';
             }
-            include '../common/tables/coin_table.php'; 
             ?>
+            <div class="table-responsive">
+                <?php include '../common/tables/coin_table.php'; ?>
+            </div>
         </div>
     </div>
 </div>

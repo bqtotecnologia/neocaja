@@ -1,11 +1,9 @@
 <?php 
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 
 include_once '../../models/account_model.php';
 $account_model = new AccountModel();
-
 
 $target_date = false;
 if(!empty($_POST)) {
@@ -64,9 +62,9 @@ include '../../views/common/header.php';
         ?>
         <div class="col-12 row justify-content-center px-4">
             <div class="col-12 row justify-content-center x_panel">
-                <?php 
-                include '../common/tables/unknown_incomes_table.php';
-                ?>
+                <div class="table-responsive">
+                    <?php include '../common/tables/unknown_incomes_table.php'; ?>
+                </div>
             </div>
         </div>
     <?php } ?>

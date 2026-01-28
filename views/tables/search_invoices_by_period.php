@@ -1,28 +1,28 @@
 <?php 
 $admitted_user_types = ['Estudiante', 'Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 
 include_once '../../models/account_model.php';
 $account_model = new AccountModel();
 
 $student = $_SESSION['neocaja_rol'] === 'Estudiante';
 
+$error = '';
 if($student){
     $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula']);
     
     if($target_account === false){
-        header("Location: $base_url/views/panel.php?error=Cuenta no encontrada");
-        exit;
+        $error = 'Cuenta no encontrada';
     }
 }
 
-include_once '../../models/siacad_model.php';
-$siacad = new SiacadModel();
+if($error === ''){
+    include_once '../../models/siacad_model.php';
+    $siacad = new SiacadModel();
+}
 
 $target_period = false;
 if(!empty($_POST)) {
-    $error = '';
     include_once '../../utils/Validator.php';
     $id = Validator::ValidateRecievedId('id', 'POST');
     if(is_string($id))
@@ -33,11 +33,14 @@ if(!empty($_POST)) {
         if($target_period === false)
             $error = 'Periodo no encontrado';
     }
+}
 
-    if($error !== ''){
+if($error !== ''){
+    if($student)        
+        header("Location: $base_url/views/panel.php?error=$error");
+    else
         header("Location: $base_url/views/tables/search_invoices_by_period.php?error=$error");
-        exit;
-    }
+    exit;
 }
 
 include_once '../../models/invoice_model.php';

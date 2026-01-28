@@ -3,9 +3,9 @@ $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
 
 include '../../views/common/header.php';
+
 include_once '../../models/unknown_incomes_model.php';
 $unknown_model = new UnknownIncomesModel();
-
 $generations = $unknown_model->GetUnknownIncomesGenerations();
 ?>
 
@@ -16,11 +16,10 @@ $generations = $unknown_model->GetUnknownIncomesGenerations();
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <?php 
-            $btn_url = '../forms/import_unknown_incomes.php'; 
-            include_once '../layouts/addButton.php';
-            include '../common/tables/unknown_incomes_generations_table.php'; 
-            ?>
+            <?php $btn_url = '../forms/import_unknown_incomes.php'; include_once '../layouts/addButton.php'; ?>
+            <div class="table-responsive">
+                <?php include '../common/tables/unknown_incomes_generations_table.php'; ?>
+            </div>
         </div>
     </div>
 </div>

@@ -1,7 +1,6 @@
 <?php 
 $admitted_user_types = ['Cajero', 'Super', 'Estudiante'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 include_once '../../utils/Validator.php';
 include_once '../../utils/months_data.php';
 include_once '../../utils/prettyCiphers.php';
@@ -84,7 +83,7 @@ include '../../views/common/header.php';
     
 
     <div class="col-12 row justify-content-center px-4">
-        <section class="col-12 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
+        <section class="col-12 row justify-content-center h6 bg-white py-3" style="border: 1px solid #d6d6d6ff !important">
             <div class="row col-6 justify-content-center align-self-start">
                 <div class="row col-10 justify-content-start align-items-start">
                     <label class="fw-bold mx-2">
@@ -208,10 +207,10 @@ include '../../views/common/header.php';
                 Productos
             </h2>
 
-            <div class="row col-12">
+            <div class="row col-12">                
                 <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
+                    <table class="table table-striped col-12">
+                        <thead class="bg-theme text-white fw-bold h6">
                             <tr class="text-center">
                                 <th>Producto</th>
                                 <th>Mes</th>
@@ -261,8 +260,8 @@ include '../../views/common/header.php';
 
             <div class="row col-12">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
+                    <table class="table table-striped col-12">
+                        <thead class="bg-theme text-white fw-bold h6">
                             <tr class="text-center">
                                 <th>Método</th>
                                 <th>Moneda</th>

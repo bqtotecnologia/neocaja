@@ -1,7 +1,6 @@
 <?php 
 $admitted_user_types = ['Cajero', 'Super', 'Estudiante'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 include_once '../../utils/Validator.php';
 include_once '../../utils/prettyCiphers.php';
 
@@ -84,7 +83,7 @@ include '../../views/common/header.php';
                     <label class="fw-bold mx-2">
                         Cédula:
                     </label>
-                    <span class="">
+                    <span class="cursor-pointer" onclick="CopyToClipboard(this)" title="Click para copiar en el portapapeles">
                         <?= $target_account['cedula'] ?>
                     </span>
                 </div>    
@@ -118,7 +117,7 @@ include '../../views/common/header.php';
                     <label class="fw-bold mx-2">
                         Referencia:
                     </label>
-                    <span class="">
+                    <span class="cursor-pointer" onclick="CopyToClipboard(this)" title="Click para copiar en el portapapeles">
                         <?= $target_payment['ref'] ?>
                     </span>
                 </div>
@@ -135,7 +134,7 @@ include '../../views/common/header.php';
                     <label class="fw-bold mx-2">
                         Cédula/Rif:
                     </label>
-                    <span class="">
+                    <span class="cursor-pointer" onclick="CopyToClipboard(this)" title="Click para copiar en el portapapeles">
                         <?= $target_payment['document'] ?>
                     </span>
                 </div>
@@ -179,8 +178,8 @@ include '../../views/common/header.php';
 
             <div class="row col-12">
                 <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
+                    <table class="table table-striped col-12">
+                        <thead class="bg-theme text-white fw-bold h6">
                             <tr class="text-center">
                                 <th>Producto</th>
                                 <th>Monto ($)</th>
@@ -281,20 +280,20 @@ include '../../views/common/header.php';
                             <div class="col-12 row m-0 p-0 my-2">
                                 <table class="table table-bordered shadowed coincidence-table" id="coincidence-<?= $coincidence['id'] ?>">
                                     <tr>
-                                        <td class="bg-theme text-white fw-bold align-middle col-3">Referencia</td>
-                                        <td><?= $coincidence['ref'] ?></td>
+                                        <td class="bg-theme text-white fw-bold align-middle col-3 border-black">Referencia</td>
+                                        <td class="border-black"><?= $coincidence['ref'] ?></td>
                                     </tr>
                                     <tr>
-                                        <td class="bg-theme text-white fw-bold align-middle col-3">Fecha</td>
-                                        <td><?= date('d/m/Y', strtotime($coincidence['date'])) ?></td>
+                                        <td class="bg-theme text-white fw-bold align-middle col-3 border-black">Fecha</td>
+                                        <td class="border-black"><?= date('d/m/Y', strtotime($coincidence['date'])) ?></td>
                                     </tr>
                                     <tr>
-                                        <td class="bg-theme text-white fw-bold align-middle col-3">Monto</td>
-                                        <td><?= GetPrettyCiphers($coincidence['price']) ?></td>
+                                        <td class="bg-theme text-white fw-bold align-middle col-3 border-black">Monto</td>
+                                        <td class="border-black"><?= GetPrettyCiphers($coincidence['price']) ?></td>
                                     </tr>
                                     <tr>
-                                        <td class="bg-theme text-white fw-bold align-middle col-3">Propietario</td>
-                                        <td>
+                                        <td class="bg-theme text-white fw-bold align-middle col-3 border-black">Propietario</td>
+                                        <td class="border-black">
                                             <?php 
                                             if($coincidence['account_id'] === null){
                                                 echo '<span class="text-danger">Sin identificar</span>';
@@ -306,14 +305,14 @@ include '../../views/common/header.php';
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="bg-theme text-white fw-bold align-middle col-3">Descripción</td>
-                                        <td><?= $coincidence['description'] ?></td>
+                                        <td class="bg-theme text-white fw-bold align-middle col-3 border-black">Descripción</td>
+                                        <td class="border-black"><?= $coincidence['description'] ?></td>
                                     </tr>
                                     <tr>
-                                        <td class="bg-theme text-white fw-bold align-middle col-3">
+                                        <td class="bg-theme text-white fw-bold align-middle col-3 border-black">
                                             <label class="m-0 p-0" style="padding-right:10px !important" for="r-<?= $coincidence['id'] ?>">Seleccionar</label>
                                         </td>
-                                        <td>
+                                        <td class="border-black">
                                             <input 
                                             style="transform:scale(1.4)"
                                             type="radio" 

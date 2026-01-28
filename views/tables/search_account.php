@@ -3,9 +3,9 @@ $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
 
 include '../../views/common/header.php';
+
 include_once '../../models/account_model.php';
 $account_model = new AccountModel();
-
 $accounts = $account_model->GetAccounts();
 ?>
 
@@ -16,11 +16,10 @@ $accounts = $account_model->GetAccounts();
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <?php 
-            $btn_url = '../forms/account_form.php'; 
-            include_once '../layouts/addButton.php';
-            include '../common/tables/account_table.php'; 
-            ?>
+            <?php $btn_url = '../forms/account_form.php'; include_once '../layouts/addButton.php'; ?>
+            <div class="table-responsive">
+                <?php include '../common/tables/account_table.php'; ?>
+            </div>
         </div>
     </div>
 </div>

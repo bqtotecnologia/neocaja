@@ -3,9 +3,9 @@ $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
 
 include '../../views/common/header.php';
+
 include_once '../../models/company_model.php';
 $company_model = new CompanyModel();
-
 $companies = $company_model->GetCompanies();
 ?>
 
@@ -16,11 +16,10 @@ $companies = $company_model->GetCompanies();
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <?php 
-            $btn_url = '../forms/company_form.php'; 
-            include_once '../layouts/addButton.php';
-            include '../common/tables/company_table.php'; 
-            ?>
+            <?php $btn_url = '../forms/company_form.php'; include_once '../layouts/addButton.php'; ?>
+            <div class="table-responsive">
+                <?php include '../common/tables/company_table.php'; ?>
+            </div>
         </div>
     </div>
 </div>

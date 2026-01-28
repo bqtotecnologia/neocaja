@@ -1,32 +1,33 @@
 <?php
-include_once '../utils/Auth.php';
 $admitted_user_types = ['Estudiante', 'Super'];
+include_once '../utils/Auth.php';
 session_start();
-$userOk = Auth::UserLevelIn($admitted_user_types);
+
 $error = '';
-if($userOk === false)
+if(Auth::UserLevelIn($admitted_user_types) === false)
     $error = 'Permiso denegado. Cierre sesión e inicie nuevamente';
 
-include_once '../utils/Validator.php';
-
-
-$inputJSON = file_get_contents('php://input');
-$post = json_decode($inputJSON, TRUE);
-
-if($post === NULL){
-    $error = 'POST vacío';
+if($error === ''){
+    $inputJSON = file_get_contents('php://input');
+    $post = json_decode($inputJSON, TRUE);
+    
+    if($post === NULL){
+        $error = 'POST vacío';
+    }
 }
-
-if(
-    !isset($post['cedula']) || 
-    !isset($post['period']) ||
-    !isset($post['codes'])
-){
-    $error = 'Campos necesarios no recibidos';
-}
-
 
 if($error === ''){
+    if(
+        !isset($post['cedula']) || 
+        !isset($post['period']) ||
+        !isset($post['codes'])
+    ){
+        $error = 'Campos necesarios no recibidos';
+    }
+}
+
+if($error === ''){
+    include_once '../utils/Validator.php';
     $cedula = Validator::HasSuspiciousCharacters($post['cedula']);
     if($cedula === true)
         $error = 'Cédula inválida';

@@ -140,3 +140,26 @@ function ExportToPDF(){
           finalStr = finalStr + ','  + decimalPart
       return finalStr
   }
+
+  const delay = ms => new Promise(res => setTimeout(res, ms));
+
+  async function CopyToClipboard(text){
+    var string = ''
+    if(typeof text === 'string'){
+      // it's a string
+      string = text
+    }
+    else{
+      // it's a HTML element
+      text.classList.add('copied')
+      string = text.innerHTML
+    }
+
+    const finalText = string.replace(/^\s+|\s+$/g, '');
+    await navigator.clipboard.writeText(finalText)
+
+    if(typeof text !== 'string'){
+      await delay(1010)
+      text.classList.remove('copied')
+    }    
+  }

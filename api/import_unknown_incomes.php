@@ -1,20 +1,18 @@
 <?php
-include_once '../utils/Auth.php';
 $admitted_user_types = ['Cajero', 'Super'];
+include_once '../utils/Auth.php';
 session_start();
-$userOk = Auth::UserLevelIn($admitted_user_types);
+
 $error = '';
-if($userOk === false)
+if(Auth::UserLevelIn($admitted_user_types) === false)
     $error = 'Permiso denegado. Cierre sesión e inicie nuevamente';
 
-include_once '../utils/Validator.php';
-
-$inputJSON = file_get_contents('php://input');
-$post = json_decode($inputJSON, TRUE);
-
-
-if($post === NULL){
-    $error = 'POST vacío';
+if($error === ''){
+    $inputJSON = file_get_contents('php://input');
+    $post = json_decode($inputJSON, TRUE);
+    if($post === NULL){
+        $error = 'POST vacío';
+    }
 }
 
 if($error === ''){

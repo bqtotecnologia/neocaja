@@ -56,21 +56,19 @@
                         <?php if(count($pendingNotifications) > 0) { ?>
                           <span class="mx-2 rounded-circle bg-danger px-2 py-1 text-center fw-bold"><?= count($pendingNotifications) ?></span>
                         <?php } ?>
-                      <span class="fa fa-chevron-down"></span></a>
+                        <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/tables/search_notifications.php">Ver notificaciones</a></li>
                         </ul>
                       </li>
 
-                      <li><a><i class="fa fa-usd"></i> Pagar <span class="fa fa-chevron-down"></span></a>
+                      <li><a><i class="fa fa-usd"></i> Pagos <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/forms/pay_form.php">Pagar</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/my_payments.php">Historial de pagos</a></li>
                         </ul>
                       </li>
-                    <?php } ?>
 
-                    <?php if(Auth::UserLevelIn(['Estudiante'])){ ?>
                       <li><a><i class="fa fa-fax"></i> Mis facturas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/tables/search_my_invoices.php">Este periodo</a></li>
@@ -174,6 +172,13 @@
 
                     <!-- Tecnología -->
                     <?php if(Auth::UserLevelIn(['Tecnología', 'Super', 'Cajero'])){ ?>
+                    <li><a><i class="fa fa-bell"></i> Notificaciones 
+                        <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/tables/search_notifications_by_account.php">Buscar por cliente</a></li>
+                        </ul>
+                      </li>
+
                       <li><a><i class="fa fa-code"></i> Bitácora <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/tables/search_binnacle_by_date_range.php">Buscar por rango de fechas</a></li>

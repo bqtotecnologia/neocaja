@@ -111,9 +111,12 @@ td, th {
     font-weight: 100;
 }
 
+.cursor-pointer{
+    cursor:pointer;
+}
+
 .product-card{
     background-color: #c8dcfa;
-    cursor:pointer;
     transition:0.15s;
 }
 
@@ -139,8 +142,11 @@ td, th {
 }
 
 .disappear{
-    animation: hide-pay-form 1.0s forwards;
-    
+    animation: hide-pay-form 1.0s forwards;   
+}
+
+.copied{
+    animation: copied 1.0s forwards;
 }
 
 .revisar{
@@ -282,3 +288,19 @@ td, th {
   }
 }
 
+@keyframes copied {
+    100%{
+        transform:scale(1);
+        color:inherit;
+    }
+
+    0%{
+        transform:scale(0.8);
+        color:green;
+    }
+
+    100%{
+        transform:scale(1);
+        color:inherit;
+    }
+}

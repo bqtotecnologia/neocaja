@@ -1,12 +1,11 @@
 <?php 
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
 
 include '../../views/common/header.php';
+
 include_once '../../models/payment_method_model.php';
 $payment_method_model = new PaymentMethodModel();
-
 $payment_method_types = $payment_method_model->GetAllPaymentMethodTypes();
 ?>
 
@@ -17,11 +16,10 @@ $payment_method_types = $payment_method_model->GetAllPaymentMethodTypes();
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <?php 
-            $btn_url = '../forms/payment_method_form.php'; 
-            include_once '../layouts/addButton.php';
-            include '../common/tables/payment_method_table.php';
-            ?>
+            <?php $btn_url = '../forms/payment_method_form.php'; include_once '../layouts/addButton.php'; ?>
+            <div class="table-responsive">
+                <?php include '../common/tables/payment_method_table.php'; ?>
+            </div>
         </div>
     </div>
 </div>

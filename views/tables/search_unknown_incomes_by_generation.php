@@ -1,41 +1,29 @@
 <?php 
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
-include_once '../../utils/base_url.php';
-
 include_once '../../utils/Validator.php';
+
+$error = '';
 $id = Validator::ValidateRecievedId();
 if(is_string($id)){
-    header("Location: $base_url/views/search_unknown_incomes_generations.php?error=$id");
-    exit;
+    $error = $id;
 }
 
-include_once '../../models/unknown_incomes_model.php';
-$unknown_model = new UnknownIncomesModel();
+if($error === ''){
+    include_once '../../models/unknown_incomes_model.php';
+    $unknown_model = new UnknownIncomesModel();
+    
+    $target_generation = $unknown_model->GetUnknownIncomesGeneration($id);
+    if($target_generation === false)
+        $error = 'Generación de ingresos no identificados no encontrada';
+}
 
-$target_generation = $unknown_model->GetUnknownIncomesGeneration($id);
-if($target_generation === false){
-    header("Location: $base_url/views/search_unknown_incomes_generations.php?error=Generación de ingresos no identificados no encontrada");
+if($error !== ''){
+    header("Location: $base_url/views/search_unknown_incomes_generations.php?error=$error");
     exit;
 }
 
 $incomes = $unknown_model->GetUnknownIncomesOfGeneration($id);
-
-
-$target_date = false;
-if(!empty($_POST)) {
-    $error = '';
-    try{
-        $target_date = new DateTime($_POST['date']);
-    }
-    catch(Exception $e){
-        $error = 'Fecha inválida';
-    }
-
-    if($error !== ''){
-        
-    }
-}
 
 include '../../views/common/header.php';
 
@@ -48,9 +36,9 @@ include '../../views/common/header.php';
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <?php 
-            include '../common/tables/unknown_incomes_table.php';
-            ?>
+            <div class="table-responsive">
+                <?php include '../common/tables/unknown_incomes_table.php'; ?>
+            </div>
         </div>
     </div>
 </div>

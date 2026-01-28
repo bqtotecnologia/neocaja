@@ -11,8 +11,9 @@ $coinPriceFields = [
         'max' => 11,
         'min' => 1,
         'required' => true,
-        'value' => isset($_GET['id']) ? $_GET['id'] : '',
-        'elements' => $display_coins
+        'suspicious' => true,
+        'value' => $target_coin['id'] ?? '',
+        'elements' => $form ? $display_coins : '',
     ],
     [
         'name' => 'price',
@@ -22,6 +23,7 @@ $coinPriceFields = [
         'type' => 'decimal',
         'size' => 4,
         'required' => true,
+        'suspicious' => true,
         'value' => '0',
     ],
     [
@@ -32,6 +34,7 @@ $coinPriceFields = [
         'type' => 'date',
         'size' => 4,
         'required' => true,
+        'suspicious' => false,
         'value' => date('Y-m-d'),
         'max' => date('Y-m-d'),
     ],
