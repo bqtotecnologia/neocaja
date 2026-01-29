@@ -1,87 +1,4 @@
-Necesito que me des el código de 3 triggers para cada una de las tablas de mi base de datos, las tablas junto a sus columnas son las siguientes.
-
-account_company_history: id, account, company, current, created_at
-account_payment_products: id, product, price, payment
-account_payments: id, related_id, related_with, payment_method_type, payment_method, price, ref, document, state, response, created_at
-accounts: id, cedula, names, surnames, address, phone, is_student, scholarship, scholarship_coverage, created_at
-admins: id, name, cedula, role, active, created_at
-banks: id, name, active, created_at
-binnacle: id, action, user, created_at
-coin_history: id, coin, price, current, created_at
-coins: id, name, url, active, auto_update, created_at
-companies: id, name, rif_letter, rif_number, address, created_at
-concepts: id, product, price, invoice, month
-global_vars: id, name
-global_vars_history: id, global_var, value, current, created_at
-invoice_payment_method: id, invoice, type, price, coin, bank, sale_point, document_number, igtf
-invoices: id, invoice_number, control_number, account, observation, active, period, created_at, rate_date
-mobile_payments: id, phone, bank, document_letter, document_number, active, created_at
-notifications: id, cedula, message, viewed, created_at
-payment_method_types: id, name, created_at
-product_history: id, product, price, current, created_at
-products: id, name, active, created_at
-roles: id, name, created_at
-sale_points: id, code, bank, created_at
-scholarships: id, name, created_at
-self_data: id, fullname, city
-transfers: id, account_number, document_letter, document_number, bank, active, created_at
-unknown_incomes: id, date, price, ref, description, account, generation
-unknown_incomes_generations: id, created_at
-
-
-Los triggers que necesito son estos 3, reemplaza los campos señalados con [] según corresponda para cada tabla.
-
--- Creando triggers de alteraciones manuales para la tabla [NOMBRE TABLA]
-CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_[NOMBRE TABLA]_AFTER_INSERT` AFTER INSERT ON `[NOBMRE TABLA]` FOR EACH ROW BEGIN
-	IF @app_audit IS NULL THEN		
-		INSERT INTO binnacle (action) VALUES (
-			CONCAT(
-				'Una persona ha agregado manualmente un [DEJAR EN BLANCO] ', 
-                ' con los siguientes datos: ',
-                ' [NOMBRE COLUMNA 1]:', new.[NOMBRE COLUMNA 1], ',',
-                ' [NOMBRE COLUMNA 2]:', new.[NOMBRE COLUMNA 2], ',',
-                .....
-			)
-        );
-    END IF;
-END
-
-CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_[NOMBRE TABLA]_AFTER_UPDATE` AFTER UPDATE ON `[NOMBRE TABLA]` FOR EACH ROW BEGIN
-	IF @app_audit IS NULL THEN		
-		INSERT INTO binnacle (action) VALUES (
-			CONCAT(
-				'Una persona ha modificado manualmente un [DEJAR EN BLANCO] de id ', 
-				old.id,
-                ' con los siguientes datos: ',
-                ' [NOMBRE COLUMNA 1]:', old.[NOMBRE COLUMNA 1], ' => ', new.[NOMBRE COLUMNA 1], ',',
-                ' [NOMBRE COLUMNA 2]:', old.[NOMBRE COLUMNA 2], ' => ', new.[NOMBRE COLUMNA 2], ',',
-                .....
-			)
-        );
-    END IF;
-END
-
-CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_[NOMBRE TABLA]_AFTER_DELETE` AFTER DELETE ON `[NOMBRE TABLA]` FOR EACH ROW BEGIN
-IF @app_audit IS NULL THEN		
-		INSERT INTO binnacle (action) VALUES (
-			CONCAT(
-				'Una persona ha borrado manualmente un [DEJAR EN BLANCO]', 
-                ' con los siguientes datos: ',
-                ' [NOMBRE COLUMNA 1]:', old.[NOMBRE COLUMNA 1], ',',
-                ' [NOMBRE COLUMNA 2]:', old.[NOMBRE COLUMNA 2], ',',
-			)
-        );
-    END IF;
-END
-
-
-
-
-
-
-
-
-
+-- account_company_history
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_account_company_history_AFTER_INSERT`
 AFTER INSERT ON `account_company_history`
 FOR EACH ROW
@@ -91,6 +8,7 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un historial de cuenta-empresa ',
                 ' con los siguientes datos: ',
+                ' id:', NEW.id, ',',
                 ' account:', NEW.account, ',',
                 ' company:', NEW.company, ',',
                 ' current:', NEW.current, ',',
@@ -110,6 +28,7 @@ BEGIN
                 'Una persona ha modificado manualmente un historial de cuenta-empresa de id ',
                 OLD.id,
                 ' con los siguientes datos: ',
+                ' id:', OLD.id, ' => ', NEW.id, ',',
                 ' account:', OLD.account, ' => ', NEW.account, ',',
                 ' company:', OLD.company, ' => ', NEW.company, ',',
                 ' current:', OLD.current, ' => ', NEW.current, ',',
@@ -128,6 +47,7 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un historial de cuenta-empresa ',
                 ' con los siguientes datos: ',
+                ' id:', OLD.id, ',',
                 ' account:', OLD.account, ',',
                 ' company:', OLD.company, ',',
                 ' current:', OLD.current, ',',
@@ -136,7 +56,8 @@ BEGIN
         );
     END IF;
 END;
-//////////////////////////
+
+-- account_payment_products
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_account_payment_products_AFTER_INSERT`
 AFTER INSERT ON `account_payment_products`
 FOR EACH ROW
@@ -144,8 +65,9 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha agregado manualmente un producto de pago ',
+                'Una persona ha agregado manualmente un producto pagado del carrito de un cliente ',
                 ' con los siguientes datos: ',
+                ' id:', NEW.id, ',',
                 ' product:', NEW.product, ',',
                 ' price:', NEW.price, ',',
                 ' payment:', NEW.payment
@@ -161,9 +83,10 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente un producto de pago de id ',
+                'Una persona ha modificado manualmente un producto pagado del carrito de un cliente de id ',
                 OLD.id,
                 ' con los siguientes datos: ',
+                ' id:', OLD.id, ' => ', NEW.id, ',',
                 ' product:', OLD.product, ' => ', NEW.product, ',',
                 ' price:', OLD.price, ' => ', NEW.price, ',',
                 ' payment:', OLD.payment, ' => ', NEW.payment
@@ -179,8 +102,9 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha borrado manualmente un producto de pago ',
+                'Una persona ha borrado manualmente un producto pagado del carrito de un cliente ',
                 ' con los siguientes datos: ',
+                ' id:', OLD.id, ',',
                 ' product:', OLD.product, ',',
                 ' price:', OLD.price, ',',
                 ' payment:', OLD.payment
@@ -188,7 +112,8 @@ BEGIN
         );
     END IF;
 END;
-///////////////////////////
+
+-- account_payments
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_account_payments_AFTER_INSERT`
 AFTER INSERT ON `account_payments`
 FOR EACH ROW
@@ -196,8 +121,9 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha agregado manualmente un pago ',
+                'Una persona ha agregado manualmente un pago de un cliente ',
                 ' con los siguientes datos: ',
+                ' id:', NEW.id, ',',
                 ' related_id:', NEW.related_id, ',',
                 ' related_with:', NEW.related_with, ',',
                 ' payment_method_type:', NEW.payment_method_type, ',',
@@ -220,12 +146,21 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente un pago de id ',
+                'Una persona ha modificado manualmente un pago de un cliente de id ',
                 OLD.id,
                 ' con los siguientes datos: ',
-                ' state:', OLD.state, ' => ', NEW.state, ',',
+                ' id:', OLD.id, ' => ', NEW.id, ',',
+                ' related_id:', OLD.related_id, ' => ', NEW.related_id, ',',
+                ' related_with:', OLD.related_with, ' => ', NEW.related_with, ',',
+                ' payment_method_type:', OLD.payment_method_type, ' => ', NEW.payment_method_type, ',',
+                ' payment_method:', OLD.payment_method, ' => ', NEW.payment_method, ',',
                 ' price:', OLD.price, ' => ', NEW.price, ',',
+                ' ref:', OLD.ref, ' => ', NEW.ref, ',',
+                ' document:', OLD.document, ' => ', NEW.document, ',',
+                ' state:', OLD.state, ' => ', NEW.state, ',',
                 ' response:', OLD.response, ' => ', NEW.response
+                ' created_at:', OLD.created_at, ' => ', NEW.created_at, ',',
+
             )
         );
     END IF;
@@ -238,16 +173,25 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha borrado manualmente un pago ',
+                'Una persona ha borrado manualmente un pago de un cliente',
                 ' con los siguientes datos: ',
-                ' related_id:', OLD.related_id, ',',
-                ' price:', OLD.price, ',',
-                ' state:', OLD.state
+                ' id:', NEW.id, ',',
+                ' related_id:', NEW.related_id, ',',
+                ' related_with:', NEW.related_with, ',',
+                ' payment_method_type:', NEW.payment_method_type, ',',
+                ' payment_method:', NEW.payment_method, ',',
+                ' price:', NEW.price, ',',
+                ' ref:', NEW.ref, ',',
+                ' document:', NEW.document, ',',
+                ' state:', NEW.state, ',',
+                ' response:', NEW.response, ',',
+                ' created_at:', NEW.created_at
             )
         );
     END IF;
 END;
-///////////////////////////////
+
+-- accounts
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_accounts_AFTER_INSERT`
 AFTER INSERT ON `accounts`
 FOR EACH ROW
@@ -255,13 +199,18 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha agregado manualmente una cuenta ',
+                'Una persona ha agregado manualmente un cliente ',
                 ' con los siguientes datos: ',
+                ' id:', NEW.id, ',',
                 ' cedula:', NEW.cedula, ',',
                 ' names:', NEW.names, ',',
                 ' surnames:', NEW.surnames, ',',
+                ' address:', NEW.address, ',',
                 ' phone:', NEW.phone, ',',
                 ' is_student:', NEW.is_student
+                ' scholarship:', NEW.scholarship, ',',
+                ' scholarship_coverage:', NEW.scholarship_coverage, ',',
+                ' created_at:', NEW.created_at
             )
         );
     END IF;
@@ -274,12 +223,19 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente una cuenta de id ',
+                'Una persona ha modificado manualmente un cliente de id ',
                 OLD.id,
                 ' con los siguientes datos: ',
+                ' id:', OLD.id, ' => ', NEW.id, ',',
+                ' cedula:', OLD.cedula, ' => ', NEW.cedula, ',',
+                ' names:', OLD.names, ' => ', NEW.names, ',',
+                ' surnames:', OLD.surnames, ' => ', NEW.surnames, ',',
                 ' address:', OLD.address, ' => ', NEW.address, ',',
                 ' phone:', OLD.phone, ' => ', NEW.phone, ',',
-                ' scholarship:', OLD.scholarship, ' => ', NEW.scholarship
+                ' is_student:', OLD.is_student, ' => ', NEW.is_student, ',',
+                ' scholarship:', OLD.scholarship, ' => ', NEW.scholarship, ',',
+                ' scholarship_coverage:', OLD.scholarship_coverage, ' => ', NEW.scholarship_coverage, ',',
+                ' created_at:', OLD.created_at, ' => ', NEW.created_at
             )
         );
     END IF;
@@ -292,16 +248,24 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha borrado manualmente una cuenta ',
+                'Una persona ha borrado manualmente un cliente ',
                 ' con los siguientes datos: ',
+                ' id:', OLD.id, ',',
                 ' cedula:', OLD.cedula, ',',
                 ' names:', OLD.names, ',',
-                ' surnames:', OLD.surnames
+                ' surnames:', OLD.surnames, ',',
+                ' address:', OLD.address, ',',
+                ' phone:', OLD.phone, ',',
+                ' is_student:', OLD.is_student
+                ' scholarship:', OLD.scholarship, ',',
+                ' scholarship_coverage:', OLD.scholarship_coverage, ',',
+                ' created_at:', OLD.created_at
             )
         );
     END IF;
 END;
-//////////////////////////
+
+-- admins
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_admins_AFTER_INSERT`
 AFTER INSERT ON `admins`
 FOR EACH ROW
@@ -311,10 +275,12 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un administrador ',
                 ' con los siguientes datos: ',
+                ' id:', NEW.id, ',',
                 ' name:', NEW.name, ',',
                 ' cedula:', NEW.cedula, ',',
                 ' role:', NEW.role, ',',
-                ' active:', NEW.active
+                ' active:', NEW.active, ',',
+                ' created_at:', NEW.created_at
             )
         );
     END IF;
@@ -330,8 +296,12 @@ BEGIN
                 'Una persona ha modificado manualmente un administrador de id ',
                 OLD.id,
                 ' con los siguientes datos: ',
+                ' id:', OLD.id, ' => ', NEW.id, ',',
+                ' name:', OLD.name, ' => ', NEW.name, ',',
+                ' cedula:', OLD.cedula, ' => ', NEW.cedula, ',',
                 ' role:', OLD.role, ' => ', NEW.role, ',',
                 ' active:', OLD.active, ' => ', NEW.active
+                ' created_at:', OLD.created_at, ' => ', NEW.created_at, ',',
             )
         );
     END IF;
@@ -346,13 +316,18 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un administrador ',
                 ' con los siguientes datos: ',
+                ' id:', OLD.id, ',',
                 ' name:', OLD.name, ',',
-                ' cedula:', OLD.cedula
+                ' cedula:', OLD.cedula, ',',
+                ' role:', OLD.role, ',',
+                ' active:', OLD.active, ',',
+                ' created_at:', OLD.created_at
             )
         );
     END IF;
 END;
-///////////////////////////////
+
+-- banks
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_banks_AFTER_INSERT`
 AFTER INSERT ON `banks`
 FOR EACH ROW
