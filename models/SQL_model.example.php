@@ -71,9 +71,12 @@ class SQLModel{
 
     // Ejecuta una consulta que no retorna registros, retorna true si no hubo errores, sino false
     public function DoQuery($sql){
+        $final_sql = "SET @app_audit = 1; " . $sql;
+        // Para que la base de datos entienda que es la acción de un usuario del sistema
+        // De esa forma no se disparan los triggers y no se inunda la tabla binnacle
         $conn = $this->GetConnection();
         try {
-            $conn->query($sql);
+            $conn->query($final_sql);
             return true;
         } catch (Exception $e) {
             echo $e->getMessage();

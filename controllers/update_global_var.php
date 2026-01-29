@@ -5,7 +5,7 @@ include_once '../utils/Validator.php';
 
 $error = '';
 $target_global_var = false;
-
+$form = false;
 if(empty($_POST)){
     $error = 'POST vacío';
 }

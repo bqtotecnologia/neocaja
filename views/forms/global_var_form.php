@@ -4,6 +4,7 @@ include_once '../../utils/validate_user_type.php';
 include_once '../../utils/Validator.php';
 
 $error = '';
+$form = true;
 if(empty($_GET))
     $error = 'GET vacío';
 

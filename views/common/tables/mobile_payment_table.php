@@ -1,7 +1,8 @@
-<table class="table table-striped col-12 datatable-date-3">
+<table class="table table-striped col-12 datatable-date-4">
     <thead class="bg-theme text-white fw-bold h6">
         <tr>
             <th class="text-center">Nº</th>
+            <th class="text-center">Banco</th>
             <th class="text-center">Teléfono</th>
             <th class="text-center">Rif/Cédula</th>
             <th class="text-center">Fecha de creación</th>
@@ -17,6 +18,7 @@
         <?php foreach($mobile_payments as $mobile_payment) {  ?>
             <tr class="h6">
                 <td class="align-middle text-center"><?php echo $count; $count++; ?></td>
+                <td class="align-middle text-center"><?= $mobile_payment['bank'] ?></td>
                 <td class="align-middle text-center"><?= $mobile_payment['phone'] ?></td>
                 <td class="align-middle text-center"><?= $mobile_payment['document_letter'] . $mobile_payment['document_number'] ?></td>
                 <td class="align-middle text-center"><?= $mobile_payment['created_at'] ?></td>

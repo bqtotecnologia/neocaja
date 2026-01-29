@@ -86,11 +86,11 @@ include_once 'common/header.php';
                     <table class="table table-bordered col-12 h5 text-center">
                         <tr>
                             <td class="bg-theme text-white">Día límite antes de aplicar la diferencia de mensualidad</td>
-                            <td><?= intval($global_vars['Dia tope mora']) ?></td>
+                            <td class="border border-black"><?= intval($global_vars['Dia tope mora']) ?></td>
                         </tr>
                         <tr>
                             <td class="bg-theme text-white">Porcentaje de la diferencia de mensualidad</td>
-                            <td><?= intval($global_vars['Porcentaje mora']) ?>%</td>
+                            <td class="border border-black"><?= intval($global_vars['Porcentaje mora']) ?>%</td>
                         </tr>
                     </table>
                 </div>
@@ -114,7 +114,7 @@ include_once 'common/header.php';
                                     <?php if($debtState['months']['total'] > 0) { ?>
                                         <?php foreach($debtState['months']['detail'] as $month => $debt) { ?>
                                             <span class="col-6 p-0"><?= $month ?></span>
-                                            <span class="col-6 p-0">Bs. <?= $debt * $usd['price'] ?></span>
+                                            <span class="col-6 p-0">Bs. <?= GetPrettyCiphers($debt * $usd['price']) ?></span>
                                         <?php } ?>
                                     <?php } else { ?>
                                         SIN DEUDA
@@ -126,7 +126,7 @@ include_once 'common/header.php';
                                     <?php if($debtState['months']['total'] > 0) { ?>
                                         <?php foreach($debtState['months']['detail'] as $month => $debt) { ?>
                                             <span class="col-6 p-0"><?= $month ?></span>
-                                            <span class="col-6 p-0"><?= $debt ?>$</span>
+                                            <span class="col-6 p-0"><?= GetPrettyCiphers($debt) ?>$</span>
                                         <?php } ?>
                                     <?php } else { ?>
                                         SIN DEUDA
@@ -142,7 +142,7 @@ include_once 'common/header.php';
                                     <?php if($debtState['retard']['total'] > 0) { ?>
                                         <?php foreach($debtState['retard']['detail'] as $month => $debt) { ?>
                                             <span class="col-6 p-0"><?= $month ?></span>
-                                            <span class="col-6 p-0">Bs. <?= $debt * $usd['price'] ?></span>
+                                            <span class="col-6 p-0">Bs. <?= GetPrettyCiphers($debt * $usd['price']) ?></span>
                                         <?php } ?>
                                     <?php } else { ?>
                                         SIN DEUDA
@@ -154,7 +154,7 @@ include_once 'common/header.php';
                                     <?php if($debtState['retard']['total'] > 0) { ?>
                                         <?php foreach($debtState['retard']['detail'] as $month => $debt) { ?>
                                             <span class="col-6 p-0"><?= $month ?></span>
-                                            <span class="col-6 p-0"><?= $debt ?>$</span>
+                                            <span class="col-6 p-0"><?= GetPrettyCiphers($debt) ?>$</span>
                                         <?php } ?>
                                     <?php } else { ?>
                                         SIN DEUDA

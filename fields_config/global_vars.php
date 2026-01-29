@@ -28,8 +28,8 @@ $globalVarFields = [
         'suspicious' => true,
         'value' => $target_global_var['value']
     ],
-    [
-        'name' => 'id',
-        'value' => $target_global_var['id']
-    ]
 ];
+
+if($form){
+    array_push($globalVarFields, ['name' => 'id', 'value' => $target_global_var['id']]);
+}
