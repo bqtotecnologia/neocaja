@@ -1,9 +1,10 @@
 <?php
-$admitted_user_types = ['Tecnología', 'Super'];
+$admitted_user_types = ['Tecnologia', 'Super'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/Validator.php';
 
 $error = '';
+$form = true;
 $id = Validator::ValidateRecievedId();
 if(is_string($id))
     $error = $id;

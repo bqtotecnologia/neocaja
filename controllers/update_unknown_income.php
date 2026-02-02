@@ -26,6 +26,7 @@ if($error === ''){
 }
 
 if($error === ''){
+    $form = false;
     include_once '../fields_config/unknown_incomes.php';
     $cleanData = Validator::ValidatePOSTFields($unknownIncomeFields);
     if(is_string($cleanData))

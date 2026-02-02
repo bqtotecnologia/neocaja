@@ -209,6 +209,10 @@ if($error === ''){
 }
 
 if($error === ''){
+    $action = 'El cliente ' . $target_account['names'] . ' ' . $target_account['surnames'] . ' (' . $target_account['cedula'] . ') ';
+    $action .= 'registró un pago remoto. referencia:' . $insertData['ref'] . ', monto:' . $insertData['price'];
+    $action .= ', cedula/rif:' . $insertData['document'] . ', metodo de pago:' . $insertData['payment_method_type'];
+    $payments_model->CreateBinnacle('NULL', $action);
     $response = [
         'status' => true,
         'message' => 'Su compra ha sido registrada con éxito. Acuda al instituto para retirar su factura.'

@@ -26,9 +26,14 @@ if($error === ''){
 }
 
 if($error === ''){
+    include_once '../models/account_model.php';
+    $account_model = new AccountModel();
+
     $target_user = $bdusuarios->TryLogin($user, $password);
-    if($target_user === false)
+    if($target_user === false){
         $error = 'Credenciales inválidas';
+        $account_model->CreateBinnacle('NULL', 'Intento de inicio de sesión fallido para el usuario ' . $user);
+    }
 }
 
 if($error === ''){
@@ -130,6 +135,14 @@ exit;
 
 
 if($error === ''){
+    include_once '../models/account_model.php';
+    $account_model = new AccountModel();
+
+    if($user_role === 'Estudiante')
+        $account_model->CreateBinnacle('NULL', $_SESSION['neocaja_fullname'] . ' ha ingresado al sistema');
+    else
+        $account_model->CreateBinnacle($_SESSION['neocaja_id'], 'Ha ingresado al sistema');
+
     $allow_refresh = true;
     include_once 'refresh_coins.php';
 

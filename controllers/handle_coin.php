@@ -5,7 +5,7 @@
  * The 'success' are True or False
  * The 'value' if 'success' is True, will be the coin price, otherwise will be a string error message
  */
-$admitted_user_types = ['Tecnología', 'Super', 'Cajero'];
+$admitted_user_types = ['Tecnologia', 'Super', 'Cajero'];
 include_once '../utils/validate_user_type.php';
 include_once '../utils/Validator.php';
 
@@ -145,7 +145,7 @@ if($error === ''){
     }
     else{
         $message = 'Moneda registrada correctamente';
-        $action = 'Creo la moneda ' . $cleanData['name'] . ' con la URL ' . $cleanData['url'] . ' que retornó un precio de' . $coinValue;
+        $action = 'Creo la moneda ' . $cleanData['name'] . ' con la URL ' . $cleanData['url'] . ' que retornó un precio de ' . $coinValue;
     }
     $coin_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
 }

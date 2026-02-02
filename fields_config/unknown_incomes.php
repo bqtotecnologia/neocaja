@@ -60,8 +60,9 @@ $unknownIncomeFields = [
         'value' => $target_income['account_id'],
         'elements' => $display_accounts
     ],
-    [
-        'name' => 'id',
-        'value' => $target_income['id']
-    ]
 ];
+
+
+if($form){
+    array_push($unknownIncomeFields, ['name' => 'id', 'value' => $target_income['id']]);
+}

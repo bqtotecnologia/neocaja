@@ -16,52 +16,8 @@ $payment_method_field_block = [
     'Tarjeta de débito' => [],
 ];
 
-$fields_config = [
-    'invoice_number' => [
-        'min' => 1,
-        'max' => 11,
-        'required' => true,
-        'type' => 'integer',
-        'suspicious' => true,
-    ],
-    'control_number' => [
-        'min' => 1,
-        'max' => 11,
-        'required' => true,
-        'type' => 'integer',
-        'suspicious' => true,
-    ],
-    'account' => [
-        'min' => 1,
-        'max' => 11,
-        'required' => true,
-        'type' => 'integer',
-        'suspicious' => true,
-    ],
-    'rate-date' => [
-        'min' => 8,
-        'max' => 10,
-        'required' => true,
-        'type' => 'date',
-        'suspicious' => false,
-    ],
-    'observation' => [
-        'min' => 0,
-        'max' => 255,
-        'required' => false,
-        'type' => 'string',
-        'suspicious' => true,
-    ],
-    'known-income' => [
-        'min' => 0,
-        'max' => 11,
-        'required' => false,
-        'type' => 'integer',
-        'suspicious' => true,
-    ]
-];
-
-$result = Validator::ValidatePOSTFields($fields_config);
+include_once '../fields_config/invoices.php';
+$result = Validator::ValidatePOSTFields($invoiceFields);
 if(is_string($result))
     $error = $result;
 else
@@ -75,7 +31,6 @@ if($error === ''){
     $invoice_number = $cleanData['invoice_number'];
     $control_number = $cleanData['control_number'];
     $allOK = false;
-
 
     while(true){
         $invoice_number_exists = $invoice_model->GetInvoiceByInvoiceNumber($invoice_number);
@@ -129,8 +84,6 @@ if($error === ''){
     if($target_invoice === false)
         $error = 'Hubo un error al intentar crear la factura';
 }
-
-
 
 if($error === ''){
     $last_product_number = 0;

@@ -171,7 +171,7 @@
                     <?php } ?>
 
                     <!-- Tecnología -->
-                    <?php if(Auth::UserLevelIn(['Tecnología', 'Super', 'Cajero'])){ ?>
+                    <?php if(Auth::UserLevelIn(['Tecnologia', 'Super', 'Cajero'])){ ?>
                     <li><a><i class="fa fa-bell"></i> Notificaciones 
                         <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
@@ -188,7 +188,7 @@
 
                       <li><a><i class="fa fa-usd"></i> Monedas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <?php if(Auth::UserLevelIn(['Tecnología', 'Super'])){ ?>
+                          <?php if(Auth::UserLevelIn(['Tecnologia', 'Super'])){ ?>
                             <li><a href="<?= $base_url ?>/views/forms/coin_form.php">Crear moneda</a></li>
                           <?php } ?>
 

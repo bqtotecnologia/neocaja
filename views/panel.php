@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Cajero', 'Supervisor', 'Estudiante', 'Super'];
+$admitted_user_types = ['Cajero', 'Supervisor', 'Estudiante', 'Super', 'Tecnologia'];
 include_once '../utils/validate_user_type.php';
 include_once '../utils/Auth.php';
 
@@ -224,6 +224,4 @@ include_once 'common/header.php';
     </div>
 <?php } ?>
 
-<?php
-include_once 'common/footer.php'; 
-?>
+<?php include_once 'common/footer.php'; ?>

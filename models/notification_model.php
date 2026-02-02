@@ -48,6 +48,8 @@ class NotificationModel extends SQLModel
             FROM 
             notifications
             INNER JOIN accounts ON accounts.cedula = notifications.cedula
+            GROUP BY 
+            accounts.cedula
             ORDER BY
             notifications.created_at DESC";
 

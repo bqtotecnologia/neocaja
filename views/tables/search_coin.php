@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Cajero', 'Tecnología', 'Super'];
+$admitted_user_types = ['Cajero', 'Tecnologia', 'Super'];
 include_once '../../utils/validate_user_type.php';
 
 include '../../views/common/header.php';
@@ -17,7 +17,7 @@ $coins = $coin_model->GetAllCoins();
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
             <?php 
-            if(Auth::UserLevelIn(['Tecnología', 'Super'])){
+            if(Auth::UserLevelIn(['Tecnologia', 'Super'])){
                 $btn_url = '../forms/coin_form.php'; 
                 include_once '../layouts/addButton.php';
             }

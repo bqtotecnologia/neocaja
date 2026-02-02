@@ -90,7 +90,7 @@ if($error === ''){
     }
     else{
         $message = 'Cuenta de transferencias registrada correctamente';
-        $action = 'Creo la cuenta de transferencias de numero de cuenta' . $cleanData['account_number'] . ' con el documento ' . $cleanData['document_letter'] . '-' . $cleanData['document_number'] . ' con el banco ' . $cleanData['bank'];
+        $action = 'Creo la cuenta de transferencias de numero de cuenta ' . $cleanData['account_number'] . ' con el documento ' . $cleanData['document_letter'] . '-' . $cleanData['document_number'] . ' con el banco ' . $cleanData['bank'];
     }
     $transfer_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
 }
