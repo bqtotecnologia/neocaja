@@ -7,25 +7,18 @@
 </head>
 <body>
     <input type="text" style="font-size:50px; text-align:right" id="input" value="0,00" onkeypress="PriceFieldBiehavior(event)" onkeydown="DeleteWrittenValue(event)">
-    <button onclick="Test()">Prueba</button>
+    <button onclick="GetFixedCursorPosition()">Prueba</button>
 </body>
 
 <script>
     const input = document.getElementById('input')
     input.focus()
+    input.setSelectionRange(4,4)
 
     const decimalNumbers = 2
     let logicValue = 0.00
     let visibleValue = '0,00'
     let writtenValue = ''
-
-    function Test(){
-        input.focus()
-        console.log('Position: ' + input.selectionStart)
-        //input.setSelectionRange(0,input.value.length)
-    }
-
-
 
     function PriceFieldBiehavior(e){
         e.preventDefault()
@@ -34,9 +27,57 @@
             return
         }
 
-        writtenValue += e.key
-        CalculateInputValue()        
+        var cursorPosition = input.selectionStart
+        var oldValueSize = input.value.length
+        var parts = GetWrittenValuePartsRegardCursorPosition()
+        writtenValue = parts.firstPart + e.key + parts.secondPart
+
+        CalculateInputValue()
+        var newValueSize = input.value.length
+        var diff = newValueSize - oldValueSize
+        
+        if(diff > 1)
+            diff -= 1
+
+        if(parts.firstPart !== '' && parts.secondPart !== '')
+            diff -= 1
+
+        input.setSelectionRange(cursorPosition + 1 + diff, cursorPosition + 1 + diff)
     }
+
+    // Returns the input cursor position regard writtenValue position
+    function GetWrittenValuePartsRegardCursorPosition(){
+        var initialPosition = input.selectionStart
+        var writePosition = initialPosition
+
+
+        if(writePosition === 0)
+            writePosition = -1
+
+        if(writePosition === writtenValue.length)
+            writePosition = writtenValue.length
+
+        var obstacles = 0 // the number of '.' and ','
+        for(let i = 0; i < writePosition; i++){
+            if(['.', ','].includes(input.value[i]))
+                obstacles += 1
+        }
+
+        writePosition -= obstacles
+        if(writePosition < 0)
+            writePosition = -1
+
+        var firstPart = writtenValue.slice(0, writePosition )
+        var secondPart = writtenValue.slice(writePosition )
+
+        return {
+            firstPart: firstPart,
+            secondPart: secondPart,
+            finalPosition: writePosition,
+            initialPosition: initialPosition
+        }
+    }
+
 
     function CalculateInputValue(){
         var finalValue = TransformWrittenValue()        
@@ -46,15 +87,31 @@
     function DeleteWrittenValue(e){
         if(['Backspace','Delete'].includes(e.key)){
             e.preventDefault()
-            if(writtenValue !== '')
-                writtenValue = writtenValue.slice(0, writtenValue.length - 1)
+
+            var cursorPosition = input.selectionStart
+
+            if(writtenValue !== ''){
+                // backspace
+                if(input.selectionStart === input.selectionEnd && input.selectionStart !== 0){                
+                    var parts = GetWrittenValuePartsRegardCursorPosition()
+                    var firstPart = parts.firstPart.slice(0, parts.firstPart.length - 1)
+    
+                    writtenValue = firstPart + parts.secondPart
+                }
+            }
+
 
             CalculateInputValue()
+
+            //console.log('Posición del cursor ' + cursorPosition + dots)
+            if(cursorPosition <= 0)
+                input.setSelectionRange(0, 0)
+            else
+            input.setSelectionRange(cursorPosition - 1, cursorPosition - 1)
         }
     }
 
     function TransformWrittenValue(){
-        console.log(writtenValue)
         var result = ''
         var size = writtenValue.length
         if(size === 0)
