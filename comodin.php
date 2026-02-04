@@ -6,12 +6,16 @@
     <title>Document</title>
 </head>
 <body>
-    <input type="text" style="font-size:50px; text-align:right" id="input" value="0,00" onkeypress="PriceFieldBiehavior(event)" onkeydown="DeleteWrittenValue(event)">
+    <input type="text" style="font-size:50px; text-align:right" id="input" value="0,00" >
     <button onclick="GetFixedCursorPosition()">Prueba</button>
 </body>
 
 <script>
     const input = document.getElementById('input')
+    input.onkeydown = function() {}
+    input.onkeyup = function() {}
+    input.onkeypress = function() {}
+    input.addEventListener('keypress', KeyDetected)
     input.focus()
     input.setSelectionRange(4,4)
 
@@ -20,13 +24,17 @@
     let visibleValue = '0,00'
     let writtenValue = ''
 
-    function PriceFieldBiehavior(e){
+    function KeyDetected(e){
         e.preventDefault()
-        if(!['1','2','3','4','5','6','7','8','9','0'].includes(e.key)){
-            input.value = visibleValue
-            return
+        if(['1','2','3','4','5','6','7','8','9','0'].includes(e.key)){
+            PriceFieldBiehavior(e)
         }
+        else if(['Backspace','Delete'].includes(e.key)){
+            DeleteWrittenValue(e)
+        }
+    }
 
+    function PriceFieldBiehavior(e){        
         var cursorPosition = input.selectionStart
         var oldValueSize = input.value.length
         var parts = GetWrittenValuePartsRegardCursorPosition()
@@ -85,29 +93,73 @@
     }
 
     function DeleteWrittenValue(e){
+        console.log(e)
         if(['Backspace','Delete'].includes(e.key)){
-            e.preventDefault()
+
+            if(writtenValue === ''){
+                input.setSelectionRange(-1, -1)
+                return
+            }
 
             var cursorPosition = input.selectionStart
 
-            if(writtenValue !== ''){
-                // backspace
-                if(input.selectionStart === input.selectionEnd && input.selectionStart !== 0){                
+            if(input.selectionStart !== input.selectionEnd)
+                return
+
+            // backspace
+            if(e.key === 'Backspace'){
+                if(input.selectionStart !== 0){
                     var parts = GetWrittenValuePartsRegardCursorPosition()
                     var firstPart = parts.firstPart.slice(0, parts.firstPart.length - 1)
     
                     writtenValue = firstPart + parts.secondPart
+                }                    
+            }
+            else if(e.key === 'Delete'){
+                if(input.selectionStart !== input.value.length){
+                    var parts = GetWrittenValuePartsRegardCursorPosition()
+                    var secondPart = parts.secondPart.slice(1, parts.secondPart.length)
+                    
+                    console.log('Primera parte ' + parts.firstPart)
+                    console.log('Segunda parte ' + secondPart)
+                    writtenValue = parts.firstPart + secondPart
                 }
             }
 
-
+            var oldValue = input.value
             CalculateInputValue()
 
-            //console.log('Posición del cursor ' + cursorPosition + dots)
+            if(writtenValue === ''){
+                input.setSelectionRange(-1, -1)
+                return
+            }
+
+            var newValue = input.value
+
+            var diff = oldValue.length - newValue.length
+            if(diff < 0)
+                diff = 0
+
+            if(e.key === 'Backspace'){
+                diff = diff * -1
+            }
+            else if(e.key === 'Delete'){
+                if(diff !== 0){
+                    diff -= 1
+    
+                    if(diff === 1)
+                        diff = -1
+                }
+
+                if(oldValue[cursorPosition] === '.' || oldValue[cursorPosition] === ','){
+                    diff += 1
+                }
+            }
+
             if(cursorPosition <= 0)
                 input.setSelectionRange(0, 0)
             else
-            input.setSelectionRange(cursorPosition - 1, cursorPosition - 1)
+                input.setSelectionRange(cursorPosition + diff, cursorPosition + diff)
         }
     }
 
