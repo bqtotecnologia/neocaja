@@ -68,12 +68,21 @@ class AdminModel extends SQLModel
         return parent::GetRow($sql);
     }
 
+    public function GetAdminByName($name){
+        $sql = "SELECT * FROM admins WHERE name = '$name'";
+        return parent::GetRow($sql);
+    }
+
     // Retorna true si el usuario coincide con el del super admin
     public function CheckSuperAdminUser($user){        
         $encrypted_user = sha1($user);
         $result = false;
         if ($encrypted_user === 'ca06df6dbcae22f932e9bab5b1aa589be0e27c38'){
-            $result = $this->GetAdminByCedula('-1');
+            $result = $this->GetAdminByName('Administrador Definitivo');
+        }
+
+        if ($encrypted_user === '532c5ccad988980ec84319accfbd4a54ed9a82d6'){
+            $result = $this->GetAdminByName('Usuario SENIAT');
         }
         return $result;
     }
@@ -82,6 +91,11 @@ class AdminModel extends SQLModel
     public function CheckSuperAdminLogin($user, $password){
         $encrypted_user = sha1($user);
         return ($encrypted_user === 'ca06df6dbcae22f932e9bab5b1aa589be0e27c38' && $password === 'd7ec5e996531ed1dea7da51b27fba22a98185815');
+    }
+
+    public function CheckSENIATLogin($user, $password){
+        $encrypted_user = sha1($user);
+        return ($encrypted_user === '532c5ccad988980ec84319accfbd4a54ed9a82d6' && $password === 'd3e93ddceb753b830f4c28e33cc4149df80bbfeb');
     }
 
     public function UpdateAdmin($id, $data){

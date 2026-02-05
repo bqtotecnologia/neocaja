@@ -14,6 +14,6 @@ $loginFields = [
         'max' => 100,
         'required' => true,
         'type' => 'string',
-        'suspicious' => true,
+        'suspicious' => false,
     ],
 ];

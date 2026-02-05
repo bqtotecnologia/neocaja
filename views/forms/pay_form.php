@@ -129,7 +129,7 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
 
                     <div class="row col-12 m-0 p-0 align-items-center my-1">
                         <label class="col-12 col-lg-4 text-right align-middle m-0 h6" for="price">Monto de la transacción</label>
-                        <input class="col-12 col-lg-8 form-control" id="price" type="text" placeholder="Diferenciar decimales con punto" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46">
+                        <input class="col-12 col-lg-8 form-control text-right amount-input" id="price" type="text" >
                     </div>
 
                     <div class="row col-12 m-0 p-0 align-items-center mt-5">
@@ -198,4 +198,6 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
 <?php include_once '../common/partials/pay_form/fetchs.php'; ?>
 <?php include_once '../common/partials/pay_form/product_module.php'; ?>
 <?php include_once '../common/partials/pay_form/checkout_module.php'; ?>
+
+<script src="<?= $base_url ?>/vendors/theme/js/amount_input.js"></script>
 

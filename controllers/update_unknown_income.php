@@ -49,7 +49,6 @@ if($error === ''){
         $error = 'Hubo un error al intentar actualizar el valor de la variable global';
 }
 
-
 // Managing feedback message and binnacle
 if($error === ''){
     $action = "Actualizó el propietario del ingreso no identificado de id " . $cleanData['id'];

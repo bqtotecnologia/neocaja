@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Cajero', 'Super', 'Estudiante'];
+$admitted_user_types = ['Cajero', 'Super', 'Estudiante', 'SENIAT'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/Validator.php';
 include_once '../../utils/prettyCiphers.php';
@@ -74,7 +74,7 @@ include '../../views/common/header.php';
                     <label class="fw-bold mx-2">
                         Cliente:
                     </label>
-                    <span class="">
+                    <span class="cursor-pointer" onclick="CopyToClipboard(this)" title="Click para copiar en el portapapeles">
                         <?= $target_account['names'] . ' ' . $target_account['surnames'] ?>
                     </span>
                 </div>
@@ -212,7 +212,7 @@ include '../../views/common/header.php';
         </section>        
     </div>
 
-    <?php if($_SESSION['neocaja_rol'] !== 'Estudiante') { ?>
+    <?php if(!in_array($_SESSION['neocaja_rol'], ['Estudiante', 'SENIAT'])) { ?>
         <form class="col-12 row m-0 p-0 confirm-form" method="POST" action="<?=$base_url?>/controllers/update_account_payment.php">
             <section class="col-10 col-lg-6 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
                 <div class="row col-12 justify-content-center my-5 confirm-form" >

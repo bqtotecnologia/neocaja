@@ -80,10 +80,12 @@
                     <?php } ?>
 
                     <!-- Cashier -->
-                    <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                    <?php if(Auth::UserLevelIn(['Cajero', 'Super', 'SENIAT'])){ ?>
                       <li><a><i class="fa fa-book"></i> Facturas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/forms/invoice_form.php">Crear factura</a></li>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                            <li><a href="<?= $base_url ?>/views/forms/invoice_form.php">Crear factura</a></li>
+                          <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_invoices_of_today.php">Facturas de hoy</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_invoices_by_period.php">Buscar por periodo</a></li>
                         </ul>
@@ -91,7 +93,9 @@
 
                       <li><a><i class="fa fa-users"></i> Clientes <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/forms/account_form.php">Crear cliente</a></li>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                            <li><a href="<?= $base_url ?>/views/forms/account_form.php">Crear cliente</a></li>
+                          <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_account.php">Ver clientes</a></li>
                         </ul>
                       </li>
@@ -109,28 +113,36 @@
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/tables/search_unknown_income_generations.php">Generaciones</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_unknown_incomes_by_date.php">Buscar por fecha</a></li>
-                          <li><a href="<?= $base_url ?>/views/forms/import_unknown_incomes.php">Importar</a></li>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                            <li><a href="<?= $base_url ?>/views/forms/import_unknown_incomes.php">Importar</a></li>
+                          <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_identified_incomes.php">Ingresos identificados</a></li>                          
                         </ul>
                       </li>
 
                       <li><a><i class="fa fa-cubes"></i> Productos <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/forms/product_form.php">Crear producto</a></li>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                            <li><a href="<?= $base_url ?>/views/forms/product_form.php">Crear producto</a></li>
+                          <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_product.php">Ver productos</a></li>
                         </ul>
                       </li>
 
                       <li><a><i class="fa fa-building"></i> Empresas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/forms/company_form.php">Crear empresa</a></li>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                            <li><a href="<?= $base_url ?>/views/forms/company_form.php">Crear empresa</a></li>
+                          <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_company.php">Ver empresas</a></li>
                         </ul>
                       </li>
 
                       <li><a><i class="fa fa-fax"></i> Puntos de venta <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/forms/sale_point_form.php">Crear punto de venta</a></li>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                            <li><a href="<?= $base_url ?>/views/forms/sale_point_form.php">Crear punto de venta</a></li>
+                          <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_sale_point.php">Ver puntos de venta</a></li>
                         </ul>
                       </li>
@@ -143,35 +155,43 @@
 
                       <li><a><i class="fa fa-sitemap"></i> Métodos de pago <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/forms/payment_method_form.php">Crear método de pago</a></li>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                            <li><a href="<?= $base_url ?>/views/forms/payment_method_form.php">Crear método de pago</a></li>
+                          <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_payment_method.php">Ver métodos de pago</a></li>
                         </ul>
                       </li>
 
                       <li><a><i class="fa fa-exchange"></i> Cuentas de depósito <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/tables/search_mobile_payments.php">Pago móvil</a></li>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                            <li><a href="<?= $base_url ?>/views/tables/search_mobile_payments.php">Pago móvil</a></li>
+                          <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_transfers.php">Transferencias</a></li>
                         </ul>
                       </li>
 
                       <li><a><i class="fa fa-bank"></i> Bancos <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/forms/bank_form.php">Crear banco</a></li>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                            <li><a href="<?= $base_url ?>/views/forms/bank_form.php">Crear banco</a></li>
+                          <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_bank.php">Ver bancos</a></li>
                         </ul>
                       </li>
 
                       <li><a><i class="fa fa-leaf"></i> Becas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/forms/scholarship_form.php">Crear beca</a></li>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                            <li><a href="<?= $base_url ?>/views/forms/scholarship_form.php">Crear beca</a></li>
+                          <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_scholarship.php">Ver becas</a></li>
                         </ul>
                       </li>
                     <?php } ?>
 
                     <!-- Tecnología -->
-                    <?php if(Auth::UserLevelIn(['Tecnologia', 'Super', 'Cajero'])){ ?>
+                    <?php if(Auth::UserLevelIn(['Tecnologia', 'Super', 'Cajero', 'SENIAT'])){ ?>
                     <li><a><i class="fa fa-bell"></i> Notificaciones 
                         <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
@@ -208,10 +228,12 @@
                     <?php } ?>
 
                     <!-- Super Admin -->
-                    <?php if(Auth::UserLevelIn(['Super'])){ ?>
+                    <?php if(Auth::UserLevelIn(['Super', 'SENIAT'])){ ?>
                       <li><a><i class="fa fa-user"></i> Admins <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/forms/admin_form.php">Agragar admin</a></li>
+                          <?php if(Auth::UserLevelIn(['Super'])){ ?>
+                            <li><a href="<?= $base_url ?>/views/forms/admin_form.php">Agragar admin</a></li>
+                          <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_admin.php">Ver admins</a></li>
                         </ul>
                       </li>

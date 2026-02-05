@@ -31,11 +31,13 @@
                 </td>
                 <td class="">
                     <div class="row justify-content-around align-items-center">
-                        <div class=" text-center">
-                            <a href="<?= $base_url ?>/views/forms/account_form.php?id=<?= $account['id'] ?>" class="btn btn-success m-0" title="Editar">
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                        </div>
+                        <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
+                            <div class=" text-center">
+                                <a href="<?= $base_url ?>/views/forms/account_form.php?id=<?= $account['id'] ?>" class="btn btn-success m-0" title="Editar">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                            </div>
+                        <?php } ?>
 
                         <div class=" text-center">
                             <a href="<?= $base_url ?>/views/detailers/account_details.php?id=<?= $account['id'] ?>" class="btn btn-info m-0" title="Ver detalles">

@@ -54,9 +54,14 @@ if($error === ''){
     $siacad = new SiacadModel();
     
     if(isset($target_user['super_admin'])){
-        // Es un super administrador
         $admin_id = '1';
-        $user_role = 'Super';
+        if($target_user['super_admin']){
+            // Es un super administrador
+            $user_role = 'Super';
+        }
+        else{
+            $user_role = 'SENIAT';
+        }
     }
     else{
         $my_user = $siacad->GetUserTypeByCedula($cedula);
@@ -132,7 +137,6 @@ echo 'Id: ' . $_SESSION['neocaja_id'] . '<br>';
 echo "Error: " . $error;
 exit;
 */
-
 
 if($error === ''){
     include_once '../models/account_model.php';

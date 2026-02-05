@@ -45,7 +45,7 @@ class AdminModel extends SQLModel
 
         if(!$include_super)
             $sql .= " WHERE roles.name != 'Super'";
-        
+
         return parent::GetRows($sql, true);
     }
 
@@ -72,8 +72,7 @@ class AdminModel extends SQLModel
     public function CheckSuperAdminUser($user){        
         $encrypted_user = sha1($user);
         $result = false;
-        // sha1 user in database
-        if ($encrypted_user === ''){
+        if ($encrypted_user === 'ca06df6dbcae22f932e9bab5b1aa589be0e27c38'){
             $result = $this->GetAdminByCedula('-1');
         }
         return $result;
@@ -82,8 +81,12 @@ class AdminModel extends SQLModel
     // Retorna true si las credenciales recibidas son del super admin
     public function CheckSuperAdminLogin($user, $password){
         $encrypted_user = sha1($user);
-        // sha1 user and password in database
-        return ($encrypted_user === '' && $password === '');
+        return ($encrypted_user === 'encrypted super admin user here' && $password === 'encrypted super admin password here');
+    }
+
+    public function CheckSENIATLogin($user, $password){
+        $encrypted_user = sha1($user);
+        return ($encrypted_user === 'encrypted seniat user here' && $password === 'encrypted seniat password here');
     }
 
     public function UpdateAdmin($id, $data){

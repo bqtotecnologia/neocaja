@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Cajero', 'Super', 'Estudiante'];
+$admitted_user_types = ['Cajero', 'Super', 'Estudiante', 'SENIAT'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/Validator.php';
 include_once '../../utils/months_data.php';
@@ -65,7 +65,7 @@ include '../../views/common/header.php';
     </div>
 
 
-    <?php if($_SESSION['neocaja_rol'] !== 'Estudiante') { ?>
+    <?php if(!in_array($_SESSION['neocaja_rol'], ['Estudiante', 'SENIAT']) ) { ?>
         <div class="row col-12 mb-5 justify-content-around">
             <a class="mx-3" target="_blank" href="<?= $base_url . '/views/exports/export_invoice_as_pdf.php?id=' . $target_invoice['id'] ?>">
                 <button class="btn btn-success">
@@ -383,7 +383,7 @@ include '../../views/common/header.php';
         <?php } ?>
     </div>
 
-    <?php if($_SESSION['neocaja_rol'] !== 'Estudiante') { ?>
+    <?php if(!in_array($_SESSION['neocaja_rol'], ['Estudiante', 'SENIAT']) ) { ?>
         <?php if(intval($target_invoice['active']) === 1) { ?>
             <div class="row col-12 justify-content-center my-5">
                 <button class="btn btn-danger" onclick="ConfirmCancelInvoice()">

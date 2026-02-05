@@ -33,6 +33,15 @@ class BdusuariosModel extends PGSQLModel
                     'nombrecompleto' => 'Administrador Supremo',
                     'super_admin' => true
                 );
+            else{
+                // Puede ser un usuario del SENIAT
+                $user = $admin_model->CheckSENIATLogin($username, $password);
+                if($user !== false)
+                    $user = array(
+                        'nombrecompleto' => 'Usuario SENIAT',
+                        'super_admin' => false
+                    );
+            }
         } 
         return $user;
     }

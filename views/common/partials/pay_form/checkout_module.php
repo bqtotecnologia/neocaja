@@ -178,7 +178,7 @@
         methodSelect.innerHTML = ''
         methodDataTable.innerHTML = ''
         methodSelect.value = ''
-        priceInput.value = ''
+        priceInput.value = '0,00'
         refInput.value = ''
         cedulaInput.value = ''
 
@@ -197,7 +197,7 @@
             error = 'Tipo de método de pago inválido'
 
         if(error === ''){
-            var price = priceInput.value
+            var price = priceInput.value.replaceAll('.', '').replaceAll(',', '.')
             var to_pay = totalToPay.innerHTML.replace('.', '')
             var to_pay = to_pay.replace(',', '.')
             
@@ -232,7 +232,7 @@
             'codes': codes,
             'document': cedulaInput.value,
             'ref': refInput.value,
-            'price': priceInput.value,
+            'price': priceInput.value.replaceAll('.', '').replaceAll(',', '.'),
             'payment_method': methodSelect.value,
             'payment_method_type': methodTypeSelect.value,
         }

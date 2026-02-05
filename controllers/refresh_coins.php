@@ -67,6 +67,7 @@ foreach($data as $d){
 }
 
 if($error === ''){
+    $coin_model->CreateBinnacle($_SESSION['neocaja_id'], 'Actualizó las monedas automáticamente');
     $refresh_message = 'Todas las monedas han sido actualizadas correctamente';
     $refresh_success = true;
 }
