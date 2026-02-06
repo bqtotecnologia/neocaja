@@ -13,7 +13,7 @@
         $count = 1;
         ?>
         <?php foreach($global_var_history as $history) {  ?>
-            <tr class="h6">
+            <tr class="h6 <?= intval($history['current']) === 1 ? 'bg-notification' : '' ?>">
                 <td class="align-middle text-center"><?php echo $count; $count++; ?></td>
                 <td class="align-middle text-center"><?= $history['name'] ?></td>
                 <td class="align-middle text-center"><?= $history['value'] ?></td>

@@ -17,7 +17,9 @@ $invoices = $invoice_model->GetInvoicesOfDate(date('Y-m-d'));
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
             <div class="table-responsive">
-                <?php $btn_url = '../forms/invoice_form.php'; include_once '../layouts/addButton.php'; ?>
+                <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
+                    <?php $btn_url = '../forms/invoice_form.php'; include_once '../layouts/addButton.php'; ?>
+                <?php } ?>
                 <div class="table-responsive">
                     <?php include '../common/tables/invoice_table.php'; ?>
                 </div>

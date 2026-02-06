@@ -1,8 +1,9 @@
 <?php 
-$admitted_user_types = ['Cajero', 'Super'];
+$admitted_user_types = ['Cajero', 'Super', 'SENIAT'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/Validator.php';
 
+$error = '';
 $id = Validator::ValidateRecievedId();
 if(is_string($id)){
     $error = $id;    

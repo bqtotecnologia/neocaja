@@ -27,13 +27,15 @@
                 </td>
                 <td class="">
                     <div class="row justify-content-around">
-                        <div class="col-3 text-center">
-                            <a href="<?= $base_url ?>/views/forms/product_form.php?id=<?= $product['id'] ?>" class="btn btn-success" title="Editar">
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                        </div>
+                        <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
+                            <div class="col text-center">
+                                <a href="<?= $base_url ?>/views/forms/product_form.php?id=<?= $product['id'] ?>" class="btn btn-success" title="Editar">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                            </div>
+                        <?php } ?>
 
-                        <div class="col-3 text-center">
+                        <div class="col text-center">
                             <a href="<?= $base_url ?>/views/tables/product_history.php?id=<?= $product['id'] ?>" class="btn btn-info" title="Ver historial de precios">
                                 <i class="fa fa-list"></i>
                             </a>

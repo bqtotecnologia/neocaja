@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Cajero', 'Super'];
+$admitted_user_types = ['Cajero', 'Super', 'SENIAT'];
 include_once '../../utils/validate_user_type.php';
 
 include_once '../../models/account_model.php';
@@ -28,7 +28,7 @@ include '../../views/common/header.php';
 <div class="row justify-content-center">
     <div class="col-12 text-center">
         <?php if($target_date === false) { ?>
-            <h1 class="h1 text-black">Buscar ingresos identificados por fecha</h1>
+            <h1 class="h1 text-black">Buscar ingresos identificados por fecha de transacción</h1>
         <?php } else { ?>
             <h1 class="h1 text-black">Ingresos identificados del <?= $target_date->format('d/m/Y') ?></h1>
         <?php } ?>

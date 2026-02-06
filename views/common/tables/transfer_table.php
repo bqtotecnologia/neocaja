@@ -7,7 +7,9 @@
             <th class="text-center">Rif/Cédula</th>
             <th class="text-center">Fecha de creación</th>
             <th class="text-center">Activo</th>
-            <th class="text-center">Acción</th>
+            <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
+                <th class="text-center">Acción</th>
+            <?php } ?>
         </tr>
     </thead>
 
@@ -25,15 +27,17 @@
                 <td class="align-middle text-center fw-bold text-<?= intval($transfer['active']) === 1 ? 'success' : 'danger' ?>">
                     <?= intval($transfer['active']) === 1 ? 'Sí' : 'No' ?>
                 </td>
-                <td class="">
-                    <div class="row justify-content-around">
-                        <div class="col-6 text-center">
-                            <a href="<?= $base_url ?>/views/forms/transfer_form.php?id=<?= $transfer['id'] ?>" class="btn btn-success" title="Editar">
-                                <i class="fa fa-pencil"></i>
-                            </a>
+                <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
+                    <td class="">
+                        <div class="row justify-content-around">
+                            <div class="col-6 text-center">
+                                <a href="<?= $base_url ?>/views/forms/transfer_form.php?id=<?= $transfer['id'] ?>" class="btn btn-success" title="Editar">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                </td>
+                    </td>
+                <?php } ?>
             </tr>
         <?php } ?>
     </tbody>

@@ -1,5 +1,5 @@
 <?php
-$admitted_user_types = ['Tecnologia', 'Super'];
+$admitted_user_types = ['Tecnologia', 'Super', 'SENIAT'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/Validator.php';
 
@@ -40,11 +40,18 @@ foreach($accounts as $account){
     array_push($display_accounts, $to_add);
 }
 
+$title = 'Detalles de un ingreso ';
+
+if($target_income['account_id'] === null)
+    $title .= 'no ';
+
+$title .= 'identificado';
+
 include_once '../../fields_config/unknown_incomes.php';
 $formBuilder = new FormBuilder(
     '../../controllers/update_unknown_income.php',    
     'POST',
-    'Detalles de un ingreso no identificado',
+    $title,
     'Actualizar',
     '',
     $unknownIncomeFields
@@ -61,6 +68,16 @@ $formBuilder = new FormBuilder(
         <?php $formBuilder->DrawForm(); ?>
     </div>
 </div>
+
+<?php if($_SESSION['neocaja_rol'] === 'SENIAT') { ?>
+    <script>
+        const submitButton = document.querySelector('button[type="submit"]');
+        submitButton.remove()
+
+        const accountSelect = document.getElementById('account')
+        accountSelect.disabled = true
+    </script>
+<?php } ?>
 
 <?php include_once '../common/footer.php'; ?>
 

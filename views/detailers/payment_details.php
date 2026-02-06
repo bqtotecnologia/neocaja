@@ -126,7 +126,8 @@ include '../../views/common/header.php';
                     <label class="fw-bold mx-2">
                         Monto:
                     </label>
-                    <span class="" id="price">                        
+                    <span class="" id="price">    
+                        
                     </span>
                 </div>
 

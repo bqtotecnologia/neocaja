@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Cajero', 'Super'];
+$admitted_user_types = ['Super', 'SENIAT'];
 include_once '../../utils/validate_user_type.php';
 
 include '../../views/common/header.php';
@@ -16,7 +16,9 @@ $admins = $admin_model->GetAdmins();
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <?php $btn_url = '../forms/admin_form.php'; include_once '../layouts/addButton.php'; ?>
+            <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
+                <?php $btn_url = '../forms/admin_form.php'; include_once '../layouts/addButton.php'; ?>
+            <?php } ?>
             <div class="table-responsive">
                 <?php include_once '../common/tables/admin_table.php'; ?>
             </div>

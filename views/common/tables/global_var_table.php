@@ -21,13 +21,15 @@
                 <td class="align-middle text-center"><?= $var['date'] ?></td>
                 <td class="">
                     <div class="row justify-content-around">
-                        <div class="col-3 text-center">
-                            <a href="<?= $base_url ?>/views/forms/global_var_form.php?id=<?= $var['id'] ?>" class="btn btn-success" title="Editar">
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                        </div>   
+                        <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
+                            <div class="col text-center">
+                                <a href="<?= $base_url ?>/views/forms/global_var_form.php?id=<?= $var['id'] ?>" class="btn btn-success" title="Editar">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                            </div>   
+                        <?php } ?>
                         
-                        <div class="col-3 text-center">
+                        <div class="col text-center">
                             <a href="<?= $base_url ?>/views/tables/global_var_history.php?id=<?= $var['id'] ?>" class="btn btn-info" title="Ver historial de valores">
                                 <i class="fa fa-list"></i>
                             </a>

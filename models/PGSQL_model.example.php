@@ -96,7 +96,7 @@ class PGSQLModel{
 
     // Crea una entrada en la bitácora
     public function CreateBinnacle($user, $action){
-        $sql = "INSERT INTO binnacle (user, action, ip_address) VALUES ($user, '$action', '" . $_SERVER['REMOTE_ADDR'] . "')";
+        $sql = "INSERT INTO binnacle (user, action, ip_address) VALUES ($user, '$action', '" . $_SERVER['REMOTE_ADDR'] . "')";        
         $this->DoQuery($sql);
     }
 

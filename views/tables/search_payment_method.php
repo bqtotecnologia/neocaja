@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Cajero', 'Super'];
+$admitted_user_types = ['Cajero', 'Super', 'SENIAT'];
 include_once '../../utils/validate_user_type.php';
 
 include '../../views/common/header.php';
@@ -16,7 +16,9 @@ $payment_method_types = $payment_method_model->GetAllPaymentMethodTypes();
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <?php $btn_url = '../forms/payment_method_form.php'; include_once '../layouts/addButton.php'; ?>
+            <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
+                <?php $btn_url = '../forms/payment_method_form.php'; include_once '../layouts/addButton.php'; ?>
+            <?php } ?>
             <div class="table-responsive">
                 <?php include '../common/tables/payment_method_table.php'; ?>
             </div>

@@ -6,7 +6,9 @@
             <th class="text-center">Nombre</th>
             <th class="text-center">Fecha de creación</th>
             <th class="text-center">Activo</th>
-            <th class="text-center">Acción</th>
+            <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
+                <th class="text-center">Acción</th>
+            <?php } ?>
         </tr>
     </thead>
 
@@ -23,15 +25,17 @@
                 <td class="align-middle text-center fw-bold text-<?= $admin['active'] ? 'success' : 'danger' ?>">
                     <?= $admin['active'] ? 'Sí' : 'No' ?>          
                 </td>
-                <td class="">
-                    <div class="row justify-content-around">
-                        <div class="col-3 text-center">
-                            <a href="<?= $base_url ?>/views/forms/admin_form.php?id=<?= $admin['admin_id'] ?>" class="btn btn-success" title="Editar">
-                                <i class="fa fa-pencil"></i>
-                            </a>
+                <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
+                    <td class="">
+                        <div class="row justify-content-around">
+                            <div class="col-3 text-center">
+                                <a href="<?= $base_url ?>/views/forms/admin_form.php?id=<?= $admin['admin_id'] ?>" class="btn btn-success" title="Editar">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                </td>
+                    </td>
+                <?php } ?>
             </tr>
         <?php } ?>
     </tbody>

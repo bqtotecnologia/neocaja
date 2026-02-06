@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Cajero', 'Super'];
+$admitted_user_types = ['Cajero', 'Super', 'SENIAT'];
 include_once '../../utils/validate_user_type.php';
 
 include '../../views/common/header.php';
@@ -16,7 +16,9 @@ $companies = $company_model->GetCompanies();
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <?php $btn_url = '../forms/company_form.php'; include_once '../layouts/addButton.php'; ?>
+            <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
+                <?php $btn_url = '../forms/company_form.php'; include_once '../layouts/addButton.php'; ?>
+            <?php } ?>
             <div class="table-responsive">
                 <?php include '../common/tables/company_table.php'; ?>
             </div>

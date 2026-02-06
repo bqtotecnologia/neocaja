@@ -35,7 +35,7 @@ include '../../views/common/header.php';
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">            
-            <?php $btn_url = 'search_coin.php'; include_once '../layouts/backButton.php'; ?>
+            <?php $btn_url = "$base_url/views/panel.php"; include_once '../layouts/backButton.php'; ?>
             <div class="table-responsive">
                 <?php include '../common/tables/account_payments_table.php';  ?>
             </div>

@@ -1,42 +1,48 @@
 <?php
 
 $invoiceFields = [
-    'invoice_number' => [
+    [
+        'name' => 'invoice_number',
         'min' => 1,
         'max' => 11,
         'required' => true,
         'type' => 'integer',
         'suspicious' => true,
     ],
-    'control_number' => [
+    [
+        'name' => 'control_number',
         'min' => 1,
         'max' => 11,
         'required' => true,
         'type' => 'integer',
         'suspicious' => true,
     ],
-    'account' => [
+    [
+        'name' => 'account',
         'min' => 1,
         'max' => 11,
         'required' => true,
         'type' => 'integer',
         'suspicious' => true,
     ],
-    'rate-date' => [
+    [
+        'name' => 'rate-date',
         'min' => 8,
         'max' => 10,
         'required' => true,
         'type' => 'date',
         'suspicious' => false,
     ],
-    'observation' => [
+    [
+        'name' => 'observation',
         'min' => 0,
         'max' => 255,
         'required' => false,
         'type' => 'string',
         'suspicious' => true,
     ],
-    'known-income' => [
+    [
+        'name' => 'known-income',
         'min' => 0,
         'max' => 11,
         'required' => false,

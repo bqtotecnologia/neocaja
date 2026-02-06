@@ -1,5 +1,5 @@
 <?php
-$admitted_user_types = ['Super', 'Supervisor'];
+$admitted_user_types = ['Super', 'Supervisor', 'SENIAT'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../models/admin_model.php';
 $admin_model = new AdminModel();

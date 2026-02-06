@@ -80,7 +80,7 @@ class SiacadModel extends PGSQLModel
 
         include_once 'admin_model.php';
         $admin_model = new AdminModel();
-        $admin = $admin_model->CheckAdmin($cedula);
+        $admin = $admin_model->GetAdminByCedula($cedula);
         if($admin !== false){
             $data = array(
                 'role' => $admin['role'],

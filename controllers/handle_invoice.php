@@ -13,7 +13,7 @@ $payment_method_field_block = [
     'Efectivo' => ['bank', 'salepoint', 'document'],
     'Pago móvil' => ['salepoint'],
     'Transferencia' => ['salepoint'],
-    'Tarjeta de débito' => [],
+    'Tarjeta de déb' => [],
 ];
 
 include_once '../fields_config/invoices.php';
@@ -162,6 +162,10 @@ if($error === ''){
         $payment_method_id = $_POST['payment-method-' . $i];
 
         $target_price = $_POST["payment-price-$i"];
+
+        if($target_price === '')
+            continue;
+
         if(!is_numeric($target_price)){
             $error = 'El precio de un método de pago es inválido';
             break;
@@ -278,6 +282,9 @@ while(true){
         }
 
         $target_price = $_POST["igtf-price"];
+        if($target_price === '')
+            continue;
+
         if(!is_numeric($target_price)){
             $error = 'El precio del método de pago del IGTF es inválido';
             break;

@@ -21,7 +21,8 @@ if($error === ''){
 
     include_once '../models/bdusuarios_model.php';
     $bdusuarios = new BdusuariosModel();
-    if(!$bdusuarios->UserExists($user))
+    $exists = $bdusuarios->UserExists($user);
+    if($exists === false)
         $error = 'Credenciales inválidas';
 }
 
@@ -30,11 +31,15 @@ if($error === ''){
     $account_model = new AccountModel();
 
     $target_user = $bdusuarios->TryLogin($user, $password);
+
     if($target_user === false){
         $error = 'Credenciales inválidas';
-        $account_model->CreateBinnacle('NULL', 'Intento de inicio de sesión fallido para el usuario ' . $user);
+        $account_model->CreateBinnacle('NULL', 'Intento de inicio de sesión fallido para el usuario ' . $exists['name']);
     }
 }
+
+// TODO: CREAR LO DE LÍMITE DE INTENTOS
+// TODO: MIGRAR LOS MODELOS NORMALES A LOS .EXAMPLE
 
 if($error === ''){
     // Login exitoso
@@ -54,7 +59,7 @@ if($error === ''){
     $siacad = new SiacadModel();
     
     if(isset($target_user['super_admin'])){
-        $admin_id = '1';
+        $admin_id = $exists['id'];
         if($target_user['super_admin']){
             // Es un super administrador
             $user_role = 'Super';
@@ -74,9 +79,7 @@ if($error === ''){
 
 if($error === ''){
     if($user_role === 'Estudiante'){
-        // Si es un estudiante, vamos a verificar que tenga cuenta, si no la tiene, la creamos
-        include_once '../models/account_model.php';
-        $account_model = new AccountModel();
+        // Si es un estudiante, vamos a verificar que tenga cuenta, si no la tiene, la creamos        
     
         $account = $account_model->GetAccountByCedula($cedula);
         if($account === false){

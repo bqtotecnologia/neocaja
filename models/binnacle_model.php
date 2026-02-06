@@ -8,10 +8,11 @@ class BinnacleModel extends SQLModel
         admins.cedula,
         admins.name as name,
         binnacle.created_at,
+        binnacle.ip_address,
         binnacle.action
         FROM
         binnacle
-        INNER JOIN admins ON admins.id = binnacle.user ";
+        LEFT JOIN admins ON admins.id = binnacle.user ";
 
     /**
      * Obtener la bitácora entre un rango de fechas "Y-m-d"
@@ -38,4 +39,16 @@ class BinnacleModel extends SQLModel
 
         return parent::GetRows($sql, true);
     }    
+
+    public function GetManualChanges(){
+        $sql = $this->BINNACLE_TEMPLATE . "
+            WHERE
+            binnacle.user IS NULL AND
+            binnacle.ip_address IS NULL AND
+            admins.cedula IS NULL
+            ORDER BY
+            binnacle.created_at DESC";
+
+        return parent::GetRows($sql, true);
+    }
 }

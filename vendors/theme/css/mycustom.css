@@ -162,7 +162,7 @@ td, th {
 }
 
 .bg-notification{
-    background-color: rgb(168, 241, 168);
+    background-color: rgb(168, 241, 168) !important;
 }
 
 .border-success{

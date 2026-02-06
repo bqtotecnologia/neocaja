@@ -1,11 +1,13 @@
-<table class="table table-striped col-12 datatable-date-3" style="width:100%">
-    <thead>
+<table class="table table-striped col-12 datatable-date-3">
+    <thead class="bg-theme text-white fw-bold h6">
         <tr>
             <th class="text-center" style="padding-right:15px !important;">Nº</th>
             <th class="text-center">Código</th>
             <th class="text-center">Banco</th>
             <th class="text-center">Fecha de creación</th>
-            <th class="text-center">Acción</th>
+            <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
+                <th class="text-center">Acción</th>
+            <?php } ?>
         </tr>
     </thead>
 
@@ -19,15 +21,17 @@
                 <td class="align-middle text-center"><?= $sale_point['code'] ?></td>
                 <td class="align-middle text-center"><?= $sale_point['bank'] ?></td>
                 <td class="align-middle text-center"><?= $sale_point['created_at'] ?></td>
-                <td class="">
-                    <div class="row justify-content-around">
-                        <div class="col-3 text-center">
-                            <a href="<?= $base_url ?>/views/forms/sale_point_form.php?id=<?= $sale_point['id'] ?>" class="btn btn-success" title="Editar">
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                        </div>                      
-                    </div>
-                </td>
+                <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
+                    <td class="">
+                        <div class="row justify-content-around">
+                            <div class="col-3 text-center">
+                                <a href="<?= $base_url ?>/views/forms/sale_point_form.php?id=<?= $sale_point['id'] ?>" class="btn btn-success" title="Editar">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                            </div>                      
+                        </div>
+                    </td>
+                <?php } ?>
             </tr>
         <?php } ?>
     </tbody>

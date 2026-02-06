@@ -164,9 +164,7 @@
 
                       <li><a><i class="fa fa-exchange"></i> Cuentas de depósito <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
-                            <li><a href="<?= $base_url ?>/views/tables/search_mobile_payments.php">Pago móvil</a></li>
-                          <?php } ?>
+                          <li><a href="<?= $base_url ?>/views/tables/search_mobile_payments.php">Pago móvil</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_transfers.php">Transferencias</a></li>
                         </ul>
                       </li>
@@ -203,6 +201,7 @@
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/tables/search_binnacle_by_date_range.php">Buscar por rango de fechas</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_binnacle_by_admin.php">Buscar por usuario</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_binnacle_manual_changes.php">Buscar registros manuales</a></li>
                         </ul>
                       </li>
 
