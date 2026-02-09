@@ -238,13 +238,13 @@ if($error === ''){
             }
         }
 
-        if(!in_array('document', $blocked_fields)){
+        if(!in_array('document', $blocked_fields)){            
             if(!isset($_POST['payment-document-' . $i])){
                 $error = 'No se recibió ningún número de documento en uno de los métodos de pago';
                 break;
             }
 
-            $target_document = $_POST["payment-document-$i"];
+            $target_document = $_POST["payment-document-$i"];            
             if($target_document === ''){
                 $error = 'El número de documento es necesario';
                 break;
@@ -261,7 +261,7 @@ if($error === ''){
             'coin' => $target_coin['history_id'],
             'salepoint' => $target_sale_point['id'] ?? 'NULL',
             'bank' => $target_bank['id'] ?? 'NULL',
-            'document_number' => $target_document['id'] ?? 'NULL',
+            'document_number' => ("'" . $target_document . "'") ?? 'NULL',
             'price' => $target_price,
             'igtf' => '0',
         ];
@@ -338,7 +338,7 @@ while(true){
             else
                 $error = 'El punto de venta del IGTF es necesario';
         }
-
+        
         if(!in_array('document', $blocked_fields)){
             if(!isset($_POST['igtf-document'])){
                 $error = 'No se recibió el numero de documento del IGTF';
@@ -367,7 +367,7 @@ if($error === '' && isset($_POST['igtf-price'])){
         'coin' => $target_coin['history_id'],
         'salepoint' => $target_sale_point['id'] ?? 'NULL',
         'bank' => $target_bank['id'] ?? 'NULL',
-        'document_number' => $target_document['id'] ?? 'NULL',
+        'document_number' => ("'" . $target_document . "'") ?? 'NULL',
         'price' => $target_price,
         'igtf' => '1',
     ];
@@ -393,7 +393,7 @@ if($error === ''){
 
 if($error === ''){
     // Agregamos los conceptos de la factura
-    foreach($payment_methods as $payment_method){
+    foreach($payment_methods as $payment_method){        
         $created = $invoice_model->AddPaymentMethodToInvoice($payment_method, strval($target_invoice['id']));
         if($created === false){
             $error = 'Ocurrió un error al intentar agregar el método de pago de monto ' . $payment_method['price'];

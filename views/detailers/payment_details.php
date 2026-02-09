@@ -127,7 +127,7 @@ include '../../views/common/header.php';
                         Monto:
                     </label>
                     <span class="" id="price">    
-                        
+                        <?= GetPrettyCiphers($target_payment['price']) ?>
                     </span>
                 </div>
 

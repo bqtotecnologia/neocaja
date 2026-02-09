@@ -285,7 +285,7 @@ $other_concepts = [
     'IGTF' => $igtfTotal,
     'Total Factura' => $productsTotal + $iva,
     'IVA 16%' => $iva,
-    'Base Imopnible' => $productsTotal,
+    'Base Imponible' => $productsTotal,
     'Sub-total' => $productsTotal,    
 ];
 

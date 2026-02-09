@@ -90,27 +90,27 @@ class InvoiceModel extends SQLModel
         $igtf = $payment_method['igtf'];
 
         $sql = "INSERT INTO invoice_payment_method
-        (
-        invoice,
-        type,
-        price,
-        coin,
-        bank,
-        sale_point,
-        document_number,
-        igtf
-        )
-        VALUES
-        (
-        $invoice_id,
-        $method,
-        $price,
-        $coin,
-        $bank,
-        $salepoint,
-        $document_number,
-        $igtf
-        )";
+            (
+            invoice,
+            type,
+            price,
+            coin,
+            bank,
+            sale_point,
+            document_number,
+            igtf
+            )
+            VALUES
+            (
+            $invoice_id,
+            $method,
+            $price,
+            $coin,
+            $bank,
+            $salepoint,
+            $document_number,
+            $igtf
+            )";
 
         return parent::DoQuery($sql);
     }

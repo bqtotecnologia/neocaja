@@ -76,9 +76,18 @@ class SQLModel{
         // De esa forma no se disparan los triggers y no se inunda la tabla binnacle
         $conn = $this->GetConnection();
         try {
-            $conn->query($final_sql);
+            //$conn->query($final_sql);
+            $stm = $conn->prepare($final_sql);
+            $stm->execute();
+            $i = 0;
+
+            while($stm->nextRowset()){
+                $i++;
+            }
+
             return true;
         } catch (Exception $e) {
+            echo '<strong> Error de base de datos </strong> <br>';
             echo $e->getMessage();
             echo'<br><br>';
             return false;

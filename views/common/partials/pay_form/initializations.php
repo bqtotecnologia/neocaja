@@ -20,7 +20,7 @@
     const methodDataTable = document.getElementById('payment-method-table')
     const methodHeader = document.getElementById('payment-method-header')
 
-    const cedulaInput = document.getElementById('cedula')
+    const cedulaInput = document.getElementById('document')
     const priceInput = document.getElementById('price')
     const refInput = document.getElementById('ref')
     

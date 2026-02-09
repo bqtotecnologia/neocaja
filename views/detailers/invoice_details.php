@@ -333,8 +333,8 @@ include '../../views/common/header.php';
     
                 <div class="row col-12">
                     <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
+                        <table class="table table-striped col-12">
+                            <thead class="bg-theme text-white fw-bold h6">
                                 <tr class="text-center">
                                     <th>Método</th>
                                     <th>Moneda</th>

@@ -1,66 +1,25 @@
 <?php
-$admitted_user_types = ['Estudiante', 'Super'];
+$admitted_user_types = ['Estudiante'];
+include_once '../utils/validate_user_type.php';
+include_once '../utils/Validator.php';
 include_once '../utils/Auth.php';
-session_start();
 
 $error = '';
-if(Auth::UserLevelIn($admitted_user_types) === false)
-    $error = 'Permiso denegado. Cierre sesión e inicie nuevamente';
+
+if(empty($_POST))
+    $error = 'POST vacío';
 
 if($error === ''){
-    $availablePaymentMethods = ['mobile_payment', 'transfer'];
-    $inputJSON = file_get_contents('php://input');
-    $post = json_decode($inputJSON, TRUE);
-    
-    if($post === NULL){
-        $error = 'POST vacío';
-    }
-}
-
-if($error === ''){
-    if(
-        !isset($post['cedula']) || 
-        !isset($post['document']) ||
-        !isset($post['ref']) ||
-        !isset($post['price']) ||
-        !isset($post['payment_method_type']) ||
-        !isset($post['payment_method']) ||
-        !isset($post['codes'])
-    ){
-        $error = 'Campos necesarios no recibidos';
-    }
-}
-
-if($error === ''){
-    include_once '../utils/Validator.php';
-    foreach($post as $key => $value){
-        if($key === 'codes') 
-            continue;
-    
-        $suspicious = Validator::HasSuspiciousCharacters($value);
-        if($suspicious === true){
-            $error = 'Campo ' . $key . ' inválido';
-            break;
-        }
-    }
-}
-
-if($error === ''){
-    if(count($post['codes']) < 1){
-        $error = 'No se seleccionaron productos';
-    }else{
-        foreach($post['codes'] as $code){
-            $valid = Validator::HasSuspiciousCharacters($code);
-            if($valid === true)
-                $error = 'Texto malicioso detectado en algún producto';
-        }
-    }
+    include_once '../fields_config/remote_payments.php';
+    $cleanData = Validator::ValidatePOSTFields($remotePaymentFields);
+    if(is_string($cleanData))
+        $error = $cleanData;
 }
 
 if($error === ''){
     include_once '../models/account_model.php';
     $account_model = new AccountModel();
-    $target_account = $account_model->GetAccountByCedula($post['cedula']);
+    $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula']);
     if($target_account === false)
         $error = 'Cuenta no encontrada';
 }
@@ -84,7 +43,7 @@ if($error === ''){
 if($error === ''){
     $final_products = [];
     foreach($products as $product){
-        if(in_array($product['code'], $post['codes']))
+        if(in_array($product['code'], $_POST['codes']))
             array_push($final_products, $product);
     }
 
@@ -94,22 +53,23 @@ if($error === ''){
 }
 
 if($error === ''){
-    if(!in_array($post['payment_method_type'], $availablePaymentMethods))
+    $availablePaymentMethods = ['mobile_payment', 'transfer'];
+    if(!in_array($cleanData['payment_method_type'], $availablePaymentMethods))
         $error = 'Método de pago inválido';
 }
 
 if($error === ''){
-    if($post['payment_method_type'] === 'mobile_payment'){
+    if($cleanData['payment_method_type'] === 'mobile_payment'){
         include_once '../models/mobile_payments_model.php';
         $mobile_payment_model = new MobilePaymentsModel();
-        $target_payment_method = $mobile_payment_model->GetMobilePayment($post['payment_method']);
+        $target_payment_method = $mobile_payment_model->GetMobilePayment($cleanData['payment_method']);
         if($target_payment_method === false)
             $error = 'Pago móvil seleccionado no encontrado';
     }
-    else if($post['payment_method_type'] === 'transfer'){
+    else if($cleanData['payment_method_type'] === 'transfer'){
         include_once '../models/transfers_model.php';
         $transfer_model = new TransfersModel();
-        $target_payment_method = $transfer_model->GetTransfer($post['payment_method']);
+        $target_payment_method = $transfer_model->GetTransfer($cleanData['payment_method']);
         if($target_payment_method === false)
             $error = 'Cuenta de transferencia seleccionada no encontrada';
     }
@@ -171,8 +131,11 @@ if($error === ''){
     $usd = $coin_model->GetCoinByName('Dólar');
     $total_bs = round($product_total * $usd['price'], 2);
 
+    $cleanData['price'] = str_replace('.', '', $cleanData['price']);
+    $cleanData['price'] = floatval(str_replace(',', '.', $cleanData['price']));
+
     // Lo comparamos con un margen de error de 0.2bs debido al cálculo de decimales
-    if((($total_bs - 0.2 < $post['price']) && ($total_bs + 0.2 > $post['price'])) === false)
+    if((($total_bs - 0.2 < $cleanData['price']) && ($total_bs + 0.2 > $cleanData['price'])) === false)
         $error = 'El monto no coincide';   
 }
 
@@ -184,11 +147,11 @@ if($error === ''){
     $insertData = [
         'related_id' => $target_account['id'],
         'related_with' => 'client',
-        'payment_method_type' => $post['payment_method_type'],
-        'payment_method' => $post['payment_method'],
-        'price' => $post['price'],
-        'ref' => $post['ref'],
-        'document' => $post['document'],
+        'payment_method_type' => $cleanData['payment_method_type'],
+        'payment_method' => $cleanData['payment_method'],
+        'price' => $cleanData['price'],
+        'ref' => $cleanData['ref'],
+        'document' => $cleanData['document'],
         'state' => 'Por revisar',
     ];
 
@@ -228,7 +191,12 @@ if($error !== '' && $created !== false){
     $payments_model->DeletePayment($created['id']);
 }
 
-$json_data = json_encode($response, JSON_UNESCAPED_UNICODE); // Para que acepte las tildes
-header('Content-Type: application/json');
-echo $json_data;
+if($error === ''){
+    $message = 'Su compra ha sido registrada con éxito. Actualmente se encuentra en estado "Por revisar".';
+    header("Location: $base_url/views/panel.php?message=$message");
+}
+else{
+    header("Location: $base_url/views/forms/pay_form.php?error=$error");
+}
+
 exit;

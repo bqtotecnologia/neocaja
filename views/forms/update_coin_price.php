@@ -1,7 +1,6 @@
 <?php
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
-include_once '../common/header.php';
 
 include_once '../../models/coin_model.php';
 $coin_model = new CoinModel();
@@ -21,6 +20,29 @@ $focusUSD = false;
 if(isset($_GET['usd'])){
     $focusUSD = true;
 }
+
+if(isset($_GET['id'])){
+    include_once '../../utils/Validator.php';
+
+    $error = '';
+    $id = Validator::ValidateRecievedId();
+    if(is_string($id))
+        $error = $id;
+
+    if($error === ''){
+        $target_coin = $coin_model->GetCoin($id);
+        if($target_coin === false)
+            $error = 'Moneda no encontrada';
+    }
+
+    if($error !== ''){
+        header("Location: $base_url/views/tables/search_coin.php?error=$error");
+        exit;
+    }
+}
+
+include_once '../common/header.php';
+
 
 $form = true;
 include_once '../../fields_config/coins_price.php';

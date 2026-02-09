@@ -109,6 +109,35 @@
         }
     }
 
+    function CreateFormInputs(data){
+        for(let key in data){            
+            if(key === 'products'){
+                data['products'].forEach((product) => {
+                    var checkbox = document.createElement('input')
+                    checkbox.type = 'checkbox'
+                    checkbox.name = 'codes[]'
+                    checkbox.checked = true
+                    checkbox.value = product.code
+                    checkbox.classList.add('d-none')
+                    checkoutInputContainer.appendChild(checkbox)
+                })
+            }
+            else{
+                const input = CreateHiddenInput(key, data[key])
+                checkoutInputContainer.appendChild(input)
+            }
+        }
+    }
+
+    function CreateHiddenInput(name, value){
+        const input = document.createElement('input')
+        input.type = 'text'
+        input.name = name
+        input.value = value
+        input.classList.add('d-none')
+        return input
+    }
+
     function ShowMethodSelection(){
         methodSelectContainer.classList.remove('d-none')
     }

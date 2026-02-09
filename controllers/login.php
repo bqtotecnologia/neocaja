@@ -59,7 +59,7 @@ if($error === ''){
     $siacad = new SiacadModel();
     
     if(isset($target_user['super_admin'])){
-        $admin_id = $exists['id'];
+        $admin_id = $exists['admin_id'];
         if($target_user['super_admin']){
             // Es un super administrador
             $user_role = 'Super';
@@ -170,6 +170,7 @@ if($error === ''){
 }
 else
    $redirect = "Location: $base_url/views/forms/login.php?error=$error";
+
 
 header($redirect);
 exit;

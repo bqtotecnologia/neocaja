@@ -177,6 +177,7 @@
     function ResetPaymentMethodDisplay(){
         methodSelect.innerHTML = ''
         methodDataTable.innerHTML = ''
+        methodHeader.innerHTML = ''
         methodSelect.value = ''
         priceInput.value = '0,00'
         refInput.value = ''
@@ -217,30 +218,19 @@
             var confirm = null
             confirm = await ConfirmRegisterPayment()
             if(confirm)
-                await TryRegisterPayment()
+                TryRegisterPayment()
         }
     }
 
-    async function TryRegisterPayment(){
-        var codes = []
-        selectedProducts.forEach((product) => {
-            codes.push(product.code)
-        })
-
+    function TryRegisterPayment(){
+        
         var data = {
-            'cedula': '<?= $_SESSION['neocaja_cedula'] ?>',
-            'codes': codes,
-            'document': cedulaInput.value,
-            'ref': refInput.value,
-            'price': priceInput.value.replaceAll('.', '').replaceAll(',', '.'),
+            'products': selectedProducts,
             'payment_method': methodSelect.value,
             'payment_method_type': methodTypeSelect.value,
         }
 
-        var result = await FetchPayment(data)
-        if(result.status === true){
-            url = '<?= $base_url ?>/views/panel.php?message=' + result.message
-            window.location.href = url
-        }
+        CreateFormInputs(data)
+        checkoutInputContainer.submit()
     }
 </script>
