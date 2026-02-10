@@ -163,3 +163,12 @@ function ExportToPDF(){
       text.classList.remove('copied')
     }    
   }
+
+  function ZoomInImage(htmlImage){
+    html = '<img src="' + htmlImage.src + '" class="col-12 p-0">'
+    
+    Swal.fire({
+        width:800,
+        html:html
+      })
+  }

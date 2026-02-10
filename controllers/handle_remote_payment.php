@@ -59,6 +59,34 @@ if($error === ''){
 }
 
 if($error === ''){
+    if(!isset($_FILES['capture']))
+        $error = 'No se encontró ninguna imagen del comprobante de pago';
+}
+
+if($error === ''){
+    $target_image = $_FILES['capture'];
+    
+    $imageMaxSize = 1024 * 1024; // 1Mb
+    if($target_image['size'] >= $imageMaxSize){
+        $error = 'La imagen seleccionada supera el límite de tamaño (1Mb).';
+    }
+}
+
+if($error === ''){
+    $timezone = new DateTimeZone('America/Caracas');
+    $now = new DateTime('now', $timezone);
+    $uploaddir = '../images/payments_captures/';
+
+    $splits = explode('.', $target_image['name']);
+    $imageFormat = $splits[count($splits) - 1];
+    $newImageName = date_timestamp_get($now) . '.' . $imageFormat;
+    $uploadPath = $uploaddir . $newImageName;
+    
+    if (!move_uploaded_file($target_image['tmp_name'], $uploadPath))
+        $error = 'Ocurrió un error durante la subida del archivo';
+}
+
+if($error === ''){
     if($cleanData['payment_method_type'] === 'mobile_payment'){
         include_once '../models/mobile_payments_model.php';
         $mobile_payment_model = new MobilePaymentsModel();
@@ -151,6 +179,7 @@ if($error === ''){
         'payment_method' => $cleanData['payment_method'],
         'price' => $cleanData['price'],
         'ref' => $cleanData['ref'],
+        'capture' => $newImageName,
         'document' => $cleanData['document'],
         'state' => 'Por revisar',
     ];
@@ -189,6 +218,7 @@ if($error === ''){
 
 if($error !== '' && $created !== false){
     $payments_model->DeletePayment($created['id']);
+    unlink($uploadPath);
 }
 
 if($error === ''){

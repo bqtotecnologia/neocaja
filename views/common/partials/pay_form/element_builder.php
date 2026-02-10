@@ -138,6 +138,31 @@
         return input
     }
 
+    function DisplayLoadedImage(){
+        captureDisplayer.classList.add('d-none')
+        captureDisplayer.src = ''
+
+        const [file] = captureInput.files        
+        if(file){
+            const fileSize = captureInput.files[0].size
+            if(fileSize >= maxCaptureSize){
+                captureInput.value = ''
+                var compressHelp = '<a class="fw-bold" target="_blank" href="https://tinypng.com/">¿Cómo comprimo mi imagen?</a>'
+                Swal.fire({
+                    title: "La imagen supera el límite de tamaño (1Mb). Intente recortarla o comprimirla",
+                    icon: 'warning',
+                    confirmButtonText: "Entendido",
+                    html: compressHelp
+                })
+            }
+            else{
+                captureDisplayer.classList.remove('d-none')
+                captureDisplayer.src = URL.createObjectURL(file)
+            }
+        }
+
+    }
+
     function ShowMethodSelection(){
         methodSelectContainer.classList.remove('d-none')
     }

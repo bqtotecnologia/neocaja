@@ -20,6 +20,7 @@ class AccountPaymentsModel extends SQLModel
         account_payments.created_at,
         DATE(account_payments.created_at) as date,
         account_payments.related_id,
+        account_payments.capture,
         account_payments.related_with
         FROM
         account_payments
@@ -112,17 +113,17 @@ class AccountPaymentsModel extends SQLModel
     }    
 
     public function GetPaymentsOfAccount($cedula){
-        $sql = $this->SELECT_TEMPLATE . " WHERE polymorph.cedula = '$cedula' GROUP BY account_payments.id";
+        $sql = $this->SELECT_TEMPLATE . " WHERE polymorph.cedula = '$cedula' GROUP BY account_payments.id ORDER BY account_payments.created_at DESC";
         return parent::GetRows($sql, true);
     }
 
     public function GetPaymentsOfState($state){
-        $sql = $this->SELECT_TEMPLATE . " WHERE account_payments.state = '$state' GROUP BY account_payments.id";
+        $sql = $this->SELECT_TEMPLATE . " WHERE account_payments.state = '$state' GROUP BY account_payments.id ORDER BY account_payments.created_at DESC";
         return parent::GetRows($sql, true);
     }
 
     public function GetPaymentsOfDate($date){
-        $sql = $this->SELECT_TEMPLATE . " WHERE DATE(account_payments.created_at) = '$date' GROUP BY account_payments.id";
+        $sql = $this->SELECT_TEMPLATE . " WHERE DATE(account_payments.created_at) = '$date' GROUP BY account_payments.id ORDER BY account_payments.created_at DESC";
         return parent::GetRows($sql, true);
     }
 

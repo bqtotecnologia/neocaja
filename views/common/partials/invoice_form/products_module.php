@@ -102,8 +102,8 @@
             total += price
         }
 
-        productsTotal.innerHTML = total.toFixed(2) + '$'
-        productsTotalBs.innerHTML = (total * parseFloat(usdRate)).toFixed(2)
+        productsTotal.innerHTML = '$ ' + total.toFixed(2)
+        productsTotalBs.innerHTML = 'Bs. ' + (total * parseFloat(usdRate)).toFixed(2)
         UpdatePaymentMethodsDiffWithProducts()
     }
 

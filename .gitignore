@@ -3,5 +3,7 @@ models/SQL_model.php
 models/bdusuarios_model.php
 models/admin_model.php
 
+images/payments_captures/*
+
 python/venv
 python/__pycache__

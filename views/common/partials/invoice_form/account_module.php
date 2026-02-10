@@ -4,7 +4,7 @@
             return
 
         ClearInvoices()
-        CleanProducts()
+        CleanProducts(true)
         var error = false
         targetAccount = await GetAccountData(id)
         if(targetAccount.status !== false){

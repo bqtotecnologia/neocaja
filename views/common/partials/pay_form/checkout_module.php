@@ -191,7 +191,7 @@
     async function RegisterPayment(){
         var error = ''
 
-        if([cedulaInput.value, refInput.value, priceInput.value, methodSelect.value, methodTypeSelect.value].includes(''))
+        if([cedulaInput.value, refInput.value, priceInput.value, methodSelect.value, methodTypeSelect.value, captureInput.value].includes(''))
             error = 'Se requieren de todos los datos para registrar el pago. (Cédula del emisor, número de referencia y monto)'
 
         if(!availablePaymentMethods.includes(methodTypeSelect.value))
@@ -204,6 +204,13 @@
             
             if(price !== to_pay)
                 error = 'El monto no coindice con el total a pagar'
+        }
+
+        if(error === ''){
+            const fileSize = captureInput.files[0].size            
+            if(fileSize >= maxCaptureSize){
+                error = 'La imagen seleccionada supera el límite de tamaño (1Mb).'
+            }
         }
 
         if(error !== ''){

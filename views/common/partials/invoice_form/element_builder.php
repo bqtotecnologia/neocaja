@@ -17,8 +17,9 @@
     ////////////////////////// INVOICE //////////////////////////
 
     function DisplayCoinHistory(coin){
-        var text = `<table class="table table-bordered">
-            <thead>
+        var text = `
+        <table class="table table-striped col-12 datatable-date-2">
+            <thead class="bg-theme text-white fw-bold h6">
                 <tr>
                     <th>Fecha</th>
                     <th>Tasa</th>
@@ -593,11 +594,25 @@
         const diffUSDElement = document.getElementById('payment-diff-usd')
         const productsTotal = document.getElementById('products-total-bs').innerHTML
         const paymentsTotal = document.getElementById('payment-total').innerHTML
+
+        diffElement.classList.remove('text-danger')
+        diffElement.classList.remove('text-success')
+
+        diffUSDElement.classList.remove('text-danger')
+        diffUSDElement.classList.remove('text-success')
         
         if(productsTotal !== '' && paymentsTotal !== ''){
-            var diff = (parseFloat(productsTotal) - parseFloat(paymentsTotal)).toFixed(2)
-            diffElement.innerHTML = diff
-            diffUSDElement.innerHTML = (diff / coinValues['Dólar']) .toFixed(4) + ' $'
+            var diff = (parseFloat(productsTotal.replaceAll('Bs. ', '')) - parseFloat(paymentsTotal.replaceAll('Bs. ', ''))).toFixed(2)
+            if(diff <= 0.001 && diff >= -0.001){
+                diffUSDElement.classList.add('text-success')
+                diffElement.classList.add('text-success')
+            }
+            else{
+                diffUSDElement.classList.add('text-danger')
+                diffElement.classList.add('text-danger')
+            }
+            diffElement.innerHTML = 'Bs. ' + diff
+            diffUSDElement.innerHTML = '$ ' + (diff / coinValues['Dólar']) .toFixed(4)
         }
     }
     

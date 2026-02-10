@@ -113,7 +113,7 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
 
 
 
-                <form class="row m-0 p-0 col-12 col-lg-5 my-3 d-none" id="checkout-inputs-container" method="POST" action="<?= $base_url ?>/controllers/handle_remote_payment.php">
+                <form enctype="multipart/form-data" class="row m-0 p-0 col-12 col-lg-5 my-3 d-none" id="checkout-inputs-container" method="POST" action="<?= $base_url ?>/controllers/handle_remote_payment.php">
                     <input type="hidden" name="cedula" value="<?= $_SESSION['neocaja_cedula'] ?>">
                     <div class="row col-12 m-0 p-0 align-items-center my-1">
                         <h3 class="col-12 text-center h3">Tras realizar la transacción registre los siguientes datos</h3>
@@ -131,6 +131,16 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
                     <div class="row col-12 m-0 p-0 align-items-center my-1">
                         <label class="col-12 col-lg-4 text-right align-middle m-0 h6" for="price">Monto de la transacción</label>
                         <input name="price" class="col-12 col-lg-8 form-control text-right amount-input" id="price" type="text" >
+                    </div>
+
+                    <div class="row col-12 m-0 p-0 align-items-center my-1">
+                        <label class="col-12 col-lg-4 text-right align-middle m-0 h6" for="capture">Capture o comprobante de pago</label>
+                        <input name="capture" class="col-12 col-lg-8 text-right h6" required id="capture" type="file" accept="image/png, image/jpg, image/jpeg">
+                    </div>
+                    <div class="row col-12 m-0 p-0 align-items-center justify-content-center my-1">
+                        <figure class="col-12 col-lg-8 h6">
+                            <img class="col-12" src="" alt="" id="capture-displayer">
+                        </figure>
                     </div>
 
                     <div class="row col-12 m-0 p-0 align-items-center mt-5">

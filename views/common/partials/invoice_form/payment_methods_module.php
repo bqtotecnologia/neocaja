@@ -163,7 +163,7 @@
             total += price
         }
 
-        paymentTotal.innerHTML = total.toFixed(2)
+        paymentTotal.innerHTML = 'Bs. ' + total.toFixed(2)
         UpdateIGTF(igtf)
         UpdatePaymentMethodsDiffWithProducts()
     }

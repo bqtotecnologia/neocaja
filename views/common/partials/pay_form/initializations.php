@@ -23,9 +23,12 @@
     const cedulaInput = document.getElementById('document')
     const priceInput = document.getElementById('price')
     const refInput = document.getElementById('ref')
+    const captureInput = document.getElementById('capture')
+    const captureDisplayer = document.getElementById('capture-displayer')
     
     const usdValue = parseFloat('<?= $usdValue['price'] ?>')
 
+    const maxCaptureSize = 1024 * 1024 // 1MB
     const availablePaymentMethods = ['mobile_payment', 'transfer']
     
     let paymentMethods = {}
@@ -38,6 +41,7 @@
 
     methodTypeSelect.addEventListener('change', function(e) { SelectPaymentMethodType(e.target.value) })
     methodSelect.addEventListener('change', function(e) { SelectPaymentMethod(e.target.value, methodTypeSelect.value) })
+    captureInput.addEventListener('change', function(e) { DisplayLoadedImage() })
 </script>
 
 

@@ -9,11 +9,11 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un historial de cuenta-empresa ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' account:', NEW.account, ',',
-                ' company:', NEW.company, ',',
-                ' current:', NEW.current, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' account:', COALESCE(NEW.account, 'NULL'), ',',
+                ' company:', COALESCE(NEW.company, 'NULL'), ',',
+                ' current:', COALESCE(NEW.current, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -29,13 +29,13 @@ BEGIN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
                 'Una persona ha modificado manualmente un historial de cuenta-empresa de id ',
-                OLD.id,
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' account:', OLD.account, ' => ', NEW.account, ',',
-                ' company:', OLD.company, ' => ', NEW.company, ',',
-                ' current:', OLD.current, ' => ', NEW.current, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' account:', COALESCE(OLD.account, 'NULL'), ' => ', COALESCE(NEW.account, 'NULL'), ',',
+                ' company:', COALESCE(OLD.company, 'NULL'), ' => ', COALESCE(NEW.company, 'NULL'), ',',
+                ' current:', COALESCE(OLD.current, 'NULL'), ' => ', COALESCE(NEW.current, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -52,11 +52,11 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un historial de cuenta-empresa ',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' account:', OLD.account, ',',
-                ' company:', OLD.company, ',',
-                ' current:', OLD.current, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' account:', COALESCE(OLD.account, 'NULL'), ',',
+                ' company:', COALESCE(OLD.company, 'NULL'), ',',
+                ' current:', COALESCE(OLD.current, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -74,10 +74,10 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un producto pagado del carrito de un cliente ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' product:', NEW.product, ',',
-                ' price:', NEW.price, ',',
-                ' payment:', NEW.payment
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' product:', COALESCE(NEW.product, 'NULL'), ',',
+                ' price:', COALESCE(NEW.price, 'NULL'), ',',
+                ' payment:', COALESCE(NEW.payment, 'NULL')
             )
         );
     END IF;
@@ -93,12 +93,12 @@ BEGIN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
                 'Una persona ha modificado manualmente un producto pagado del carrito de un cliente de id ',
-                OLD.id,
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' product:', OLD.product, ' => ', NEW.product, ',',
-                ' price:', OLD.price, ' => ', NEW.price, ',',
-                ' payment:', OLD.payment, ' => ', NEW.payment
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' product:', COALESCE(OLD.product, 'NULL'), ' => ', COALESCE(NEW.product, 'NULL'), ',',
+                ' price:', COALESCE(OLD.price, 'NULL'), ' => ', COALESCE(NEW.price, 'NULL'), ',',
+                ' payment:', COALESCE(OLD.payment, 'NULL'), ' => ', COALESCE(NEW.payment, 'NULL')
             )
         );
     END IF;
@@ -115,10 +115,10 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un producto pagado del carrito de un cliente ',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' product:', OLD.product, ',',
-                ' price:', OLD.price, ',',
-                ' payment:', OLD.payment
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' product:', COALESCE(OLD.product, 'NULL'), ',',
+                ' price:', COALESCE(OLD.price, 'NULL'), ',',
+                ' payment:', COALESCE(OLD.payment, 'NULL')
             )
         );
     END IF;
@@ -136,17 +136,18 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un pago de un cliente ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' related_id:', NEW.related_id, ',',
-                ' related_with:', NEW.related_with, ',',
-                ' payment_method_type:', NEW.payment_method_type, ',',
-                ' payment_method:', NEW.payment_method, ',',
-                ' price:', NEW.price, ',',
-                ' ref:', NEW.ref, ',',
-                ' document:', NEW.document, ',',
-                ' state:', NEW.state, ',',
-                ' response:', NEW.response, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' related_id:', COALESCE(NEW.related_id, 'NULL'), ',',
+                ' related_with:', COALESCE(NEW.related_with, 'NULL'), ',',
+                ' payment_method_type:', COALESCE(NEW.payment_method_type, 'NULL'), ',',
+                ' payment_method:', COALESCE(NEW.payment_method, 'NULL'), ',',
+                ' price:', COALESCE(NEW.price, 'NULL'), ',',
+                ' ref:', COALESCE(NEW.ref, 'NULL'), ',',
+                ' document:', COALESCE(NEW.document, 'NULL'), ',',
+                ' capture:', COALESCE(NEW.capture, 'NULL'), ',',
+                ' state:', COALESCE(NEW.state, 'NULL'), ',',
+                ' response:', COALESCE(NEW.response, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -162,20 +163,20 @@ BEGIN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
                 'Una persona ha modificado manualmente un pago de un cliente de id ',
-                OLD.id,
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' related_id:', OLD.related_id, ' => ', NEW.related_id, ',',
-                ' related_with:', OLD.related_with, ' => ', NEW.related_with, ',',
-                ' payment_method_type:', OLD.payment_method_type, ' => ', NEW.payment_method_type, ',',
-                ' payment_method:', OLD.payment_method, ' => ', NEW.payment_method, ',',
-                ' price:', OLD.price, ' => ', NEW.price, ',',
-                ' ref:', OLD.ref, ' => ', NEW.ref, ',',
-                ' document:', OLD.document, ' => ', NEW.document, ',',
-                ' state:', OLD.state, ' => ', NEW.state, ',',
-                ' response:', OLD.response, ' => ', NEW.response, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
-
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' related_id:', COALESCE(OLD.related_id, 'NULL'), ' => ', COALESCE(NEW.related_id, 'NULL'), ',',
+                ' related_with:', COALESCE(OLD.related_with, 'NULL'), ' => ', COALESCE(NEW.related_with, 'NULL'), ',',
+                ' payment_method_type:', COALESCE(OLD.payment_method_type, 'NULL'), ' => ', COALESCE(NEW.payment_method_type, 'NULL'), ',',
+                ' payment_method:', COALESCE(OLD.payment_method, 'NULL'), ' => ', COALESCE(NEW.payment_method, 'NULL'), ',',
+                ' price:', COALESCE(OLD.price, 'NULL'), ' => ', COALESCE(NEW.price, 'NULL'), ',',
+                ' ref:', COALESCE(OLD.ref, 'NULL'), ' => ', COALESCE(NEW.ref, 'NULL'), ',',
+                ' document:', COALESCE(OLD.document, 'NULL'), ' => ', COALESCE(NEW.document, 'NULL'), ',',
+                ' capture:', COALESCE(OLD.capture, 'NULL'), ' => ', COALESCE(NEW.capture, 'NULL'), ',',
+                ' state:', COALESCE(OLD.state, 'NULL'), ' => ', COALESCE(NEW.state, 'NULL'), ',',
+                ' response:', COALESCE(OLD.response, 'NULL'), ' => ', COALESCE(NEW.response, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -192,17 +193,18 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un pago de un cliente',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' related_id:', OLD.related_id, ',',
-                ' related_with:', OLD.related_with, ',',
-                ' payment_method_type:', OLD.payment_method_type, ',',
-                ' payment_method:', OLD.payment_method, ',',
-                ' price:', OLD.price, ',',
-                ' ref:', OLD.ref, ',',
-                ' document:', OLD.document, ',',
-                ' state:', OLD.state, ',',
-                ' response:', OLD.response, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' related_id:', COALESCE(OLD.related_id, 'NULL'), ',',
+                ' related_with:', COALESCE(OLD.related_with, 'NULL'), ',',
+                ' payment_method_type:', COALESCE(OLD.payment_method_type, 'NULL'), ',',
+                ' payment_method:', COALESCE(OLD.payment_method, 'NULL'), ',',
+                ' price:', COALESCE(OLD.price, 'NULL'), ',',
+                ' ref:', COALESCE(OLD.ref, 'NULL'), ',',
+                ' document:', COALESCE(OLD.document, 'NULL'), ',',
+                ' capture:', COALESCE(OLD.capture, 'NULL'), ',',
+                ' state:', COALESCE(OLD.state, 'NULL'), ',',
+                ' response:', COALESCE(OLD.response, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -220,16 +222,16 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un cliente ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' cedula:', NEW.cedula, ',',
-                ' names:', NEW.names, ',',
-                ' surnames:', NEW.surnames, ',',
-                ' address:', NEW.address, ',',
-                ' phone:', NEW.phone, ',',
-                ' is_student:', NEW.is_student, ',',
-                ' scholarship:', NEW.scholarship, ',',
-                ' scholarship_coverage:', NEW.scholarship_coverage, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' cedula:', COALESCE(NEW.cedula, 'NULL'), ',',
+                ' names:', COALESCE(NEW.names, 'NULL'), ',',
+                ' surnames:', COALESCE(NEW.surnames, 'NULL'), ',',
+                ' address:', COALESCE(NEW.address, 'NULL'), ',',
+                ' phone:', COALESCE(NEW.phone, 'NULL'), ',',
+                ' is_student:', COALESCE(NEW.is_student, 'NULL'), ',',
+                ' scholarship:', COALESCE(NEW.scholarship, 'NULL'), ',',
+                ' scholarship_coverage:', COALESCE(NEW.scholarship_coverage, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -245,18 +247,18 @@ BEGIN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
                 'Una persona ha modificado manualmente un cliente de id ',
-                OLD.id,
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' cedula:', OLD.cedula, ' => ', NEW.cedula, ',',
-                ' names:', OLD.names, ' => ', NEW.names, ',',
-                ' surnames:', OLD.surnames, ' => ', NEW.surnames, ',',
-                ' address:', OLD.address, ' => ', NEW.address, ',',
-                ' phone:', OLD.phone, ' => ', NEW.phone, ',',
-                ' is_student:', OLD.is_student, ' => ', NEW.is_student, ',',
-                ' scholarship:', OLD.scholarship, ' => ', NEW.scholarship, ',',
-                ' scholarship_coverage:', OLD.scholarship_coverage, ' => ', NEW.scholarship_coverage, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' cedula:', COALESCE(OLD.cedula, 'NULL'), ' => ', COALESCE(NEW.cedula, 'NULL'), ',',
+                ' names:', COALESCE(OLD.names, 'NULL'), ' => ', COALESCE(NEW.names, 'NULL'), ',',
+                ' surnames:', COALESCE(OLD.surnames, 'NULL'), ' => ', COALESCE(NEW.surnames, 'NULL'), ',',
+                ' address:', COALESCE(OLD.address, 'NULL'), ' => ', COALESCE(NEW.address, 'NULL'), ',',
+                ' phone:', COALESCE(OLD.phone, 'NULL'), ' => ', COALESCE(NEW.phone, 'NULL'), ',',
+                ' is_student:', COALESCE(OLD.is_student, 'NULL'), ' => ', COALESCE(NEW.is_student, 'NULL'), ',',
+                ' scholarship:', COALESCE(OLD.scholarship, 'NULL'), ' => ', COALESCE(NEW.scholarship, 'NULL'), ',',
+                ' scholarship_coverage:', COALESCE(OLD.scholarship_coverage, 'NULL'), ' => ', COALESCE(NEW.scholarship_coverage, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -273,16 +275,16 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un cliente ',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' cedula:', OLD.cedula, ',',
-                ' names:', OLD.names, ',',
-                ' surnames:', OLD.surnames, ',',
-                ' address:', OLD.address, ',',
-                ' phone:', OLD.phone, ',',
-                ' is_student:', OLD.is_student, ',',
-                ' scholarship:', OLD.scholarship, ',',
-                ' scholarship_coverage:', OLD.scholarship_coverage, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' cedula:', COALESCE(OLD.cedula, 'NULL'), ',',
+                ' names:', COALESCE(OLD.names, 'NULL'), ',',
+                ' surnames:', COALESCE(OLD.surnames, 'NULL'), ',',
+                ' address:', COALESCE(OLD.address, 'NULL'), ',',
+                ' phone:', COALESCE(OLD.phone, 'NULL'), ',',
+                ' is_student:', COALESCE(OLD.is_student, 'NULL'), ',',
+                ' scholarship:', COALESCE(OLD.scholarship, 'NULL'), ',',
+                ' scholarship_coverage:', COALESCE(OLD.scholarship_coverage, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -300,12 +302,12 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un administrador ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' name:', NEW.name, ',',
-                ' cedula:', NEW.cedula, ',',
-                ' role:', NEW.role, ',',
-                ' active:', NEW.active, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(NEW.name, 'NULL'), ',',
+                ' cedula:', COALESCE(NEW.cedula, 'NULL'), ',',
+                ' role:', COALESCE(NEW.role, 'NULL'), ',',
+                ' active:', COALESCE(NEW.active, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -321,14 +323,14 @@ BEGIN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
                 'Una persona ha modificado manualmente un administrador de id ',
-                OLD.id,
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' name:', OLD.name, ' => ', NEW.name, ',',
-                ' cedula:', OLD.cedula, ' => ', NEW.cedula, ',',
-                ' role:', OLD.role, ' => ', NEW.role, ',',
-                ' active:', OLD.active, ' => ', NEW.active, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at, ','
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ' => ', COALESCE(NEW.name, 'NULL'), ',',
+                ' cedula:', COALESCE(OLD.cedula, 'NULL'), ' => ', COALESCE(NEW.cedula, 'NULL'), ',',
+                ' role:', COALESCE(OLD.role, 'NULL'), ' => ', COALESCE(NEW.role, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ' => ', COALESCE(NEW.active, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -345,12 +347,12 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un administrador ',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' name:', OLD.name, ',',
-                ' cedula:', OLD.cedula, ',',
-                ' role:', OLD.role, ',',
-                ' active:', OLD.active, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ',',
+                ' cedula:', COALESCE(OLD.cedula, 'NULL'), ',',
+                ' role:', COALESCE(OLD.role, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -368,10 +370,10 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un banco ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' name:', NEW.name, ',',
-                ' active:', NEW.active, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(NEW.name, 'NULL'), ',',
+                ' active:', COALESCE(NEW.active, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -387,12 +389,12 @@ BEGIN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
                 'Una persona ha modificado manualmente un banco de id ',
-                OLD.id,
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' name:', OLD.name, ' => ', NEW.name, ',',
-                ' active:', OLD.active, ' => ', NEW.active, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ' => ', COALESCE(NEW.name, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ' => ', COALESCE(NEW.active, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -409,10 +411,10 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un banco ',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' name:', OLD.name, ',',
-                ' active:', OLD.active, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -430,11 +432,11 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un historial de moneda ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' coin:', NEW.coin, ',',
-                ' price:', NEW.price, ',',
-                ' current:', NEW.current, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' coin:', COALESCE(NEW.coin, 'NULL'), ',',
+                ' price:', COALESCE(NEW.price, 'NULL'), ',',
+                ' current:', COALESCE(NEW.current, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -450,13 +452,13 @@ BEGIN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
                 'Una persona ha modificado manualmente un historial de moneda de id ',
-                OLD.id,
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' coin:', OLD.coin, ' => ', NEW.coin, ',',
-                ' price:', OLD.price, ' => ', NEW.price, ',',
-                ' current:', OLD.current, ' => ', NEW.current, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' coin:', COALESCE(OLD.coin, 'NULL'), ' => ', COALESCE(NEW.coin, 'NULL'), ',',
+                ' price:', COALESCE(OLD.price, 'NULL'), ' => ', COALESCE(NEW.price, 'NULL'), ',',
+                ' current:', COALESCE(OLD.current, 'NULL'), ' => ', COALESCE(NEW.current, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -473,11 +475,11 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un historial de moneda ',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' coin:', OLD.coin, ',',
-                ' price:', OLD.price, ',',
-                ' current:', OLD.current, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' coin:', COALESCE(OLD.coin, 'NULL'), ',',
+                ' price:', COALESCE(OLD.price, 'NULL'), ',',
+                ' current:', COALESCE(OLD.current, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -495,12 +497,12 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente una moneda ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' name:', NEW.name, ',',
-                ' url:', NEW.url, ',',
-                ' active:', NEW.active, ',',
-                ' auto_update:', NEW.auto_update, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(NEW.name, 'NULL'), ',',
+                ' url:', COALESCE(NEW.url, 'NULL'), ',',
+                ' active:', COALESCE(NEW.active, 'NULL'), ',',
+                ' auto_update:', COALESCE(NEW.auto_update, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -516,14 +518,14 @@ BEGIN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
                 'Una persona ha modificado manualmente una moneda de id ',
-                OLD.id,
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' name:', OLD.name, ' => ', NEW.name, ',',
-                ' url:', OLD.url, ' => ', NEW.url, ',',
-                ' active:', OLD.active, ' => ', NEW.active, ',',
-                ' auto_update:', OLD.auto_update, ' => ', NEW.auto_update, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at, ','
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ' => ', COALESCE(NEW.name, 'NULL'), ',',
+                ' url:', COALESCE(OLD.url, 'NULL'), ' => ', COALESCE(NEW.url, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ' => ', COALESCE(NEW.active, 'NULL'), ',',
+                ' auto_update:', COALESCE(OLD.auto_update, 'NULL'), ' => ', COALESCE(NEW.auto_update, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -540,12 +542,12 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente una moneda ',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' name:', OLD.name, ',',
-                ' url:', OLD.url, ',',
-                ' active:', OLD.active, ',',
-                ' auto_update:', OLD.auto_update, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ',',
+                ' url:', COALESCE(OLD.url, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ',',
+                ' auto_update:', COALESCE(OLD.auto_update, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -563,12 +565,12 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente una empresa ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' name:', NEW.name, ',',
-                ' rif_letter:', NEW.rif_letter, ',',
-                ' rif_number:', NEW.rif_number, ',',
-                ' address:', NEW.address, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(NEW.name, 'NULL'), ',',
+                ' rif_letter:', COALESCE(NEW.rif_letter, 'NULL'), ',',
+                ' rif_number:', COALESCE(NEW.rif_number, 'NULL'), ',',
+                ' address:', COALESCE(NEW.address, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -584,14 +586,14 @@ BEGIN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
                 'Una persona ha modificado manualmente una empresa de id ',
-                OLD.id,
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' name:', OLD.name, ' => ', NEW.name, ',',
-                ' rif_letter:', OLD.rif_letter, ' => ', NEW.rif_letter, ',',
-                ' rif_number:', OLD.rif_number, ' => ', NEW.rif_number, ',',
-                ' address:', OLD.address, ' => ', NEW.address, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ' => ', COALESCE(NEW.name, 'NULL'), ',',
+                ' rif_letter:', COALESCE(OLD.rif_letter, 'NULL'), ' => ', COALESCE(NEW.rif_letter, 'NULL'), ',',
+                ' rif_number:', COALESCE(OLD.rif_number, 'NULL'), ' => ', COALESCE(NEW.rif_number, 'NULL'), ',',
+                ' address:', COALESCE(OLD.address, 'NULL'), ' => ', COALESCE(NEW.address, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -608,12 +610,12 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente una empresa ',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' name:', OLD.name, ',',
-                ' rif_letter:', OLD.rif_letter, ',',
-                ' rif_number:', OLD.rif_number, ',',
-                ' address:', OLD.address, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ',',
+                ' rif_letter:', COALESCE(OLD.rif_letter, 'NULL'), ',',
+                ' rif_number:', COALESCE(OLD.rif_number, 'NULL'), ',',
+                ' address:', COALESCE(OLD.address, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -631,11 +633,11 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un concepto ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' product:', NEW.product, ',',
-                ' price:', NEW.price, ',',
-                ' invoice:', NEW.invoice, ',',
-                ' month:', NEW.month
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' product:', COALESCE(NEW.product, 'NULL'), ',',
+                ' price:', COALESCE(NEW.price, 'NULL'), ',',
+                ' invoice:', COALESCE(NEW.invoice, 'NULL'), ',',
+                ' month:', COALESCE(NEW.month, 'NULL')
             )
         );
     END IF;
@@ -651,13 +653,13 @@ BEGIN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
                 'Una persona ha modificado manualmente un concepto de id ',
-                OLD.id,
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' product:', OLD.product, ' => ', NEW.product, ',',
-                ' price:', OLD.price, ' => ', NEW.price, ',',
-                ' invoice:', OLD.invoice, ' => ', NEW.invoice, ',',
-                ' month:', OLD.month, ' => ', NEW.month
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' product:', COALESCE(OLD.product, 'NULL'), ' => ', COALESCE(NEW.product, 'NULL'), ',',
+                ' price:', COALESCE(OLD.price, 'NULL'), ' => ', COALESCE(NEW.price, 'NULL'), ',',
+                ' invoice:', COALESCE(OLD.invoice, 'NULL'), ' => ', COALESCE(NEW.invoice, 'NULL'), ',',
+                ' month:', COALESCE(OLD.month, 'NULL'), ' => ', COALESCE(NEW.month, 'NULL')
             )
         );
     END IF;
@@ -674,11 +676,11 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un concepto ',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' product:', OLD.product, ',',
-                ' price:', OLD.price, ',',
-                ' invoice:', OLD.invoice, ',',
-                ' month:', OLD.month
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' product:', COALESCE(OLD.product, 'NULL'), ',',
+                ' price:', COALESCE(OLD.price, 'NULL'), ',',
+                ' invoice:', COALESCE(OLD.invoice, 'NULL'), ',',
+                ' month:', COALESCE(OLD.month, 'NULL')
             )
         );
     END IF;
@@ -696,8 +698,8 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente una variable global ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' name:', NEW.name
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(NEW.name, 'NULL')
             )
         );
     END IF;
@@ -713,10 +715,10 @@ BEGIN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
                 'Una persona ha modificado manualmente una variable global de id ',
-                OLD.id,
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' name:', OLD.name, ' => ', NEW.name
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ' => ', COALESCE(NEW.name, 'NULL')
             )
         );
     END IF;
@@ -733,8 +735,8 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente una variable global ',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' name:', OLD.name
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL')
             )
         );
     END IF;
@@ -752,11 +754,11 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un historial de variable global ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' global_var:', NEW.global_var, ',',
-                ' value:', NEW.value, ',',
-                ' current:', NEW.current, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' global_var:', COALESCE(NEW.global_var, 'NULL'), ',',
+                ' value:', COALESCE(NEW.value, 'NULL'), ',',
+                ' current:', COALESCE(NEW.current, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -772,13 +774,13 @@ BEGIN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
                 'Una persona ha modificado manualmente un historial de variable global de id ',
-                OLD.id,
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' global_var:', OLD.global_var, ' => ', NEW.global_var, ',',
-                ' value:', OLD.value, ' => ', NEW.value, ',',
-                ' current:', OLD.current, ' => ', NEW.current, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' global_var:', COALESCE(OLD.global_var, 'NULL'), ' => ', COALESCE(NEW.global_var, 'NULL'), ',',
+                ' value:', COALESCE(OLD.value, 'NULL'), ' => ', COALESCE(NEW.value, 'NULL'), ',',
+                ' current:', COALESCE(OLD.current, 'NULL'), ' => ', COALESCE(NEW.current, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -795,11 +797,11 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un historial de variable global ',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' global_var:', OLD.global_var, ',',
-                ' value:', OLD.value, ',',
-                ' current:', OLD.current, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' global_var:', COALESCE(OLD.global_var, 'NULL'), ',',
+                ' value:', COALESCE(OLD.value, 'NULL'), ',',
+                ' current:', COALESCE(OLD.current, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -817,15 +819,15 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un método de pago de una factura ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' invoice:', NEW.invoice, ',',
-                ' type:', NEW.type, ',',
-                ' price:', NEW.price, ',',
-                ' coin:', NEW.coin, ',',
-                ' bank:', NEW.bank, ',',
-                ' sale_point:', NEW.sale_point, ',',
-                ' document_number:', NEW.document_number, ',',
-                ' igtf:', NEW.igtf
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' invoice:', COALESCE(NEW.invoice, 'NULL'), ',',
+                ' type:', COALESCE(NEW.type, 'NULL'), ',',
+                ' price:', COALESCE(NEW.price, 'NULL'), ',',
+                ' coin:', COALESCE(NEW.coin, 'NULL'), ',',
+                ' bank:', COALESCE(NEW.bank, 'NULL'), ',',
+                ' sale_point:', COALESCE(NEW.sale_point, 'NULL'), ',',
+                ' document_number:', COALESCE(NEW.document_number, 'NULL'), ',',
+                ' igtf:', COALESCE(NEW.igtf, 'NULL')
             )
         );
     END IF;
@@ -840,17 +842,18 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente un método de pago de una factura de id ', OLD.id,
+                'Una persona ha modificado manualmente un método de pago de una factura de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' invoice:', OLD.invoice, ' => ', NEW.invoice, ',',
-                ' type:', OLD.type, ' => ', NEW.type, ',',
-                ' price:', OLD.price, ' => ', NEW.price, ',',
-                ' coin:', OLD.coin, ' => ', NEW.coin, ',',
-                ' bank:', OLD.bank, ' => ', NEW.bank, ',',
-                ' sale_point:', OLD.sale_point, ' => ', NEW.sale_point, ',',
-                ' document_number:', OLD.document_number, ' => ', NEW.document_number, ',',
-                ' igtf:', OLD.igtf, ' => ', NEW.igtf
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' invoice:', COALESCE(OLD.invoice, 'NULL'), ' => ', COALESCE(NEW.invoice, 'NULL'), ',',
+                ' type:', COALESCE(OLD.type, 'NULL'), ' => ', COALESCE(NEW.type, 'NULL'), ',',
+                ' price:', COALESCE(OLD.price, 'NULL'), ' => ', COALESCE(NEW.price, 'NULL'), ',',
+                ' coin:', COALESCE(OLD.coin, 'NULL'), ' => ', COALESCE(NEW.coin, 'NULL'), ',',
+                ' bank:', COALESCE(OLD.bank, 'NULL'), ' => ', COALESCE(NEW.bank, 'NULL'), ',',
+                ' sale_point:', COALESCE(OLD.sale_point, 'NULL'), ' => ', COALESCE(NEW.sale_point, 'NULL'), ',',
+                ' document_number:', COALESCE(OLD.document_number, 'NULL'), ' => ', COALESCE(NEW.document_number, 'NULL'), ',',
+                ' igtf:', COALESCE(OLD.igtf, 'NULL'), ' => ', COALESCE(NEW.igtf, 'NULL')
             )
         );
     END IF;
@@ -867,15 +870,15 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un método de pago de una factura',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' invoice:', OLD.invoice, ',',
-                ' type:', OLD.type, ',',
-                ' price:', OLD.price, ',',
-                ' coin:', OLD.coin, ',',
-                ' bank:', OLD.bank, ',',
-                ' sale_point:', OLD.sale_point, ',',
-                ' document_number:', OLD.document_number, ',',
-                ' igtf:', OLD.igtf
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' invoice:', COALESCE(OLD.invoice, 'NULL'), ',',
+                ' type:', COALESCE(OLD.type, 'NULL'), ',',
+                ' price:', COALESCE(OLD.price, 'NULL'), ',',
+                ' coin:', COALESCE(OLD.coin, 'NULL'), ',',
+                ' bank:', COALESCE(OLD.bank, 'NULL'), ',',
+                ' sale_point:', COALESCE(OLD.sale_point, 'NULL'), ',',
+                ' document_number:', COALESCE(OLD.document_number, 'NULL'), ',',
+                ' igtf:', COALESCE(OLD.igtf, 'NULL')
             )
         );
     END IF;
@@ -893,15 +896,15 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente una factura ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' invoice_number:', NEW.invoice_number, ',',
-                ' control_number:', NEW.control_number, ',',
-                ' account:', NEW.account, ',',
-                ' observation:', NEW.observation, ',',
-                ' active:', NEW.active, ',',
-                ' period:', NEW.period, ',',
-                ' created_at:', NEW.created_at, ',',
-                ' rate_date:', NEW.rate_date
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' invoice_number:', COALESCE(NEW.invoice_number, 'NULL'), ',',
+                ' control_number:', COALESCE(NEW.control_number, 'NULL'), ',',
+                ' account:', COALESCE(NEW.account, 'NULL'), ',',
+                ' observation:', COALESCE(NEW.observation, 'NULL'), ',',
+                ' active:', COALESCE(NEW.active, 'NULL'), ',',
+                ' period:', COALESCE(NEW.period, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL'), ',',
+                ' rate_date:', COALESCE(NEW.rate_date, 'NULL')
             )
         );
     END IF;
@@ -916,17 +919,18 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente una factura de id ', OLD.id,
+                'Una persona ha modificado manualmente una factura de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' invoice_number:', OLD.invoice_number, ' => ', NEW.invoice_number, ',',
-                ' control_number:', OLD.control_number, ' => ', NEW.control_number, ',',
-                ' account:', OLD.account, ' => ', NEW.account, ',',
-                ' observation:', OLD.observation, ' => ', NEW.observation, ',',
-                ' active:', OLD.active, ' => ', NEW.active, ',',
-                ' period:', OLD.period, ' => ', NEW.period, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at, ',',
-                ' rate_date:', OLD.rate_date, ' => ', NEW.rate_date
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' invoice_number:', COALESCE(OLD.invoice_number, 'NULL'), ' => ', COALESCE(NEW.invoice_number, 'NULL'), ',',
+                ' control_number:', COALESCE(OLD.control_number, 'NULL'), ' => ', COALESCE(NEW.control_number, 'NULL'), ',',
+                ' account:', COALESCE(OLD.account, 'NULL'), ' => ', COALESCE(NEW.account, 'NULL'), ',',
+                ' observation:', COALESCE(OLD.observation, 'NULL'), ' => ', COALESCE(NEW.observation, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ' => ', COALESCE(NEW.active, 'NULL'), ',',
+                ' period:', COALESCE(OLD.period, 'NULL'), ' => ', COALESCE(NEW.period, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL'), ',',
+                ' rate_date:', COALESCE(OLD.rate_date, 'NULL'), ' => ', COALESCE(NEW.rate_date, 'NULL')
             )
         );
     END IF;
@@ -943,15 +947,15 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente una factura ',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' invoice_number:', OLD.invoice_number, ',',
-                ' control_number:', OLD.control_number, ',',
-                ' account:', OLD.account, ',',
-                ' observation:', OLD.observation, ',',
-                ' active:', OLD.active, ',',
-                ' period:', OLD.period, ',',
-                ' created_at:', OLD.created_at, ',',
-                ' rate_date:', OLD.rate_date
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' invoice_number:', COALESCE(OLD.invoice_number, 'NULL'), ',',
+                ' control_number:', COALESCE(OLD.control_number, 'NULL'), ',',
+                ' account:', COALESCE(OLD.account, 'NULL'), ',',
+                ' observation:', COALESCE(OLD.observation, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ',',
+                ' period:', COALESCE(OLD.period, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ',',
+                ' rate_date:', COALESCE(OLD.rate_date, 'NULL')
             )
     );
     END IF;
@@ -969,13 +973,13 @@ BEGIN
         CONCAT(
             'Una persona ha agregado manualmente un pago móvil',
             ' con los siguientes datos: ',
-            ' id:', NEW.id, ',',
-            ' phone:', NEW.phone, ',',
-            ' bank:', NEW.bank, ',',
-            ' document_letter:', NEW.document_letter, ',',
-            ' document_number:', NEW.document_number, ',',
-            ' active:', NEW.active, ',',
-            ' created_at:', NEW.created_at
+            ' id:', COALESCE(NEW.id, 'NULL'), ',',
+            ' phone:', COALESCE(NEW.phone, 'NULL'), ',',
+            ' bank:', COALESCE(NEW.bank, 'NULL'), ',',
+            ' document_letter:', COALESCE(NEW.document_letter, 'NULL'), ',',
+            ' document_number:', COALESCE(NEW.document_number, 'NULL'), ',',
+            ' active:', COALESCE(NEW.active, 'NULL'), ',',
+            ' created_at:', COALESCE(NEW.created_at, 'NULL')
         )
     );
     END IF;
@@ -990,15 +994,16 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente un pago móvil de id ', OLD.id,
+                'Una persona ha modificado manualmente un pago móvil de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' phone:', OLD.phone, ' => ', NEW.phone, ',',
-                ' bank:', OLD.bank, ' => ', NEW.bank, ',',
-                ' document_letter:', OLD.document_letter, ' => ', NEW.document_letter, ',',
-                ' document_number:', OLD.document_number, ' => ', NEW.document_number, ',',
-                ' active:', OLD.active, ' => ', NEW.active, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' phone:', COALESCE(OLD.phone, 'NULL'), ' => ', COALESCE(NEW.phone, 'NULL'), ',',
+                ' bank:', COALESCE(OLD.bank, 'NULL'), ' => ', COALESCE(NEW.bank, 'NULL'), ',',
+                ' document_letter:', COALESCE(OLD.document_letter, 'NULL'), ' => ', COALESCE(NEW.document_letter, 'NULL'), ',',
+                ' document_number:', COALESCE(OLD.document_number, 'NULL'), ' => ', COALESCE(NEW.document_number, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ' => ', COALESCE(NEW.active, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1015,13 +1020,13 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un pago móvil',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' phone:', OLD.phone, ',',
-                ' bank:', OLD.bank, ',',
-                ' document_letter:', OLD.document_letter, ',',
-                ' document_number:', OLD.document_number, ',',
-                ' active:', OLD.active, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' phone:', COALESCE(OLD.phone, 'NULL'), ',',
+                ' bank:', COALESCE(OLD.bank, 'NULL'), ',',
+                ' document_letter:', COALESCE(OLD.document_letter, 'NULL'), ',',
+                ' document_number:', COALESCE(OLD.document_number, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -1039,11 +1044,11 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente una notificación ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' cedula:', NEW.cedula, ',',
-                ' message:', NEW.message, ',',
-                ' viewed:', NEW.viewed, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' cedula:', COALESCE(NEW.cedula, 'NULL'), ',',
+                ' message:', COALESCE(NEW.message, 'NULL'), ',',
+                ' viewed:', COALESCE(NEW.viewed, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1058,13 +1063,14 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente una notificación de id ', OLD.id,
+                'Una persona ha modificado manualmente una notificación de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' cedula:', OLD.cedula, ' => ', NEW.cedula, ',',
-                ' message:', OLD.message, ' => ', NEW.message, ',',
-                ' viewed:', OLD.viewed, ' => ', NEW.viewed, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' cedula:', COALESCE(OLD.cedula, 'NULL'), ' => ', COALESCE(NEW.cedula, 'NULL'), ',',
+                ' message:', COALESCE(OLD.message, 'NULL'), ' => ', COALESCE(NEW.message, 'NULL'), ',',
+                ' viewed:', COALESCE(OLD.viewed, 'NULL'), ' => ', COALESCE(NEW.viewed, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1081,11 +1087,11 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente una notificación',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' cedula:', OLD.cedula, ',',
-                ' message:', OLD.message, ',',
-                ' viewed:', OLD.viewed, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' cedula:', COALESCE(OLD.cedula, 'NULL'), ',',
+                ' message:', COALESCE(OLD.message, 'NULL'), ',',
+                ' viewed:', COALESCE(OLD.viewed, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -1103,9 +1109,9 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un método de pago',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' name:', NEW.name, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(NEW.name, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1120,11 +1126,12 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente un método de pago de id ', OLD.id,
+                'Una persona ha modificado manualmente un método de pago de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' name:', OLD.name, ' => ', NEW.name, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ' => ', COALESCE(NEW.name, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1140,9 +1147,9 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un método de pago',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' name:', OLD.name, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -1160,11 +1167,11 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un historial de producto',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' product:', NEW.product, ',',
-                ' price:', NEW.price, ',',
-                ' current:', NEW.current, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' product:', COALESCE(NEW.product, 'NULL'), ',',
+                ' price:', COALESCE(NEW.price, 'NULL'), ',',
+                ' current:', COALESCE(NEW.current, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1179,13 +1186,14 @@ BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente un historial de producto de id ', OLD.id,
+                'Una persona ha modificado manualmente un historial de producto de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' product:', OLD.product, ' => ', NEW.product, ',',
-                ' price:', OLD.price, ' => ', NEW.price, ',',
-                ' current:', OLD.current, ' => ', NEW.current, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' product:', COALESCE(OLD.product, 'NULL'), ' => ', COALESCE(NEW.product, 'NULL'), ',',
+                ' price:', COALESCE(OLD.price, 'NULL'), ' => ', COALESCE(NEW.price, 'NULL'), ',',
+                ' current:', COALESCE(OLD.current, 'NULL'), ' => ', COALESCE(NEW.current, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
             );
     END IF;
@@ -1202,11 +1210,11 @@ BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un historial de producto',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' product:', OLD.product, ',',
-                ' price:', OLD.price, ',',
-                ' current:', OLD.current, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' product:', COALESCE(OLD.product, 'NULL'), ',',
+                ' price:', COALESCE(OLD.price, 'NULL'), ',',
+                ' current:', COALESCE(OLD.current, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -1224,10 +1232,10 @@ BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un producto',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' name:', NEW.name, ',',
-                ' active:', NEW.active, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(NEW.name, 'NULL'), ',',
+                ' active:', COALESCE(NEW.active, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1241,12 +1249,13 @@ FOR EACH ROW BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente un producto de id ', OLD.id,
+                'Una persona ha modificado manualmente un producto de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' name:', OLD.name, ' => ', NEW.name, ',',
-                ' active:', OLD.active, ' => ', NEW.active, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ' => ', COALESCE(NEW.name, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ' => ', COALESCE(NEW.active, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1262,10 +1271,10 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un producto',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' name:', OLD.name, ',',
-                ' active:', OLD.active, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
             );
     END IF;
@@ -1282,9 +1291,9 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un rol',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' name:', NEW.name, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(NEW.name, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1298,11 +1307,12 @@ FOR EACH ROW BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente un rol de id ', OLD.id,
+                'Una persona ha modificado manualmente un rol de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' name:', OLD.name, ' => ', NEW.name, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ' => ', COALESCE(NEW.name, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1318,9 +1328,9 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un rol',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' name:', OLD.name, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -1337,10 +1347,10 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un punto de venta',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' code:', NEW.code, ',',
-                ' bank:', NEW.bank, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' code:', COALESCE(NEW.code, 'NULL'), ',',
+                ' bank:', COALESCE(NEW.bank, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1354,12 +1364,13 @@ FOR EACH ROW BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente un punto de venta de id ', OLD.id,
+                'Una persona ha modificado manualmente un punto de venta de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                'id:', OLD.id, ' => ', NEW.id, ',',
-                'code:', OLD.code, ' => ', NEW.code, ',',
-                'bank:', OLD.bank, ' => ', NEW.bank, ',',
-                'created_at:', OLD.created_at, ' => ', NEW.created_at
+                'id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                'code:', COALESCE(OLD.code, 'NULL'), ' => ', COALESCE(NEW.code, 'NULL'), ',',
+                'bank:', COALESCE(OLD.bank, 'NULL'), ' => ', COALESCE(NEW.bank, 'NULL'), ',',
+                'created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1375,10 +1386,10 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un punto de venta',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' code:', OLD.code, ',',
-                ' bank:', OLD.bank, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' code:', COALESCE(OLD.code, 'NULL'), ',',
+                ' bank:', COALESCE(OLD.bank, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -1395,9 +1406,9 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente una beca',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' name:', NEW.name, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(NEW.name, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
             );
     END IF;
@@ -1411,11 +1422,12 @@ FOR EACH ROW BEGIN
         IF @app_audit IS NULL THEN
             INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente una beca de id ', OLD.id,
+                'Una persona ha modificado manualmente una beca de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' name:', OLD.name, ' => ', NEW.name, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ' => ', COALESCE(NEW.name, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1431,9 +1443,9 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente una beca',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' name:', OLD.name, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' name:', COALESCE(OLD.name, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -1450,9 +1462,9 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente una información propia ',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' fullname:', NEW.fullname, ',',
-                ' city:', NEW.city
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' fullname:', COALESCE(NEW.fullname, 'NULL'), ',',
+                ' city:', COALESCE(NEW.city, 'NULL')
             )
         );
     END IF;
@@ -1466,11 +1478,12 @@ FOR EACH ROW BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente una información propia de id ', OLD.id,
+                'Una persona ha modificado manualmente una información propia de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' fullname:', OLD.fullname, ' => ', NEW.fullname, ',',
-                ' city:', OLD.city, ' => ', NEW.city
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' fullname:', COALESCE(OLD.fullname, 'NULL'), ' => ', COALESCE(NEW.fullname, 'NULL'), ',',
+                ' city:', COALESCE(OLD.city, 'NULL'), ' => ', COALESCE(NEW.city, 'NULL')
             )
         );
     END IF;
@@ -1486,9 +1499,9 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente una información propia',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' fullname:', OLD.fullname, ',',
-                ' city:', OLD.city
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' fullname:', COALESCE(OLD.fullname, 'NULL'), ',',
+                ' city:', COALESCE(OLD.city, 'NULL')
             ));
     END IF;
 END$$  
@@ -1504,13 +1517,13 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente una cuenta de transferencias',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' account_number:', NEW.account_number, ',',
-                ' document_letter:', NEW.document_letter, ',',
-                ' document_number:', NEW.document_number, ',',
-                ' bank:', NEW.bank, ',',
-                ' active:', NEW.active, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' account_number:', COALESCE(NEW.account_number, 'NULL'), ',',
+                ' document_letter:', COALESCE(NEW.document_letter, 'NULL'), ',',
+                ' document_number:', COALESCE(NEW.document_number, 'NULL'), ',',
+                ' bank:', COALESCE(NEW.bank, 'NULL'), ',',
+                ' active:', COALESCE(NEW.active, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1524,15 +1537,16 @@ FOR EACH ROW BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente una cuenta de transferencias de id ', OLD.id,
+                'Una persona ha modificado manualmente una cuenta de transferencias de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' account_number:', OLD.account_number, ' => ', NEW.account_number, ',',
-                ' document_letter:', OLD.document_letter, ' => ', NEW.document_letter, ',',
-                ' document_number:', OLD.document_number, ' => ', NEW.document_number, ',',
-                ' bank:', OLD.bank, ' => ', NEW.bank, ',',
-                ' active:', OLD.active, ' => ', NEW.active, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' account_number:', COALESCE(OLD.account_number, 'NULL'), ' => ', COALESCE(NEW.account_number, 'NULL'), ',',
+                ' document_letter:', COALESCE(OLD.document_letter, 'NULL'), ' => ', COALESCE(NEW.document_letter, 'NULL'), ',',
+                ' document_number:', COALESCE(OLD.document_number, 'NULL'), ' => ', COALESCE(NEW.document_number, 'NULL'), ',',
+                ' bank:', COALESCE(OLD.bank, 'NULL'), ' => ', COALESCE(NEW.bank, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ' => ', COALESCE(NEW.active, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1548,13 +1562,13 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente una cuenta de transferencias',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' account_number:', OLD.account_number, ',',
-                ' document_letter:', OLD.document_letter, ',',
-                ' document_number:', OLD.document_number, ',',
-                ' bank:', OLD.bank, ',',
-                ' active:', OLD.active, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' account_number:', COALESCE(OLD.account_number, 'NULL'), ',',
+                ' document_letter:', COALESCE(OLD.document_letter, 'NULL'), ',',
+                ' document_number:', COALESCE(OLD.document_number, 'NULL'), ',',
+                ' bank:', COALESCE(OLD.bank, 'NULL'), ',',
+                ' active:', COALESCE(OLD.active, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;
@@ -1571,13 +1585,13 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente un ingreso desconocido',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' date:', NEW.date, ',',
-                ' price:', NEW.price, ',',
-                ' ref:', NEW.ref, ',',
-                ' description:', NEW.description, ',',
-                ' account:', NEW.account, ',',
-                ' generation:', NEW.generation
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' date:', COALESCE(NEW.date, 'NULL'), ',',
+                ' price:', COALESCE(NEW.price, 'NULL'), ',',
+                ' ref:', COALESCE(NEW.ref, 'NULL'), ',',
+                ' description:', COALESCE(NEW.description, 'NULL'), ',',
+                ' account:', COALESCE(NEW.account, 'NULL'), ',',
+                ' generation:', COALESCE(NEW.generation, 'NULL')
             )
         );
     END IF;
@@ -1591,15 +1605,16 @@ FOR EACH ROW BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente un ingreso desconocido de id ', OLD.id,
+                'Una persona ha modificado manualmente un ingreso desconocido de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                'id:', OLD.id, ' => ', NEW.id, ',',
-                'date:', OLD.date, ' => ', NEW.date, ',',
-                'price:', OLD.price, ' => ', NEW.price, ',',
-                'ref:', OLD.ref, ' => ', NEW.ref, ',',
-                'description:', OLD.description, ' => ', NEW.description, ',',
-                'account:', OLD.account, ' => ', NEW.account, ',',
-                'generation:', OLD.generation, ' => ', NEW.generation
+                'id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                'date:', COALESCE(OLD.date, 'NULL'), ' => ', COALESCE(NEW.date, 'NULL'), ',',
+                'price:', COALESCE(OLD.price, 'NULL'), ' => ', COALESCE(NEW.price, 'NULL'), ',',
+                'ref:', COALESCE(OLD.ref, 'NULL'), ' => ', COALESCE(NEW.ref, 'NULL'), ',',
+                'description:', COALESCE(OLD.description, 'NULL'), ' => ', COALESCE(NEW.description, 'NULL'), ',',
+                'account:', COALESCE(OLD.account, 'NULL'), ' => ', COALESCE(NEW.account, 'NULL'), ',',
+                'generation:', COALESCE(OLD.generation, 'NULL'), ' => ', COALESCE(NEW.generation, 'NULL')
             ));
     END IF;
 END$$  
@@ -1614,13 +1629,13 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un ingreso desconocido',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' date:', OLD.date, ',',
-                ' price:', OLD.price, ',',
-                ' ref:', OLD.ref, ',',
-                ' description:', OLD.description, ',',
-                ' account:', OLD.account, ',',
-                ' generation:', OLD.generation
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' date:', COALESCE(OLD.date, 'NULL'), ',',
+                ' price:', COALESCE(OLD.price, 'NULL'), ',',
+                ' ref:', COALESCE(OLD.ref, 'NULL'), ',',
+                ' description:', COALESCE(OLD.description, 'NULL'), ',',
+                ' account:', COALESCE(OLD.account, 'NULL'), ',',
+                ' generation:', COALESCE(OLD.generation, 'NULL')
             )
         );
     END IF;
@@ -1637,8 +1652,8 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha agregado manualmente una generación de ingresos desconocidos',
                 ' con los siguientes datos: ',
-                ' id:', NEW.id, ',',
-                ' created_at:', NEW.created_at
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1652,10 +1667,11 @@ FOR EACH ROW BEGIN
     IF @app_audit IS NULL THEN
         INSERT INTO binnacle (action) VALUES (
             CONCAT(
-                'Una persona ha modificado manualmente una generación de ingresos desconocidos de id ', OLD.id,
+                'Una persona ha modificado manualmente una generación de ingresos desconocidos de id ', 
+                COALESCE(OLD.id, 'NULL'),
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ' => ', NEW.id, ',',
-                ' created_at:', OLD.created_at, ' => ', NEW.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
             )
         );
     END IF;
@@ -1671,8 +1687,8 @@ FOR EACH ROW BEGIN
             CONCAT(
                 'Una persona ha borrado manualmente un ',
                 ' con los siguientes datos: ',
-                ' id:', OLD.id, ',',
-                ' created_at:', OLD.created_at
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
             )
         );
     END IF;

@@ -65,11 +65,11 @@ include '../../views/common/header.php';
 
     <div class="col-12 text-center mt-4">
         <h1 class="h1 text-black">Pago remoto</h1>
-    </div>
+    </div>    
 
     <div class="col-12 row justify-content-center px-4">
-        <section class="col-12 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
-            <div class="row col-6 justify-content-center align-self-start h5">
+        <section class="col-12 col-xl-8 col-lg-7  row justify-content-center h6 bg-white py-2 px-0" style="border: 1px solid #d6d6d6ff !important">
+            <div class="row col-12 col-xl-6 justify-content-center align-self-start h5">
                 <div class="row col-10 justify-content-start align-items-start">
                     <label class="fw-bold mx-2">
                         Cliente:
@@ -92,7 +92,7 @@ include '../../views/common/header.php';
                     <label class="fw-bold mx-2">
                         Método de pago:
                     </label>
-                    <span class="">
+                    <span class="col-12">
                         <?php
                             $display = '';
                             if($target_payment['payment_method_type'] === 'mobile_payment'){
@@ -111,7 +111,7 @@ include '../../views/common/header.php';
                 </div>              
             </div>
 
-            <div class="row col-6 justify-content-center align-self-start h5">               
+            <div class="row col-12 col-xl-6 mt-3 mt-xl-0 justify-content-center align-self-start h5">               
 
                 <div class="row col-10 justify-content-start align-items-middle">
                     <label class="fw-bold mx-2">
@@ -171,6 +171,13 @@ include '../../views/common/header.php';
             </div>
         </section>
 
+        <section class="col-11 col-xl-4 col-lg-5 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
+            <?php if(file_exists('../../images/payments_captures/' . $target_payment['capture'])) { ?>
+                <img class="p-0 col-12 cursor-pointer" src="<?= $base_url ?>/images/payments_captures/<?= $target_payment['capture'] ?>" alt="Comprobante de pago" onclick="ZoomInImage(this)">
+            <?php } else { ?>
+                <h3>Imagen <strong><?= $target_payment['capture'] ?></strong> no encontrada</h3>
+            <?php } ?>
+        </section>
 
         <section class="col-12 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
             <h2 class="col-12 h2">
