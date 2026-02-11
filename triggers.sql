@@ -1,5 +1,6 @@
 -- account_company_history
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_account_company_history_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_account_company_history_AFTER_INSERT`
 AFTER INSERT ON `account_company_history`
 FOR EACH ROW
@@ -21,6 +22,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_account_company_history_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_account_company_history_AFTER_UPDATE`
 AFTER UPDATE ON `account_company_history`
 FOR EACH ROW
@@ -43,6 +45,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_account_company_history_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_account_company_history_AFTER_DELETE`
 AFTER DELETE ON `account_company_history`
 FOR EACH ROW
@@ -65,6 +68,7 @@ DELIMITER ;
 
 -- account_payment_products
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_account_payment_products_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_account_payment_products_AFTER_INSERT`
 AFTER INSERT ON `account_payment_products`
 FOR EACH ROW
@@ -85,6 +89,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_account_payment_products_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_account_payment_products_AFTER_UPDATE`
 AFTER UPDATE ON `account_payment_products`
 FOR EACH ROW
@@ -106,6 +111,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_account_payment_products_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_account_payment_products_AFTER_DELETE`
 AFTER DELETE ON `account_payment_products`
 FOR EACH ROW
@@ -127,6 +133,7 @@ DELIMITER ;
 
 -- account_payments
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_account_payments_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_account_payments_AFTER_INSERT`
 AFTER INSERT ON `account_payments`
 FOR EACH ROW
@@ -155,6 +162,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_account_payments_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_account_payments_AFTER_UPDATE`
 AFTER UPDATE ON `account_payments`
 FOR EACH ROW
@@ -184,6 +192,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_account_payments_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_account_payments_AFTER_DELETE`
 AFTER DELETE ON `account_payments`
 FOR EACH ROW
@@ -213,6 +222,7 @@ DELIMITER ;
 
 -- accounts
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_accounts_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_accounts_AFTER_INSERT`
 AFTER INSERT ON `accounts`
 FOR EACH ROW
@@ -239,6 +249,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_accounts_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_accounts_AFTER_UPDATE`
 AFTER UPDATE ON `accounts`
 FOR EACH ROW
@@ -266,6 +277,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_accounts_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_accounts_AFTER_DELETE`
 AFTER DELETE ON `accounts`
 FOR EACH ROW
@@ -293,6 +305,7 @@ DELIMITER ;
 
 -- admins
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_admins_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_admins_AFTER_INSERT`
 AFTER INSERT ON `admins`
 FOR EACH ROW
@@ -315,6 +328,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_admins_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_admins_AFTER_UPDATE`
 AFTER UPDATE ON `admins`
 FOR EACH ROW
@@ -338,6 +352,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_admins_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_admins_AFTER_DELETE`
 AFTER DELETE ON `admins`
 FOR EACH ROW
@@ -359,8 +374,77 @@ BEGIN
 END$$  
 DELIMITER ;
 
+-- authentications
+DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_authentications_AFTER_INSERT`;
+CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_authentications_AFTER_INSERT`
+AFTER INSERT ON `authentications`
+FOR EACH ROW BEGIN
+    IF @app_audit IS NULL THEN
+        INSERT INTO binnacle (action) VALUES (
+            CONCAT(
+                'Una persona ha agregado manualmente una información de autenticación',
+                ' con los siguientes datos: ',
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' cedula:', COALESCE(NEW.cedula, 'NULL'), ',',
+                ' last_attempt:', COALESCE(NEW.last_attempt, 'NULL'), ',',
+                ' login_attempts:', COALESCE(NEW.login_attempts, 'NULL'), ',',
+                ' login_cooldown:', COALESCE(NEW.login_cooldown, 'NULL'), ',',
+                ' last_connection:', COALESCE(NEW.last_connection, 'NULL')
+            )
+        );
+    END IF;
+END$$  
+DELIMITER ;
+
+DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_authentications_AFTER_UPDATE`;
+CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_authentications_AFTER_UPDATE`
+AFTER UPDATE ON `authentications`
+FOR EACH ROW BEGIN
+    IF @app_audit IS NULL THEN
+        INSERT INTO binnacle (action) VALUES (
+            CONCAT(
+                'Una persona ha modificado manualmente una información de autenticación de id ', 
+                COALESCE(OLD.id, 'NULL'),
+                ' con los siguientes datos: ',
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' cedula:', COALESCE(OLD.cedula, 'NULL'), ' => ', COALESCE(NEW.cedula, 'NULL'), ',',
+                ' last_attempt:', COALESCE(OLD.last_attempt, 'NULL'), ' => ', COALESCE(NEW.last_attempt, 'NULL'), ',',
+                ' login_attempts:', COALESCE(OLD.login_attempts, 'NULL'), ' => ', COALESCE(NEW.login_attempts, 'NULL'), ',',
+                ' login_cooldown:', COALESCE(OLD.login_cooldown, 'NULL'), ' => ', COALESCE(NEW.login_cooldown, 'NULL'), ',',
+                ' last_connection:', COALESCE(OLD.last_connection, 'NULL'), ' => ', COALESCE(NEW.last_connection, 'NULL')
+            )
+        );
+    END IF;
+END$$  
+DELIMITER ;
+
+DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_authentications_AFTER_DELETE`;
+CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_authentications_AFTER_DELETE`
+AFTER DELETE ON `authentications`
+FOR EACH ROW BEGIN
+    IF @app_audit IS NULL THEN
+        INSERT INTO binnacle (action) VALUES (
+            CONCAT(
+                'Una persona ha borrado manualmente un ',
+                ' con los siguientes datos: ',
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' cedula:', COALESCE(OLD.cedula, 'NULL'), ',',
+                ' last_attempt:', COALESCE(OLD.last_attempt, 'NULL'), ',',
+                ' login_attempts:', COALESCE(OLD.login_attempts, 'NULL'), ',',
+                ' login_cooldown:', COALESCE(OLD.login_cooldown, 'NULL'), ',',
+                ' last_connection:', COALESCE(OLD.last_connection, 'NULL')
+            )
+        );
+    END IF;
+END$$  
+DELIMITER ;
+
 -- banks
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_banks_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_banks_AFTER_INSERT`
 AFTER INSERT ON `banks`
 FOR EACH ROW
@@ -381,6 +465,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_banks_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_banks_AFTER_UPDATE`
 AFTER UPDATE ON `banks`
 FOR EACH ROW
@@ -402,6 +487,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_banks_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_banks_AFTER_DELETE`
 AFTER DELETE ON `banks`
 FOR EACH ROW
@@ -423,6 +509,7 @@ DELIMITER ;
 
 -- coin_history
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_coin_history_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_coin_history_AFTER_INSERT`
 AFTER INSERT ON `coin_history`
 FOR EACH ROW
@@ -444,6 +531,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_coin_history_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_coin_history_AFTER_UPDATE`
 AFTER UPDATE ON `coin_history`
 FOR EACH ROW
@@ -466,6 +554,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_coin_history_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_coin_history_AFTER_DELETE`
 AFTER DELETE ON `coin_history`
 FOR EACH ROW
@@ -488,6 +577,7 @@ DELIMITER ;
 
 -- coins
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_coins_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_coins_AFTER_INSERT`
 AFTER INSERT ON `coins`
 FOR EACH ROW
@@ -510,6 +600,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_coins_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_coins_AFTER_UPDATE`
 AFTER UPDATE ON `coins`
 FOR EACH ROW
@@ -533,6 +624,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_coins_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_coins_AFTER_DELETE`
 AFTER DELETE ON `coins`
 FOR EACH ROW
@@ -556,6 +648,7 @@ DELIMITER ;
 
 -- companies
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_companies_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_companies_AFTER_INSERT`
 AFTER INSERT ON `companies`
 FOR EACH ROW
@@ -578,6 +671,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_companies_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_companies_AFTER_UPDATE`
 AFTER UPDATE ON `companies`
 FOR EACH ROW
@@ -601,6 +695,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_companies_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_companies_AFTER_DELETE`
 AFTER DELETE ON `companies`
 FOR EACH ROW
@@ -624,6 +719,7 @@ DELIMITER ;
 
 -- concepts
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_concepts_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_concepts_AFTER_INSERT`
 AFTER INSERT ON `concepts`
 FOR EACH ROW
@@ -645,6 +741,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_concepts_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_concepts_AFTER_UPDATE`
 AFTER UPDATE ON `concepts`
 FOR EACH ROW
@@ -667,6 +764,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_concepts_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_concepts_AFTER_DELETE`
 AFTER DELETE ON `concepts`
 FOR EACH ROW
@@ -689,6 +787,7 @@ DELIMITER ;
 
 -- global_vars
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_global_vars_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_global_vars_AFTER_INSERT`
 AFTER INSERT ON `global_vars`
 FOR EACH ROW
@@ -707,6 +806,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_global_vars_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_global_vars_AFTER_UPDATE`
 AFTER UPDATE ON `global_vars`
 FOR EACH ROW
@@ -726,6 +826,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_global_vars_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_global_vars_AFTER_DELETE`
 AFTER DELETE ON `global_vars`
 FOR EACH ROW
@@ -745,6 +846,7 @@ DELIMITER ;
 
 -- global_vars_history
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_global_vars_history_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_global_vars_history_AFTER_INSERT`
 AFTER INSERT ON `global_vars_history`
 FOR EACH ROW
@@ -766,6 +868,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_global_vars_history_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_global_vars_history_AFTER_UPDATE`
 AFTER UPDATE ON `global_vars_history`
 FOR EACH ROW
@@ -788,6 +891,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_global_vars_history_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_global_vars_history_AFTER_DELETE`
 AFTER DELETE ON `global_vars_history`
 FOR EACH ROW
@@ -810,6 +914,7 @@ DELIMITER ;
 
 -- invoice_payment_method
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_invoice_payment_method_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_invoice_payment_method_AFTER_INSERT`
 AFTER INSERT ON `invoice_payment_method`
 FOR EACH ROW
@@ -835,6 +940,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_invoice_payment_method_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_invoice_payment_method_AFTER_UPDATE`
 AFTER UPDATE ON `invoice_payment_method`
 FOR EACH ROW
@@ -861,6 +967,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_invoice_payment_method_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_invoice_payment_method_AFTER_DELETE`
 AFTER DELETE ON `invoice_payment_method`
 FOR EACH ROW
@@ -887,6 +994,7 @@ DELIMITER ;
 
 -- invoices
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_invoices_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_invoices_AFTER_INSERT`
 AFTER INSERT ON `invoices`
 FOR EACH ROW
@@ -912,6 +1020,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_invoices_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_invoices_AFTER_UPDATE`
 AFTER UPDATE ON `invoices`
 FOR EACH ROW
@@ -938,6 +1047,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_invoices_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_invoices_AFTER_DELETE`
 AFTER DELETE ON `invoices`
 FOR EACH ROW
@@ -962,8 +1072,74 @@ BEGIN
 END$$  
 DELIMITER ;
 
+-- login_history
+DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_login_history_AFTER_INSERT`;
+CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_login_history_AFTER_INSERT`
+AFTER INSERT ON `login_history`
+FOR EACH ROW
+BEGIN
+    IF @app_audit IS NULL THEN
+        INSERT INTO binnacle (action) VALUES (
+            CONCAT(
+                'Una persona ha agregado manualmente un historial de login ',
+                ' con los siguientes datos: ',
+                ' id:', COALESCE(NEW.id, 'NULL'), ',',
+                ' cedula:', COALESCE(NEW.cedula, 'NULL'), ',',
+                ' success:', COALESCE(NEW.success, 'NULL'), ',',
+                ' created_at:', COALESCE(NEW.created_at, 'NULL')
+            )
+        );
+    END IF;
+END$$  
+DELIMITER ;
+
+DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_login_history_AFTER_UPDATE`;
+CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_login_history_AFTER_UPDATE`
+AFTER UPDATE ON `login_history`
+FOR EACH ROW
+BEGIN
+    IF @app_audit IS NULL THEN
+        INSERT INTO binnacle (action) VALUES (
+            CONCAT(
+                'Una persona ha modificado manualmente un historial de login de id ', 
+                COALESCE(OLD.id, 'NULL'),
+                ' con los siguientes datos: ',
+                ' id:', COALESCE(OLD.id, 'NULL'), ' => ', COALESCE(NEW.id, 'NULL'), ',',
+                ' cedula:', COALESCE(OLD.cedula, 'NULL'), ' => ', COALESCE(NEW.cedula, 'NULL'), ',',
+                ' success:', COALESCE(OLD.success, 'NULL'), ' => ', COALESCE(NEW.success, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL'), ' => ', COALESCE(NEW.created_at, 'NULL')
+            )
+        );
+    END IF;
+END$$  
+DELIMITER ;
+
+DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_login_history_AFTER_DELETE`;
+CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_login_history_AFTER_DELETE`
+AFTER DELETE ON `login_history`
+FOR EACH ROW
+BEGIN
+    IF @app_audit IS NULL THEN
+        INSERT INTO binnacle (action) VALUES (
+            CONCAT(
+                'Una persona ha borrado manualmente una factura ',
+                ' con los siguientes datos: ',
+                ' id:', COALESCE(OLD.id, 'NULL'), ',',
+                ' cedula:', COALESCE(OLD.cedula, 'NULL'), ',',
+                ' success:', COALESCE(OLD.success, 'NULL'), ',',
+                ' created_at:', COALESCE(OLD.created_at, 'NULL')
+            )
+    );
+    END IF;
+END$$  
+DELIMITER ;
+
 -- mobile_payments
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_mobile_payments_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_mobile_payments_AFTER_INSERT`
 AFTER INSERT ON `mobile_payments`
 FOR EACH ROW
@@ -987,6 +1163,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_mobile_payments_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_mobile_payments_AFTER_UPDATE`
 AFTER UPDATE ON `mobile_payments`
 FOR EACH ROW
@@ -1011,6 +1188,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_mobile_payments_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_mobile_payments_AFTER_DELETE`
 AFTER DELETE ON `mobile_payments`
 FOR EACH ROW
@@ -1035,6 +1213,7 @@ DELIMITER ;
 
 -- notifications
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_notifications_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_notifications_AFTER_INSERT`
 AFTER INSERT ON `notifications`
 FOR EACH ROW
@@ -1056,6 +1235,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_notifications_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_notifications_AFTER_UPDATE`
 AFTER UPDATE ON `notifications`
 FOR EACH ROW
@@ -1078,6 +1258,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_notifications_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_notifications_AFTER_DELETE`
 AFTER DELETE ON `notifications`
 FOR EACH ROW
@@ -1100,6 +1281,7 @@ DELIMITER ;
 
 -- payment_method_types
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_payment_method_types_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_payment_method_types_AFTER_INSERT`
 AFTER INSERT ON `payment_method_types`
 FOR EACH ROW
@@ -1119,6 +1301,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_payment_method_types_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_payment_method_types_AFTER_UPDATE`
 AFTER UPDATE ON `payment_method_types`
 FOR EACH ROW 
@@ -1139,6 +1322,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_payment_method_types_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_payment_method_types_AFTER_DELETE`
 AFTER DELETE ON `payment_method_types`
 FOR EACH ROW BEGIN
@@ -1158,6 +1342,7 @@ DELIMITER ;
 
 -- product_history
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_product_history_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_product_history_AFTER_INSERT`
 AFTER INSERT ON `product_history`
 FOR EACH ROW 
@@ -1179,6 +1364,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_product_history_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_product_history_AFTER_UPDATE`
 AFTER UPDATE ON `product_history`
 FOR EACH ROW 
@@ -1201,6 +1387,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_product_history_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_product_history_AFTER_DELETE`
 AFTER DELETE ON `product_history`
 FOR EACH ROW 
@@ -1223,6 +1410,7 @@ DELIMITER ;
 
 -- products
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_products_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_products_AFTER_INSERT`
 AFTER INSERT ON `products`
 FOR EACH ROW 
@@ -1243,6 +1431,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_products_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_products_AFTER_UPDATE`
 AFTER UPDATE ON `products`
 FOR EACH ROW BEGIN
@@ -1263,6 +1452,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_products_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_products_AFTER_DELETE`
 AFTER DELETE ON `products`
 FOR EACH ROW BEGIN
@@ -1283,6 +1473,7 @@ DELIMITER ;
 
 -- roles
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_roles_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_roles_AFTER_INSERT`
 AFTER INSERT ON `roles`
 FOR EACH ROW BEGIN
@@ -1301,6 +1492,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_roles_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_roles_AFTER_UPDATE`
 AFTER UPDATE ON `roles`
 FOR EACH ROW BEGIN
@@ -1320,6 +1512,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_roles_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_roles_AFTER_DELETE`
 AFTER DELETE ON `roles`
 FOR EACH ROW BEGIN
@@ -1339,6 +1532,7 @@ DELIMITER ;
 
 -- sale_points
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_sale_points_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_sale_points_AFTER_INSERT`
 AFTER INSERT ON `sale_points`
 FOR EACH ROW BEGIN
@@ -1358,6 +1552,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_sale_points_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_sale_points_AFTER_UPDATE`
 AFTER UPDATE ON `sale_points`
 FOR EACH ROW BEGIN
@@ -1378,6 +1573,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_sale_points_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_sale_points_AFTER_DELETE`
 AFTER DELETE ON `sale_points`
 FOR EACH ROW BEGIN
@@ -1398,6 +1594,7 @@ DELIMITER ;
 
 -- sholarships
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_scholarships_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_scholarships_AFTER_INSERT`
 AFTER INSERT ON `scholarships`
 FOR EACH ROW BEGIN
@@ -1416,6 +1613,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_scholarships_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_scholarships_AFTER_UPDATE`
 AFTER UPDATE ON `scholarships`
 FOR EACH ROW BEGIN
@@ -1435,6 +1633,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_scholarships_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_scholarships_AFTER_DELETE`
 AFTER DELETE ON `scholarships`
 FOR EACH ROW BEGIN
@@ -1454,6 +1653,7 @@ DELIMITER ;
 
 -- self_data
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_self_data_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_self_data_AFTER_INSERT`
 AFTER INSERT ON `self_data`
 FOR EACH ROW BEGIN
@@ -1472,6 +1672,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_self_data_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_self_data_AFTER_UPDATE`
 AFTER UPDATE ON `self_data`
 FOR EACH ROW BEGIN
@@ -1491,6 +1692,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_self_data_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_self_data_AFTER_DELETE`
 AFTER DELETE ON `self_data`
 FOR EACH ROW BEGIN
@@ -1509,6 +1711,7 @@ DELIMITER ;
 
 -- transfers
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_transfers_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_transfers_AFTER_INSERT`
 AFTER INSERT ON `transfers`
 FOR EACH ROW BEGIN
@@ -1531,6 +1734,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_transfers_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_transfers_AFTER_UPDATE`
 AFTER UPDATE ON `transfers`
 FOR EACH ROW BEGIN
@@ -1554,6 +1758,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_transfers_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_transfers_AFTER_DELETE`
 AFTER DELETE ON `transfers`
 FOR EACH ROW BEGIN
@@ -1577,6 +1782,7 @@ DELIMITER ;
 
 -- unknown_incomes
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_unknown_incomes_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_unknown_incomes_AFTER_INSERT`
 AFTER INSERT ON `unknown_incomes`
 FOR EACH ROW BEGIN
@@ -1599,6 +1805,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_unknown_incomes_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_unknown_incomes_AFTER_UPDATE`
 AFTER UPDATE ON `unknown_incomes`
 FOR EACH ROW BEGIN
@@ -1621,6 +1828,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_unknown_incomes_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_unknown_incomes_AFTER_DELETE`
 AFTER DELETE ON `unknown_incomes`
 FOR EACH ROW BEGIN
@@ -1644,6 +1852,7 @@ DELIMITER ;
 
 -- unknown_incomes_generations
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_unknown_incomes_generations_AFTER_INSERT`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_unknown_incomes_generations_AFTER_INSERT`
 AFTER INSERT ON `unknown_incomes_generations`
 FOR EACH ROW BEGIN
@@ -1661,6 +1870,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_unknown_incomes_generations_AFTER_UPDATE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_unknown_incomes_generations_AFTER_UPDATE`
 AFTER UPDATE ON `unknown_incomes_generations`
 FOR EACH ROW BEGIN
@@ -1679,6 +1889,7 @@ END$$
 DELIMITER ;
 
 DELIMITER $$ 
+DROP TRIGGER IF EXISTS `MANUAL_unknown_incomes_generations_AFTER_DELETE`;
 CREATE DEFINER=`root`@`localhost` TRIGGER `MANUAL_unknown_incomes_generations_AFTER_DELETE`
 AFTER DELETE ON `unknown_incomes_generations`
 FOR EACH ROW BEGIN

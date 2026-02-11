@@ -26,6 +26,32 @@ if($error === ''){
         $error = 'Credenciales inválidas';
 }
 
+$authUpdate = [];
+$authData = null;
+if($error === ''){
+    include_once '../models/authentication_model.php';
+    $authentication_model = new AuthenticationModel();
+    $authData = $authentication_model->GetAuthenticationDataByCedula($user);
+    if($authData === false){
+        $authentication_model->CreateAuthenticationData($user);
+        $authData = $authentication_model->GetAuthenticationDataByCedula($user);
+    }
+
+    $timezone = new DateTimeZone('America/Caracas');
+    $now = new DateTime('now', $timezone);
+
+    if($authData['login_cooldown'] !== NULL){
+        $loginCooldown = new DateTime($authData['login_cooldown'], $timezone);
+
+        if($loginCooldown > $now){
+            $authentication_model->CreateLoginHistory($user, 0);
+            $error = 'Su usuario sigue bloqueado temporalmente, inténtelo de nuevo más tarde.';
+        }
+    }
+
+    $authUpdate['last_attempt'] = $now->format('Y-m-d H:i:s');    
+}
+
 if($error === ''){
     include_once '../models/account_model.php';
     $account_model = new AccountModel();
@@ -35,6 +61,17 @@ if($error === ''){
     if($target_user === false){
         $error = 'Credenciales inválidas';
         $account_model->CreateBinnacle('NULL', 'Intento de inicio de sesión fallido para el usuario ' . $exists['name']);
+        $authentication_model->CreateLoginHistory($user, 0);
+        $authUpdate['login_attempts'] = intval($authData['login_attempts']) + 1;
+        if(intval($authUpdate['login_attempts']) >= 3){
+            $error = 'Por motivos de seguridad su usuario ha sido bloqueado durante 10 minutos. Inténtelo más tarde. Si ha olvidado su contraseña acuda a control de estudios.';
+            $loginCooldown = new DateTime('now', $timezone);
+            $loginCooldown->modify('+10 minute');
+            $authUpdate['login_cooldown'] = $loginCooldown->format('Y-m-d H:i:s');
+        }
+    }else{
+        $authentication_model->CreateLoginHistory($user, 1);
+        $authUpdate['login_attempts'] = 0;
     }
 }
 
@@ -141,7 +178,9 @@ echo "Error: " . $error;
 exit;
 */
 
+
 if($error === ''){
+    $authUpdate['last_connection'] = $now->format('Y-m-d H:i:s');
     include_once '../models/account_model.php';
     $account_model = new AccountModel();
 
@@ -168,9 +207,14 @@ if($error === ''){
         $redirect = "Location: $base_url/views/panel.php";
     }
 }
-else
-   $redirect = "Location: $base_url/views/forms/login.php?error=$error";
+else{
+    session_destroy();
+    $redirect = "Location: $base_url/views/forms/login.php?error=$error";
+}
 
+if($authUpdate !== [] && $authData !== null){
+    $authentication_model->UpdateAuthenticationData($authData['id'], $authUpdate);
+}
 
 header($redirect);
 exit;
