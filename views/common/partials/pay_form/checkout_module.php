@@ -207,6 +207,11 @@
         }
 
         if(error === ''){
+            if(refInput.value.length < 6)
+                error = 'La referencia debe tener un mínimo de 6 caracteres y deben ser los últimos 6 dígitos.'
+        }
+
+        if(error === ''){
             const fileSize = captureInput.files[0].size            
             if(fileSize >= maxCaptureSize){
                 error = 'La imagen seleccionada supera el límite de tamaño (1Mb).'

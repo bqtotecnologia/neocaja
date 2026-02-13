@@ -120,22 +120,22 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
                     </div>
                     <div class="row col-12 m-0 p-0 align-items-center my-1">
                         <label class="col-12 col-lg-4 text-right align-middle m-0 h6" for="document">Cédula del emisor</label>
-                        <input name="document" class="col-12 col-lg-8 form-control" id="document" type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+                        <input name="document" class="col-12 col-lg-8 form-control" id="document" type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" required>
                     </div>
 
                     <div class="row col-12 m-0 p-0 align-items-center my-1">
                         <label class="col-12 col-lg-4 text-right align-middle m-0 h6" for="ref">Referencia de la transacción</label>
-                        <input name="ref" class="col-12 col-lg-8 form-control" id="ref" type="text" minlength="6" placeholder="Referencia completa" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+                        <input name="ref" class="col-12 col-lg-8 form-control" id="ref" type="text" minlength="6" placeholder="Referencia completa" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" required>
                     </div>
 
                     <div class="row col-12 m-0 p-0 align-items-center my-1">
                         <label class="col-12 col-lg-4 text-right align-middle m-0 h6" for="price">Monto de la transacción</label>
-                        <input name="price" class="col-12 col-lg-8 form-control text-right amount-input" id="price" type="text" >
+                        <input name="price" class="col-12 col-lg-8 form-control text-right amount-input" id="price" type="text" required>
                     </div>
 
                     <div class="row col-12 m-0 p-0 align-items-center my-1">
                         <label class="col-12 col-lg-4 text-right align-middle m-0 h6" for="capture">Capture o comprobante de pago</label>
-                        <input name="capture" class="col-12 col-lg-8 text-right h6" required id="capture" type="file" accept="image/png, image/jpg, image/jpeg">
+                        <input name="capture" class="col-12 col-lg-8 text-right h6" required id="capture" type="file" accept="image/png, image/jpg, image/jpeg" required>
                     </div>
                     <div class="row col-12 m-0 p-0 align-items-center justify-content-center my-1">
                         <figure class="col-12 col-lg-8 h6">
