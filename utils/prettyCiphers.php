@@ -19,13 +19,12 @@ function GetPrettyCiphers($str){
         for ($i=(count($intPart) - 1); $i >= 0 ; $i--) { 
             $currentChar = $intPart[$i];
 
-            if($digitCount === 3){
+            if($digitCount >= 3){
                 $currentChar .= '.';
                 $digitCount = 0;
             }
-            else{
-                $digitCount++;
-            }
+
+            $digitCount++;
 
             $finalResult = $currentChar . $finalResult;
         }
