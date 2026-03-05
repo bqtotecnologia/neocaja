@@ -20,10 +20,12 @@ function GetPrettyCiphers($str){
             $currentChar = $intPart[$i];
 
             if($digitCount >= 3){
-                $currentChar .= '.';
-                $digitCount = 0;
+                if($currentChar !== '-'){
+                    $currentChar .= '.';
+                    $digitCount = 0;
+                }
             }
-
+            
             $digitCount++;
 
             $finalResult = $currentChar . $finalResult;
