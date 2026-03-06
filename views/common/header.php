@@ -103,7 +103,8 @@
                       <li><a><i class="fa fa-plane"></i> Pagos remotos <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/tables/search_remote_payments.php?state=Por revisar">Por revisar</a></li>
-                          <li><a href="<?= $base_url ?>/views/tables/search_remote_payments.php?state=Aprobado">Aprobados</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_remote_payments.php?state=Conciliado">Conciliados</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_remote_payments.php?state=Facturado">Aprobados</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_remote_payments.php?state=Rechazado">Rechazados</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_remote_payments_by_date.php">Por fecha</a></li>
                         </ul>

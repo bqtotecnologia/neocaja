@@ -17,7 +17,7 @@ if($error === ''){
 }
 
 if($error === ''){
-    if(!in_array($_POST['state'], ['Aprobado', 'Rechazado']))
+    if(!in_array($_POST['state'], ['Conciliado', 'Rechazado']))
         $error = 'Estado inválido';
 }
 
@@ -65,7 +65,7 @@ if($error === ''){
 }
 
 if($error === '' && isset($income_id)){
-    if($_POST['state'] === 'Aprobado'){
+    if($_POST['state'] === 'Conciliado'){
         $data = ['account' => $target_payment['account_id']];
         $unknown_model->SimpleUpdate('unknown_incomes', $data, $target_income['id']);
     }

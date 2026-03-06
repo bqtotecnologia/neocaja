@@ -41,7 +41,6 @@ include '../../views/common/header.php';
 
     <div class="col-12 row justify-content-center px-4">
         <div class="col-12 row justify-content-center x_panel">
-            <?php $btn_url = '../views/panel.php'; include_once '../layouts/addButton.php'; ?>
             <div class="table-responsive">
                 <?php include '../common/tables/invoice_table.php'; ?>
             </div>

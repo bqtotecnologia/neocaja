@@ -37,7 +37,7 @@
                 <td class="align-middle text-center">
                     <div class="row justify-content-around">
                         <div class="col-12 text-center">
-                            <a href="<?= $base_url ?>/views/detailers/payment_details.php?id=<?= $payment['id'] ?>" class="btn btn-success" title="Ver">
+                            <a href="<?= $base_url ?>/views/forms/update_account_payment.php?id=<?= $payment['id'] ?>" class="btn btn-success" title="Ver">
                                 <i class="fa fa-search"></i>
                             </a>
                         </div>

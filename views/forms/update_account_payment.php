@@ -67,6 +67,35 @@ include '../../views/common/header.php';
         <h1 class="h1 text-black">Pago remoto</h1>
     </div>    
 
+
+    <div class="row col-12 m-0 p-0 justify-content-center h5">
+        <section class="x_panel d-flex row col-12 justify-content-center text-center">
+            <div class="col-4 p-2">
+                <label class="fw-bold">Cliente</label>
+                <span class="cursor-pointer" onclick="CopyToClipboard(this)" title="Click para copiar en el portapapeles">
+                    <?= $target_account['names'] . ' ' . $target_account['surnames'] ?>
+                </span>
+            </div>
+            <div class="col-4 p-2">
+                <label class="fw-bold">Cédula</label>
+                <span class="cursor-pointer" onclick="CopyToClipboard(this)" title="Click para copiar en el portapapeles">
+                    <?= $target_account['cedula'] ?>
+                </span>
+            </div>
+            <div class="col-4 p-2">
+                <label class="fw-bold">Becado</label>
+                <span class="text-<?= $target_account['scholarship_coverage'] === NULL ? 'danger' : 'success' ?>">
+                    <?= $target_account['scholarship_coverage'] === NULL ? 'NO' : ($target_account['scholarship_coverage'] . '%') ?>
+                </span>
+            </div>
+        </section>
+    </div>
+
+
+
+
+
+
     <div class="col-12 row justify-content-center px-4">
         <section class="col-12 col-xl-8 col-lg-7  row justify-content-center h6 bg-white py-2 px-0" style="border: 1px solid #d6d6d6ff !important">
             <div class="row col-12 col-xl-6 justify-content-center align-self-start h5">
