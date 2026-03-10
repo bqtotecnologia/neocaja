@@ -33,7 +33,7 @@ include '../../views/common/header.php';
         <h1 class="h1 text-black">Pagos remotos <?= $_GET['state'] ?></h1>
     </div>
 
-    <div class="col-12 row justify-content-center px-4">
+    <div class="col-12 row justify-content-center">
         <div class="col-12 row justify-content-center x_panel">            
             <?php $btn_url = "$base_url/views/panel.php"; include_once '../layouts/backButton.php'; ?>
             <div class="table-responsive">
@@ -42,5 +42,11 @@ include '../../views/common/header.php';
         </div>
     </div>
 </div>
+
+<style>
+    .dataTables_wrapper.no-footer{
+        padding:0 !important;
+    }
+</style>
 
 <?php include '../common/footer.php'; ?>

@@ -89,6 +89,10 @@ include '../../views/common/header.php';
                 </span>
             </div>
         </section>
+
+        <form class="row col-12 m-0 p-0 justify-content-center" action="<?= $base_url ?>/controllers/update_account_payment.php" method="POST">
+            
+        </form>
     </div>
 
 

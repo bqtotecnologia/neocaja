@@ -3,6 +3,7 @@
     const cartTable = document.getElementById('cart-table')
     const checkoutCartTable = document.getElementById('checkout-cart-table')
 
+    const dateContainer = document.getElementById('date-container')
     const checkoutContainer = document.getElementById('checkout-container')    
     const productContainer = document.getElementById('product-container')    
     const cartContainer = document.getElementById('cart-container')
@@ -20,13 +21,12 @@
     const methodDataTable = document.getElementById('payment-method-table')
     const methodHeader = document.getElementById('payment-method-header')
 
+    const dateInput = document.getElementById('pay-date')
     const cedulaInput = document.getElementById('document')
     const priceInput = document.getElementById('price')
     const refInput = document.getElementById('ref')
     const captureInput = document.getElementById('capture')
-    const captureDisplayer = document.getElementById('capture-displayer')
-    
-    const usdValue = parseFloat('<?= $usdValue['price'] ?>')
+    const captureDisplayer = document.getElementById('capture-displayer')       
 
     const maxCaptureSize = 1024 * 1024 // 1MB
     const availablePaymentMethods = ['mobile_payment', 'transfer']
@@ -34,6 +34,9 @@
     let paymentMethods = {}
     const mobile_payments = []
     const transfers = []
+    let usdValue = null
+    let rateDate = null
+    let fixedRateDate = null
     let selectedProducts = []
     let productList = []
     let proceedToPay = false

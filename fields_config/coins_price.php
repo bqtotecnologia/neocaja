@@ -36,6 +36,6 @@ $coinPriceFields = [
         'required' => true,
         'suspicious' => false,
         'value' => date('Y-m-d'),
-        'max' => date('Y-m-d'),
+        //'max' => date('Y-m-d'),
     ],
 ];

@@ -61,4 +61,22 @@
 
         return await TryFetch(url, fetchConfig)
     }
+
+    async function FetchUSDValueOfDay(date){
+        var url = '<?= $base_url ?>/api/get_usd_value_of_date.php'
+
+        const dataToSend = {
+            'date': date,
+        }
+
+        var fetchConfig = {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataToSend)
+        }
+
+        return await TryFetch(url, fetchConfig)
+    }
 </script>

@@ -30,6 +30,12 @@ if($error === ''){
 }
 
 if($error === ''){
+    $today = new DateTime(date('Y-m-d'), new DateTimeZone('America/Caracas'));
+    if($cleanData['date'] > $today)
+        $error = 'La fecha del pago debe ser anterior o igual a la fecha de hoy';
+}
+
+if($error === ''){
     include_once '../models/product_model.php';
     include_once '../models/siacad_model.php';
     $product_model = new ProductModel();
@@ -179,6 +185,7 @@ if($error === ''){
         'payment_method' => $cleanData['payment_method'],
         'price' => $cleanData['price'],
         'ref' => $cleanData['ref'],
+        'date' => $cleanData['date']->format('Y-m-d'),
         'capture' => $newImageName,
         'document' => $cleanData['document'],
         'state' => 'Por revisar',

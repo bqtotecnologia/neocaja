@@ -37,12 +37,6 @@ if($error === ''){
     }
 }
 
-if($error === ''){
-    if(strtotime($cleanData['date']->format('Y-m-d')) > strtotime(date('Y-m-d'))){
-        $error = 'No se puede actualizar la tasa en un día posterior a hoy';
-    }
-}
-
 // Updating the price
 if($error === ''){
     $today = ($cleanData['date']->format('Y-m-d')) === date('Y-m-d');
@@ -55,6 +49,16 @@ if($error === ''){
         $updated = $coin_model->UpdateCoinPriceOfDate($target_coin['id'], $cleanData['price'], $cleanData['date']->format('Y-m-d'));
         if($updated === false)
             $error = 'Hubo un error al intentar actualizar la tasa antigua de la moneda';
+    }
+}
+
+if($error === ''){
+    // Verificamos si el día actualizado es un Lunes, de ser así se le coloca esa misma tasa al domingo y sábado
+    if($cleanData['date']->format('D') === 'Mon'){
+        $cleanData['date']->modify('-1 day'); // Domingo
+        $coin_model->UpdateCoinPriceOfDate($target_coin['id'], $cleanData['price'], $cleanData['date']->format('Y-m-d'));
+        $cleanData['date']->modify('-1 day'); // Sábado
+        $coin_model->UpdateCoinPriceOfDate($target_coin['id'], $cleanData['price'], $cleanData['date']->format('Y-m-d'));
     }
 }
 

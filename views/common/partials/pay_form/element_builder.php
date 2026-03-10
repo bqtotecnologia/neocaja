@@ -192,4 +192,30 @@
     function AddStyleToProductTD(td){
         td.classList.add('text-right', 'p-1')
     }
+
+    function ScrollToBegin(){
+        pageBody.scrollIntoView(true, { behavior: "instant", block:'center'});
+    }
+
+    function ShowProductSelecting(){
+        ScrollToBegin()
+        dateContainer.classList.add('disappear')
+
+        productContainer.classList.add('appear')
+        productContainer.classList.remove('my-hidden')
+        cartContainer.classList.add('appear')
+        cartContainer.classList.remove('my-hidden')
+        proceedContainer.classList.add('appear')
+        proceedContainer.classList.remove('my-hidden')
+    }
+
+    function ShowCheckout(){
+        ScrollToBegin()
+        productContainer.classList.add('disappear')
+        cartContainer.classList.add('disappear')
+        proceedContainer.classList.add('disappear')
+        checkoutContainer.classList.remove('my-hidden')
+        checkoutContainer.classList.add('appear')
+    }
+
 </script>

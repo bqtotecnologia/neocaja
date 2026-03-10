@@ -109,6 +109,28 @@ $('.datatable-date-4').DataTable({
     responsive: true,
 }); 
 
+$('.datatable-date-4-datetime-7').DataTable({    
+    language: spanish,
+    dom: "Blfrtip",
+        buttons: [
+            {
+                extend: "excel",
+                className: "btn-sm"
+            },
+        ],
+    columnDefs: [
+      {
+        targets: [7],
+        render: $.fn.dataTable.render.moment('YYYY-MM-DD HH:mm:ss', 'DD/MM/YYYY HH:mm:ss')
+      },
+      {
+        targets: [4],
+        render: $.fn.dataTable.render.moment('YYYY-MM-DD', 'DD/MM/YYYY')
+      }
+    ],
+    responsive: true,
+}); 
+
 $('.datatable-date-5').DataTable({    
     language: spanish,
     dom: "Blfrtip",

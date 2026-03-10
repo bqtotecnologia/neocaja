@@ -51,4 +51,49 @@
         totalUSDLabel.innerHTML = usdTotal
         totalVESLabel.innerHTML = GetPrettyCiphers(vesTotal)
     }
+
+    async function CheckUSDRateOfDay(){
+        date = dateInput.value
+        error = ''
+        
+        if(date === '')
+            error = 'Por favor, escoja la fecha en la que hizo o realizará la transacción.'
+
+        var splits = date.split('-')
+        var today = new Date();
+        var selectedDate = splits[1] + '-' + splits[2] + '-' + splits[0]
+        selectedDate = new Date(selectedDate)
+        if(selectedDate > today)
+            error = 'La fecha seleccionada debe ser igual o anterior a la fecha actual'
+
+        if(error !== ''){
+            Swal.fire({
+                title: error,
+                icon: 'warning',
+                confirmButtonText: "Entendido",
+            })
+
+            return
+        }
+
+        var fetchResult = await FetchUSDValueOfDay(date)
+        if(typeof fetchResult !== "string"){
+            fixedRateDate = splits[2] + '/' + splits[1] + '/' + splits[0]
+            Swal.fire({
+                title: "¿Es esta la fecha correcta?",
+                icon:'question',
+                html: fixedRateDate,
+                showDenyButton: true,
+                confirmButtonText: "Sí",
+                denyButtonText: "No"
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    rateDate = date                    
+                    usdValue = parseFloat(fetchResult['data'])
+                    checkoutInputContainer.appendChild(CreateHiddenInput('date', rateDate))
+                    ShowProductSelecting()
+                }
+            });
+        }
+    }
 </script>

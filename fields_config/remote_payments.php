@@ -32,6 +32,12 @@ $remotePaymentFields = [
         'suspicious' => true,
     ],
     [
+        'name' => 'date',
+        'type' => 'date',
+        'required' => true,
+        'suspicious' => true,
+    ],
+    [
         'name' => 'payment_method',
         'type' => 'text',
         'max' => 11,

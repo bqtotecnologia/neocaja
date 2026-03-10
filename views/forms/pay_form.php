@@ -7,6 +7,7 @@ include_once '../../models/coin_model.php';
 $coin_model = new CoinModel();
 
 $latest = $coin_model->GetCoinByName('Dólar');
+
 $lastRateDate = new DateTime($latest['price_created_at'], new DateTimeZone('America/Caracas'));
 $today = new DateTime('now', new DateTimeZone('America/Caracas'));
 if($lastRateDate->format('Y-m-d') !== $today->format('Y-m-d')){
@@ -43,13 +44,69 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
 
 <main class="row col-12 m-0 p-0 justify-content-center align-items-start animated">
 
-    <section class="x_panel row m-0 p-0 col-12 text-center mb-3">
+    <section class="row m-0 p-0 col-12 text-center mb-5">
         <div class="col-12 m-0 p-2" >
-            <h1 class="h1">Registrar pago remoto</h1>
+            <h1 class="h1 text-black">Registro de pago remoto</h1>
         </div>
     </section>
 
-    <div class="x_panel row col-12 m-0 p-2 animated">
+    <div class="x_panel row col-12 m-0 p-2 align-items-center animated">
+        <section class="row col-12 m-0 p-2 align-items-center animated" id="date-container">
+            <div class="row col-12 m-0 p-0 mb-2 h5 align-items-center">
+                <label class="col-12 col-lg-6 text-center text-lg-right m-0 align-middle" for="pay-date">Fecha del pago</label>
+                <input class="col-12 col-lg-3 form-control h-auto" id="pay-date" name="pay-date" type="date" max="<?= date('Y-m-d') ?>">
+            </div>
+            <div class="row col-12 m-0 p-0 h5 align-items-center justify-content-center">
+                <button class="btn btn-success" onclick="CheckUSDRateOfDay()">Comprobar</button>
+            </div>
+        </section>
+
+        <section class="row col-12 col-lg-6 col-xl-8 m-0 p-1 justify-content-center align-items-start animated my-hidden" id="product-container">
+            <div class="col-12 text-center border border-black rounded">
+                <h3 class="h3 border-bottom mb-5">Seleccione los conceptos que desea pagar</h3>                
+
+                <div class="row m-0 p-0 my-3 col-12 justify-content-start align-items-start flex-wrap">
+                    <?php foreach($products as $product) { ?>
+                        <article class="row m-0 p-2 col-6 col-xl-3 align-self-stretch">
+                            <div class="w-100 border border-black rounded product-card cursor-pointer text-black p-1" id="<?= $product['code'] ?>" onclick="SelectProduct(this)">
+                                <h6 class="h5 fw-bold col-12 text-center p-0"><?= $product['name'] ?></h6>
+                                <p class="h5 fw-bold w-100 text-center m-0"><?= $product['price'] ?>$</p>
+                            </div>
+                        </article>
+                    <?php } ?>
+                </div>
+            </div>
+        </section>
+
+        <section class="row col-12 col-lg-6 col-xl-4 m-0 mt-4 mt-lg-0 p-1 justify-content-center align-items-start animated my-hidden" id="cart-container">
+            <div class="row col-12 justify-content-center align-items-start">
+                <table class="w-100 h6 text-black animated">
+                    <thead>
+                        <tr class="bg-theme text-white text-center fw-bold h5">
+                            <th class="p-1 py-2">Producto</th>
+                            <th class="p-1 py-2">Precio ($)</th>
+                            <th class="p-1 py-2">Total Bs.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-table">
+                    </tbody>
+                    <tfoot>                        
+                        <tr class="fw-bold text-right bg-theme text-white h5">
+                            <td class="p-1">Total:</td>
+                            <td class="p-1" id="total-usd">0</td>
+                            <td class="p-1" id="total-bs">0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <section class="row col-12 justify-content-center align-items-center pt-4 animated my-hidden" id="proceed-container">
+            <button class="btn btn-success m-0" onclick="ConfirmProceed()">
+                Proceder
+            </button>
+        </section>
+
         <section class="row col-12 m-0 p-1 justify-content-center align-items-start my-hidden" id="checkout-container">
             <div class="col-12 text-center">
                 <h1 class="col-12 h1">Resumen de transacción</h1>
@@ -152,51 +209,7 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
             </div>
         </section>
 
-        <section class="row col-12 col-lg-6 col-xl-8 m-0 p-1 justify-content-center align-items-start animated" id="product-container">
-            <div class="col-12 text-center border border-black rounded">
-                <h3 class="h3 border-bottom mb-5">Seleccione los conceptos que desea pagar</h3>                
 
-                <div class="row m-0 p-0 my-3 col-12 justify-content-start align-items-start flex-wrap">
-                    <?php foreach($products as $product) { ?>
-                        <article class="row m-0 p-2 col-6 col-xl-3 align-self-stretch">
-                            <div class="w-100 border border-black rounded product-card cursor-pointer text-black p-1" id="<?= $product['code'] ?>" onclick="SelectProduct(this)">
-                                <h6 class="h5 fw-bold col-12 text-center p-0"><?= $product['name'] ?></h6>
-                                <p class="h5 fw-bold w-100 text-center m-0"><?= $product['price'] ?>$</p>
-                            </div>
-                        </article>
-                    <?php } ?>
-                </div>
-            </div>
-        </section>
-
-        <section class="row col-12 col-lg-6 col-xl-4 m-0 mt-4 mt-lg-0 p-1 justify-content-center align-items-start animated" id="cart-container">
-            <div class="row col-12 justify-content-center align-items-start">
-                <table class="w-100 h6 text-black animated">
-                    <thead>
-                        <tr class="bg-theme text-white text-center fw-bold h5">
-                            <th class="p-1 py-2">Producto</th>
-                            <th class="p-1 py-2">Precio ($)</th>
-                            <th class="p-1 py-2">Total Bs.</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cart-table">
-                    </tbody>
-                    <tfoot>                        
-                        <tr class="fw-bold text-right bg-theme text-white h5">
-                            <td class="p-1">Total:</td>
-                            <td class="p-1" id="total-usd">0</td>
-                            <td class="p-1" id="total-bs">0</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </section>
-
-        <section class="row col-12 justify-content-center align-items-center pt-4 animated" id="proceed-container">
-            <button class="btn btn-success m-0" onclick="ConfirmProceed()">
-                Proceder
-            </button>
-        </section>
     </div>
 </main>
 

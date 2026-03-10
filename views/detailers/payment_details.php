@@ -173,7 +173,7 @@ include '../../views/common/header.php';
 
         <section class="col-11 col-xl-4 col-lg-5 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
             <?php if(file_exists('../../images/payments_captures/' . $target_payment['capture'])) { ?>
-                <img class="p-0 col-12 cursor-pointer" src="<?= $base_url ?>/images/payments_captures/<?= $target_payment['capture'] ?>" alt="Comprobante de pago" onclick="ZoomInImage(this)">
+                <img class="p-0 col-12 cursor-pointer" src="<?= $base_url ?>/images/payments_captures/<?= $target_payment['capture'] ?>" alt="Comprobante de pago" onclick="ZoomInImage(this.src)">
             <?php } else { ?>
                 <h3>Imagen <strong><?= $target_payment['capture'] ?></strong> no encontrada</h3>
             <?php } ?>

@@ -1,11 +1,10 @@
-<table class="table table-striped col-12 datatable-date-3-4">
+<table class="table table-striped col-12 datatable-date-3">
     <thead class="bg-theme text-white fw-bold h6">
         <tr>
             <th class="text-center">Nº</th>
             <th class="text-center">Nombre</th>
             <th class="text-center">Tasa más reciente</th>
             <th class="text-center">Fecha de la tasa</th>
-            <th class="text-center">Fecha de creación</th>
             <th class="text-center">Activo</th>
             <th class="text-center">Acción</th>
         </tr>
@@ -21,7 +20,6 @@
                 <td class="align-middle text-center"><?= $coin['name'] ?></td>
                 <td class="align-middle text-center"><?= $coin['price'] ?></td>
                 <td class="align-middle text-center"><?= $coin['price_created_at'] ?></td>
-                <td class="align-middle text-center"><?= $coin['coin_created_at'] ?></td>
                 <td class="align-middle text-center fw-bold text-<?= $coin['active'] ? 'success' : 'danger' ?>">
                     <?= $coin['active'] ? 'Sí' : 'No' ?>
                 </td>

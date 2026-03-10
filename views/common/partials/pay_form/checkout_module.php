@@ -88,6 +88,7 @@
 
     async function ConfirmRegisterPayment(){
         var message = "¿Los datos ingresados son correctos? <br>"
+        message += "Fecha: <strong>" + fixedRateDate + "</strong> <br>"
         message += "Cédula: <strong>" + cedulaInput.value + "</strong> <br>"
         message += "Número de referencia: <strong>" + refInput.value + "</strong> <br>"
         message += "Monto: <strong>" + priceInput.value + "</strong> <br>"
@@ -113,13 +114,7 @@
 
     function ProceedToPay(){
         proceedToPay = true
-        pageBody.scrollIntoView(true, { behavior: "instant", block:'center'});
-        productContainer.classList.add('disappear')
-        cartContainer.classList.add('disappear')
-        proceedContainer.classList.add('disappear')
-        checkoutContainer.classList.remove('my-hidden')
-        checkoutContainer.classList.add('appear')
-
+        ShowCheckout()
         FillCheckoutTable()
     }
 
