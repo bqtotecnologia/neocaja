@@ -56,15 +56,15 @@ include '../../views/common/header.php';
 
     <?php if($target_date !== false) { ?>
         <?php
-        include_once '../../models/account_payments_model.php';
+        include_once '../../models/remote_payments_model.php';
         include_once '../../utils/prettyCiphers.php';
-        $payment_model = new AccountPaymentsModel();
+        $payment_model = new RemotePaymentsModel();
         $payments = $payment_model->GetPaymentsOfDate($target_date->format('Y-m-d'));
         ?>
         <div class="col-12 row justify-content-center px-4">
             <div class="col-12 row justify-content-center x_panel">
                 <div class="table-responsive">
-                    <?php include '../common/tables/account_payments_table.php'; ?>
+                    <?php include '../common/tables/remote_payments_table.php'; ?>
                 </div>
             </div>
         </div>

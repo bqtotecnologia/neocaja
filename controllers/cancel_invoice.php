@@ -33,17 +33,17 @@ if($error === ''){
 
 // Revirtiendo los pagos remotos de la factura
 if($error === ''){
-    include_once '../models/account_payments_model.php';
-    $account_payments_model = new AccountPaymentsModel();
+    include_once '../models/remote_payments_model.php';
+    $remote_payments_model = new RemotePaymentsModel();
 
-    $incomes = $account_payments_model->GetIncomesOfInvoice($target_invoice['id']);
+    $incomes = $remote_payments_model->GetIncomesOfInvoice($target_invoice['id']);
     foreach($incomes as $income){
         $data = [
             'related_with' => 'client',
             'related_id' => $target_invoice['account_id'],
             'state' => 'Por revisar'
         ];
-        $account_payments_model->SimpleUpdate('account_payments', $data, $income['id']);
+        $remote_payments_model->SimpleUpdate('remote_payments', $data, $income['id']);
     }
 }
 

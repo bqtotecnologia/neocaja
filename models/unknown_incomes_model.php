@@ -18,7 +18,8 @@ class UnknownIncomesModel extends SQLModel
         FROM 
         unknown_incomes_generations 
         INNER JOIN unknown_incomes ON unknown_incomes.generation = unknown_incomes_generations.id
-        LEFT JOIN accounts ON accounts.id = unknown_incomes.account ";
+        LEFT JOIN remote_payments ON remote_payments.id = unknown_incomes.remote_payment
+        LEFT JOIN accounts ON accounts.id = remote_payments.account ";
 
     public $GENERATION_SELECT_TEMPLATE = "SELECT
         unknown_incomes_generations.id,

@@ -150,15 +150,23 @@ td, th {
 }
 
 .revisar{
+    color: #5c5c5c !important;
+}
+
+.Conciliado{
     color: #1386d3 !important;
 }
 
-.Aprobado{
+.Facturado{
     color:#50d33e !important;
 }
 
 .Rechazado{
     color:#ff0000 !important;
+}
+
+.payment-capture{
+    max-height: 600px;
 }
 
 .bg-notification{

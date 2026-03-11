@@ -179,8 +179,8 @@ if($error === ''){
 $created = false;
 if($error === ''){
     // Registramos el pago
-    include_once '../models/account_payments_model.php';
-    $payments_model = new AccountPaymentsModel();
+    include_once '../models/remote_payments_model.php';
+    $payments_model = new RemotePaymentsModel();
     $insertData = [
         'related_id' => $target_account['id'],
         'related_with' => 'client',

@@ -165,7 +165,12 @@ function ExportToPDF(){
   }
 
   function ZoomInImage(src){
-    html = '<img src="' + src + '" class="col-12 p-0">'
+    targetSrc = src
+
+    if(typeof src === 'object')
+      targetSrc = src.src
+
+    html = '<img src="' + targetSrc + '" class="col-12 p-0">'
     
     Swal.fire({
         width:800,

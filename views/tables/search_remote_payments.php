@@ -3,8 +3,8 @@ $admitted_user_types = ['Cajero', 'Super', 'SENIAT'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/Validator.php';
 
-include_once '../../models/account_payments_model.php';
-$payment_model = new AccountPaymentsModel();
+include_once '../../models/remote_payments_model.php';
+$payment_model = new RemotePaymentsModel();
 
 $error = '';
 if(isset($_GET['state'])){
@@ -37,7 +37,7 @@ include '../../views/common/header.php';
         <div class="col-12 row justify-content-center x_panel">            
             <?php $btn_url = "$base_url/views/panel.php"; include_once '../layouts/backButton.php'; ?>
             <div class="table-responsive">
-                <?php include '../common/tables/account_payments_table.php';  ?>
+                <?php include '../common/tables/remote_payments_table.php';  ?>
             </div>
         </div>
     </div>

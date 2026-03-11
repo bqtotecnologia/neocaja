@@ -25,13 +25,13 @@ include_once '../../models/product_model.php';
 include_once '../../models/siacad_model.php';
 include_once '../../models/invoice_model.php';
 include_once '../../models/global_vars_model.php';
-include_once '../../models/account_payments_model.php';
+include_once '../../models/remote_payments_model.php';
 
 $account_model = new AccountModel();
 $bank_model = new BankModel();
 $sale_point_model = new SalePointModel();
 $payment_method_model = new PaymentMethodModel();
-$account_payments_model = new AccountPaymentsModel();
+$remote_payments_model = new RemotePaymentsModel();
 $product_model = new ProductModel();
 $siacad = new SiacadModel();
 $invoice_model = new InvoiceModel();
@@ -48,7 +48,7 @@ $global_vars = $global_vars_model->GetGlobalVars(true);
 
 $period = $siacad->GetCurrentPeriodo();
 $periodId = $period['idperiodo'];
-$payments = $account_payments_model->GetAccountPaymentsBetweenDatesWihtoutInvoice($period['fechainicio'], $period['fechafin']);
+$payments = $remote_payments_model->GetAccountPaymentsBetweenDatesWihtoutInvoice($period['fechainicio'], $period['fechafin']);
 
 $latest = $invoice_model->GetLatestNumbers();
 

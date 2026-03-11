@@ -11,13 +11,13 @@ if(is_string($id)){
     $error = $id;    
 }
 
-include_once '../../models/account_payments_model.php';
+include_once '../../models/remote_payments_model.php';
 include_once '../../models/account_model.php';
 include_once '../../models/product_model.php';
 include_once '../../models/coin_model.php';
 include_once '../../models/unknown_incomes_model.php';
 
-$payment_model = new AccountPaymentsModel();
+$payment_model = new RemotePaymentsModel();
 $account_model = new AccountModel();
 $siacad = new ProductModel();
 $coin_model = new CoinModel();
@@ -173,7 +173,7 @@ include '../../views/common/header.php';
 
         <section class="col-11 col-xl-4 col-lg-5 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
             <?php if(file_exists('../../images/payments_captures/' . $target_payment['capture'])) { ?>
-                <img class="p-0 col-12 cursor-pointer" src="<?= $base_url ?>/images/payments_captures/<?= $target_payment['capture'] ?>" alt="Comprobante de pago" onclick="ZoomInImage(this.src)">
+                <img class="p-0 col-12 cursor-pointer" src="<?= $base_url ?>/images/payments_captures/<?= $target_payment['capture'] ?>" alt="Comprobante de pago" onclick="ZoomInImage(this)">
             <?php } else { ?>
                 <h3>Imagen <strong><?= $target_payment['capture'] ?></strong> no encontrada</h3>
             <?php } ?>
@@ -221,7 +221,7 @@ include '../../views/common/header.php';
     </div>
 
     <?php if(!in_array($_SESSION['neocaja_rol'], ['Estudiante', 'SENIAT'])) { ?>
-        <form class="col-12 row m-0 p-0 confirm-form" method="POST" action="<?=$base_url?>/controllers/update_account_payment.php">
+        <form class="col-12 row m-0 p-0 confirm-form" method="POST" action="<?=$base_url?>/controllers/update_remote_payment.php">
             <section class="col-10 col-lg-6 row justify-content-center h6 bg-white py-2" style="border: 1px solid #d6d6d6ff !important">
                 <div class="row col-12 justify-content-center my-5 confirm-form" >
                     <input type="hidden" name="id" value="<?= $target_payment['id'] ?>">

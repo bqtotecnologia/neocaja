@@ -61,10 +61,10 @@ if($error === ''){
 }
 
 if($error === '' && $_POST['known-income'] !== ''){
-    include_once '../models/account_payments_model.php';
-    $account_payments_model = new AccountPaymentsModel();
+    include_once '../models/remote_payments_model.php';
+    $remote_payments_model = new RemotePaymentsModel();
 
-    $target_payment = $account_payments_model->GetAccountPayment($cleanData['known-income']);
+    $target_payment = $remote_payments_model->GetAccountPayment($cleanData['known-income']);
     if($target_payment === false)
         $error = 'El ingreso identificado seleccionado no pudo ser encontrado';
 }
@@ -407,7 +407,7 @@ if($error === '' && $_POST['known-income'] !== ''){
         'related_with' => 'invoice',
         'related_id' => $target_invoice['id']
     ];
-    $account_payments_model->SimpleUpdate('account_payments', $data, $target_payment['id']);
+    $remote_payments_model->SimpleUpdate('remote_payments', $data, $target_payment['id']);
 }
 
 

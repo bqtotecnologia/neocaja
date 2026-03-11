@@ -6,8 +6,8 @@ include_once '../../utils/prettyCiphers.php';
 
 include '../../views/common/header.php';
 
-include_once '../../models/account_payments_model.php';
-$payment_model = new AccountPaymentsModel();
+include_once '../../models/remote_payments_model.php';
+$payment_model = new RemotePaymentsModel();
 $payments = $payment_model->GetPaymentsOfAccount($_SESSION['neocaja_cedula']);
 
 ?>
@@ -21,7 +21,7 @@ $payments = $payment_model->GetPaymentsOfAccount($_SESSION['neocaja_cedula']);
         <div class="col-12 row justify-content-center x_panel">            
             <?php $btn_url = $base_url . '/views/panel.php'; include_once '../layouts/backButton.php'; ?>
             <div class="table-responsive">
-                <?php include '../common/tables/account_payments_table.php';  ?>
+                <?php include '../common/tables/remote_payments_table.php';  ?>
             </div>
         </div>
     </div>

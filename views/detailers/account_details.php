@@ -26,13 +26,13 @@ if($error !== ''){
 
 include_once '../../models/invoice_model.php';
 include_once '../../models/siacad_model.php';
-include_once '../../models/account_payments_model.php';
+include_once '../../models/remote_payments_model.php';
 include_once '../../models/product_model.php';
 include_once '../../models/coin_model.php';
 
 $invoice_model = new InvoiceModel();
 $siacad = new SiacadModel();
-$payment_model = new AccountPaymentsModel();
+$payment_model = new RemotePaymentsModel();
 $product_model = new ProductModel();
 $coin_model = new CoinModel();
 
@@ -234,7 +234,7 @@ include '../../views/common/header.php';
 
             <div class="row col-12 justify-content-center">
                 <div class="table-responsive">
-                    <?php include_once '../common/tables/account_payments_table.php'; ?>
+                    <?php include_once '../common/tables/remote_payments_table.php'; ?>
                 </div>
             </div>
         </section>

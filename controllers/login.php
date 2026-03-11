@@ -75,9 +75,6 @@ if($error === ''){
     }
 }
 
-// TODO: CREAR LO DE LÍMITE DE INTENTOS
-// TODO: MIGRAR LOS MODELOS NORMALES A LOS .EXAMPLE
-
 if($error === ''){
     // Login exitoso
     $names = explode(' ', $target_user['nombrecompleto']);

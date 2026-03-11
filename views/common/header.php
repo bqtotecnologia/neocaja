@@ -104,7 +104,7 @@
                         <ul class="nav child_menu">
                           <li><a href="<?= $base_url ?>/views/tables/search_remote_payments.php?state=Por revisar">Por revisar</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_remote_payments.php?state=Conciliado">Conciliados</a></li>
-                          <li><a href="<?= $base_url ?>/views/tables/search_remote_payments.php?state=Facturado">Aprobados</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_remote_payments.php?state=Facturado">Facturado</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_remote_payments.php?state=Rechazado">Rechazados</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_remote_payments_by_date.php">Por fecha</a></li>
                         </ul>
@@ -261,9 +261,8 @@
 
                 <li class="nav-item dropdown open" style="padding-left: 15px;">
                   <a href="javascript:;" class="user-profile dropdown-toggle h6" aria-haspopup="true" id="navbarDropdown" data-toggle="dropdown" aria-expanded="false"
-                  style="text-transform:uppercase"
                   >
-                    Bienvenido(a) <?= $_SESSION['neocaja_name'] . ' ' . $_SESSION['neocaja_surname'] ?>
+                    Bienvenido(a) <?= $_SESSION['neocaja_name'] ?>
                   </a>
                   <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item"  href="<?= $base_url ?>/controllers/logout.php"> Cerrar sesión</a>

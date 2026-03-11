@@ -48,7 +48,7 @@
     }
 
     async function GetAccountPayment(id){
-        var url = '<?= $base_url ?>/api/get_account_payment.php?id=' + id
+        var url = '<?= $base_url ?>/api/get_remote_payment.php?id=' + id
         var fetchConfig = {
             method: 'GET', 
             headers: {

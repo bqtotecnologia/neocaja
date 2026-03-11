@@ -21,16 +21,16 @@ if($error === ''){
 }
 
 if($error === ''){
-    include_once '../models/account_payments_model.php';
-    $account_payments_model = new AccountPaymentsModel();
-    $target_payment = $account_payments_model->GetAccountPayment($id);
+    include_once '../models/remote_payments_model.php';
+    $remote_payments_model = new RemotePaymentsModel();
+    $target_payment = $remote_payments_model->GetAccountPayment($id);
     if($target_payment === false)
         $error = 'Pago remoto no encontrado';
 }
 
 if($error === ''){
-    $products = $account_payments_model->GetProductsOfPayment($id);
-    $payment_method = $account_payments_model->GetPaymentMethodOfPayment($target_payment);
+    $products = $remote_payments_model->GetProductsOfPayment($id);
+    $payment_method = $remote_payments_model->GetPaymentMethodOfPayment($target_payment);
     $response = [
         'status' => true,
         'data' => [
