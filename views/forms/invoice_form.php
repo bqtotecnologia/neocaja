@@ -201,6 +201,16 @@ $latest = $invoice_model->GetLatestNumbers();
                                     </select>
                                 </div>
                             </div>
+
+                            <div class=" row col-12 col-md-9 m-0 p-0 justify-content-center justify-content-md-start ">                           
+                                <div class="row m-0 p-0 col-12 justify-content-center my-2">
+                                    <a class="d-none" target="_blank" id="remote-payment-link">
+                                        <button class="btn btn-info" type="button">
+                                            Ver pago remoto
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
                         </div>                        
                     </div>
                 </div>
@@ -276,7 +286,7 @@ $latest = $invoice_model->GetLatestNumbers();
                         <tbody id="product-table">
                         </tbody>
                         <tr>
-                            <td class="text-right h5 fw-bold p-1" colspan="2">Total</td>
+                            <td class="text-right align-middle h5 fw-bold p-1 bg-theme text-white" colspan="2">Total</td>
                             <td class="text-center fw-bold h4 p-1" id="products-total"></td>
                             <td class="text-center fw-bold h4 p-1" id="products-total-bs"></td>
                     </table>
@@ -313,8 +323,8 @@ $latest = $invoice_model->GetLatestNumbers();
                             <td class="text-right h5 fw-bold p-1" colspan="6">Total</td>
                             <td class="text-center fw-bold h4 p-1" id="payment-total"></td>
                         </tr>
-                        <tr class="bg-light">
-                            <td class="text-right h5 fw-bold p-1" colspan="6">Diferencia</td>
+                        <tr>
+                            <td class="bg-theme text-white text-right h5 fw-bold p-1" colspan="6">Diferencia</td>
                             <td class="text-center fw-bold h4 p-1" id="payment-diff"></td>
                             <td class="text-center fw-bold h4 p-1" id="payment-diff-usd"></td>
                         </tr>

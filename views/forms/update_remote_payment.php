@@ -73,20 +73,20 @@ include '../../views/common/header.php';
         <section class="x_panel d-flex row mb-3 col-12 justify-content-center text-center">
             <div class="col-12 col-lg-4 p-2">
                 <label class="col-12 fw-bold align-middle m-0">Cliente</label>
-                <label class="col-12 cursor-pointer align-middle" onclick="CopyToClipboard(this)" title="Click para copiar en el portapapeles">
+                <label class="cursor-pointer align-middle" onclick="CopyToClipboard(this)" title="Click para copiar en el portapapeles">
                     <?= $target_account['names'] . ' ' . $target_account['surnames'] ?>
                 </label>
             </div>
             <div class="col-12 col-lg-4 p-2">
                 <label class="col-12 fw-bold align-middle m-0">Cédula</label>
-                <label class="col-12 cursor-pointer align-middle" onclick="CopyToClipboard(this)" title="Click para copiar en el portapapeles">
+                <label class="cursor-pointer align-middle" onclick="CopyToClipboard(this)" title="Click para copiar en el portapapeles">
                     <?= $target_account['cedula'] ?>
                 </label>
             </div>
             <div class="col-12 col-lg-4 p-2">
                 <label class="col-12 fw-bold align-middle m-0">Becado</label>
-                <label class="col-12 align-middle fw-bold text-<?= $target_account['scholarship_coverage'] === NULL ? 'danger' : 'success' ?>">
-                    <?= $target_account['scholarship_coverage'] === NULL ? 'NO' : ($target_account['scholarship_coverage'] . '%') ?>
+                <label class="align-middle fw-bold text-<?= $target_account['scholarship_coverage'] === NULL ? 'danger' : 'success' ?>">
+                    <?= $target_account['scholarship_coverage'] === NULL ? 'NO' : ($target_account['scholarship'] . ' ' . $target_account['scholarship_coverage'] . '%') ?>
                 </label>
             </div>
         </section>
@@ -98,26 +98,91 @@ include '../../views/common/header.php';
 
                 <div class="row col-12 m-0 p-0 align-items-center justify-content-center my-2 my-lg-1 px-3 px-lg-0">
                     <label class="fw-bold col-12 col-lg-4 text-center text-lg-right align-middle m-0" for="ref">Referencia</label>
-                    <input onclick="ClickingPaymentInput('ref')" class="form-control col-10 col-lg-6" name="ref" id="ref" type="text" value="<?= $target_payment['ref'] ?>" readonly>
+                    <input onclick="ClickingPaymentInput('ref')" class="cursor-pointer form-control col-10 col-lg-6" name="ref" id="ref" type="text" value="<?= $target_payment['ref'] ?>" readonly>
                     <i onclick="ToggleInput('ref')" class="col-1 fa fa-pencil"></i>
                 </div>
 
                 <div class="row col-12 m-0 p-0 align-items-center justify-content-center my-2 my-lg-1 px-3 px-lg-0">
                     <label class="fw-bold col-12 col-lg-4 text-center text-lg-right align-middle m-0" for="ref">Cédula / Rif</label>
-                    <input onclick="ClickingPaymentInput('document')" class="form-control col-10 col-lg-6" name="document" id="document" type="text" value="<?= $target_payment['document'] ?>" readonly>
+                    <input onclick="ClickingPaymentInput('document')" class="cursor-pointer form-control col-10 col-lg-6" name="document" id="document" type="text" value="<?= $target_payment['document'] ?>" readonly>
                     <i onclick="ToggleInput('document')" class="col-1 fa fa-pencil"></i>
                 </div>
 
                 <div class="row col-12 m-0 p-0 align-items-center justify-content-center my-2 my-lg-1 px-3 px-lg-0">
                     <label class="fw-bold col-12 col-lg-4 text-center text-lg-right align-middle m-0" for="ref">Fecha</label>
-                    <input onclick="ClickingPaymentInput('date')" class="form-control col-10 col-lg-6" name="date" id="date" type="date" value="<?= $target_payment['date'] ?>" readonly>
+                    <input onclick="ClickingPaymentInput('date')" class="cursor-pointer form-control col-10 col-lg-6" name="date" id="date" type="date" value="<?= $target_payment['date'] ?>" readonly>
                     <i onclick="ToggleInput('date')" class="col-1 fa fa-pencil"></i>
                 </div>
 
                 <div class="row col-12 m-0 p-0 align-items-center justify-content-center my-2 my-lg-1 px-3 px-lg-0">
                     <label class="fw-bold col-12 col-lg-4 text-center text-lg-right align-middle m-0" for="ref">Monto</label>
-                    <input onclick="ClickingPaymentInput('price')" class="form-control col-10 col-lg-6" name="price" id="price" type="number" value="<?= $target_payment['price'] ?>" readonly>
+                    <input onclick="ClickingPaymentInput('price')" class="cursor-pointer form-control col-10 col-lg-6" name="price" id="price" type="number" value="<?= $target_payment['price'] ?>" readonly>
                     <i onclick="ToggleInput('price')" class="col-1 fa fa-pencil"></i>
+                </div>
+
+                <div class="row col-12 m-0 p-0 align-items-center justify-content-center my-2 my-lg-1 px-3 px-lg-0">
+                    <label class="fw-bold col-12 col-lg-4 text-center text-lg-right align-middle m-0">Estado</label>
+                    <label class="fw-bold col-10 col-lg-6 text-center text-lg-left align-middle m-0 p-0 <?= $target_payment['state'] ?>">
+                        <?= $target_payment['state'] ?>
+                    </label>
+                    <i class="col-1"></i>
+                </div>
+
+                <div class="row col-12 m-0 p-0 align-items-start justify-content-center my-2 my-lg-1 px-3 px-lg-0">
+                    <label class="fw-bold col-12 col-lg-4 text-center text-lg-right align-start m-0">Método de pago</label>
+                    <label class="col-10 col-lg-6 text-center text-lg-left align-middle m-0 p-0 border border-black p-1">
+                        <?php 
+                            if($target_payment['payment_method_type'] === 'mobile_payment')
+                                echo 'Pago móvil';
+                            else if($target_payment['payment_method_type'] === 'transfer')
+                                echo 'Transferencia';
+                        ?>
+
+                        <br>
+                        <label class="m-0 p-0 cursor-pointer" onclick="CopyToClipboard(this)" title="Click para copiar en el portapapeles">
+                            <?= $payment_method['bank'] ?>
+                        </label>
+                        <br>
+                        <label class="m-0 p-0 cursor-pointer" onclick="CopyToClipboard(this)" title="Click para copiar en el portapapeles">
+                            <?= $payment_method['document_letter'] . '-' . $payment_method['document_number'] ?>
+                        </label>                        
+                        <br>
+                        
+                        <label class="m-0 p-0 cursor-pointer" onclick="CopyToClipboard(this)" title="Click para copiar en el portapapeles">
+                            <?php
+                                if($target_payment['payment_method_type'] === 'mobile_payment') { 
+                                    echo $payment_method['phone'];
+                                }    
+                                else if($target_payment['payment_method_type'] === 'transfer')
+                                    echo $payment_method['account_number'];
+                            ?>
+                        </label>
+                    </label>
+                    <i class="col-1"></i>
+                </div>
+
+                <div class="row col-12 m-0 p-0 align-items-center justify-content-center my-2 my-lg-1 px-3 px-lg-0">
+                    <label class="fw-bold col-12 col-lg-4 text-center text-lg-right align-middle m-0"></label>
+                    <label class="fw-bold col-10 col-lg-6 text-center text-lg-left align-middle m-0 p-0">
+                        
+                    </label>
+                    <i class="col-1"></i>
+                </div>
+
+                <div class="row col-12 m-0 p-0 align-items-center justify-content-center my-2 my-lg-1 px-3 px-lg-0">
+                    <label class="fw-bold col-12 col-lg-4 text-center text-lg-right align-middle m-0">Registrado el</label>
+                    <label class="col-10 col-lg-6 text-center text-lg-left align-middle m-0 p-0">
+                        <?= date('d/m/Y H:i:s', strtotime($target_payment['created_at'])); ?>
+                    </label>
+                    <i class="col-1"></i>
+                </div>
+
+                <div class="row col-12 m-0 p-0 align-items-center justify-content-center my-2 my-lg-1 px-3 px-lg-0">
+                    <label class="fw-bold col-12 col-lg-4 text-center text-lg-right align-middle m-0">Respuesta</label>
+                    <label class="col-10 col-lg-6 text-center text-lg-left align-middle m-0 p-0">
+                        <?= $target_payment['response'] ?>
+                    </label>
+                    <i class="col-1"></i>
                 </div>
 
                 <div class="row col-12 m-0 p-0 align-items-center justify-content-center mt-5">
@@ -137,7 +202,7 @@ include '../../views/common/header.php';
         </section>
 
 
-        <section class="x_panel d-flex row m-0 p-0 col-12 col-lg-4 justify-content-center text-center p-2">
+        <section class="x_panel d-flex row m-0 p-0 col-12 col-lg-4 justify-content-center align-items-start text-center p-2">
             <div class="col-12 row m-0 p-0 justify-content-center mt-3">
                 <h3>Coincidencias por fecha y referencia</h3>
             </div>
@@ -157,9 +222,7 @@ include '../../views/common/header.php';
                             </tr>
                         </table>
                     </div>
-                    <script>
-                        SelectUnknownPayment('r-0')
-
+                    <script>                       
                         function SelectUnknownPayment(inputId){
                             const tables = document.getElementsByClassName('coincidence-table')
                             for(let i = 0; i < tables.length; i++){
@@ -172,6 +235,11 @@ include '../../views/common/header.php';
                         } 
                     </script>
                     <?php foreach($coincidences as $coincidence) { ?>
+                        <?php 
+                            $matchs = intval($coincidence['remote_payment']) === intval($target_payment['id']);
+                            if($matchs)
+                                $payment_identified = true;
+                        ?>
                         <div class="col-12 row m-0 p-0 my-2">
                             <table class="table table-bordered shadowed coincidence-table h6" id="coincidence-<?= $coincidence['id'] ?>">
                                 <tr>
@@ -188,15 +256,15 @@ include '../../views/common/header.php';
                                 </tr>
                                 <tr>
                                     <td class="bg-theme text-white fw-bold align-middle col-3 border-black">Propietario</td>
-                                    <td class="border-black">
-                                        <?php 
-                                        if($coincidence['account_id'] === null){
-                                            echo '<span class="text-danger">Sin identificar</span>';
-                                        }
-                                        else{
-                                            echo $coincidence['surnames'] . ' ' . $coincidence['names'] . ' (' . $coincidence['cedula'] .  ')';
-                                        }
-                                        ?>
+                                    <td class="border-black fw-bold">
+                                        <?php if($coincidence['remote_payment'] === null){ ?>
+                                            <span class="text-danger">Sin identificar</span>
+                                        <?php } else { ?>
+                                            <a target="_blank" class="text-decoration-underline text-black" href=" <?= $base_url ?>/views/forms/update_remote_payment.php?id=<?= $coincidence['remote_payment'] ?>">
+                                                <?= $coincidence['surnames'] . ' ' . $coincidence['names'] . ' (' . $coincidence['cedula'] .  ')' ?>
+                                                <i class="fa fa-reply"></i>
+                                            </a>
+                                        <?php } ?>
                                     </td>
                                 </tr>
                                 <tr>
@@ -208,20 +276,21 @@ include '../../views/common/header.php';
                                         <label class="m-0 p-0" style="padding-right:10px !important" for="r-<?= $coincidence['id'] ?>">Seleccionar</label>
                                     </td>
                                     <td class="border-black">
-                                        <input 
-                                        style="transform:scale(1.4)"
-                                        type="radio" 
-                                        name="unknown-income" 
-                                        id="r-<?= $coincidence['id'] ?>" 
-                                        value="<?= $coincidence['id'] ?>" 
-                                        <?php 
-                                        $matchs = $coincidence['account_id'] === $target_payment['account_id'];
-                                        if($matchs)
-                                            $payment_identified = true;
-                                        ?>
-                                        <?= $matchs ? 'checked' : '' ?>   
-                                        onchange="SelectUnknownPayment(this.id)"
-                                        >
+                                        <?php if($matchs === true || $coincidence['remote_payment'] === null) { // No está identificado y además no coincide ?>
+                                            <input 
+                                                style="transform:scale(1.4)"
+                                                type="radio" 
+                                                name="unknown-income" 
+                                                id="r-<?= $coincidence['id'] ?>" 
+                                                value="<?= $coincidence['id'] ?>" 
+                                                <?= $matchs ? 'checked' : '' ?>   
+                                                onchange="SelectUnknownPayment(this.id)"
+                                            >
+                                        <?php } else { ?>
+                                            <span class="fw-bold m-0 text-center text-danger">
+                                                YA ESTÁ IDENTIFICADO
+                                            </span>
+                                        <?php } ?>
                                     </td>
                                     <?php if($matchs) { ?>
                                         <script>
@@ -315,6 +384,12 @@ include '../../views/common/header.php';
     <?php } ?>
 </div>
 
+<?php if($payment_identified === false) { ?>
+<script>
+    SelectUnknownPayment('r-0')
+</script>
+<?php } ?>
+
 
 <?php include '../common/footer.php'; ?>
 
@@ -337,6 +412,11 @@ include '../../views/common/header.php';
     function ToggleInput(id){
         const input = document.getElementById(id)
         input.readOnly = !input.readOnly
+
+        if(input.classList.contains('cursor-pointer'))
+            input.classList.remove('cursor-pointer')
+        else
+            input.classList.add('cursor-pointer')
     }
 
     function ClickingPaymentInput(id){

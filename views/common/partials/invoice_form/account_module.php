@@ -16,7 +16,6 @@
 
         if(!error){
             var accountButton = document.getElementById('account-link')
-            accountButton.classList.add('d-none')
             debtContainer.classList.add('d-none')
             accountButton.classList.remove('d-none')
             accountButton.href  = '<?= $base_url ?>' + '/views/detailers/account_details.php?id=' + targetAccount.id
@@ -46,6 +45,11 @@
         target_payment = found.data
         $('#account').val(target_payment.payment.account_id).trigger('change')
 
+        var remotePaymentLink = document.getElementById('remote-payment-link')
+        debtContainer.classList.add('d-none')
+        remotePaymentLink.classList.remove('d-none')
+        remotePaymentLink.href  = '<?= $base_url ?>' + '/views/forms/update_remote_payment.php?id=' + target_payment.payment.id
+
         rateDate.value = target_payment.payment.date
         rateDate.dispatchEvent(new Event('change'))
         await new Promise(r => setTimeout(r, 500))
@@ -66,16 +70,19 @@
                 }
                 var monthNumber = GetMonthNumberByName(month)
                 
+                
                 if(product.product.includes('con mora')){
                     ChangeProduct(nextProduct - 1, productIds['Diferencia Mensualidad']) 
                     ChangeMonth(nextProduct - 1, monthNumber)
+                    console.log(debtData.data)
+                    console.log(month)
                     ChangeProductPrice(nextProduct - 1, debtData.data.retard.detail[month])
                     AddProduct()
 
                     if(product.product.includes('Restante'))
                         productName = 'Saldo Mensualidad'
-                        else
-                    productName = 'Mensualidad'
+                    else
+                        productName = 'Mensualidad'
                 }
                 else if(product.product.includes('Restante')){
                     ChangeProduct(nextProduct - 1, productIds['Saldo Mensualidad']) 
@@ -93,8 +100,7 @@
                     productPrice = productPrices['Mensualidad']
                     if(scholarshipped)
                         productPrice = productPrice - (productPrice * (targetAccount.scholarship_coverage / 100))
-                }
-                
+                }                
             }                
 
             if(monthNumber !== '')

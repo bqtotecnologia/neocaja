@@ -88,6 +88,11 @@ if($error === ''){
     }
 }
 
+if($error === '' && isset($target_income)){
+    if(intval($target_income['remote_payment']) !== intval($target_payment['id']) && $target_income['remote_payment'] !== null)
+        $error = 'El ingreso no identificado seleccionado ya pertenece a un pago remoto';
+}
+
 if($error === ''){    
     $updated = $payments_model->ProcessPayment($id, $cleanData);
     if($updated === false)
@@ -95,14 +100,16 @@ if($error === ''){
 }
 
 
-
 if($error === ''){   
-    if(isset($income_id))
-        $data = ['account' => $target_payment['account_id']];
-    else
-        $data = ['account' => NULL];
-
-    $unknown_model->SimpleUpdate('unknown_incomes', $data, $target_income['id']);
+    if(isset($income_id)){
+        // Se recibió un ingreso desconocido y se vincula con el pago remoto
+        $data = ['remote_payment' => $target_payment['id']];
+        $unknown_model->SimpleUpdate('unknown_incomes', $data, $target_income['id']);
+    }
+    else{
+        // No se recibió un ingreso desconocido, de haber estado vinculado con alguno, se desvincula
+        $unknown_model->UnlinkFromRemotePayment($target_payment['id']);
+    }       
 }
 
 if($error === ''){

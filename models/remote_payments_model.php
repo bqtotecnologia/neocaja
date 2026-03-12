@@ -69,7 +69,7 @@ class RemotePaymentsModel extends SQLModel
         $sql = $this->SELECT_TEMPLATE . " WHERE 
             DATE(remote_payments.created_at) BETWEEN '$start_date' AND '$end_date' 
             AND            
-            remote_payments.state = 'Aprobado' AND
+            remote_payments.state = 'Conciliado' AND
             remote_payments.related_with != 'invoice'
             GROUP BY remote_payments.id";
         return parent::GetRows($sql, true);

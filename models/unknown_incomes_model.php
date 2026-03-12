@@ -11,15 +11,33 @@ class UnknownIncomesModel extends SQLModel
         unknown_incomes.price,
         unknown_incomes.ref,
         unknown_incomes.description,
-        accounts.names,
-        accounts.surnames,
-        accounts.cedula,
-        accounts.id as account_id
+        unknown_incomes.remote_payment,
+        polymorph.names,
+        polymorph.surnames,
+        polymorph.cedula,
+        polymorph.account_id
         FROM 
         unknown_incomes_generations 
         INNER JOIN unknown_incomes ON unknown_incomes.generation = unknown_incomes_generations.id
-        LEFT JOIN remote_payments ON remote_payments.id = unknown_incomes.remote_payment
-        LEFT JOIN accounts ON accounts.id = remote_payments.account ";
+        LEFT JOIN remote_payments ON remote_payments.id = unknown_incomes.remote_payment       
+        LEFT JOIN
+        (
+            SELECT 
+            accounts.names,
+            accounts.surnames,
+            accounts.cedula,
+            accounts.id as account_id,
+            invoices.id as invoice_id
+            FROM
+            accounts
+            LEFT JOIN invoices ON invoices.account = accounts.id
+        )
+        as polymorph ON
+        (polymorph.account_id = remote_payments.related_id AND remote_payments.related_with = 'client') 
+        OR
+        (polymorph.invoice_id = remote_payments.related_id AND remote_payments.related_with = 'invoice') 
+        -- Here yo need to place GROUP BY unknown_incomes.id before writting a WHERE statement       
+        ";
 
     public $GENERATION_SELECT_TEMPLATE = "SELECT
         unknown_incomes_generations.id,
@@ -70,7 +88,12 @@ class UnknownIncomesModel extends SQLModel
     }
 
     public function GetUnknownIncomesByDateAndReference($date, $ref){
-        $sql = $this->INCOME_SELECT_TEMPLATE . " WHERE DATE(unknown_incomes.date) = DATE('$date') AND unknown_incomes.ref LIKE '%$ref%'";
+        $sql = $this->INCOME_SELECT_TEMPLATE . " WHERE 
+            DATE(unknown_incomes.date) = DATE('$date') AND 
+            unknown_incomes.ref LIKE '%$ref%' 
+            GROUP BY 
+            unknown_incomes.id";
+
         return parent::GetRows($sql, true);
     }
 
@@ -108,6 +131,11 @@ class UnknownIncomesModel extends SQLModel
             $sql .= ' AND unknown_incomes.account IS NULL';
 
         return parent::GetRows($sql, true);
+    }
+
+    public function UnlinkFromRemotePayment($id){
+        $sql = "UPDATE unknown_incomes SET remote_payment = NULL WHERE remote_payment = $id";
+        return parent::DoQuery($sql);
     }
 
     public function DeleteIncomesGeneration($id){

@@ -232,7 +232,7 @@
         basePriceInput.type = 'text'                
         basePriceInput.classList.add('form-control')
         basePriceCol.appendChild(basePriceInput)
-        basePriceInput.addEventListener('change', function(e){ UpdateProductsPrice() })
+        basePriceInput.addEventListener('keyup', function(e){ UpdateProductsPrice() })
         return basePriceCol
     }
 
@@ -559,7 +559,7 @@
         priceInput.name = name
         priceInput.classList.add('form-control')
         priceCol.appendChild(priceInput)
-        priceInput.addEventListener('change', function(e){ UpdatePaymentPrice(paymentId); UpdatePaymentTotal(); })
+        priceInput.addEventListener('keyup', function(e){ UpdatePaymentPrice(paymentId); UpdatePaymentTotal(); })
         return priceCol
     }
 
