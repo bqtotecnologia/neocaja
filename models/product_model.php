@@ -116,6 +116,7 @@ class ProductModel extends SQLModel
         $account_model = new AccountModel();
 
         $period_id = $period['idperiodo'];
+        $periodName = $period['nombreperiodo'];
           
         $monthly = $this->GetProductByName('Mensualidad');
         $monthlyPrice = floatval($monthly['price']);
@@ -132,9 +133,9 @@ class ProductModel extends SQLModel
         $nonPaid = [];
         if($invoice_model->AccountPaidFOCOnPeriod($cedula, $period_id) === false){
             $to_add = [
-                'name' => 'FOC' . $period['nombreperiodo'],
+                'name' => $periodName . ' FOC',
                 'price' => floatval($foc['price']),
-                'code' => sha1($cedula . 'F'),
+                'code' => sha1($periodName . $cedula . 'F'),
                 'month' => null,
             ];
             array_push($nonPaid, $to_add);
@@ -149,8 +150,8 @@ class ProductModel extends SQLModel
             $monthNumber = intval($this->GetMonthNumberByName($month));
 
             $to_add = [
-                'name' => 'Mensualidad ' . $month,
-                'code' => $cedula . 'M' . $monthNumber,
+                'name' => $periodName . ' Mensualidad ' . $month,
+                'code' => $periodName . $cedula . 'M' . $monthNumber,
                 'month' => $monthNumber,
             ];
 
@@ -171,7 +172,7 @@ class ProductModel extends SQLModel
             $to_add['price'] = $monthFinalPrice;
             $to_add['code'] = sha1($to_add['code']);
 
-            $to_add['name'] .= ' ' . $period['nombreperiodo'];
+            //$to_add['name'] .= ' ' . $periodName;
             
             array_push($nonPaid, $to_add);
         }

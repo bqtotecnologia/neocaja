@@ -22,10 +22,10 @@ class FormBuilder
     const TITLE_CLASS = "h1 text-black";
 
     // Inputs
-    const FIELD_CONTAINER_CLASS = " row col-12 col-md-8 my-2 justify-content-start ";
-    const LABEL_CONTAINER_CLASS = " row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-4 ";
+    const FIELD_CONTAINER_CLASS = " row col-12 col-lg-8 my-2 justify-content-start ";
+    const LABEL_CONTAINER_CLASS = " row m-0 p-0 align-items-center justify-content-center justify-content-lg-end col-12 col-lg-4 ";
     const LABEL_CLASS = " h6 m-0 fw-bold px-2 ";
-    const INPUT_CONTAINER_CLASS = " row col-12 col-md-8 m-0 p-0 justify-content-center justify-content-md-start ";
+    const INPUT_CONTAINER_CLASS = " row col-12 col-lg-8 m-0 p-0 justify-content-center justify-content-lg-start ";
     const INPUT_CLASS = " form-control ";
     const MULTI_INPUT_CONTAINER_CLASS = "row col-12 m-0 p-0 mx-2";
     const MULTI_LABEL_CLASS = " text-left mx-2 h6 ";
@@ -41,6 +41,7 @@ class FormBuilder
         'checkbox' => ' flat ',
         'radio' => ' flat  ',
         'date' => '',
+        'password' => '',
     ];
 
     public function __construct(
@@ -102,7 +103,7 @@ class FormBuilder
                         else
                             $name = 'name="' . $field['name'] . '" ';
 
-                        if(in_array($field['type'], ['integer', 'decimal', 'text', 'date'])){
+                        if(in_array($field['type'], ['integer', 'decimal', 'text', 'date', 'password'])){
                             $input = '<input ' . $id . $name . $class . $placeholder . $required . ' value="' . $field['value'] . '" ';
                             if($field['type'] === 'integer')
                                 $input .= ' type="number" ';
@@ -120,7 +121,7 @@ class FormBuilder
                             echo $input;
                         }
                         else if($field['type'] === 'textarea'){
-                            $textarea = '<textarea ' . $id . $name . $class . $required . ' rows="3" columns="50" value="' . $field['value'] . '"';
+                            $textarea = '<textarea ' . $id . $name . $class . $placeholder . $required . ' rows="3" columns="50" value="' . $field['value'] . '"';
                             $textarea .= $this->GetHTMLProperties($field);                           
 
                             echo $textarea . '>' . $field['value'] . '</textarea> ';
@@ -160,7 +161,7 @@ class FormBuilder
             echo '</div>';
 
             echo '<div class="row col-12 m-0 p-0 justify-content-center">';
-                echo '<button type="submit" class="btn btn-success">';
+                echo '<button type="submit" class="btn btn-success form-builder-submit">';
                     echo $this->submitText;
                 echo '</button>';
             echo '</div>';

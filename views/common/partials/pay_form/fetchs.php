@@ -1,9 +1,8 @@
 <script>
     async function GetRealProducts(codes){
-        var url = '<?= $base_url ?>/api/get_products_of_account_by_code.php'
+        var url = '<?= $base_url ?>/api/get_products_of_account_by_codes.php'
 
         const dataToSend = {
-            'period': '<?= $current_period['idperiodo'] ?>',
             'cedula': '<?= $_SESSION['neocaja_cedula'] ?>',
             'codes': codes
         }

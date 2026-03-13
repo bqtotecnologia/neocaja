@@ -287,6 +287,13 @@ class InvoiceModel extends SQLModel
         $periodMonths = $siacad->GerMonthsOfPeriodo($periodId, true);
         $global_vars = $global_model->GetGlobalVars(true);
 
+        $previousPeriod = false;
+        $current_period = $siacad->GetCurrentPeriodo();
+        $recieved_period = $siacad->GetPeriodoById($periodId);
+        if(intval($recieved_period['ordenperiodo']) < intval($current_period['ordenperiodo']))
+            $previousPeriod = true;
+        
+
         $sql = "SELECT
             products.name as product,
             concepts.price,
@@ -384,7 +391,10 @@ class InvoiceModel extends SQLModel
                             $result[$key]['debt'] = 1;
                         }
                     }
-                }                
+                }   
+                
+                if($previousPeriod)
+                    $result[$key]['debt'] = 1;
     
                 if(array_key_exists('Abono Mensualidad', $value['concepts'])){
                     // Abonó al mes

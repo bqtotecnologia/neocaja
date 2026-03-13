@@ -19,7 +19,6 @@ if($error === ''){
 if($error === ''){
     if(
         !isset($post['cedula']) || 
-        !isset($post['period']) ||
         !isset($post['codes'])
     ){
         $error = 'Campos necesarios no recibidos';
@@ -33,14 +32,6 @@ if($error === ''){
         $error = 'Cédula inválida';
     else
         $cedula = $post['cedula'];
-}
-
-if($error === ''){    
-    $period = Validator::HasSuspiciousCharacters($post['period']);
-    if($period === true)
-        $error = 'Periodo inválido';
-    else
-        $period = $post['period'];
 }
 
 if($error === ''){
@@ -71,16 +62,18 @@ if($error === ''){
 if($error === ''){
     include_once '../models/product_model.php';
     $product_model = new ProductModel();
-    $products = $product_model->GetAvailableProductsOfStudentByPeriod($cedula, $period);
-    if($products === false)
+    $periodProducts = $product_model->GetAvailableProductsOfStudentByPeriod($cedula);
+    if($products === [])
         $error = 'Ocurrió un error al intentar obtener los productos disponibles';
 }
 
 if($error === ''){
     $result = [];
-    foreach($products as $product){
-        if(in_array($product['code'], $post['codes']))
-            array_push($result, $product);
+    foreach($periodProducts as $period => $products){
+        foreach($products as $product){
+            if(in_array($product['code'], $post['codes']))
+                array_push($result, $product);
+        }
     }
 
     if(count($result) === 0)
