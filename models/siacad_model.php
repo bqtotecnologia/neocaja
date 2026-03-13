@@ -23,6 +23,29 @@ class SiacadModel extends PGSQLModel
         return parent::GetRow($sql);
     }
 
+    public function GetPeriods(){
+        return parent::GetRows("SELECT * FROM periodos WHERE nombreperiodo LIKE '%-%' ORDER BY idperiodo DESC", true);
+    }
+
+    public function GetPeriodsOfStudent($cedula){
+        $sql = "SELECT
+            periodos.idperiodo,
+            periodos.nombreperiodo
+            FROM 
+            participantes
+            INNER JOIN participantescarreras ON participantescarreras.cedula = participantes.cedula
+            INNER JOIN matriculas ON matriculas.idparticipantescarrera = participantescarreras.idparticipantescarrera
+            INNER JOIN periodos ON periodos.idperiodo = matriculas.idperiodo
+            WHERE
+            participantes.cedula = '$cedula'
+            GROUP BY
+            periodos.idperiodo
+            ORDER BY
+            periodos.idperiodo DESC";
+
+        return parent::GetRows($sql);
+    }
+
     public function GetPeriodoById($id){
         $sql = "SELECT * FROM periodos WHERE idperiodo=$id";
         return parent::GetRow($sql);

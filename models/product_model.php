@@ -85,18 +85,38 @@ class ProductModel extends SQLModel
     }
 
     /**
-     * Retorna los productos que el estudiante ve al momento de pagar
+     * Retorna los productos que el estudiante aún no ha pagado, los retorna por periodos
     */
-    public function GetAvailableProductsOfStudent($cedula, $period){
-        include_once 'invoice_model.php';
+    public function GetAvailableProductsOfStudentByPeriod($cedula){
+        include_once 'siacad_model.php';
         include_once 'global_vars_model.php';
+
+        $siacad = new SiacadModel();
+        $global_vars_model = new GlobalVarsModel();
+
+        $global_vars = $global_vars_model->GetGlobalVars(true);      
+        $periods = $siacad->GetPeriodsOfStudent($cedula);
+        $result = [];
+
+        foreach($periods as $period){
+            $products = $this->GetAvailableProductsOfStudent($cedula, $period, $global_vars);
+
+            if($products !== [])
+                $result[$period['nombreperiodo']] = $products;
+        }
+
+        return $result;
+    }
+
+    public function GetAvailableProductsOfStudent($cedula, $period, $global_vars){
+        include_once 'invoice_model.php';
         include_once 'account_model.php';
 
         $invoice_model = new InvoiceModel();
-        $global_vars_model = new GlobalVarsModel();
         $account_model = new AccountModel();
 
-        $global_vars = $global_vars_model->GetGlobalVars(true);        
+        $period_id = $period['idperiodo'];
+          
         $monthly = $this->GetProductByName('Mensualidad');
         $monthlyPrice = floatval($monthly['price']);
         $foc = $this->GetProductByName('FOC');
@@ -105,15 +125,14 @@ class ProductModel extends SQLModel
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
         if($scholarshipped){
             $monthlyPrice = $monthlyPrice - ($monthlyPrice * (floatval($target_account['scholarship_coverage']) / 100));
-
         }             
         
-        $monthStates = $invoice_model->GetAccountState($cedula, $period);
+        $monthStates = $invoice_model->GetAccountState($cedula, $period_id);
         
         $nonPaid = [];
-        if($invoice_model->AccountPaidFOCOnPeriod($cedula, $period) === false){
+        if($invoice_model->AccountPaidFOCOnPeriod($cedula, $period_id) === false){
             $to_add = [
-                'name' => 'FOC',
+                'name' => 'FOC' . $period['nombreperiodo'],
                 'price' => floatval($foc['price']),
                 'code' => sha1($cedula . 'F'),
                 'month' => null,
@@ -136,7 +155,7 @@ class ProductModel extends SQLModel
             ];
 
             if($value['partial'] === 1){                
-                $remaining = $invoice_model->GetRemainingPriceOfMonthOfStudent($monthNumber, $cedula, $period);
+                $remaining = $invoice_model->GetRemainingPriceOfMonthOfStudent($monthNumber, $cedula, $period_id);
                 $to_add['name'] = 'Restante ' . $to_add['name'];
                 $monthFinalPrice -= $remaining;
                 $to_add['code'] .= 'P';
@@ -151,6 +170,8 @@ class ProductModel extends SQLModel
             
             $to_add['price'] = $monthFinalPrice;
             $to_add['code'] = sha1($to_add['code']);
+
+            $to_add['name'] .= ' ' . $period['nombreperiodo'];
             
             array_push($nonPaid, $to_add);
         }

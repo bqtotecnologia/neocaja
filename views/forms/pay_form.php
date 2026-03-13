@@ -31,10 +31,8 @@ $global_vars_model = new GlobalVarsModel();
 $transfers_model = new TransfersModel();
 $mobile_payments_model = new MobilePaymentsModel();
 
-$current_period = $siacad->GetCurrentPeriodo();
-
 $usdValue = $coin_model->GetCoinByName('Dólar');
-$products = $product_model->GetAvailableProductsOfStudent($_SESSION['neocaja_cedula'], $current_period['idperiodo']);
+$periodProducts = $product_model->GetAvailableProductsOfStudentByPeriod($_SESSION['neocaja_cedula']);
     
 $global_vars = $global_vars_model->GetGlobalVars(true);
 $transfers = $transfers_model->GetActiveTransfers();
@@ -62,20 +60,28 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
         </section>
 
         <section class="row col-12 col-lg-6 col-xl-8 m-0 p-1 justify-content-center align-items-start animated my-hidden" id="product-container">
-            <div class="col-12 text-center border border-black rounded">
+            <div class="col-12 text-center">
                 <h3 class="h3 border-bottom mb-5">Seleccione los conceptos que desea pagar</h3>                
+            </div>
 
-                <div class="row m-0 p-0 my-3 col-12 justify-content-start align-items-start flex-wrap">
-                    <?php foreach($products as $product) { ?>
-                        <article class="row m-0 p-2 col-6 col-xl-3 align-self-stretch">
-                            <div class="w-100 border border-black rounded product-card cursor-pointer text-black p-1" id="<?= $product['code'] ?>" onclick="SelectProduct(this)">
-                                <h6 class="h5 fw-bold col-12 text-center p-0"><?= $product['name'] ?></h6>
-                                <p class="h5 fw-bold w-100 text-center m-0"><?= $product['price'] ?>$</p>
-                            </div>
-                        </article>
+            <?php foreach($periodProducts as $period => $products) { ?>                    
+                <div class="col-12 text-center border border-black rounded">
+                    <div class="row col-12 m-0 p-0 text-center">
+                        <h3 class="h3 col-12"><?= $period ?></h3>
+                    </div>
+
+                    <?php foreach($products as $product) { ?>     
+                        <div class="row m-0 p-0 my-3 col-12 justify-content-start align-items-start flex-wrap">
+                            <article class="row m-0 p-2 col-6 col-xl-3 align-self-stretch">
+                                <div class="w-100 border border-black rounded product-card cursor-pointer text-black p-1" id="<?= $product['code'] ?>" onclick="SelectProduct(this)">
+                                    <h6 class="h5 fw-bold col-12 text-center p-0"><?= $product['name'] ?></h6>
+                                    <p class="h5 fw-bold w-100 text-center m-0"><?= $product['price'] ?>$</p>
+                                </div>
+                            </article>
+                        </div>
                     <?php } ?>
                 </div>
-            </div>
+            <?php } ?>
         </section>
 
         <section class="row col-12 col-lg-6 col-xl-4 m-0 mt-4 mt-lg-0 p-1 justify-content-center align-items-start animated my-hidden" id="cart-container">
@@ -215,11 +221,11 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
 
 <?php include_once '../common/footer.php'; ?>
 
+<?php include_once '../common/partials/pay_form/fetchs.php'; ?>
 <?php include_once '../common/partials/pay_form/initializations.php'; ?>
 <?php include_once '../common/partials/pay_form/utils_functions.php'; ?>
 
 <?php include_once '../common/partials/pay_form/element_builder.php'; ?>
-<?php include_once '../common/partials/pay_form/fetchs.php'; ?>
 <?php include_once '../common/partials/pay_form/product_module.php'; ?>
 <?php include_once '../common/partials/pay_form/checkout_module.php'; ?>
 

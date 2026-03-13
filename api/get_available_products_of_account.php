@@ -52,7 +52,7 @@ if($error === ''){
 if($error === ''){
     include_once '../models/product_model.php';
     $product_model = new ProductModel();
-    $prducts = $product_model->GetAvailableProductsOfStudent($cedula, $periodId);
+    $prducts = $product_model->GetAvailableProductsOfStudentByPeriod($cedula, $periodId);
     if($prducts === false)
         $error = 'Ocurrió un error al intentar obtener los productos disponibles';
 }

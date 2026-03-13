@@ -45,6 +45,7 @@ $coins = $coin_model->GetActiveCoins();
 $coinHistories = $coin_model->GetOrderedCoinHistories();
 $products = $product_model->GetActiveProducts();
 $global_vars = $global_vars_model->GetGlobalVars(true);
+$periods = $siacad->GetPeriods();
 
 $period = $siacad->GetCurrentPeriodo();
 $periodId = $period['idperiodo'];
