@@ -48,7 +48,7 @@
 
         var vesTotal = (usdTotal * usdValue).toFixed(2)
 
-        totalUSDLabel.innerHTML = usdTotal
+        totalUSDLabel.innerHTML = GetPrettyCiphers(usdTotal)
         totalVESLabel.innerHTML = GetPrettyCiphers(vesTotal)
     }
 

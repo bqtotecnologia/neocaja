@@ -3,18 +3,6 @@ $admitted_user_types = ['Estudiante'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/Auth.php';
 
-include_once '../../models/coin_model.php';
-$coin_model = new CoinModel();
-
-$latest = $coin_model->GetCoinByName('Dólar');
-
-$lastRateDate = new DateTime($latest['price_created_at'], new DateTimeZone('America/Caracas'));
-$today = new DateTime('now', new DateTimeZone('America/Caracas'));
-if($lastRateDate->format('Y-m-d') !== $today->format('Y-m-d')){
-    header("Location: $base_url/views/panel.php?error=La tasa del dólar no ha sido actualizada todavia. Intentelo más tarde");
-    exit;
-}
-
 include_once '../common/header.php';
 
 include_once '../../models/product_model.php';
@@ -23,6 +11,7 @@ include_once '../../models/shop_model.php';
 include_once '../../models/global_vars_model.php';
 include_once '../../models/transfers_model.php';
 include_once '../../models/mobile_payments_model.php';
+include_once '../../models/coin_model.php';
 
 $product_model = new ProductModel();
 $siacad = new SiacadModel();
@@ -30,9 +19,20 @@ $shop_model = new ShopModel();
 $global_vars_model = new GlobalVarsModel();
 $transfers_model = new TransfersModel();
 $mobile_payments_model = new MobilePaymentsModel();
+$coin_model = new CoinModel();
 
 $usdValue = $coin_model->GetCoinByName('Dólar');
 $periodProducts = $product_model->GetAvailableProductsOfStudentByPeriod($_SESSION['neocaja_cedula']);
+
+$periodNames = '';
+
+foreach($periodProducts as $period => $products){
+    $periodNames .= "'" . $period . "', ";
+}
+
+$periodNames = trim($periodNames, ', ');
+
+$periods = $siacad->GetPeriodsByNames($periodNames);
     
 $global_vars = $global_vars_model->GetGlobalVars(true);
 $transfers = $transfers_model->GetActiveTransfers();
@@ -59,23 +59,23 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
             </div>
         </section>
 
-        <section class="row col-12 col-lg-6 col-xl-8 m-0 p-1 justify-content-center align-items-start animated my-hidden2" id="product-container">
+        <section class="row col-12 col-lg-6 col-xl-8 m-0 p-1 justify-content-center align-items-start animated my-hidden" id="product-container">
             <div class="col-12 text-center">
-                <h3 class="h3 border-bottom mb-5">Seleccione los conceptos que desea pagar</h3>                
+                <h2 class="h2 mb-3 w-auto">Seleccione los conceptos que desea pagar</h2>
             </div>
 
             <?php foreach($periodProducts as $period => $products) { ?>                    
                 <div class="col-12 text-center border border-black rounded my-4 shadowed bg-light">
                     <div class="row col-12 m-0 p-0 text-center">
-                        <h3 class="h3 col-12 fw-bold">Periodo <?= $period ?></h3>
+                        <h3 class="h3 col-12 fw-bold text-decoration-underline">Periodo <?= $period ?></h3>
                     </div>
 
                     <div class="row m-0 p-0 my-3 col-12 justify-content-start align-items-start flex-wrap">
                         <?php foreach($products as $product) { ?>     
-                            <article class="row m-0 p-2 col-6 col-xl-3 align-self-stretch">
-                                <div class="w-100 border border-black rounded product-card cursor-pointer text-black p-1" id="<?= $product['code'] ?>" onclick="SelectProduct(this)">
+                            <article class="row m-0 p-2 col-6 col-xl-3 h-auto align-self-stretch">
+                                <div class="row col-12 p-1 border border-black rounded product-card cursor-pointer text-black align-items-center justify-content-center" id="<?= $product['code'] ?>" onclick="SelectProduct(this)">
                                     <h6 class="h5 fw-bold col-12 text-center p-0"><?= $product['name'] ?></h6>
-                                    <p class="h5 fw-bold w-100 text-center m-0"><?= $product['price'] ?>$</p>
+                                    <p class="h5 fw-bold col-12 text-center m-0"><?= $product['price'] ?>$</p>
                                 </div>
                             </article>
                         <?php } ?>
@@ -113,7 +113,7 @@ $mobile_payments = $mobile_payments_model->GetActiveMobilePayments();
             </button>
         </section>
 
-        <section class="row col-12 m-0 p-1 justify-content-center align-items-start my-hidden" id="checkout-container">
+        <section class="row col-12 m-0 p-1 justify-content-center align-items-start my-hidden mb-5" id="checkout-container">
             <div class="col-12 text-center">
                 <h1 class="col-12 h1">Resumen de transacción</h1>
             </div>

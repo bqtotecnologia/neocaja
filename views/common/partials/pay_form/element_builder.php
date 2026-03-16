@@ -12,7 +12,7 @@
         productRow.id = 'cart-' + product.code
 
         var nameCol = BuildProductNameColumn(product.name)
-        var priceCol = BuildProductPriceColumn(product.price)
+        var priceCol = BuildProductPriceColumn(GetPrettyCiphers(product.price))
         var total = (product.price * usdValue).toFixed(2)
         var totalCol = BuildProductTotalColumn(total)
 

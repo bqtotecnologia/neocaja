@@ -66,6 +66,15 @@ class SiacadModel extends PGSQLModel
     }
 
     /**
+     * Recibe un string con una serie de nombres de periodos entre comillas y separados por comas
+     * Los ordena por ordenperiodo
+     */
+    public function GetPeriodsByNames($names){
+        $sql = "SELECT * FROM periodos WHERE nombreperiodo IN ($names) ORDER BY ordenperiodo ASC";
+        return parent::GetRows($sql, true);
+    }
+
+    /**
      * Retorna una lista con los números de los meses que conforman el periodo
      * Si recibe $names = true retorna la lista de meses pero con los nombres en vez de los números
      */

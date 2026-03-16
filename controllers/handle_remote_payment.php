@@ -41,16 +41,18 @@ if($error === ''){
     $product_model = new ProductModel();
     $siacad = new SiacadModel();
     $period = $siacad->GetCurrentPeriodo()['idperiodo'];
-    $products = $product_model->GetAvailableProductsOfStudentByPeriod($target_account['cedula'], $period);
-    if($products === false)
+    $periodProducts = $product_model->GetAvailableProductsOfStudentByPeriod($target_account['cedula'], $period);
+    if($periodProducts === false)
         $error = 'Ocurrió un error al intentar obtener los productos disponibles';
 }
 
 if($error === ''){
     $final_products = [];
-    foreach($products as $product){
-        if(in_array($product['code'], $_POST['codes']))
-            array_push($final_products, $product);
+    foreach($periodProducts as $period => $products){
+        foreach($products as $product){
+            if(in_array($product['code'], $_POST['codes']))
+                array_push($final_products, $product);
+        }
     }
 
     $productCounts = count($final_products);
@@ -108,53 +110,84 @@ if($error === ''){
             $error = 'Cuenta de transferencia seleccionada no encontrada';
     }
 }
-
+$focCount = 0;
 if($error === ''){
-    // Verificamos si seleccionó FOC
-    $hasFOC = false;    
-    $youngestPayableMonth = null;
-    $product_total = 0;
+    // Comprovamos si seleccionó FOC
+    $hasFOC = false;
 
-    foreach($final_products as $product){
-        if($product['name'] === 'FOC'){
-            $hasFOC = true;
-        }
-        else if($youngestPayableMonth === null)
-            $youngestPayableMonth = $product['month'];
 
-        $product_total += $product['price'];
-    }
-
-    // Validamos que haya escogido meses consecutivos empezando por el primero
-    $nextMonth = intval($youngestPayableMonth);
-    $consecutiveMonths = 0;
-    $cyclesMade = -1;    
-
-    while(true){
-        $cyclesMade++;
-        foreach($final_products as $product){
-            if(intval($product['month']) === $nextMonth && $product['name'] !== 'FOC'){
-                $nextMonth++;
-                if($nextMonth === 13)
-                    $nextMonth = 1;
-                
-                $consecutiveMonths++;
-                break;
+    foreach($periodProducts as $period => $products){
+        foreach($products as $product){
+            if(strpos($product['name'], 'FOC') !== false){
+                $focCount += 1;
             }
         }
-
-        if($cyclesMade > $productCounts)
-            break;
     }
 
-    if($hasFOC){
-            if($productCounts !== $consecutiveMonths + 1)
-                $error = 'Debes seleccionar meses consecutivos y empezar por el primero';
+    $consecutiveMonths = 0;
+    // Por cada uno de los periodos, validamos que haya escogido meses consecutivos empezando por el primero
+    periodList.forEach((period) => {
+        nextMonth = parseInt(youngestPayableMonths[period.name])
+        cyclesMade = -1
+        while(true){
+            cyclesMade++
+            for(let i = 0; i < selectedProducts.length; i++){
+                product = selectedProducts[i]
+                if(
+                    product.period !== period.name ||
+                    product.name.includes('FOC')
+                )
+                    continue;
+
+                if(parseInt(product.month) === nextMonth){
+                    nextMonth++
+                    if(nextMonth === 13)
+                        nextMonth = 1
+                    
+                    consecutiveMonths++
+                    break
+                }
+            }
+
+            if(cyclesMade > selectedProducts.length)
+                break;
+        }               
+    })   
+
+    if(selectedProducts.length !== consecutiveMonths + $focCount)
+            error = 'Debes seleccionar meses consecutivos y empezar por el primero'
+}
+
+// Validar que haya pagado por completo un periodo anterior para intentar pagar el siguiente
+if($error === ''){
+    selectedProductsCount = {}
+    // Contamos los productos seleccionado de cada periodo  
+    selectedProducts.forEach((product) => {
+        if(selectedProductsCount[product.period] === undefined)
+            selectedProductsCount[product.period] = 0
+
+        selectedProductsCount[product.period]++
+    })
+
+    // Los comparamos con el total de productos de cada periodo por orden
+    canPayNextPeriod = true
+    for(let i = 0; i < periodList.length; i++){
+        period = periodList[i].name
+
+        if(canPayNextPeriod === false && selectedProductsCount[period] > 0){
+            error = 'Debes pagar por completo un periodo anterior para empezar a pagar el siguiente.'
+            break
         }
-        else{
-            if($productCounts !== $consecutiveMonths)
-                $error = 'Debes seleccionar meses consecutivos y empezar por el primero';
+
+        if(periodProductsCount[period] === selectedProductsCount[period])
+            continue
+        
+        if(selectedProductsCount[period] < periodProductsCount[period]){
+            if(canPayNextPeriod)
+                canPayNextPeriod = false
+            continue
         }
+    }
 }
 
 if($error === ''){

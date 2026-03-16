@@ -120,12 +120,20 @@ td, th {
 }
 
 .product-card{
-    background-color: #c8dcfa;
-    transition:0.15s;
+    background-color: #c8d8fa;
+    transition:0.3s;
+}
+
+.product-card:hover{
+    background-color: #e6f0ff;
 }
 
 .product-selected{
-    background-color: #72c558;
+    background-color: #8ae66e;
+}
+
+.product-selected:hover{
+    background-color: #b8fca4;
 }
 
 .cart-product{

@@ -39,28 +39,56 @@
     let fixedRateDate = null
     let selectedProducts = []
     let productList = []
+    let periodList = []
+    let periodProductsCount = {}
     let proceedToPay = false
-    let youngestPayableMonth = null
+
+    let youngestPayableMonths = {}
+    let youngestPayablePeriod = null
 
     methodTypeSelect.addEventListener('change', function(e) { SelectPaymentMethodType(e.target.value) })
     methodSelect.addEventListener('change', function(e) { SelectPaymentMethod(e.target.value, methodTypeSelect.value) })
     captureInput.addEventListener('change', function(e) { DisplayLoadedImage() })
 </script>
 
-
-<?php foreach($products as $product) { ?>
-    <script>        
-        var product = {
-            'name': '<?= $product['name'] ?>',
-            'price': parseFloat('<?= $product['price'] ?>'),
-            'code': '<?= $product['code'] ?>',
-            'month': '<?= $product['month'] ?>'
+<?php foreach($periods as $period) { ?>
+    <script>
+        var period = {
+            'id': '<?= $period['idperiodo'] ?>',
+            'name': '<?= $period['nombreperiodo'] ?>',
+            'order': '<?= $period['ordenperiodo'] ?>',
         }
-        productList.push(product)
+        periodList.push(period)
 
-        if(youngestPayableMonth === null && product.name !== 'FOC')
-            youngestPayableMonth = product.month
+        if(youngestPayablePeriod === null)
+            youngestPayablePeriod = period
     </script>
+<?php } ?>
+
+
+
+<?php foreach($periodProducts as $period => $products) { ?>
+    <?php foreach($products as $product) { ?>
+        <script>        
+            var product = {
+                'name': '<?= $product['name'] ?>',
+                'price': parseFloat('<?= $product['price'] ?>'),
+                'code': '<?= $product['code'] ?>',
+                'month': '<?= $product['month'] ?>',
+                'period': '<?= $period ?>'
+            }
+            productList.push(product)
+
+            if(periodProductsCount[product.period] === undefined)
+                periodProductsCount[product.period] = 0
+
+            periodProductsCount[product.period]++
+
+            if(product.name.includes('FOC') === false && youngestPayableMonths[product.period] === undefined)
+                youngestPayableMonths[product.period] = product.month
+            
+        </script>
+    <?php } ?>    
 <?php } ?>
 
 <?php foreach($mobile_payments as $mobile_payment) { ?>

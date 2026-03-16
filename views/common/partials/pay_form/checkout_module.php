@@ -5,46 +5,80 @@
             error = 'Debe seleccinar al menos un producto para proceder'            
         }
 
+        var focCount = 0
         if(error === ''){
             // Comprovamos si seleccionó FOC
             var hasFOC = false
             for(let i = 0; i < selectedProducts.length; i++){
                 var product = selectedProducts[i]
-                if(product.name === 'FOC'){
-                    hasFOC = true
+                if(product.name.includes('FOC')){
+                    focCount++
+                }
+            }    
+
+            var consecutiveMonths = 0
+            // Por cada uno de los periodos, validamos que haya escogido meses consecutivos empezando por el primero
+            periodList.forEach((period) => {
+                nextMonth = parseInt(youngestPayableMonths[period.name])
+                cyclesMade = -1
+                while(true){
+                    cyclesMade++
+                    for(let i = 0; i < selectedProducts.length; i++){
+                        var product = selectedProducts[i]
+                        if(
+                            product.period !== period.name ||
+                            product.name.includes('FOC')
+                        )
+                            continue;
+
+                        if(parseInt(product.month) === nextMonth){
+                            nextMonth++
+                            if(nextMonth === 13)
+                                nextMonth = 1
+                            
+                            consecutiveMonths++
+                            break
+                        }
+                    }
+        
+                    if(cyclesMade > selectedProducts.length)
+                        break;
+                }               
+            })   
+
+            if(selectedProducts.length !== consecutiveMonths + focCount)
+                    error = 'Debes seleccionar meses consecutivos y empezar por el primero'
+        }
+
+        // Validar que haya pagado por completo un periodo anterior para intentar pagar el siguiente
+        if(error === ''){
+            var selectedProductsCount = {}
+            // Contamos los productos seleccionado de cada periodo  
+            selectedProducts.forEach((product) => {
+                if(selectedProductsCount[product.period] === undefined)
+                    selectedProductsCount[product.period] = 0
+
+                selectedProductsCount[product.period]++
+            })
+
+            // Los comparamos con el total de productos de cada periodo por orden
+            var canPayNextPeriod = true
+            for(let i = 0; i < periodList.length; i++){
+                var period = periodList[i].name
+
+                if(canPayNextPeriod === false && selectedProductsCount[period] > 0){
+                    error = 'Debes pagar por completo un periodo anterior para empezar a pagar el siguiente.'
                     break
                 }
-            }
-    
-            // Validamos que haya escogido meses consecutivos empezando por el primero
-            var nextMonth = parseInt(youngestPayableMonth)
-            var consecutiveMonths = 0
-            var cyclesMade = -1
-            while(true){
-                cyclesMade++
-                for(let i = 0; i < selectedProducts.length; i++){
-                    var product = selectedProducts[i]
-                    if(parseInt(product.month) === nextMonth && product.name !== 'FOC'){
-                        nextMonth++
-                        if(nextMonth === 13)
-                            nextMonth = 1
-                        
-                        consecutiveMonths++
-                        break
-                    }
+
+                if(periodProductsCount[period] === selectedProductsCount[period])
+                    continue
+                
+                if(selectedProductsCount[period] < periodProductsCount[period]){
+                    if(canPayNextPeriod)
+                        canPayNextPeriod = false
+                    continue
                 }
-    
-                if(cyclesMade > selectedProducts.length)
-                    break;
-            }
-    
-            if(hasFOC){
-                if(selectedProducts.length !== consecutiveMonths + 1)
-                    error = 'Debes seleccionar meses consecutivos y empezar por el primero'
-            }
-            else{
-                if(selectedProducts.length !== consecutiveMonths)
-                    error = 'Debes seleccionar meses consecutivos y empezar por el primero'
             }
         }
 
