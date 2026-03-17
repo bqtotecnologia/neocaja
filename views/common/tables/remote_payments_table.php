@@ -41,7 +41,15 @@
                 <td class="align-middle text-center">
                     <div class="row justify-content-around">
                         <div class="col text-center">
-                            <a href="<?= $base_url ?>/views/forms/update_remote_payment.php?id=<?= $payment['id'] ?>" class="btn btn-success" title="Ver">
+                            <?php 
+                                if(in_array($_SESSION['neocaja_rol'], ['Cajero', 'Super'])) {
+                                    $url = $base_url . '/views/forms/update_remote_payment.php'; 
+                                }  
+                                else{
+                                    $url = $base_url . '/views/detailers/payment_details.php'; 
+                                }
+                            ?>
+                            <a href="<?= $url ?>?id=<?= $payment['id'] ?>" class="btn btn-success" title="Ver">
                                 <i class="fa fa-search"></i>
                             </a>
                         </div>

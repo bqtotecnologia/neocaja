@@ -40,7 +40,7 @@ if($error === ''){
 }
 
 if($error === ''){
-    $usd_value = $coin_model->GetCoinPriceOfDate($usd['id'], $post['date']);
+    $usd_value = $coin_model->GetCoinPriceOfDateById($usd['id'], $post['date']);
     if($usd_value === false)
         $error = 'No hay una tasa registrada para la fecha seleccionada. De haber realizado el pago el ' . $target_date->format('d/m/Y') . ' acuda al instituto para procesar el pago manualmente.';
 }

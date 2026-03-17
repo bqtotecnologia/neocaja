@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Cajero', 'Super', 'Estudiante', 'SENIAT'];
+$admitted_user_types = ['Cajero', 'Super'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/Validator.php';
 include_once '../../utils/prettyCiphers.php';
@@ -337,11 +337,13 @@ include '../../views/common/header.php';
                                     <td class="align-middle text-right" id="<?= $product['product'] ?>">Bs. <?= GetPrettyCiphers(round($total, 2)) ?> </td>
                                 </tr>
                             <?php } ?>
+                        </tbody>
+                        <tfoot>
                             <tr class="fw-bold text-right bg-theme text-white h5">
                                 <td class="align-middle" colspan="3">Total</td>
                                 <td>Bs. <?= GetPrettyCiphers(round($products_total, 2)) ?></td>
                             </tr>
-                        </tbody>
+                        </tfoot>
                     </table>
                 </div>
             </div>

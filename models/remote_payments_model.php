@@ -65,10 +65,8 @@ class RemotePaymentsModel extends SQLModel
         return parent::GetRows($sql, true);
     }
 
-    public function GetAccountPaymentsBetweenDatesWihtoutInvoice($start_date, $end_date){
-        $sql = $this->SELECT_TEMPLATE . " WHERE 
-            DATE(remote_payments.created_at) BETWEEN '$start_date' AND '$end_date' 
-            AND            
+    public function GetAccountPaymentsWihtoutInvoice(){
+        $sql = $this->SELECT_TEMPLATE . " WHERE
             remote_payments.state = 'Conciliado' AND
             remote_payments.related_with != 'invoice'
             GROUP BY remote_payments.id";
@@ -102,12 +100,13 @@ class RemotePaymentsModel extends SQLModel
     public function AddProductToPayment($product, $payment){
         $name = $product['name'];
         $price = $product['price'];
+        $period = $product['period'];
 
         $sql = "INSERT INTO 
             remote_payment_products
-            (product, price, payment) 
+            (product, price, payment, period) 
             VALUES
-            ('$name', '$price', $payment)";
+            ('$name', '$price', $payment, period)";
 
         return parent::DoQuery($sql);
     }    

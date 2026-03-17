@@ -137,6 +137,7 @@ class ProductModel extends SQLModel
                 'price' => floatval($foc['price']),
                 'code' => sha1($periodName . $cedula . 'F'),
                 'month' => null,
+                'period' => $periodName,
             ];
             array_push($nonPaid, $to_add);
         }
@@ -153,6 +154,7 @@ class ProductModel extends SQLModel
                 'name' => $periodName . ' Mensualidad ' . $month,
                 'code' => $periodName . $cedula . 'M' . $monthNumber,
                 'month' => $monthNumber,
+                'period' => $periodName,
             ];
 
             if($value['partial'] === 1){                

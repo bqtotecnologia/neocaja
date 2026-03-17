@@ -47,11 +47,14 @@ if($error === ''){
 }
 
 if($error === ''){
+    $product_total = 0;
     $final_products = [];
     foreach($periodProducts as $period => $products){
         foreach($products as $product){
-            if(in_array($product['code'], $_POST['codes']))
+            if(in_array($product['code'], $_POST['codes'])){
                 array_push($final_products, $product);
+                $product_total += intval($product['price']);
+            }
         }
     }
 
@@ -113,79 +116,99 @@ if($error === ''){
 $focCount = 0;
 if($error === ''){
     // Comprovamos si seleccionó FOC
-    $hasFOC = false;
-
+    $youngestPayableMonths = [];
+    $periodProductsCount = [];
+    $periodNames = '';
 
     foreach($periodProducts as $period => $products){
+        $periodNames .= "'" . $period . "', ";
+
         foreach($products as $product){
             if(strpos($product['name'], 'FOC') !== false){
                 $focCount += 1;
             }
+            else{
+                if(!isset($youngestPayableMonths[$product['period']]))
+                    $youngestPayableMonths[$product['period']] = $product['month'];
+
+                if(!isset($periodProductsCount[$product['period']]))
+                    $periodProductsCount[$product['period']] = 0;
+
+                $periodProductsCount[$product['period']] += 1;
+            }
         }
+
     }
 
+    $periodNames = trim($periodNames, ', ');
+    $periods = $siacad->GetPeriodsByNames($periodNames);
+
     $consecutiveMonths = 0;
-    // Por cada uno de los periodos, validamos que haya escogido meses consecutivos empezando por el primero
-    periodList.forEach((period) => {
-        nextMonth = parseInt(youngestPayableMonths[period.name])
-        cyclesMade = -1
+
+    foreach($periods as $period){
+        // Por cada uno de los periodos, validamos que haya escogido meses consecutivos empezando por el primero
+        $nextMonth = intval($youngestPayableMonths[$period['nombreperiodo']]);
+        $cyclesMade = -1;
         while(true){
-            cyclesMade++
-            for(let i = 0; i < selectedProducts.length; i++){
-                product = selectedProducts[i]
+            $cyclesMade += 1;
+            for($i = 0; $i < $productCounts; $i++){
+                $product = $final_products[$i];
                 if(
-                    product.period !== period.name ||
-                    product.name.includes('FOC')
+                    $product['period'] !== $period['nombreperiodo'] ||
+                    strpos($product['name'], 'FOC') !== false
                 )
                     continue;
 
-                if(parseInt(product.month) === nextMonth){
-                    nextMonth++
-                    if(nextMonth === 13)
-                        nextMonth = 1
+                if(intval($product['month']) === $nextMonth){
+                    $nextMonth += 1;
+                    if($nextMonth === 13)
+                        $nextMonth = 1;
                     
-                    consecutiveMonths++
-                    break
+                    $consecutiveMonths += 1;
+                    break;
                 }
             }
 
-            if(cyclesMade > selectedProducts.length)
+            if($cyclesMade > $productCounts)
                 break;
-        }               
-    })   
+        }         
+    } 
 
-    if(selectedProducts.length !== consecutiveMonths + $focCount)
-            error = 'Debes seleccionar meses consecutivos y empezar por el primero'
+    if($productCounts !== $consecutiveMonths + $focCount)
+        $error = 'Debes seleccionar meses consecutivos y empezar por el primero';
 }
 
 // Validar que haya pagado por completo un periodo anterior para intentar pagar el siguiente
 if($error === ''){
-    selectedProductsCount = {}
+    $selectedProductsCount = [];
     // Contamos los productos seleccionado de cada periodo  
-    selectedProducts.forEach((product) => {
-        if(selectedProductsCount[product.period] === undefined)
-            selectedProductsCount[product.period] = 0
+    foreach($final_products as $product){
+        if(!isset($selectedProductsCount[$product['period']]))
+            $selectedProductsCount[$product['period']] = 0;
 
-        selectedProductsCount[product.period]++
-    })
+        $selectedProductsCount[$product['period']] += 1;
+    }
 
     // Los comparamos con el total de productos de cada periodo por orden
-    canPayNextPeriod = true
-    for(let i = 0; i < periodList.length; i++){
-        period = periodList[i].name
+    $canPayNextPeriod = true;
+    for($i = 0; $i < count($periods); $i++){
+        $period = $periods[$i]['nombreperiodo'];
 
-        if(canPayNextPeriod === false && selectedProductsCount[period] > 0){
-            error = 'Debes pagar por completo un periodo anterior para empezar a pagar el siguiente.'
-            break
+        if(!isset($selectedProductsCount[$period]))
+            continue;
+
+        if($canPayNextPeriod === false && $selectedProductsCount[$period] > 0){
+            $error = 'Debes pagar por completo un periodo anterior para empezar a pagar el siguiente.';
+            break;
         }
 
-        if(periodProductsCount[period] === selectedProductsCount[period])
-            continue
+        if($periodProductsCount[$period] === $selectedProductsCount[$period])
+            continue;
         
-        if(selectedProductsCount[period] < periodProductsCount[period]){
-            if(canPayNextPeriod)
-                canPayNextPeriod = false
-            continue
+        if($selectedProductsCount[$period] < $periodProductsCount[$period]){
+            if($canPayNextPeriod)
+                $canPayNextPeriod = false;
+            continue;
         }
     }
 }
@@ -195,7 +218,7 @@ if($error === ''){
     include_once '../models/coin_model.php';
     $coin_model = new CoinModel();
 
-    $usd = $coin_model->GetCoinByName('Dólar');
+    $usd = $coin_model->GetCoinPriceOfDateByName('Dólar', $cleanData['date']->format('Y-m-d'));
     $total_bs = round($product_total * $usd['price'], 2);
 
     $cleanData['price'] = str_replace('.', '', $cleanData['price']);

@@ -8,7 +8,6 @@
         var focCount = 0
         if(error === ''){
             // Comprovamos si seleccionó FOC
-            var hasFOC = false
             for(let i = 0; i < selectedProducts.length; i++){
                 var product = selectedProducts[i]
                 if(product.name.includes('FOC')){

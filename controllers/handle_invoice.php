@@ -186,7 +186,7 @@ if($error === ''){
             break;
         }
         else{
-            $rate_exists = $coin_model->GetCoinPriceOfDate($target_coin['id'], $cleanData['rate-date']->format('Y-m-d'));
+            $rate_exists = $coin_model->GetCoinPriceOfDateById($target_coin['id'], $cleanData['rate-date']->format('Y-m-d'));
             if($rate_exists === false && $target_coin['name'] !== 'Bolívar')
                 $error = 'No existe una tasa para la moneda ' . $target_coin['name'] . ' en la fecha ' . $cleanData['rate-date']->format('d/m/Y');
         }

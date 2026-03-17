@@ -43,7 +43,7 @@ class CoinModel extends SQLModel
         return parent::GetRows($sql, true);
     }
 
-    public function GetCoinPriceOfDate($id, $date){
+    public function GetCoinPriceOfDateById($id, $date){
         $sql = "SELECT 
             coins.id,
             coins.name,
@@ -60,6 +60,27 @@ class CoinModel extends SQLModel
             WHERE
             DATE(coin_history.created_at) = '$date' AND
             coins.id = $id";
+
+        return parent::GetRow($sql);
+    }
+
+        public function GetCoinPriceOfDateByName($name, $date){
+        $sql = "SELECT 
+            coins.id,
+            coins.name,
+            coins.active,
+            coins.created_at,
+            coins.auto_update,
+            coin_history.id as history_id,
+            coin_history.created_at as price_created_at,
+            coin_history.price,
+            coin_history.current
+            FROM
+            coins
+            INNER JOIN coin_history ON coin_history.coin = coins.id
+            WHERE
+            DATE(coin_history.created_at) = '$date' AND
+            coins.name = '$name'";
 
         return parent::GetRow($sql);
     }
@@ -199,7 +220,7 @@ class CoinModel extends SQLModel
      * Actualiza la tasa de una moneda en una fecha dada, si la fecha no existe crea un registro nuevo con current = 0
      */
     public function UpdateCoinPriceOfDate($id, $price, $date){
-        $exists = $this->GetCoinPriceOfDate($id, $date);
+        $exists = $this->GetCoinPriceOfDateById($id, $date);
         if($exists === false)
             $sql = "INSERT INTO coin_history (coin, price, current, created_at) VALUES ($id, $price, 0, '$date 00:00:00')";
         else
