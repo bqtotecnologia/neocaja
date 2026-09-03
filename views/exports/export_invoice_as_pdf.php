@@ -234,8 +234,8 @@ $pdf->Cell(25, 4, 'Tipo', 0, 0, 'L');
 $pdf->Cell(18, 4, 'Moneda', 0, 0, 'L');
 $pdf->Cell(16, 4, 'Monto', 0, 0, 'L');
 $pdf->Cell(16, 4, 'Tasa', 0, 0, 'L');
-$pdf->Cell(32, 4, 'Banco', 0, 0, 'L');
-$pdf->Cell(15, 4, 'No. Doc.', 0, 0, 'L');
+$pdf->Cell(30, 4, 'Banco', 0, 0, 'L');
+$pdf->Cell(18, 4, 'No. Doc.', 0, 0, 'L');
 $pdf->Cell(16, 4, 'Monto Bs.', 0, 0, 'L');
 
 $igtf = null;
@@ -252,8 +252,8 @@ foreach($payment_methods as $payment_method){
     $pdf->Cell(18, 4, MyDecode($payment_method['coin']), 0, 0, 'L');
     $pdf->Cell(16, 4, MyDecode($payment_method['price']), 0, 0, 'L');
     $pdf->Cell(16, 4, MyDecode($coinValues[$payment_method['coin']]), 0, 0, 'L');
-    $pdf->Cell(32, 4, MyDecode($payment_method['bank']), 0, 0, 'L');
-    $pdf->Cell(15, 4, $payment_method['document_number'], 0, 0, 'L');
+    $pdf->Cell(30, 4, MyDecode($payment_method['bank']), 0, 0, 'L');
+    $pdf->Cell(18, 4, $payment_method['document_number'], 0, 0, 'L');
     $pdf->Cell(16, 4, MyDecode($payment_method['price'] * $coinValues[$payment_method['coin']]), 0, 0, 'R');
     $rowPosition += 3;
 }

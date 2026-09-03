@@ -54,10 +54,12 @@ class Validator
                 }
             }
 
-            if($currentField['suspicious'] && $currentField['type'] !== 'date'){
-                if(Validator::HasSuspiciousCharacters($recievedData)){
-                    $error = 'El campo ' . $field . ' contiene caracteres sospechosos';
-                    break;
+            if(isset($currentField['suspicious'])){
+                if($currentField['suspicious'] && $currentField['type'] !== 'date'){
+                    if(Validator::HasSuspiciousCharacters($recievedData)){
+                        $error = 'El campo ' . $field . ' contiene caracteres sospechosos';
+                        break;
+                    }
                 }
             }
 

@@ -5,7 +5,6 @@ include_once '../../utils/validate_user_type.php';
 include_once '../../models/account_model.php';
 $account_model = new AccountModel();
 
-
 $target_date = false;
 if(!empty($_POST)) {
     $error = '';

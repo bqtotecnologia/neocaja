@@ -58,7 +58,7 @@ $unknownIncomeFields = [
         'min' => 1,
         'required' => false,
         'value' => $target_income['account_id'],
-        'elements' => $display_accounts
+        'elements' => $form ? $display_accounts : []
     ],
 ];
 

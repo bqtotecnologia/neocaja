@@ -126,9 +126,9 @@ class UnknownIncomesModel extends SQLModel
         $sql = $this->INCOME_SELECT_TEMPLATE . " WHERE DATE(unknown_incomes.date) = '$date'";
 
         if($identified)
-            $sql .= ' AND unknown_incomes.account IS NOT NULL';
+            $sql .= ' AND unknown_incomes.remote_payment IS NOT NULL';
         else
-            $sql .= ' AND unknown_incomes.account IS NULL';
+            $sql .= ' AND unknown_incomes.remote_payment IS NULL';
 
         return parent::GetRows($sql, true);
     }

@@ -44,11 +44,12 @@ if($error === ''){
 
 // Updating the unknown income
 if($error === ''){
-    $updated = $unknown_model->SimpleUpdate('unknown_incomes', ['account' => $target_account['id']], $cleanData['id']);
+    $updated = $unknown_model->SimpleUpdate('unknown_incomes', ['remote_payment' => $target_account['id']], $cleanData['id']);
     if($updated === false)
-        $error = 'Hubo un error al intentar actualizar el valor de la variable global';
+        $error = 'Hubo un error al intentar actualizar el ingreso no identificado';
 }
 
+exit;
 // Managing feedback message and binnacle
 if($error === ''){
     $action = "Actualizó el propietario del ingreso no identificado de id " . $cleanData['id'];
