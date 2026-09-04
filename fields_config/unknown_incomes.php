@@ -48,17 +48,17 @@ $unknownIncomeFields = [
         'value' => $target_income['description'],
     ],
     [
-        'name' => 'account',
-        'display' => 'Cliente relacionado',
+        'name' => 'remote_payment',
+        'display' => 'Pago remoto',
         'placeholder' => '',
-        'id' => 'account',
+        'id' => 'remote_payment',
         'type' => 'select',
-        'size' => 8,
+        'size' => 12,
         'max' => 11,
-        'min' => 1,
+        'min' => 0,
         'required' => false,
-        'value' => $target_income['account_id'],
-        'elements' => $form ? $display_accounts : []
+        'value' => $target_income['remote_payment'],
+        'elements' => $form ? $display_remote_payments : []
     ],
 ];
 

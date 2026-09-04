@@ -25,19 +25,24 @@ if($error !== ''){
 include_once '../common/header.php';
 include_once '../../utils/FormBuilder.php';
 
-include_once '../../models/account_model.php';    
-$account_model = new AccountModel();
-$accounts = $account_model->GetAccounts();
+include_once '../../models/remote_payments_model.php';    
+$remote_payments_model = new RemotePaymentsModel();
+$remote_payments = $remote_payments_model->GetRemotePaymentsWithoutUnknownIncome();
 
-$display_accounts = [];
+if($target_income['remote_payment'] !== null){
+    $chosen_remote_payment = $remote_payments_model->GetAccountPayment($target_income['remote_payment']);
+    $remote_payments = array_merge([$chosen_remote_payment], $remote_payments);
+}
 
-foreach($accounts as $account){
+$display_remote_payments = [];
+
+foreach($remote_payments as $payment){
     $to_add = [
-        'display' => $account['surnames'] . ' ' . $account['names'] .' (' . $account['cedula'] . ')', 
-        'value' => $account['id'],
+        'display' => '[' . $payment['cedula'] . '] ' . $payment['fullname'] . ': Bs. ' . $payment['price'] . ' Ref. ' . $payment['ref'] . ' ' . date('d/m/Y',strtotime($payment['date'])),
+        'value' => $payment['id'],
     ];
 
-    array_push($display_accounts, $to_add);
+    array_push($display_remote_payments, $to_add);
 }
 
 $title = 'Detalles de un ingreso ';

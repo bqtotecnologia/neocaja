@@ -73,6 +73,18 @@ class RemotePaymentsModel extends SQLModel
         return parent::GetRows($sql, true);
     }
 
+    public function GetRemotePaymentsWithoutUnknownIncome(){
+        $sql = $this->SELECT_TEMPLATE . " 
+            LEFT JOIN unknown_incomes ON unknown_incomes.remote_payment = remote_payments.id
+            WHERE
+            unknown_incomes.id IS NULL
+            GROUP BY
+            remote_payments.id
+            ";
+
+        return parent::GetRows($sql, true);
+    }
+
     public function GetIncomesOfInvoice($id){
         $sql = $this->SELECT_TEMPLATE . " WHERE remote_payments.related_with = 'client' AND remote_payments.related_id = $id";
         return parent::GetRows($sql, true);

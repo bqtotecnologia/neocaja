@@ -34,26 +34,42 @@ if($error === ''){
 }
 
 if($error === ''){
-    include_once '../models/account_model.php';
-    $account_model = new AccountModel();
+    if($cleanData['remote_payment'] !== ''){
+        $payment_id = Validator::ValidateRecievedId('remote_payment', 'POST');
+        if(is_string($payment_id))
+            $error = $payment_id;
+    }
+}
 
-    $target_account = $account_model->GetAccount($cleanData['account']);
-    if($target_account === false)
-        $error = 'Cliente no encontrado';
+if($error === ''){
+    if($cleanData['remote_payment'] !== ''){
+        include_once '../models/remote_payments_model.php';
+        $remote_payment_model = new RemotePaymentsModel();
+
+        $target_payment = $remote_payment_model->GetAccountPayment($payment_id);
+        if($target_payment === false)
+            $error = 'Pago remoto no encontrado';
+    }
 }
 
 // Updating the unknown income
 if($error === ''){
-    $updated = $unknown_model->SimpleUpdate('unknown_incomes', ['remote_payment' => $target_account['id']], $cleanData['id']);
+    if($payment_id === '')
+        $payment_id = null;
+
+    $updated = $unknown_model->SimpleUpdate('unknown_incomes', ['remote_payment' => $payment_id], $cleanData['id']);
     if($updated === false)
         $error = 'Hubo un error al intentar actualizar el ingreso no identificado';
 }
 
-exit;
 // Managing feedback message and binnacle
 if($error === ''){
     $action = "Actualizó el propietario del ingreso no identificado de id " . $cleanData['id'];
-    $action .= ' al cliente ' . $target_account['names'] . ' ' . $target_account['surnames'] . ' de cédula ' . $target_account['cedula'];
+    $action .= ' al pago remoto ';
+    if($payment_id === null)
+        $action .= 'sin asignar';
+    else
+        $action .= 'de ' . $target_payment['fullname'] . ' de cédula ' . $target_payment['cedula'];
 
     $unknown_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
 }
