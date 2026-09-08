@@ -21,12 +21,6 @@ if($error === ''){
 }
 
 if($error === ''){
-    $period = Validator::ValidateRecievedId('period');
-    if(is_string($period))
-        $error = 'Id del periodo inválido';
-}
-
-if($error === ''){
     include_once '../models/account_model.php';
     $account_model = new AccountModel();
     $target_account = $account_model->GetAccount($account);
@@ -36,22 +30,24 @@ if($error === ''){
 
 if($error === ''){
     include_once '../models/siacad_model.php';
-    $siacad = new SiacadModel();
-    $target_period = $siacad->GetPeriodoById($period);
-    if($target_account === false)
-        $error = 'Periodo no encontrado';
-}
-
-if($error === ''){
     include_once '../models/invoice_model.php';
+
+    $siacad = new SiacadModel();
     $invoice_model = new InvoiceModel();
-    $account_state = $invoice_model->GetAccountState($target_account['cedula'], $target_period['idperiodo']);
+
+    $periods = $siacad->GetPeriodsOfStudent($target_account['cedula']);
+    $ordered_data = [];
+
+    foreach($periods as $period){
+        $account_state = $invoice_model->GetAccountState($target_account['cedula'], $period['idperiodo']);
+        $ordered_data[$period['nombreperiodo']] = $account_state;
+    }
 }
 
 if($error === ''){
     $response = [
         'status' => true,
-        'data' => $account_state
+        'data' => $ordered_data
     ];
 }else{
     $response = [

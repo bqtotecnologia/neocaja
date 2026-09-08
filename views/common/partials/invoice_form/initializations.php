@@ -58,12 +58,26 @@
 
 
     // CONTROL VARS
+    let allMonths = [
+        'Enero', 
+        'Febrero', 
+        'Marzo', 
+        'Abril', 
+        'Mayo', 
+        'Junio', 
+        'Julio', 
+        'Agosto', 
+        'Septiembre', 
+        'Octubre', 
+        'Noviembre',
+        'Diciembre',
+    ]
+    let periodMonths = []
     let coinValues = {}    
     let nextProduct = 1
     let targetAccount = {}
     let paidMonths = []
     let partialMonths = []
-    let periodMonths = []
     let debtData = ''   
     let target_payment = ''
     var currentDate = new Date()

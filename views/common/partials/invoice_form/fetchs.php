@@ -24,7 +24,7 @@
     }  
 
     async function GetAccountState(account, period){
-        var url = '<?= $base_url ?>/api/get_account_state.php?account=' + account + '&period=' + period
+        var url = '<?= $base_url ?>/api/get_account_state.php?account=' + account
         var fetchConfig = {
             method: 'GET', 
             headers: {

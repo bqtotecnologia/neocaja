@@ -206,7 +206,7 @@
         monthSelect.id = buffer
         monthSelect.name = buffer
         
-        periodMonths.forEach((month) => {
+        allMonths.forEach((month) => {
             if(!paidMonths.includes(month)){
                 var option = document.createElement('option')
                 option.value = GetMonthNumberByName(month)

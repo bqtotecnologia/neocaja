@@ -21,6 +21,9 @@
             accountButton.href  = '<?= $base_url ?>' + '/views/detailers/account_details.php?id=' + targetAccount.id
 
             var accountMonths = await GetAccountState(id, '<?= $periodId ?>')
+            // Acá se están obteniendo el estado de cuenta de todos los periodos de lestudiante ordenados en 'periodo' => data
+            // Hay que colcoar unos cómodos botones para alternar entre los periodos y sus estados de cuenta y siempre mostrando
+            // Primeramente el periodo actual
             invoiceTable.innerHTML = ''
             await DisplayDebt(id, '<?= $periodId ?>')
             await DisplayInvoices(accountMonths.data)
