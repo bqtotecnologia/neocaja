@@ -13,6 +13,15 @@
             companyContainer.innerHTML = ' A nombre de ' + targetAccount['company'] + ' ' + targetAccount['rif_letter'] + '-' + targetAccount['rif_number']
         }
     }
+
+    function DisplayPeriods(periods){
+        periodButtonsContainer.innerHTML = ''
+
+        periods.forEach((period) => {
+            var btn = GetNewPeriodButton(period)
+            periodButtonsContainer.prepend(btn)
+        })
+    }
     
     ////////////////////////// INVOICE //////////////////////////
 
@@ -267,6 +276,9 @@
     function BuildDebtTable(debtData){
         debtContainer.classList.remove('d-none')
         debtTable.innerHTML = ''
+
+        if(debtData === false)
+            return
 
         var monthlyRow = BuildDebtMonthlyRow('Mensualidad', debtData.months)
         var retardRow = BuildDebtMonthlyRow('Mora', debtData.retard)
@@ -614,6 +626,24 @@
             diffElement.innerHTML = 'Bs. ' + diff
             diffUSDElement.innerHTML = '$ ' + (diff / coinValues['Dólar']) .toFixed(4)
         }
+    }
+
+    function GetNewPeriodButton(period){
+        var container = document.createElement('div')
+        container.classList.add('text-center', 'row', 'p-3')
+        var btn = document.createElement('button')
+        btn.classList.add('btn', 'btn-info')
+        btn.title = period
+        btn.innerHTML = period
+        btn.type = 'button'
+        btn.addEventListener('click', function(){ 
+            chosenPeriod = period;
+            DisplayDebt(period);
+            DisplayInvoices(period);
+        })
+
+        container.appendChild(btn)
+        return container
     }
     
 

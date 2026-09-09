@@ -1,8 +1,9 @@
 <script>
     async function DisplayDebt(account, period){
-        debtData = await GetDebtOfAccountOfPeriod(account,period)        
+        debtData = await GetDebtOfAccount(account)
+
         if(typeof debtData !== "string"){
-            BuildDebtTable(debtData.data)
+            BuildDebtTable(debtData.data[period])
         }
     }
 

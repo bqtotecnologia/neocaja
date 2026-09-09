@@ -23,7 +23,7 @@
         return await TryFetch(url, fetchConfig)
     }  
 
-    async function GetAccountState(account, period){
+    async function GetAccountState(account){
         var url = '<?= $base_url ?>/api/get_account_state.php?account=' + account
         var fetchConfig = {
             method: 'GET', 
@@ -35,8 +35,8 @@
         return await TryFetch(url, fetchConfig)
     }
 
-    async function GetDebtOfAccountOfPeriod(account, period){
-        var url = '<?= $base_url ?>/api/get_account_debt.php?account=' + account + '&period=' + period
+    async function GetDebtOfAccount(account){
+        var url = '<?= $base_url ?>/api/get_account_debt.php?account=' + account
         var fetchConfig = {
             method: 'GET', 
             headers: {

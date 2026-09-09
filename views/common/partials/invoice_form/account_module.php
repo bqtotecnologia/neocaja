@@ -15,18 +15,29 @@
             error = true
 
         if(!error){
+            chosenPeriod = ''
+            availablePeriods = []
             var accountButton = document.getElementById('account-link')
             debtContainer.classList.add('d-none')
             accountButton.classList.remove('d-none')
             accountButton.href  = '<?= $base_url ?>' + '/views/detailers/account_details.php?id=' + targetAccount.id
 
-            var accountMonths = await GetAccountState(id, '<?= $periodId ?>')
-            // Acá se están obteniendo el estado de cuenta de todos los periodos de lestudiante ordenados en 'periodo' => data
-            // Hay que colcoar unos cómodos botones para alternar entre los periodos y sus estados de cuenta y siempre mostrando
-            // Primeramente el periodo actual
-            invoiceTable.innerHTML = ''
-            await DisplayDebt(id, '<?= $periodId ?>')
-            await DisplayInvoices(accountMonths.data)
+            accountStates = await GetAccountState(id)            
+            debtData = await GetDebtOfAccount(id)
+
+            for(let key in accountStates.data){
+                availablePeriods.push(key)
+            }
+
+            var lastPeriod = ''
+            if(availablePeriods.length > 0){
+                lastPeriod = availablePeriods[availablePeriods.length - 1]
+            }
+            
+            chosenPeriod = lastPeriod
+            DisplayPeriods(availablePeriods)
+            DisplayDebt(lastPeriod)
+            DisplayInvoices(lastPeriod)
 
             ShowScholarship()
             ShowCompany()
@@ -76,10 +87,8 @@
                 
                 if(product.product.includes('con mora')){
                     ChangeProduct(nextProduct - 1, productIds['Diferencia Mensualidad']) 
-                    ChangeMonth(nextProduct - 1, monthNumber)
-                    console.log(debtData.data)
-                    console.log(month)
-                    ChangeProductPrice(nextProduct - 1, debtData.data.retard.detail[month])
+                    ChangeMonth(nextProduct - 1, monthNumber)                    
+                    ChangeProductPrice(nextProduct - 1, debtData.data[chosenPeriod].retard.detail[month])
                     AddProduct()
 
                     if(product.product.includes('Restante'))
@@ -90,14 +99,14 @@
                 else if(product.product.includes('Restante')){
                     ChangeProduct(nextProduct - 1, productIds['Saldo Mensualidad']) 
                     ChangeMonth(nextProduct - 1, monthNumber)
-                    ChangeProductPrice(nextProduct - 1, debtData.data.months.detail[month])
+                    ChangeProductPrice(nextProduct - 1, debtData.data[chosenPeriod].months.detail[month])
                     AddProduct()
                 }
                 else if(product.product === 'Mensualidad ' + month){
                     productName = 'Mensualidad'
                 }
                 
-                productPrice = debtData.data.months.detail[month]
+                productPrice = debtData.data[chosenPeriod].months.detail[month]
                 if(productPrice === undefined){
                     // Es el precio normal de la mensualidad
                     productPrice = productPrices['Mensualidad']

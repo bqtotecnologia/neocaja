@@ -1,5 +1,12 @@
 <script>
-    async function DisplayInvoices(invoices){
+    function DisplayInvoices(period){
+        invoiceContainer.classList.remove('d-none')
+        invoiceTable.innerHTML = ''
+
+        if(accountStates.data[period] === undefined)
+            return
+
+        var invoices = accountStates.data[period]
         if(Object.keys(invoices).length > 0){
             invoiceContainer.classList.remove('d-none')
             for(let key in invoices){               
@@ -19,10 +26,12 @@
         }
     }
 
-    async function DisplayDebt(account, period){
-        debtData = await GetDebtOfAccountOfPeriod(account,period)        
-        if(typeof debtData !== "string"){
-            BuildDebtTable(debtData.data)
-        }
+    function DisplayDebt(period){
+        if(debtData.data[period] === undefined)
+            BuildDebtTable(false)
+        else
+            BuildDebtTable(debtData.data[period])
+
+
     }
 </script>

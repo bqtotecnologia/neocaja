@@ -6,6 +6,7 @@
     const focContent = document.getElementById('foc-content')
     const scholarshipContainer = document.getElementById('scholarship')
     const companyContainer = document.getElementById('company')
+    const periodButtonsContainer = document.getElementById('period-buttons-container')
 
 
     // TABLES
@@ -72,13 +73,17 @@
         'Noviembre',
         'Diciembre',
     ]
+
+    let chosenPeriod = ''
     let periodMonths = []
+    let availablePeriods = []
     let coinValues = {}    
     let nextProduct = 1
     let targetAccount = {}
+    let accountStates = {}
+    let debtData = ''   
     let paidMonths = []
     let partialMonths = []
-    let debtData = ''   
     let target_payment = ''
     var currentDate = new Date()
     let currentMonth = currentDate.getMonth()

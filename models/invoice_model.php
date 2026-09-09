@@ -411,147 +411,6 @@ class InvoiceModel extends SQLModel
     }
 
     /**
-     * Retorna el estado de cuenta de un cliente de todos los periodos en los que él halla estudiado.
-     * Especifica si cada mes fue pagado, es o estuvo moroso y si abonó
-     */
-    public function GetAccountStateOfPeriods($cedula, $periodIds){
-        include_once 'global_vars_model.php';
-        include_once 'account_model.php';
-        include_once 'siacad_model.php';
-
-        $global_model = new GlobalVarsModel();
-        $siacad = new SiacadModel();
-        $account_model = new AccountModel();
-
-        $target_account = $account_model->GetAccountByCedula($cedula);
-        $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
-        $periodMonths = $siacad->GerMonthsOfPeriodo($periodId, true);
-        $global_vars = $global_model->GetGlobalVars(true);
-
-        $previousPeriod = false;
-        $current_period = $siacad->GetCurrentPeriodo();
-        $recieved_period = $siacad->GetPeriodoById($periodId);
-        if(intval($recieved_period['ordenperiodo']) < intval($current_period['ordenperiodo']))
-            $previousPeriod = true;
-        
-
-        $sql = "SELECT
-            products.name as product,
-            concepts.price,
-            concepts.month,
-            invoices.id as invoice,
-            invoices.created_at
-            FROM
-            invoices
-            INNER JOIN concepts ON concepts.invoice = invoices.id
-            INNER JOIN product_history ON product_history.id = concepts.product
-	        INNER JOIN products ON products.id = product_history.product            
-            INNER JOIN account_company_history ON account_company_history.id = invoices.account 
-            INNER JOIN accounts ON accounts.id = account_company_history.account 
-            WHERE
-            accounts.cedula = '$cedula' AND
-            invoices.period = $periodId AND
-            products.name LIKE '%Mensualidad%'AND
-            concepts.month IS NOT NULL AND
-            invoices.active = 1
-            ORDER BY
-            concepts.month";
-
-        $concepts = parent::GetRows($sql, true);
-        
-        $ordered_concepts = [];
-        foreach($periodMonths as $month){            
-            $ordered_concepts[$month] = [
-                'concepts' => [],
-                'paid' => 0,
-                'debt' => 0,
-                'partial' => 0,
-            ];
-        }
-        
-        foreach($concepts as $concept){         
-            $month_name = $this->month_translate[strval($concept['month'])];
-            
-            if(!isset($ordered_concepts[$month_name]))
-                continue;
-            
-            $ordered_concepts[$month_name]['invoice'] = $concept['invoice'];
-
-            $ordered_concepts[$month_name]['concepts'][$concept['product']] = $concept['price'];
-        }     
-        $result = [];
-        $lastMonth = null;
-        $currentYear = intval(date('Y'));
-
-        //if($concepts !== []){
-            foreach($ordered_concepts as $key => $value){
-                if(!in_array($key, $periodMonths)){
-                    continue;
-                }
-
-                $currentMonthNumber = $this->GetMonthNumberByName($key);
-
-                if($lastMonth === 12 && $currentMonthNumber === 1)
-                    $currentYear++;
-
-                $lastMonth = $currentMonthNumber;
-                $result[$key] = $value; 
-
-                if(array_key_exists('Mensualidad', $value['concepts']) || array_key_exists('Saldo Mensualidad', $value['concepts'])){
-                    // El mes está pagado
-                    //echo 'Mes pagado: ' . $key . '<br>';
-                    $result[$key]['paid'] = 1;
-                }
-
-                $may_retard = false;
-                if(array_key_exists('Diferencia Mensualidad', $value['concepts']))
-                    // Pagó la mora, lo que implica que estuvo moroso
-                    $result[$key]['debt'] = 1;
-                else{
-                    if($scholarshipped){
-                        if(intval($global_vars['Becados pagan mora']) === 1)
-                            $may_retard = true;
-                    }
-                    else
-                        $may_retard = true;
-                }
-                
-                if($may_retard){
-                    if($result[$key]['paid'] === 0 && $result[$key]['debt'] === 0){
-                        // Si no ha pagado y no ha pagado la mora, verificamos si está moroso
-                        //echo 'Mes sin pagar: ' . $key . '<br>';
-                        $timezone = new DateTimeZone('America/Caracas');
-                        $now = new DateTime('now', $timezone);
-                        $now->setTime(0, 0, 0, 0);
-    
-                        $retard_date = "$currentYear-$lastMonth-" . intval($global_vars['Dia tope mora']);
-                        $retard_date = new DateTime($retard_date, $timezone);
-                        
-                        if($now > $retard_date){
-                            //echo 'Mes moroso: ' . $key . '<br>';
-                            $result[$key]['debt'] = 1;
-                        }
-                    }
-                }   
-                
-                if($previousPeriod)
-                    $result[$key]['debt'] = 1;
-    
-                if(array_key_exists('Abono Mensualidad', $value['concepts'])){
-                    // Abonó al mes
-                    //echo 'Mes abonado: ' . $key . '<br>';
-                    $result[$key]['partial'] = 1;
-                }
-            }
-        //}
-        //else{
-            //$result = $ordered_concepts;
-        //}
-        
-        return $result;
-    }
-
-    /**
      * Obtiene la deuda de un cliente en este periodo.
      * Especifica los meses que debe incluyendo el actual.
      * También verifica que el estudiante haya pagado FOC.
@@ -568,9 +427,10 @@ class InvoiceModel extends SQLModel
         $account_model = new AccountModel();
 
         $global_vars = $global_vars_model->GetGlobalVars(true);
-        $monthly = $product_model->GetProductByName('Mensualidad');
-        $monthlyPrice = floatval($monthly['price']);
         $target_period = $siacad->GetPeriodoById($periodId);
+        
+        $monthly = $product_model->GetProductByNameBeforeDate('Mensualidad', $target_period['fechafin']);
+        $monthlyPrice = floatval($monthly['price']);
 
         $target_account = $account_model->GetAccountByCedula($cedula);
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);

@@ -30,7 +30,9 @@ class SiacadModel extends PGSQLModel
     public function GetPeriodsOfStudent($cedula){
         $sql = "SELECT
             periodos.idperiodo,
-            periodos.nombreperiodo
+            periodos.nombreperiodo,
+            fechainicio,
+            fechafin
             FROM 
             participantes
             INNER JOIN participantescarreras ON participantescarreras.cedula = participantes.cedula
@@ -152,6 +154,30 @@ class SiacadModel extends PGSQLModel
             participantes.cedula = '$cedula'";
 
         return parent::GetRow($sql);
+    }
+
+        /**
+     * Retorna false si el estudiante no está activo en el periodo actual
+     * De lo contrario retorna el nombre del estudiante
+     */
+    public function StudentIsActive($cedula){
+        $sql = "SELECT
+            participantes.nombre1
+            FROM 
+            participantes
+            INNER JOIN participantescarreras ON participantescarreras.cedula = participantes.cedula
+            INNER JOIN matriculas ON matriculas.idparticipantescarrera = participantescarreras.idparticipantescarrera
+            INNER JOIN inscripciones ON inscripciones.idmatricula = matriculas.idmatricula
+            INNER JOIN secciones ON secciones.idseccion = inscripciones.idseccion
+            INNER JOIN materiasperiodos ON materiasperiodos.idmateriaperiodo = secciones.idmateriaperiodo
+            INNER JOIN periodos ON periodos.idperiodo = materiasperiodos.idperiodo
+            WHERE
+            matriculas.matriculado = 'TRUE' AND
+            inscripciones.inscrita = 'TRUE' AND
+            periodos.actual = 'TRUE' AND
+            participantes.cedula = '$cedula'";
+        
+        return parent::GetRows($sql);
     }
 
     /**

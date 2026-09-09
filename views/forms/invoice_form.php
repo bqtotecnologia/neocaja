@@ -216,6 +216,10 @@ $latest = $invoice_model->GetLatestNumbers();
                     </div>
                 </div>
 
+                <div class="row col-12 m-0 p-0 justify-content-center" id="period-buttons-container">
+
+                </div>
+
 
                 <div class="row col-12 my-2 justify-content-start align-items-start">
                     <div class="row col-12 col-md-6 my-2 justify-content-start">                    

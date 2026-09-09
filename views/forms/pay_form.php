@@ -3,18 +3,39 @@ $admitted_user_types = ['Estudiante'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/Auth.php';
 
+$error = '';
+include_once '../../models/siacad_model.php';
+$siacad = new SiacadModel();
+
+$is_active = $siacad->StudentIsActive($_SESSION['neocaja_cedula']);
+if(!$siacad){
+    $error = 'Usted no es un estudiante activo en este periodo.';
+}
+
+if($error === ''){
+    include_once '../../models/product_model.php';
+    $product_model = new ProductModel();
+
+    $periodProducts = $product_model->GetAvailableProductsOfStudentByPeriod($_SESSION['neocaja_cedula']);
+
+    if($periodProducts === [])
+        $error = 'Usted no tiene ningún pago pendiente';
+}
+
+if($error !== ''){
+    header("Location: $base_url/views/panel.php?error=$error");
+    exit;
+}
+
 include_once '../common/header.php';
 
-include_once '../../models/product_model.php';
-include_once '../../models/siacad_model.php';
 include_once '../../models/shop_model.php';
 include_once '../../models/global_vars_model.php';
 include_once '../../models/transfers_model.php';
 include_once '../../models/mobile_payments_model.php';
 include_once '../../models/coin_model.php';
 
-$product_model = new ProductModel();
-$siacad = new SiacadModel();
+
 $shop_model = new ShopModel();
 $global_vars_model = new GlobalVarsModel();
 $transfers_model = new TransfersModel();
@@ -22,7 +43,7 @@ $mobile_payments_model = new MobilePaymentsModel();
 $coin_model = new CoinModel();
 
 $usdValue = $coin_model->GetCoinByName('Dólar');
-$periodProducts = $product_model->GetAvailableProductsOfStudentByPeriod($_SESSION['neocaja_cedula']);
+
 
 $periodNames = '';
 

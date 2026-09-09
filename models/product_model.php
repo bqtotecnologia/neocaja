@@ -50,6 +50,43 @@ class ProductModel extends SQLModel
         return parent::GetRow($sql);
     }
 
+    public function GetProductByNameBeforeDate($name, $date){
+        $base_query = "SELECT 
+            pr.id,
+            pr.name,
+            pr.active,
+            pr.created_at as product_created_at,
+            ph.id as history_id,
+            ph.price,
+            ph.created_at as price_created_at
+            FROM
+            products pr
+            INNER JOIN product_history ph ON ph.product = pr.id
+            WHERE ";
+
+
+        $sql = $base_query . "
+            ph.created_at <= '$date' AND
+            pr.name = '$name'
+            ORDER BY
+            ph.created_at DESC
+            LIMIT 1";
+
+        $product = parent::GetRow($sql);
+        if($product === false){
+            $sql = $base_query . "
+                ph.created_at > '$date' AND
+                pr.name = '$name'
+                ORDER BY
+                ph.created_at ASC
+                LIMIT 1";
+
+            $product = parent::GetRow($sql);
+        }
+
+        return $product;
+    }       
+
     public function GetProductHistory($productId){
         return parent::GetRows("SELECT * FROM product_history WHERE product = $productId ORDER BY created_at DESC", true);
     }
@@ -118,9 +155,9 @@ class ProductModel extends SQLModel
         $period_id = $period['idperiodo'];
         $periodName = $period['nombreperiodo'];
           
-        $monthly = $this->GetProductByName('Mensualidad');
+        $monthly = $this->GetProductByNameBeforeDate('Mensualidad', $period['fechafin']);
         $monthlyPrice = floatval($monthly['price']);
-        $foc = $this->GetProductByName('FOC');
+        $foc = $this->GetProductByNameBeforeDate('FOC', $period['fechafin']);
 
         $target_account = $account_model->GetAccountByCedula($cedula);
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);

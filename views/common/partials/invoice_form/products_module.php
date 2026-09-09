@@ -109,7 +109,7 @@
 
     function DisplayDefaultProduct(){      
         var prcice = 0
-        if(debtData.data.foc === false){
+        if(debtData.data[chosenPeriod].foc === false){
             AddProduct()
             price = productPrices['FOC']
             ChangeProduct(nextProduct - 1, productIds['FOC'])
@@ -125,12 +125,12 @@
                 }
                 var monthNumber = GetMonthNumberByName(pmonth)
 
-                if(Object.keys(debtData.data.months.detail).includes(pmonth)){
-                    price = debtData.data.months.detail[pmonth]
+                if(Object.keys(debtData.data[chosenPeriod].months.detail).includes(pmonth)){
+                    price = debtData.data[chosenPeriod].months.detail[pmonth]
                 }
 
-                if(Object.keys(debtData.data.retard.detail).includes(pmonth)){
-                    var retardPrice = debtData.data.retard.detail[pmonth]
+                if(Object.keys(debtData.data[chosenPeriod].retard.detail).includes(pmonth)){
+                    var retardPrice = debtData.data[chosenPeriod].retard.detail[pmonth]
                     AddProduct()
                     ChangeMonth(nextProduct - 1, monthNumber)
                     ChangeProduct(nextProduct - 1, productIds['Diferencia Mensualidad'])    

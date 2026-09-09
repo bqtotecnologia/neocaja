@@ -36,7 +36,9 @@ include_once 'common/header.php';
         $global_vars = $global_vars_model->GetGlobalVars(true);
 
         $siacad = new SiacadModel();
-        $currentPeriod = $siacad->GetCurrentPeriodo();
+        //$currentPeriod = $siacad->GetCurrentPeriodo();
+        $periods = $siacad->GetPeriodsOfStudent($_SESSION['neocaja_cedula']);
+        $currentPeriod = $periods[0];
 
         $product_model = new ProductModel();
         $focProduct = $product_model->GetProductByName('FOC');
