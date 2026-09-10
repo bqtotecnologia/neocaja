@@ -163,7 +163,7 @@ class ProductModel extends SQLModel
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
         if($scholarshipped){
             $monthlyPrice = $monthlyPrice - ($monthlyPrice * (floatval($target_account['scholarship_coverage']) / 100));
-        }             
+        }
         
         $monthStates = $invoice_model->GetAccountState($cedula, $period_id);
         

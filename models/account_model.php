@@ -11,9 +11,9 @@ class AccountModel extends SQLModel
         accounts.address,
         accounts.phone,
         accounts.is_student,
-        accounts.scholarship_coverage,
         accounts.created_at,
-        account_company_history.id as account_company_history_id,
+        account_history.scholarship_coverage,
+        account_history.id as account_history_id,
         scholarships.id as scholarship_id,
         scholarships.name as scholarship,
         companies.id as company_id,
@@ -24,9 +24,9 @@ class AccountModel extends SQLModel
         companies.created_at as company_created_at
         FROM
         accounts
-        LEFT JOIN account_company_history ON account_company_history.account = accounts.id AND account_company_history.current = 1
-        LEFT JOIN companies ON companies.id = account_company_history.company 
-        LEFT JOIN scholarships ON scholarships.id = accounts.scholarship";
+        LEFT JOIN account_history ON (account_history.account = accounts.id AND account_history.current = 1)
+        LEFT JOIN companies ON companies.id = account_history.company 
+        LEFT JOIN scholarships ON scholarships.id = account_history.scholarship";
 
     public function CreateAccount($data){
         $names = $data['names'];
@@ -35,13 +35,12 @@ class AccountModel extends SQLModel
         $address = $data['address'];
         $phone = $data['phone'];
         $is_student = $data['is_student'];
-        $scholarship = $data['scholarship'];
-        $scholarship_coverage = $data['scholarship_coverage'];
 
         $sql = "INSERT INTO accounts 
-            (names, surnames, cedula, address, phone, is_student, scholarship, scholarship_coverage)
+            (names, surnames, cedula, address, phone, is_student)
             VALUES
-            ('$names', '$surnames', '$cedula', '$address', '$phone', $is_student, $scholarship, $scholarship_coverage)";
+            ('$names', '$surnames', '$cedula', '$address', '$phone', $is_student)";
+
 
         $created = parent::DoQuery($sql);
         if($created === true)
@@ -96,8 +95,6 @@ class AccountModel extends SQLModel
         $address = $data['address'];
         $phone = $data['phone'];
         $is_student = $data['is_student'];
-        $scholarship = $data['scholarship'];
-        $scholarship_coverage = $data['scholarship_coverage'];
 
         $sql = "UPDATE accounts SET
             cedula = '$cedula',
@@ -105,27 +102,26 @@ class AccountModel extends SQLModel
             surnames = '$surnames',
             address = '$address',
             phone = '$phone',
-            is_student = $is_student,
-            scholarship = $scholarship,
-            scholarship_coverage = $scholarship_coverage
+            is_student = $is_student
             WHERE
             id = $id";
 
         return parent::DoQuery($sql);
     }
 
-    /**
-     * Actualiza la empresa de un estudiante, recibe sus ids o un string NULL
-     */
-    public function UpdateAccountCompany($account, $company){
-        $result = false;
-        $sql = "UPDATE account_company_history SET current = 0 WHERE account = $account";
-        if(parent::DoQuery($sql) === true){
-            $sql = "INSERT INTO account_company_history (account, company) VALUES ($account, $company)";
-            if(parent::DoQuery($sql) === true)
-                $result = true;
-        }           
+    public function DeactivateHistoryOfAccount($account){
+        return parent::DoQuery("UPDATE account_history SET current = 0 WHERE account = $account");
+    }
 
-        return $result;
+    /**
+     * Actualiza el historial de becas/empresa de un estudiante
+     */
+    public function UpdateAccountHistory($account, $data){
+        $this->DeactivateHistoryOfAccount($account);
+        return parent::SimpleInsert('account_history', $data);
+    }
+
+    public function DeleteAccount($cedula){
+        return parent::DoQuery("DELETE FROM accounts WHERE cedula = '$cedula'");
     }
 }

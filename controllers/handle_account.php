@@ -5,6 +5,7 @@ include_once '../utils/Validator.php';
 
 $error = '';
 $target_company = false;
+$delete = false;
 
 if(empty($_POST)){
     $error = 'POST vacío';
@@ -55,7 +56,6 @@ if($error === ''){
     if($cleanData['scholarship'] !== ''){
         include_once '../models/scholarship_model.php';
         $scholarship_model = new ScholarshipModel();
-
         
         $target_scholarship = $scholarship_model->GetScholarship($cleanData['scholarship']);
         if($target_scholarship === false)
@@ -71,50 +71,59 @@ if($error === ''){
                 $error = 'La cédula ingresada ya está repetida';    
         }
         else
-            $error = 'La cédula ingresada ya está repetida';
+            //$error = 'La cédula ingresada ya está repetida';
+            $error = '';
     }
 }
 
-// Creating / updating the account
-if($error === ''){    
+if($error === ''){
     $cleanData['is_student'] = isset($_POST['is_student']) ? '1' : '0';
-    $cleanData['scholarship'] = ($cleanData['scholarship'] === '' ? 'NULL' : $target_scholarship['id']);
+    if($cleanData['is_student'] === '0' && ($cleanData['scholarship'] !== '' || $cleanData['scholarship_coverage'] !== ''))
+        $error = 'Solo los estudiantes del iujo pueden tener beca.';
+}
 
-    if($cleanData['scholarship'] === 'NULL')
-        $cleanData['scholarship_coverage'] = 'NULL';
-    else
-        $cleanData['scholarship_coverage'] = ($cleanData['scholarship_coverage'] === '' ? 'NULL' : $cleanData['scholarship_coverage']);
-
-    if($cleanData['scholarship_coverage'] === 'NULL')
-        $cleanData['scholarship'] = 'NULL';    
-
-    $cleanData['company'] = ($cleanData['company'] === '' ? 'NULL' : $target_company['id']);
+// Creating / updating the account
+if($error === ''){        
+    $updateHistory = false;
 
     if($edit){
         $updated = $account_model->UpdateAccount($cleanData['id'], $cleanData);
         if($updated === false)
             $error = 'Hubo un error al intentar actualizar el cliente';
         else{
-            if(intval($target_account['company_id']) !== intval($cleanData['company']))
-                $updateCompany = true;
+            if(
+                intval($target_account['company_id']) !== intval($cleanData['company']) || // Hubo un cambio de empresa
+                intval($target_account['scholarship_id']) !== intval($cleanData['scholarship']) || // Hubo un cambio de beca
+                intval($target_account['scholarship_coverage']) !== intval($cleanData['scholarship_coverage']) // Hubo un cambio en el porcentaje de cobertura
+            )
+                $updateHistory = true;
         }
     }
     else{
+        $updateHistory = true;
         $created = $account_model->CreateAccount($cleanData);
         if($created === false)
             $error = 'Hubo un error al intentar registrar el cliente';
+        else
+            $target_account = $created;
     }
 }
 
-if($error === '' && $updateCompany){
-    if($edit)
-        $account_id = $cleanData['id'];
-    else
-        $account_id = $created['id'];
+// Managing scholarship history
+if($error === '' && $updateHistory){    
+    $data = [
+        'account' => $target_account['id'],
+        'company' => ($cleanData['company'] === '' ? NULL : $cleanData['company']),
+        'scholarship' => ($cleanData['scholarship'] === '' ? NULL : $cleanData['scholarship']),
+        'scholarship_coverage' => $cleanData['scholarship_coverage']
+    ];
 
-    $company_history = $account_model->UpdateAccountCompany($account_id, $cleanData['company']);
-    if($company_history === false)
-        $error = 'Hubo un error al intentar crear el historial de empresa del estudiante';
+    if($data['scholarship'] === null || intval($data['scholarship_coverage']) === 0){
+        $data['scholarship'] = null;
+        $data['scholarship_coverage'] = null;
+    }
+
+    $updated = $account_model->UpdateAccountHistory($target_account['id'], $data);
 }
 
 // Managing feedback message and binnacle
@@ -127,10 +136,9 @@ if($error === ''){
         $surnamesChanged = $cleanData['surnames'] !== $target_account['surnames'];
         $addressChanged = $cleanData['address'] !== $target_account['address'];
         $is_studentChanged = intval($cleanData['is_student']) !== intval($target_account['is_student']);
-        $scholarshipChanged = intval($cleanData['scholarship']) !== intval($target_account['scholarship_id']);
-        $scholarshipCoverageChanged = intval($cleanData['scholarship_coverage']) !== intval($target_account['scholarship_coverage']);
-        $companyChanged = intval($cleanData['company']) !== intval($target_account['company_id']);
-
+        $companyChanged = intval($target_account['company_id']) !== intval($cleanData['company']);
+        $scholarshipChanged = (intval($target_account['scholarship_id']) !== intval($cleanData['scholarship']) || intval($target_account['scholarship_coverage']) !== intval($cleanData['scholarship_coverage']));
+        
         $action = 'Actualizó el cliente ' . $target_account['names'] . ' ' . $target_account['surnames'];
 
         if($cedulaChanged)
@@ -153,10 +161,7 @@ if($error === ''){
         }
 
         if($scholarshipChanged)
-            $action .= '. A la beca ' . $target_scholarship['name'];
-
-        if($scholarshipCoverageChanged)
-            $action .= '. Al porcentaje de beca ' . $cleanData['scholarship_coverage'] . '%';
+            $action .= '. A la beca ' . $target_scholarship['name'] . ' ' . $cleanData['scholarship_coverage'] . '%';
 
         if($companyChanged)
             $action .= '. A la empresa ' . $target_company['name'];
@@ -167,6 +172,11 @@ if($error === ''){
         $action = 'Creo el cliente ' . $cleanData['names'] . ' ' . $cleanData['surnames'] . ' con la cédula ' . $cleanData['cedula'];
     }
     $account_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
+}
+
+if($delete && $edit === false){
+    // Lo borramos solo si hubo un error durante la creación
+    $account_model->DeleteAccount($cleanData['cedula']);
 }
 
 if($error === ''){    
