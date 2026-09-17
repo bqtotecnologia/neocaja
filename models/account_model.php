@@ -71,6 +71,31 @@ class AccountModel extends SQLModel
         return parent::GetRow($sql);
     }
 
+    public function GetAccountHistory($id){
+        $sql = "SELECT
+            
+            companies.id as company_id,
+            companies.name as company,
+            companies.rif_letter,
+            companies.rif_number,
+            companies.created_at,
+            companies.address,
+            scholarships.id as scholarship_id,
+            scholarships.name,
+            account_history.scholarship_coverage,
+            account_history.current,
+            account_history.created_at
+            FROM
+            account_history
+            INNER JOIN accounts ON accounts.id = account_history.account
+            LEFT JOIN company ON company.id = account_history.company
+            LEFT JOIN scholarships ON scholarships.id = account_history.scholarship
+            WHERE
+            account.id = $id";
+            
+        return parent::GetRows($sql);
+    }
+
     public function GetCompanyHistory($id){
         $sql = "SELECT
             companies.id,
