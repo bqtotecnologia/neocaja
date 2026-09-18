@@ -18,8 +18,8 @@ class InvoiceModel extends SQLModel
         accounts.id as account_id
         FROM
         invoices
-        INNER JOIN account_company_history ON account_company_history.id = invoices.account 
-        INNER JOIN accounts ON accounts.id = account_company_history.account 
+        INNER JOIN account_history ON account_history.id = invoices.account 
+        INNER JOIN accounts ON accounts.id = account_history.account 
     ";
 
     public function CreateInvoice(array $data, string $period_id){
@@ -186,8 +186,8 @@ class InvoiceModel extends SQLModel
             inv.observation
             FROM
             invoices inv
-            INNER JOIN account_company_history ON account_company_history.id = inv.account 
-            INNER JOIN accounts ON accounts.id = account_company_history.account 
+            INNER JOIN account_history ON account_history.id = inv.account 
+            INNER JOIN accounts ON accounts.id = account_history.account 
             WHERE 
             accounts.id = $account AND 
             inv.period = $period AND
@@ -216,8 +216,8 @@ class InvoiceModel extends SQLModel
             inv.observation
             FROM
             invoices inv
-            INNER JOIN account_company_history ON account_company_history.id = inv.account 
-            INNER JOIN accounts ON accounts.id = account_company_history.account 
+            INNER JOIN account_history ON account_history.id = inv.account 
+            INNER JOIN accounts ON accounts.id = account_history.account 
             WHERE 
             accounts.id = $account AND
             inv.active = 1
@@ -305,8 +305,8 @@ class InvoiceModel extends SQLModel
             INNER JOIN concepts ON concepts.invoice = invoices.id
             INNER JOIN product_history ON product_history.id = concepts.product
 	        INNER JOIN products ON products.id = product_history.product            
-            INNER JOIN account_company_history ON account_company_history.id = invoices.account 
-            INNER JOIN accounts ON accounts.id = account_company_history.account 
+            INNER JOIN account_history ON account_history.id = invoices.account 
+            INNER JOIN accounts ON accounts.id = account_history.account 
             WHERE
             accounts.cedula = '$cedula' AND
             invoices.period = $periodId AND
@@ -430,7 +430,10 @@ class InvoiceModel extends SQLModel
         $target_period = $siacad->GetPeriodoById($periodId);
         
         $monthly = $product_model->GetProductByNameBeforeDate('Mensualidad', $target_period['fechafin']);
+        $foc = $product_model->GetProductByNameBeforeDate('FOC', $target_period['fechafin']);
+
         $monthlyPrice = floatval($monthly['price']);
+        $focPrice = floatval($foc['price']);
 
         $target_account = $account_model->GetAccountByCedula($cedula);
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
@@ -467,7 +470,7 @@ class InvoiceModel extends SQLModel
                 'total' => 0,
                 'detail' => []
             ],
-            'foc' => true
+            'foc' => 0
         ];
 
         foreach($accountState as $month => $value){
@@ -533,7 +536,9 @@ class InvoiceModel extends SQLModel
             }
         }
 
-        $debt_data['foc'] = $this->AccountPaidFOCOnPeriod($cedula, $periodId);
+        if($this->AccountPaidFOCOnPeriod($cedula, $periodId) === false)
+            $debt_data['foc'] = $focPrice;
+
         return $debt_data;
     }
 
@@ -547,8 +552,8 @@ class InvoiceModel extends SQLModel
             invoices
             INNER JOIN concepts ON concepts.invoice = invoices.id
             INNER JOIN products ON products.id = concepts.product
-            INNER JOIN account_company_history ON account_company_history.id = invoices.account 
-            INNER JOIN accounts ON accounts.id = account_company_history.account 
+            INNER JOIN account_history ON account_history.id = invoices.account 
+            INNER JOIN accounts ON accounts.id = account_history.account 
             WHERE
             accounts.cedula = '$cedula' AND
             invoices.period = $period AND
@@ -567,6 +572,9 @@ class InvoiceModel extends SQLModel
         return $paid;
     }
 
+    /**
+     * Returna true o false dependiendo de si el estudiante pagó FOC
+     */
     public function AccountPaidFOCOnPeriod($cedula, $periodId){
         $sql = "SELECT
             invoices.id as invoice
@@ -574,8 +582,8 @@ class InvoiceModel extends SQLModel
             invoices
             INNER JOIN concepts ON concepts.invoice = invoices.id
             INNER JOIN products ON products.id = concepts.product
-            INNER JOIN account_company_history ON account_company_history.id = invoices.account 
-            INNER JOIN accounts ON accounts.id = account_company_history.account 
+            INNER JOIN account_history ON account_history.id = invoices.account 
+            INNER JOIN accounts ON accounts.id = account_history.account 
             WHERE
             accounts.cedula = '$cedula' AND
             invoices.period = $periodId AND

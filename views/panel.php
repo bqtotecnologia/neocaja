@@ -33,38 +33,41 @@ include_once 'common/header.php';
         include_once '../utils/prettyCiphers.php';
 
         $global_vars_model = new GlobalVarsModel();
-        $global_vars = $global_vars_model->GetGlobalVars(true);
-
         $siacad = new SiacadModel();
-        //$currentPeriod = $siacad->GetCurrentPeriodo();
+        $product_model = new ProductModel();
+        $invoice_model = new InvoiceModel();
+        $coin_model = new CoinModel();
+        $account_model = new AccountModel();
+
+        $global_vars = $global_vars_model->GetGlobalVars(true);
         $periods = $siacad->GetPeriodsOfStudent($_SESSION['neocaja_cedula']);
         $currentPeriod = $periods[0];
+        $periods = array_reverse($periods);
 
-        $product_model = new ProductModel();
         $focProduct = $product_model->GetProductByName('FOC');
+        $monthStates = [];
+        $debtStates = [];
 
-        $invoice_model = new InvoiceModel();
-        $monthStates = $invoice_model->GetAccountState($_SESSION['neocaja_cedula'], $currentPeriod['idperiodo']);
-        $debtState = $invoice_model->GetDebtOfAccountOfPeriod($_SESSION['neocaja_cedula'], $currentPeriod['idperiodo']);
-
-        $coin_model = new CoinModel();
+        for($i = count($periods); $i--; $i === -1){
+            $period = $periods[$i];
+            $monthStates[$period['nombreperiodo']] = $invoice_model->GetAccountState($_SESSION['neocaja_cedula'], $period['idperiodo']);
+            $debtStates[$period['nombreperiodo']] = $invoice_model->GetDebtOfAccountOfPeriod($_SESSION['neocaja_cedula'], $period['idperiodo']);
+        }
+        
         $usd = $coin_model->GetCoinByName('Dólar');
         $coin_date = date('Y-m-d', strtotime($usd['price_created_at']));
         $today = date('Y-m-d');
         $usdUpdated = strtotime($today) === strtotime($coin_date);
-        $total_debt = $debtState['months']['total'] + $debtState['retard']['total'];
+        //$total_debt = $debtState['months']['total'] + $debtState['retard']['total'];
 
-        $account_model = new AccountModel();
         $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula']);
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
 
-        if($debtState['foc'] === false)
-            $total_debt += $focProduct['price'];
+        $total_debt = 0;
+        //if($debtState['foc'] === false)
+            //$total_debt += $focProduct['price'];
     ?>
     <div class="x_panel row col-12 m-0 p-0 justify-content-center align-items-center pt-2">              
-        <div class="row col-12 p-0 m-0 my-2 justify-content-center">
-            <h1 class="h1 text-center w-100">Su estado de cuenta en el periodo <?= $currentPeriod['nombreperiodo'] ?></h1>
-        </div>
         <div class="row col-12 p-0 m-0 my-2 justify-content-center align-items-center">
             <div class="col-12 col-md-6">
                 <?php if($usdUpdated) { ?>
@@ -98,132 +101,103 @@ include_once 'common/header.php';
                 </div>
             </div>
         </div>
-        <div class="row col-12 col-md-6 m-0 p-0 justify-content-center">
-            <div class="row m-0 p-0 col-12 justify-content-center my-2 p-2" id="debt-container">
-                <table class="col-12 col-md-10 table table-bordered border border-black text-center h6">
-                    <thead>
-                        <tr class="bg-theme text-white fw-bold">
-                            <th>Producto</th>
-                            <th>Bolívares</th>
-                            <th>Dólares</th>
-                        </tr>
-                    </thead>
-                    <tbody id="debt-table">
-                        <tr>
-                            <td class="p-1 border border-black bg-theme text-white fw-bold align-middle">Mensualidad</td>
-                            <td class="p-1 border border-black text-<?= $debtState['months']['total'] > 0 ? 'danger' : 'success' ?>">
-                                <div class="d-flex justify-content-center flex-wrap">
-                                    <?php if($debtState['months']['total'] > 0) { ?>
-                                        <?php foreach($debtState['months']['detail'] as $month => $debt) { ?>
-                                            <span class="col-6 p-0"><?= $month ?></span>
-                                            <span class="col-6 p-0">Bs. <?= GetPrettyCiphers($debt * $usd['price']) ?></span>
-                                        <?php } ?>
-                                    <?php } else { ?>
-                                        SIN DEUDA
-                                    <?php } ?>
-                                </div>
-                            </td>
-                            <td class="p-1 border border-black text-<?= $debtState['months']['total'] > 0 ? 'danger' : 'success' ?>">
-                                <div class="d-flex justify-content-center flex-wrap">
-                                    <?php if($debtState['months']['total'] > 0) { ?>
-                                        <?php foreach($debtState['months']['detail'] as $month => $debt) { ?>
-                                            <span class="col-6 p-0"><?= $month ?></span>
-                                            <span class="col-6 p-0"><?= GetPrettyCiphers($debt) ?>$</span>
-                                        <?php } ?>
-                                    <?php } else { ?>
-                                        SIN DEUDA
-                                    <?php } ?>
-                                </div>
-                            </td>
-                        </tr>
+        <div class="row col-12 m-0 p-0 justify-content-center">
 
-                        <tr>
-                            <td class="p-1 border border-black bg-theme text-white fw-bold align-middle">Diferencia mensualidad</td>
-                            <td class="p-1 border border-black text-<?= $debtState['retard']['total'] > 0 ? 'danger' : 'success' ?>">
-                                <div class="d-flex justify-content-center flex-wrap">
-                                    <?php if($debtState['retard']['total'] > 0) { ?>
-                                        <?php foreach($debtState['retard']['detail'] as $month => $debt) { ?>
-                                            <span class="col-6 p-0"><?= $month ?></span>
-                                            <span class="col-6 p-0">Bs. <?= GetPrettyCiphers($debt * $usd['price']) ?></span>
+            <div class="row col-12 m-0 p-0 mt-4">
+                <div class="row col-12 m-0 p-0 justify-content-center">
+                    <?php foreach($periods as $period) { ?>
+                        <button 
+                            class="text-white btn-period btn btn-<?= $period['nombreperiodo'] === $currentPeriod['nombreperiodo'] ? 'success' : 'secondary' ?> m-0 mx-2 " 
+                            title="Ver periodo <?= $period['nombreperiodo'] ?>"
+                            id="btn-<?= $period['nombreperiodo'] ?>"
+                            style="border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;"
+                            onclick="ChangePeriod('<?= $period['nombreperiodo'] ?>')"
+                        >
+                            <?= $period['nombreperiodo'] ?>
+                        </button>
+                    <?php } ?>
+                </div>
+
+                <?php foreach($periods as $period) { ?>
+                    <?php 
+                        $debtState = $debtStates[$period['nombreperiodo']]; 
+                        $monthState = $monthStates[$period['nombreperiodo']];
+                    ?>
+
+                    <div class="row col-12 m-0 p-2 border period-view justify-content-center align-items-start <?= $period['nombreperiodo'] === $currentPeriod['nombreperiodo'] ? '' : 'd-none' ?>" id ="debt-<?= $period['nombreperiodo'] ?>">
+                        <h2 class="col-12 text-center h2">
+                            Estado de cuenta del periodo <strong><?= $period['nombreperiodo'] ?></strong>
+                        </h2>
+
+                        <div class="row col-12 col-lg-6 m-0 p-0">                            
+                            <div class="d-flex justify-content-center table-responsive">
+                                <?php include 'common/tables/account_debt_table.php'; ?>                    
+                            </div>
+                        </div>
+    
+                        <div class="row m-0 p-0 col-12 col-lg-6 justify-content-start">
+                            <div class="row m-0 p-0 col-12 justify-content-center" id="invoices">
+                                <table class="table table-bordered border border-black">
+                                    <thead class="text-center bg-theme text-white">
+                                        <tr class="h5 m-0">
+                                            <th class="border border-black">Mes</th>
+                                            <th class="border border-black">Pagado</th>
+                                            <th class="border border-black">Moroso</th>
+                                            <th class="border border-black">Abonado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="invoice-table">
+                                        <?php foreach($monthState as $month => $state) { ?>
+                                            <tr class="text-center fs-5 text-black">
+                                                <td class="p-1 border border-black bg-white text-black"><?= $month ?></td>
+                                                <td class="p-1 border border-black bg-white">
+                                                    <i class="fa text-<?= $state['paid'] ? 'success fa-check' : 'danger fa-close' ?>"></i>
+                                                </td>
+                                                <td class="p-1 border border-black bg-white">
+                                                    <i class="fa text-<?= $state['debt'] ? 'success fa-check' : 'danger fa-close' ?>"></i>
+                                                </td>
+                                                <td class="p-1 border border-black bg-white">
+                                                    <i class="fa text-<?= $state['partial'] ? 'success fa-check' : 'danger fa-close' ?>"></i>
+                                                </td>
+                                            </tr>                                    
                                         <?php } ?>
-                                    <?php } else { ?>
-                                        SIN DEUDA
-                                    <?php } ?>
-                                </div>
-                            </td>
-                            <td class="p-1 border border-black text-<?= $debtState['retard']['total'] > 0 ? 'danger' : 'success' ?>">
-                                <div class="d-flex justify-content-center flex-wrap">
-                                    <?php if($debtState['retard']['total'] > 0) { ?>
-                                        <?php foreach($debtState['retard']['detail'] as $month => $debt) { ?>
-                                            <span class="col-6 p-0"><?= $month ?></span>
-                                            <span class="col-6 p-0"><?= GetPrettyCiphers($debt) ?>$</span>
-                                        <?php } ?>
-                                    <?php } else { ?>
-                                        SIN DEUDA
-                                    <?php } ?>
-                                </div>
-                            </td>
-                        </tr>
-                        
-                    <tr>
-                        <td class="p-1 border border-black bg-theme text-white fw-bold">FOC</td>
-                        <?php if($debtState['foc']) { ?> 
-                            <td class="p-1 border border-black text-success" colspan="2">PAGADO</td>
-                        <?php } else { ?>
-                            <td class="p-1 border border-black text-danger">Bs. <?= $focProduct['price'] * $usd['price'] ?></td>
-                            <td class="p-1 border border-black text-danger"><?= $focProduct['price'] ?>$</td>
-                        <?php } ?>
-                    </tr>
-                        <tr>
-                            <td class="p-1 border border-black bg-theme text-white fw-bold">TOTAL</td>
-                            <?php if($total_debt > 0) { ?>                                
-                                <td class="p-1 border border-black fw-bold text-danger">Bs. <?= GetPrettyCiphers($total_debt * $usd['price']) ?></td>
-                                <td class="p-1 border border-black fw-bold text-danger"><?= GetPrettyCiphers($total_debt) ?>$</td>
-                            <?php } else { ?>
-                                <td class="p-1 border border-black fw-bold text-success" colspan="2">SIN DEUDA</td>
-                            <?php } ?>
-                        </tr>
-                    </tbody>
-                </table>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
             </div>
+
+
 
             <?php  if($scholarshipped) { ?>
                 <div class="row col-12 m-0 p-2 justify-content-center text-success h3" id="scholarship">
-                    <?= 'Beca ' . $target_account['scholarship'] . ' ' . $target_account['scholarship_coverage'] . '%' ?>
+                    <?= 'Beca ' . $target_agetElementsByClassNameccount['scholarship'] . ' ' . $target_account['scholarship_coverage'] . '%' ?>
                 </div>
             <?php } ?>
         </div>
 
-        <div class="row m-0 p-0 col-12 col-md-6 my-2 justify-content-start">
-            <div class="row m-0 p-0 col-12 p-2 justify-content-center" id="invoices">
-                <table class="table table-bordered border border-black">
-                    <thead class="text-center bg-theme text-white">
-                        <tr class="h5 m-0">
-                            <th class="border border-black">Mes</th>
-                            <th class="border border-black">Pagado</th>
-                            <th class="border border-black">Moroso</th>
-                            <th class="border border-black">Abonado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="invoice-table">
-                        <?php foreach($monthStates as $month => $state) { ?>
-                            <tr class="text-center fs-5 text-black">
-                                <td class="p-1 border border-black bg-white text-black"><?= $month ?></td>
-                                <td class="p-1 border border-black bg-white">
-                                    <i class="fa text-<?= $state['paid'] ? 'success fa-check' : 'danger fa-close' ?>"></i>
-                                </td>
-                                <td class="p-1 border border-black bg-white">
-                                    <i class="fa text-<?= $state['debt'] ? 'success fa-check' : 'danger fa-close' ?>"></i>
-                                </td>
-                                <td class="p-1 border border-black bg-white">
-                                    <i class="fa text-<?= $state['partial'] ? 'success fa-check' : 'danger fa-close' ?>"></i>
-                                </td>
-                            </tr>                                    
-                        <?php } ?>
-                </table>
-            </div>
-        </div>
+        
     </div>
 <?php } ?>
+
+<script>
+    function ChangePeriod(period){
+        const containers = document.getElementsByClassName('period-view')
+        const buttons = document.getElementsByClassName('btn-period')
+
+        Array.from(containers).forEach((container) => {            
+            container.classList.add('d-none')
+        })
+
+        Array.from(buttons).forEach((btn) => {            
+            btn.classList.add('btn-secondary')
+            btn.classList.remove('btn-success')
+        })
+
+        document.getElementById('btn-' + period).classList.add('btn-success')
+        document.getElementById('debt-' + period).classList.remove('d-none')
+    }
+</script>
 
 <?php include_once 'common/footer.php'; ?>

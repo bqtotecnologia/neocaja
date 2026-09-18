@@ -78,7 +78,7 @@ if($error === ''){
     else
         $cleanData['observation'] = "'" . $cleanData['obaservation'] . "'";
 
-    $cleanData['account'] = $target_account['account_company_history_id'];
+    $cleanData['account'] = $target_account['account_history_id'];
     
     $target_invoice = $invoice_model->CreateInvoice($cleanData, strval($period['idperiodo']));
     if($target_invoice === false)

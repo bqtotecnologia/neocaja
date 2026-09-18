@@ -18,9 +18,12 @@
         periodButtonsContainer.innerHTML = ''
 
         periods.forEach((period) => {
+            last_period = period
             var btn = GetNewPeriodButton(period)
             periodButtonsContainer.prepend(btn)
         })
+
+        document.getElementById('btn-' + periods[0]).classList.add('btn-success')
     }
     
     ////////////////////////// INVOICE //////////////////////////
@@ -632,18 +635,33 @@
         var container = document.createElement('div')
         container.classList.add('text-center', 'row', 'p-3')
         var btn = document.createElement('button')
-        btn.classList.add('btn', 'btn-info')
+        btn.classList.add('btn', 'btn-secondary', 'btn-period')
         btn.title = period
         btn.innerHTML = period
         btn.type = 'button'
+        btn.id = 'btn-' + period
+
         btn.addEventListener('click', function(){ 
-            chosenPeriod = period;
-            DisplayDebt(period);
-            DisplayInvoices(period);
+            ChangeSelectedPeriod(period)
         })
 
         container.appendChild(btn)
         return container
+    }
+
+    function ChangeSelectedPeriod(period){
+        chosenPeriod = period;
+        DisplayDebt(period);
+        DisplayInvoices(period);
+
+        const buttons = document.getElementsByClassName('btn-period')
+
+        Array.from(buttons).forEach((btn) => {            
+            btn.classList.add('btn-secondary')
+            btn.classList.remove('btn-success')
+        })
+
+        document.getElementById('btn-' + period).classList.add('btn-success')
     }
     
 

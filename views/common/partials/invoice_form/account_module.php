@@ -31,7 +31,7 @@
 
             var lastPeriod = ''
             if(availablePeriods.length > 0){
-                lastPeriod = availablePeriods[availablePeriods.length - 1]
+                lastPeriod = availablePeriods[0]
             }
             
             chosenPeriod = lastPeriod
