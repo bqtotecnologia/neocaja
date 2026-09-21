@@ -22,6 +22,7 @@
     const productPrices = {}
     const coinHistories = {}
     const productIds = {}
+    const currentPeriod = '<?= $currentPeriod['nombreperiodo'] ?>'
     const retardMaxDay = parseInt('<?= $global_vars['Dia tope mora'] ?>')
     const retardPercent = parseFloat('<?= $global_vars['Porcentaje mora'] ?>')
     const scholarship_with_retard = '<?= $global_vars['Becados pagan mora'] ?>' === '1' ? true : false
@@ -56,6 +57,10 @@
 
     // LABELS
     const igtf_total_label = document.getElementById('igtf-total-label')    
+
+
+    // BUTTONS
+    const accountButton = document.getElementById('account-link')
 
 
     // CONTROL VARS

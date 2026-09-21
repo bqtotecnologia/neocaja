@@ -3,7 +3,10 @@
         if(id === '')
             return
 
+        accountButton.classList.add('d-none')
+        ToggleLoadingIcon()
         ClearInvoices()
+        CleanPeriodButtons()
         CleanProducts(true)
         var error = false
         targetAccount = await GetAccountData(id)
@@ -17,27 +20,51 @@
         if(!error){
             chosenPeriod = ''
             availablePeriods = []
-            var accountButton = document.getElementById('account-link')
+            
             debtContainer.classList.add('d-none')
-            accountButton.classList.remove('d-none')
-            accountButton.href  = '<?= $base_url ?>' + '/views/detailers/account_details.php?id=' + targetAccount.id
+            invoiceContainer.classList.add('d-none')           
 
             accountStates = await GetAccountState(id)            
             debtData = await GetDebtOfAccount(id)
 
-            for(let key in accountStates.data){
-                availablePeriods.push(key)
+            for(let period in accountStates.data){
+                availablePeriods.push(period)
             }
 
             var lastPeriod = ''
             if(availablePeriods.length > 0){
                 lastPeriod = availablePeriods[0]
             }
-            
-            chosenPeriod = lastPeriod
+
+            var oldestDebt = false
+            for(let period in debtData.data){
+                var current = debtData.data[period]
+                if(current.foc > 0 || current.months > 0 || current.retard > 0)
+                    oldestDebt = period
+            }
+
             DisplayPeriods(availablePeriods)
-            DisplayDebt(lastPeriod)
-            DisplayInvoices(lastPeriod)
+            
+            var retard = (oldestDebt !== lastPeriod) && (oldestDebt !== false)
+            if(retard){
+                // Está moroso en un periodo anterior
+                chosenPeriod = oldestDebt            
+                DisplayDebt(oldestDebt)
+                DisplayInvoices(oldestDebt)
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'El estudiante tiene deuda de un periodo anterior',
+                    html: 'Posee deuda en uno o más periodos, siendo el primero de esos el <strong>' + chosenPeriod + '</strong>'
+                })
+            }
+            else{
+                chosenPeriod = lastPeriod            
+                DisplayDebt(lastPeriod)
+                DisplayInvoices(lastPeriod)
+            }
+
+            ChangeSelectedPeriod(chosenPeriod)
+            
 
             ShowScholarship()
             ShowCompany()
@@ -48,6 +75,10 @@
 
             UpdateProductsPrice()
         }
+
+        accountButton.classList.remove('d-none')
+        accountButton.href  = '<?= $base_url ?>' + '/views/detailers/account_details.php?id=' + targetAccount.id
+        ToggleLoadingIcon()
     }    
 
     async function PaymentSelecting(select){

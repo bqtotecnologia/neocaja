@@ -177,3 +177,14 @@ function ExportToPDF(){
         html:html
       })
   }
+
+  function ToggleLoadingIcon(){
+    const loadingIcon = document.getElementById('loading-container')
+    
+    if(loadingIcon !== null){
+        if(Array.from(loadingIcon.classList).includes('d-none'))
+            loadingIcon.classList.remove('d-none')
+        else
+            loadingIcon.classList.add('d-none')
+    }
+}

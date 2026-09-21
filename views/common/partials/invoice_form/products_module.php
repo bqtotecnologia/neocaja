@@ -165,7 +165,7 @@
         input.value = price
     }
 
-    function CleanProducts(cleanPeriodMonths = false){
+    function CleanProducts(cleanPeriodMonths = false){        
         lastMonth = currentMonth
         monthReached = false
         productTable.innerHTML = ''
@@ -180,7 +180,9 @@
         companyContainer.classList.add('d-none')
 
         if(cleanPeriodMonths === true)
-            periodMonths = []
+            periodMonths = []  
+        
+        UpdateProductTotal()
     }
 
     function DeleteProductRow(id){

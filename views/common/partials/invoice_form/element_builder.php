@@ -165,6 +165,7 @@
 
         var productCol = GetNewProductColumn(productId)        
         var monthCol = GetNewMonthColumn(productId)
+        var periodCol = GetNewPeriodColumn(productId)
         var basePriceCol = GetNewBasePriceColumn(productId)
         var totalCol = GetNewTotalColumn(productId)
         var eraseCol = GetNewEraseButtonColumn(productId)      
@@ -174,6 +175,7 @@
         row.id = "product-row-" + productId
         row.appendChild(productCol)
         row.appendChild(monthCol)
+        row.appendChild(periodCol)
         row.appendChild(basePriceCol)
         row.appendChild(totalCol)
         row.appendChild(eraseCol)
@@ -233,6 +235,35 @@
 
         div.appendChild(monthSelect)
         return monthCol
+    }
+
+    function GetNewPeriodColumn(productId){
+        var periodCol = document.createElement('td')
+        var div = document.createElement('div')
+        div.classList.add('d-flex', 'justify-content-center', 'm-0')
+        periodCol.appendChild(div)
+        var periodSelect = document.createElement('select')
+        var option = document.createElement('option')
+        option.innerHTML = "&nbsp"
+        option.value = ''
+        periodSelect.appendChild(option)
+        periodSelect.classList.add('form-control', 'col-12', 'col-md-8', 'select2')
+        buffer = "product-period-" + productId
+        periodSelect.id = buffer
+        periodSelect.name = buffer
+        
+        for(let period in debtData.data){
+            var option = document.createElement('option')
+            option.value = period
+            option.innerHTML = period
+            if(period === currentPeriod)
+                option.selected = true
+
+            periodSelect.appendChild(option)
+        }
+
+        div.appendChild(periodSelect)
+        return periodCol
     }
 
     function GetNewBasePriceColumn(productId){
@@ -662,6 +693,14 @@
         })
 
         document.getElementById('btn-' + period).classList.add('btn-success')
+    }
+
+    function CleanPeriodButtons(){
+        const buttons = document.getElementsByClassName('btn-period')
+
+        Array.from(buttons).forEach((btn) => {            
+            btn.remove()
+        })
     }
     
 

@@ -21,9 +21,9 @@
     }
 
     function ClearInvoices(){
-        for (const child of invoiceTable.children) {
+        Array.from(invoiceTable.children).forEach((child) => {
             child.remove()
-        }
+        })
     }
 
     function DisplayDebt(period){

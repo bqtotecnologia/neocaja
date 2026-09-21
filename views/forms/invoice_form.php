@@ -47,9 +47,9 @@ $products = $product_model->GetActiveProducts();
 $global_vars = $global_vars_model->GetGlobalVars(true);
 $periods = $siacad->GetPeriods();
 
-$period = $siacad->GetCurrentPeriodo();
-$periodId = $period['idperiodo'];
-$payments = $remote_payments_model->GetAccountPaymentsWihtoutInvoice($period['fechainicio'], $period['fechafin']);
+$currentPeriod = $siacad->GetCurrentPeriodo();
+$periodId = $currentPeriod['idperiodo'];
+$payments = $remote_payments_model->GetAccountPaymentsWihtoutInvoice($currentPeriod['fechainicio'], $currentPeriod['fechafin']);
 
 $latest = $invoice_model->GetLatestNumbers();
 
@@ -147,7 +147,14 @@ $latest = $invoice_model->GetLatestNumbers();
                             <label class="h6 m-0 fw-bold px-2">Periodo</label>
                         </div>
                         <div class="row col-12 col-md-8 m-0 p-0 justify-content-center justify-content-md-start">
-                            <input disabled class=" form-control col-10 col-md-8"  value="<?= $period['nombreperiodo'] ?>" type="text" >
+                            <select id="period" name="period" class="form-control col-10 col-md-8 select2" required>
+                                <option value="">&nbsp;</option>
+                                <?php foreach($periods as $period) { $current = $period['actual'] === true ?>
+                                    <option value="<?= $period['idperiodo'] ?>" class="text-<?= $current ? 'success' : 'danger' ?>" <?= $current ? 'selected' : '' ?>>
+                                        <?= $period['nombreperiodo']?>
+                                    </option>
+                                <?php } ?>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -216,10 +223,12 @@ $latest = $invoice_model->GetLatestNumbers();
                     </div>
                 </div>
 
-                <div class="row col-12 m-0 p-0 justify-content-center" id="period-buttons-container">
-
+                <div class="row col-12 m-0 p-0">
+                    <?php include_once '../common/partials/loading_icon.php' ?>
                 </div>
 
+                <div class="row col-12 m-0 p-0 justify-content-center" id="period-buttons-container">
+                </div>
 
                 <div class="row col-12 my-2 justify-content-start align-items-start">
                     <div class="row col-12 col-md-6 my-2 justify-content-start">                    
@@ -283,6 +292,7 @@ $latest = $invoice_model->GetLatestNumbers();
                             <tr class="bg-theme text-white">
                                 <th class="p-1 col-4 align-middle">Producto</th>
                                 <th class="p-1 col-2 align-middle">Mes</th>
+                                <th class="col-2 align-middle">Periodo</th>
                                 <th class="p-1 align-middle">Monto base ($)</th>
                                 <th class="p-1 align-middle">Total (Bs)</th>
                                 <th class="p-1 align-middle">Borrar</th>
