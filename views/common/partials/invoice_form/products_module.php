@@ -107,53 +107,64 @@
         UpdatePaymentMethodsDiffWithProducts()
     }
 
-    function DisplayDefaultProduct(){      
-        var prcice = 0
-        if(debtData.data[chosenPeriod].foc === false){
-            AddProduct()
-            price = productPrices['FOC']
-            ChangeProduct(nextProduct - 1, productIds['FOC'])
-            ChangeProductPrice(nextProduct - 1, price)
-        }
+    async function DisplayDefaultProduct(){
+        for(let period in debtData.data){
+            // Colocamos los FOC pendientes
+            if(debtData.data[period].foc > 0){
+                AddProduct()
+                ChangeProduct(nextProduct - 1, productIds['FOC'])
+                ChangeProductPeriod(nextProduct - 1, period)
+                ChangeProductPrice(nextProduct - 1, debtData.data[period].foc)
+            }
 
-        periodMonths.forEach((pmonth) => {
-            if(!paidMonths.includes(pmonth)){
-                price = productPrices['Mensualidad']
+            // Colocamos las mensualidades pendientes
+            var baseMonthlyPrice = debtData.data[period].monthly_price
 
-                if(scholarshipped){
-                    price = price - (price * (targetAccount['scholarship_coverage'] / 100))
-                }
-                var monthNumber = GetMonthNumberByName(pmonth)
+            allMonths.forEach((month) => {                
+                if(
+                    !Object.keys(debtData.data[period].retard.detail).includes(month) &&
+                    !Object.keys(debtData.data[period].months.detail).includes(month)
+                )
+                    return
 
-                if(Object.keys(debtData.data[chosenPeriod].months.detail).includes(pmonth)){
-                    price = debtData.data[chosenPeriod].months.detail[pmonth]
-                }
+                var monthNumber = GetMonthNumberByName(month)
 
-                if(Object.keys(debtData.data[chosenPeriod].retard.detail).includes(pmonth)){
-                    var retardPrice = debtData.data[chosenPeriod].retard.detail[pmonth]
+                if(Object.keys(debtData.data[period].retard.detail).includes(month)){
+                    var retard = debtData.data[period].retard.detail[month]
+                    // Agregamos los retardos
                     AddProduct()
                     ChangeMonth(nextProduct - 1, monthNumber)
+                    ChangeProductPeriod(nextProduct - 1, period)
                     ChangeProduct(nextProduct - 1, productIds['Diferencia Mensualidad'])    
-                    ChangeProductPrice(nextProduct - 1, retardPrice)
+                    ChangeProductPrice(nextProduct - 1, retard)
                 }
 
-                AddProduct()
-                ChangeMonth(nextProduct - 1, monthNumber)
-                if(partialMonths.includes(pmonth)){
-                    ChangeProduct(nextProduct - 1, productIds['Saldo Mensualidad'])                    
-                }
-                else                
-                    ChangeProduct(nextProduct - 1, productIds['Mensualidad'])
-                
+                if(Object.keys(debtData.data[period].months.detail).includes(month)){
+                    var to_pay = debtData.data[period].months.detail[month]    
+                    var partialPaid = to_pay < baseMonthlyPrice
 
-                ChangeProductPrice(nextProduct - 1, price)
-            }
-        })        
+                    AddProduct()
+                    ChangeMonth(nextProduct - 1, monthNumber)
+                    ChangeProductPeriod(nextProduct - 1, period)
+                    if(partialPaid)
+                        ChangeProduct(nextProduct - 1, productIds['Saldo Mensualidad'])    
+                    else
+                        ChangeProduct(nextProduct - 1, productIds['Mensualidad'])    
+                    
+                    ChangeProductPrice(nextProduct - 1, to_pay)
+                }
+            })
+            await delay(1)
+        }
         //UpdateProductsPrice(true)
     }
 
     function ChangeMonth(position, month){      
         $('#product-month-' + position).val(String(month)) 
+    }
+
+    function ChangeProductPeriod(position, period){      
+        $('#product-period-' + position).val(String(period)).trigger('change')
     }
 
     function ChangeProduct(position, productId){
@@ -186,7 +197,17 @@
     }
 
     function DeleteProductRow(id){
-        document.getElementById('product-row-' + id).remove()
-        UpdateProductTotal()
+        const row = document.getElementById('product-row-' + id)
+
+        if(row !== null){
+            row.remove()
+            UpdateProductTotal()
+        }
+    }
+
+    function DeleteAllProducts(){
+        for(let i = 0; i < nextProduct; i++){
+            DeleteProductRow(i)
+        }
     }
 </script>

@@ -79,6 +79,7 @@
         'Diciembre',
     ]
 
+    let availableProducts = {}
     let chosenPeriod = ''
     let periodMonths = []
     let availablePeriods = []

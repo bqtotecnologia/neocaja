@@ -470,7 +470,8 @@ class InvoiceModel extends SQLModel
                 'total' => 0,
                 'detail' => []
             ],
-            'foc' => 0
+            'foc' => 0,
+            'monthly_price' => $monthlyPrice
         ];
 
         foreach($accountState as $month => $value){

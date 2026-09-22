@@ -124,7 +124,7 @@ class ProductModel extends SQLModel
     /**
      * Retorna los productos que el estudiante aún no ha pagado, los retorna por periodos
     */
-    public function GetAvailableProductsOfStudentByPeriod($cedula){
+    public function GetAllAvailableProductsOfStudent($cedula){
         include_once 'siacad_model.php';
         include_once 'global_vars_model.php';
 

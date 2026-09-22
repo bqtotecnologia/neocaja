@@ -279,12 +279,20 @@ $latest = $invoice_model->GetLatestNumbers();
 
             <div class="x_panel row col-12 m-0 p-0 justify-content-center align-items-start pt-2 my-2 border-top">
                 <div class="col-12 d-flex align-items-center">
-                    <h2 class="h2">
-                        Productos
-                    </h2>
-                    <button class="btn btn-info p-2 m-0 d-flex align-items-center" type="button" onclick="AddProduct()" style="margin-left:10px !important;" title="Añadir producto">
-                        <i class="fa fa-plus" style="font-size:20px"></i>
-                    </button>
+                    <div class="row col-6 m-0 p-0 align-items-center">
+                        <h2 class="h2">
+                            Productos
+                        </h2>
+                        <button class="btn btn-info p-2 m-0 d-flex align-items-center" type="button" onclick="AddProduct()" style="margin-left:10px !important;" title="Añadir producto">
+                            <i class="fa fa-plus" style="font-size:20px"></i>
+                        </button>
+                    </div>
+
+                    <div class="row col-6 m-0 p-0 justify-content-end px-3">
+                        <button class="btn btn-danger p-2 m-0 d-flex align-items-center" type="button" onclick="DeleteAllProducts()" style="margin-left:10px !important;" title="Borrar todos los productos">
+                            <i class="fa fa-trash" style="font-size:20px"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="col-12">
                     <table class="col-12 table table-bordered">

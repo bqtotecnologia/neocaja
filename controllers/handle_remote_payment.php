@@ -41,7 +41,7 @@ if($error === ''){
     $product_model = new ProductModel();
     $siacad = new SiacadModel();
     $period = $siacad->GetCurrentPeriodo()['idperiodo'];
-    $periodProducts = $product_model->GetAvailableProductsOfStudentByPeriod($target_account['cedula'], $period);
+    $periodProducts = $product_model->GetAllAvailableProductsOfStudent($target_account['cedula'], $period);
     if($periodProducts === false)
         $error = 'Ocurrió un error al intentar obtener los productos disponibles';
 }

@@ -16,7 +16,7 @@ if($error === ''){
     include_once '../../models/product_model.php';
     $product_model = new ProductModel();
 
-    $periodProducts = $product_model->GetAvailableProductsOfStudentByPeriod($_SESSION['neocaja_cedula']);
+    $periodProducts = $product_model->GetAllAvailableProductsOfStudent($_SESSION['neocaja_cedula']);
 
     if($periodProducts === [])
         $error = 'Usted no tiene ningún pago pendiente';

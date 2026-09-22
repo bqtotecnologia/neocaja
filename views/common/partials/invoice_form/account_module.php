@@ -43,42 +43,41 @@
                     oldestDebt = period
             }
 
-            DisplayPeriods(availablePeriods)
             
-            var retard = (oldestDebt !== lastPeriod) && (oldestDebt !== false)
-            if(retard){
-                // Está moroso en un periodo anterior
+            
+            studentIsRetard = (oldestDebt !== lastPeriod) && (oldestDebt !== false)
+            // Está moroso en un periodo anterior
+
+            if(studentIsRetard)
                 chosenPeriod = oldestDebt            
-                DisplayDebt(oldestDebt)
-                DisplayInvoices(oldestDebt)
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'El estudiante tiene deuda de un periodo anterior',
-                    html: 'Posee deuda en uno o más periodos, siendo el primero de esos el <strong>' + chosenPeriod + '</strong>'
-                })
-            }
-            else{
+            else
                 chosenPeriod = lastPeriod            
-                DisplayDebt(lastPeriod)
-                DisplayInvoices(lastPeriod)
-            }
-
-            ChangeSelectedPeriod(chosenPeriod)
-            
-
-            ShowScholarship()
-            ShowCompany()
-            //AddProduct()
             
             if(incomesInput.value === '')
-                DisplayDefaultProduct()
+                await DisplayDefaultProduct()
 
             UpdateProductsPrice()
         }
 
         accountButton.classList.remove('d-none')
         accountButton.href  = '<?= $base_url ?>' + '/views/detailers/account_details.php?id=' + targetAccount.id
+
+        DisplayPeriods(availablePeriods)
+        DisplayDebt(chosenPeriod)
+        DisplayInvoices(chosenPeriod)
+        ChangeSelectedPeriod(chosenPeriod)           
+        ShowScholarship()
+        ShowCompany()
+
         ToggleLoadingIcon()
+
+        if(studentIsRetard){
+            Swal.fire({
+                icon: 'warning',
+                title: 'El estudiante tiene deuda de un periodo anterior',
+                html: 'Posee deuda en uno o más periodos, siendo el primero de esos el <strong>' + chosenPeriod + '</strong>'
+            })
+        }
     }    
 
     async function PaymentSelecting(select){
