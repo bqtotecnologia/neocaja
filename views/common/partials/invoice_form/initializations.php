@@ -94,7 +94,7 @@
     var currentDate = new Date()
     let currentMonth = currentDate.getMonth()
     let lastMonth = currentMonth
-    let youngestPayableMonth = null
+    let youngestPayableMonth = {}
     let yearOfNextMonth = currentDate.getFullYear()
     let monthReached = false
     let nextPaymentMethod = 1

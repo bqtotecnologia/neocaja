@@ -14,8 +14,9 @@
             }
 
             for(let key in invoices){               
-                if(youngestPayableMonth === null && !paidMonths.includes(key))
-                        youngestPayableMonth = GetMonthNumberByName(key)
+                // TODO: Acomodar youngestPayableMonth[period] para que contenga su valor correcto, también revisar paidMonths
+                if(youngestPayableMonth[period] === undefined && !paidMonths.includes(key))
+                        youngestPayableMonth[period] = GetMonthNumberByName(key)
             }
         }
     }

@@ -146,17 +146,11 @@ $latest = $invoice_model->GetLatestNumbers();
                         <div class="row m-0 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-4">
                             <label class="h6 m-0 fw-bold px-2">Periodo</label>
                         </div>
-                        <div class="row col-12 col-md-8 m-0 p-0 justify-content-center justify-content-md-start">
-                            <select id="period" name="period" class="form-control col-10 col-md-8 select2" required>
-                                <option value="">&nbsp;</option>
-                                <?php foreach($periods as $period) { $current = $period['actual'] === true ?>
-                                    <option value="<?= $period['idperiodo'] ?>" class="text-<?= $current ? 'success' : 'danger' ?>" <?= $current ? 'selected' : '' ?>>
-                                        <?= $period['nombreperiodo']?>
-                                    </option>
-                                <?php } ?>
-                            </select>
+                       <div class="row col-12 col-md-8 m-0 p-0 justify-content-center justify-content-md-start">
+                            <input disabled class=" form-control col-10 col-md-8"  value="<?= $currentPeriod['nombreperiodo'] ?>" type="text" >
                         </div>
                     </div>
+                    
                 </div>
             </div>
 
@@ -484,6 +478,32 @@ $latest = $invoice_model->GetLatestNumbers();
             if(paymentTotal > productTotal)
                 error = 'No se puede facturar un monto inferior al total de los métodos de pago'
         }
+
+        var myPeriods = availablePeriods.reverse()
+        var orderedMonths = {}
+
+        const monthlyIds = [
+            productIds['Mensualidad'],
+            productIds['Diferencia Mensualidad'],
+            productIds['Saldo Mensualidad']
+        ]
+
+        myPeriods.forEach((period) => {
+            orderedMonths[period] = []
+            for(let i = 0; i <= nextProduct; i++){
+                const productId = document.getElementById('product-id-' + i).value
+                if(!monthlyIds.includes(productId))
+                    continue
+
+                const month = document.getElementById('product-month-' + i).value
+                if(month === ''){
+                    error = 'Se escogió una mensualidad, diferencia mensualidad o saldo mensualidad sin especificar el mes'
+                    break
+                }
+
+                orderedMonths[period].push(month)
+            }
+        })
 
         console.log('mes más jóven ' + youngestPayableMonth)
         if(error === ''){

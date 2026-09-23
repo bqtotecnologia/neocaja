@@ -85,7 +85,6 @@
         UpdateProductTotal()
     }
 
-
     function UpdateProductTotal(){
         var productsTotal = document.getElementById('products-total')
         var productsTotalBs = document.getElementById('products-total-bs')
@@ -183,7 +182,7 @@
         nextProduct = 1
         paidMonths = []
         partialMonths = []        
-        youngestPayableMonth = null
+        youngestPayableMonth = {}
         updatePricesAccordToDebt = false
         scholarshipContainer.innerHTML = ''
         scholarshipContainer.classList.add('d-none')
