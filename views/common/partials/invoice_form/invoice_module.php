@@ -2,6 +2,8 @@
     function DisplayInvoices(period){
         invoiceContainer.classList.remove('d-none')
         invoiceTable.innerHTML = ''
+        youngestPayableMonth = {}
+        oldestPayableMonth = {}
 
         if(accountStates.data[period] === undefined)
             return
@@ -10,13 +12,7 @@
         if(Object.keys(invoices).length > 0){
             invoiceContainer.classList.remove('d-none')
             for(let key in invoices){               
-                AddInvoice(key, invoices[key])
-            }
-
-            for(let key in invoices){               
-                // TODO: Acomodar youngestPayableMonth[period] para que contenga su valor correcto, también revisar paidMonths
-                if(youngestPayableMonth[period] === undefined && !paidMonths.includes(key))
-                        youngestPayableMonth[period] = GetMonthNumberByName(key)
+                AddInvoice(key, invoices[key], period)
             }
         }
     }

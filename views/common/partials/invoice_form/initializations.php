@@ -81,20 +81,20 @@
 
     let availableProducts = {}
     let chosenPeriod = ''
-    let periodMonths = []
     let availablePeriods = []
     let coinValues = {}    
     let nextProduct = 1
     let targetAccount = {}
     let accountStates = {}
     let debtData = ''   
-    let paidMonths = []
+    let paidMonths = {}
     let partialMonths = []
     let target_payment = ''
     var currentDate = new Date()
     let currentMonth = currentDate.getMonth()
     let lastMonth = currentMonth
     let youngestPayableMonth = {}
+    let oldestPayableMonth = {}
     let yearOfNextMonth = currentDate.getFullYear()
     let monthReached = false
     let nextPaymentMethod = 1

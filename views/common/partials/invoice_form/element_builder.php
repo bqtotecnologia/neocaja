@@ -56,12 +56,6 @@
     } 
 
     function AddInvoice(month, invoice){
-        if(invoice.paid === 1){
-            paidMonths.push(month)
-        }
-
-        periodMonths.push(month)
-
         if(invoice.paid === 0 && monthReached === false){
             monthReached = true
             
@@ -221,16 +215,11 @@
         monthSelect.name = buffer
         
         allMonths.forEach((month) => {
-            if(!paidMonths.includes(month)){
-                var option = document.createElement('option')
-                option.value = GetMonthNumberByName(month)
-                var span = document.createElement('span')
-                span.innerHTML = month
-                span.classList.add('bg-primary')
-                option.appendChild(span)
-    
-                monthSelect.appendChild(option)
-            }
+            var option = document.createElement('option')
+            option.value = GetMonthNumberByName(month)
+            option.innerHTML = month
+
+            monthSelect.appendChild(option)
         })
 
         div.appendChild(monthSelect)

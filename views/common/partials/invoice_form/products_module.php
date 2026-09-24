@@ -175,23 +175,42 @@
         input.value = price
     }
 
-    function CleanProducts(cleanPeriodMonths = false){        
+    function FillYoungestPayableMonths(){
+        for(let period in accountStates.data){
+            if(paidMonths[period] === undefined)
+                paidMonths[period] = []
+
+            if(youngestPayableMonth[period] === undefined){
+                youngestPayableMonth[period] = null
+                oldestPayableMonth[period] = null
+            }           
+
+            for(let month in accountStates.data[period]){
+                var monthNumber = GetMonthNumberByName(month)
+
+                if(accountStates.data[period][month].paid === 0 && youngestPayableMonth[period] === null)
+                    youngestPayableMonth[period] = monthNumber
+
+                oldestPayableMonth[period] = monthNumber
+            }
+        }
+    }
+
+    function CleanProducts(){
         lastMonth = currentMonth
         monthReached = false
         productTable.innerHTML = ''
         nextProduct = 1
-        paidMonths = []
-        partialMonths = []        
+        paidMonths = {}
         youngestPayableMonth = {}
+        oldestPayableMonth = {}
+        partialMonths = []        
         updatePricesAccordToDebt = false
         scholarshipContainer.innerHTML = ''
         scholarshipContainer.classList.add('d-none')
         companyContainer.innerHTML = ''
         companyContainer.classList.add('d-none')
 
-        if(cleanPeriodMonths === true)
-            periodMonths = []  
-        
         UpdateProductTotal()
     }
 

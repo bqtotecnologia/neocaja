@@ -7,7 +7,7 @@
         ToggleLoadingIcon()
         ClearInvoices()
         CleanPeriodButtons()
-        CleanProducts(true)
+        CleanProducts()
         var error = false
         targetAccount = await GetAccountData(id)
         if(targetAccount.status !== false){
@@ -41,9 +41,7 @@
                 var current = debtData.data[period]
                 if(current.foc > 0 || current.months > 0 || current.retard > 0)
                     oldestDebt = period
-            }
-
-            
+            }            
             
             studentIsRetard = (oldestDebt !== lastPeriod) && (oldestDebt !== false)
             // Está moroso en un periodo anterior
@@ -68,6 +66,7 @@
         ChangeSelectedPeriod(chosenPeriod)           
         ShowScholarship()
         ShowCompany()
+        FillYoungestPayableMonths()
 
         ToggleLoadingIcon()
 

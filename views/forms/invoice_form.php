@@ -460,8 +460,8 @@ $latest = $invoice_model->GetLatestNumbers();
     function ValidateForm(e){
         e.preventDefault()
         var error = ''
-        var productTotal = parseFloat(document.getElementById('products-total-bs').innerHTML)
-        var paymentTotal = parseFloat(document.getElementById('payment-total').innerHTML)
+        var productTotal = parseFloat(document.getElementById('products-total-bs').innerHTML.replaceAll('Bs. ', ''))
+        var paymentTotal = parseFloat(document.getElementById('payment-total').innerHTML.replaceAll('Bs. ', ''))
 
         var invalidValues = [0, undefined]
 
@@ -472,79 +472,124 @@ $latest = $invoice_model->GetLatestNumbers();
         ){
             error = 'Para facturar se necesita al menos un producto y un método de pago'
         }
-
         
         if(error === ''){
             if(paymentTotal > productTotal)
                 error = 'No se puede facturar un monto inferior al total de los métodos de pago'
         }
 
+        const monthlyIds = [
+            parseInt(productIds['Mensualidad']),
+            parseInt(productIds['Diferencia Mensualidad']),
+            parseInt(productIds['Saldo Mensualidad']),
+            parseInt(productIds['Abono Mensualidad']),
+        ]
+
+        // Para validar que el orden de los meses sea correcto, primero crearemos una estructura dentro de cashierIntents (intenciones del cajero)
+        // Dicha variable contendrá {'periodo': 'mes1': paid, debt, partial, 'mes2'...}
+        // paid especifica si el cajero está intentando cobrarle el mes al estudiante (Mensualidad o Saldo mensualidad)
+        // debt especifica si el cajero está intentando cobrarle mora al estudiante (Diferencia mensualidad)
+        // partial especifica si el cajero está intentando cobrarle el mes al estudiante luego de que este abonara (Abono mensualidad)
+
+        var cashierIntents = {}
+        for(let i = 1; i <= nextProduct; i++){
+            if(document.getElementById('product-id-' + i) === null)
+                continue
+
+            const productId = parseInt(document.getElementById('product-id-' + i).value)
+            if(!monthlyIds.includes(productId)) // No es un producto relacionado con una mensualidad
+                continue
+
+            const month = document.getElementById('product-month-' + i).value
+            const monthName = GetMonthNameByNumber(month)
+            const period = document.getElementById('product-period-' + i).value
+
+            if(cashierIntents[period] === undefined)
+                cashierIntents[period] = {}
+
+            if(cashierIntents[period][monthName] === undefined)
+                cashierIntents[period][monthName] = {paid: 0, debt: 0, partial: 0}
+            
+            if(productId === productIds['Diferencia Mensualidad'])
+                cashierIntents[period][monthName].debt = 1
+
+            if(productId === productIds['Abono Mensualidad'])
+                cashierIntents[period][monthName].partial = 1
+            
+            if(productId === productIds['Mensualidad'] || productId === productIds['Saldo Mensualidad'])
+                cashierIntents[period][monthName].partial = 1
+        }
+
+        if(Object.keys(cashierIntents).length > 0){
+            // Si hay información dentro es que se ha recibido algún producto relacionado con mensualidades
+            // Por lo tanto ahora debemos contrastar las intenciones del cajero con el estado de cuenta del estudiante
+            // Y así poder comprobar que no esté intentando cobrarle un mes por adelantado o una diferencia mensualidad donde no la hay
+
+            for(let period in debtData.data){
+                
+            }
+        }
+
         var myPeriods = availablePeriods.reverse()
         var orderedMonths = {}
+        var monthlySelected = 0
 
-        const monthlyIds = [
-            productIds['Mensualidad'],
-            productIds['Diferencia Mensualidad'],
-            productIds['Saldo Mensualidad']
-        ]
+
 
         myPeriods.forEach((period) => {
             orderedMonths[period] = []
-            for(let i = 0; i <= nextProduct; i++){
-                const productId = document.getElementById('product-id-' + i).value
-                if(!monthlyIds.includes(productId))
-                    continue
+            for(let i = 1; i <= nextProduct; i++){
+                
 
-                const month = document.getElementById('product-month-' + i).value
+
+
+                
                 if(month === ''){
                     error = 'Se escogió una mensualidad, diferencia mensualidad o saldo mensualidad sin especificar el mes'
                     break
                 }
 
-                orderedMonths[period].push(month)
+                monthlySelected ++
+                if(orderedMonths[period].includes(month))
+                    orderedMonths[period].push(month)
             }
         })
 
-        console.log('mes más jóven ' + youngestPayableMonth)
+        var paidPeriods = []        
+        console.log(orderedMonths)
         if(error === ''){
-            // Validamos que haya escogido meses consecutivos empezando por el primero
-            var nextMonth = parseInt(youngestPayableMonth)            
-            var selectedMonths = []
-            var consecutiveMonths = 0
-            var cyclesMade = -1
-    
-            for(let i = 0; i <= nextProduct; i++){
-                const input = document.getElementById('product-month-' + i)
-                if(input === null)
-                    continue
+            for(let period in orderedMonths){
+                console.log('procesando periodo ' + period)
+                var nextMonth = parseInt(youngestPayableMonth[period])                
+                var cyclesMade = -1
+                var consecutiveMonths = 0
+                var selectedMonths = orderedMonths[period]
 
-                if(input.value !== '' && !selectedMonths.includes(input.value)){
-                    selectedMonths.push(input.value)
-                }
-            }
-
-            while(true){
-                cyclesMade++;
-                for(let i = 0; i < selectedMonths.length; i++){
-                    currentMonth = selectedMonths[i]
-                    if(parseInt(currentMonth) === nextMonth){
-                        nextMonth++;
-                        if(nextMonth === 13)
-                            nextMonth = 1
-                        
-                        consecutiveMonths++
-                        break;
+                // Validamos que haya escogido meses consecutivos empezando por el primero   
+                while(true){
+                    cyclesMade++;
+                    for(let i = 0; i < selectedMonths.length; i++){
+                        currentMonth = selectedMonths[i]
+                        if(parseInt(currentMonth) === nextMonth){
+                            nextMonth++;
+                            console.log('Se encontró la mensualidad del mes ' + currentMonth)
+                            if(nextMonth === 13)
+                                nextMonth = 1
+                            
+                            consecutiveMonths++
+                            break;
+                        }        
                     }
-    
+        
+                    if(cyclesMade > selectedMonths.length)
+                        break;
                 }
-    
-                if(cyclesMade > selectedMonths.length)
-                    break;
+        
+                if(monthlySelected !== consecutiveMonths)
+                    error = 'Debes seleccionar meses consecutivos y empezar por el primero ('+ period +')';
             }
-    
-            if(selectedMonths.length !== consecutiveMonths)
-                error = 'Debes seleccionar meses consecutivos y empezar por el primero';
         }
+
 
         if(error === ''){
             Swal.fire({
