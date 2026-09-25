@@ -176,6 +176,7 @@
     }
 
     function FillYoungestPayableMonths(){
+        youngestPayablePeriod = null
         for(let period in accountStates.data){
             if(paidMonths[period] === undefined)
                 paidMonths[period] = []
@@ -190,7 +191,8 @@
 
                 if(accountStates.data[period][month].paid === 0 && youngestPayableMonth[period] === null)
                     youngestPayableMonth[period] = monthNumber
-
+                
+                youngestPayablePeriod = period
                 oldestPayableMonth[period] = monthNumber
             }
         }
