@@ -464,6 +464,7 @@ $latest = $invoice_model->GetLatestNumbers();
         var paymentTotal = parseFloat(document.getElementById('payment-total').innerHTML.replaceAll('Bs. ', ''))
 
         /*
+        Validación comentada para testear más cómodamente, al final hay que descomentar esto
         var invalidValues = [0, undefined]
         if(
             productTotal  in invalidValues || 
@@ -480,6 +481,7 @@ $latest = $invoice_model->GetLatestNumbers();
 
         */
         
+        // Lista de los ids de los productos que requieren ser validados
         var admittedIds = [
             parseInt(productIds['Mensualidad']),
             parseInt(productIds['Diferencia Mensualidad']),
@@ -489,10 +491,11 @@ $latest = $invoice_model->GetLatestNumbers();
         ]
 
         // Para validar que el orden de los meses sea correcto, primero crearemos una estructura dentro de cashierIntents (intenciones del cajero)
-        // Dicha variable contendrá {'periodo': 'months': {'mes1': paid, debt, partial, 'mes2'...}, foc: ...}
-        // paid especifica si el cajero está intentando cobrarle el mes al estudiante (Mensualidad o Saldo mensualidad)
+        // Dicha variable contendrá {'periodo': 'months': {'mes1': {paid, debt, partial, remaining}, 'mes2'...}, foc: ...}
+        // paid especifica si el cajero está intentando cobrarle el mes al estudiante (Mensualidad)
         // debt especifica si el cajero está intentando cobrarle mora al estudiante (Diferencia mensualidad)
         // partial especifica si el cajero está intentando cobrarle el mes al estudiante luego de que este abonara (Abono mensualidad)
+        // remaining especifica si el cajero está intentando cobrarle lo que le falta para pagar el mes (Saldo Mensualidad)
 
         var cashierIntents = {}
         for(let i = 1; i <= nextProduct; i++){
@@ -509,9 +512,6 @@ $latest = $invoice_model->GetLatestNumbers();
 
             if(cashierIntents[period] === undefined)
                 cashierIntents[period] = {months: {}, foc: 0}
-
-            if(cashierIntents[period]['months'] === undefined)
-                cashierIntents[period]['months'] = {}
 
             if(cashierIntents[period].months[monthName] === undefined)
                 cashierIntents[period].months[monthName] = {paid: 0, debt: 0, partial: 0, remaining: 0}
@@ -531,8 +531,6 @@ $latest = $invoice_model->GetLatestNumbers();
             if(productId === parseInt(productIds['FOC']))
                 cashierIntents[period].foc = 1
         }
-
-        console.log(cashierIntents)
 
         if(Object.keys(cashierIntents).length > 0){
             // Si hay información dentro es que se ha recibido algún producto relacionado con mensualidades o FOC

@@ -2,6 +2,7 @@
 $admitted_user_types = ['Cajero', 'Super'];
 include_once '../utils/validate_user_type.php';
 include_once '../utils/Validator.php';
+include_once '../utils/months_data.php';
 
 $error = '';
 
@@ -100,10 +101,27 @@ if($error === ''){
             $last_payment_method_number = intval($number);
         }
     }
+
+    $searched_product_names = [
+        'Mensualidad',
+        'Diferencia Mensualidad',
+        'Saldo Mensualidad',
+        'Abono Mensualidad',
+        'FOC',
+    ];
     
     include_once '../models/product_model.php';
     $product_model = new ProductModel();
     
+    // Para validar que el orden de los meses sea correcto, primero crearemos una estructura dentro de $cashierIntents (intenciones del cajero)
+    // Dicha variable contendrá {'periodo': 'months': {'mes1': {paid, debt, partial, remaining}, 'mes2'...}, foc: ...}
+    // paid especifica si el cajero está intentando cobrarle el mes al estudiante (Mensualidad)
+    // debt especifica si el cajero está intentando cobrarle mora al estudiante (Diferencia mensualidad)
+    // partial especifica si el cajero está intentando cobrarle el mes al estudiante luego de que este abonara (Abono mensualidad)
+    // remaining especifica si el cajero está intentando cobrarle lo que le falta para pagar el mes (Saldo Mensualidad)
+    $cashier_intents = [];
+
+
     $concepts = [];    
     // Recorriendo y ordenando los productos
     for ($i=1; $i <= $last_product_number; $i++) { 
@@ -117,16 +135,47 @@ if($error === ''){
             break;
         }
 
-        // Se intentó registrar una mensualidad sin mes
-        if($_POST["product-month-$i"] === '' && $target_product['name'] === 'Mensualidad'){
-            $error = 'Se seleccionó el producto mensualidad sin especificar el mes';
+        // Se intentó registrar un concepto relacionado a una mensualidad sin mes especificar el mes
+        if($_POST["product-month-$i"] === '' && strpos($target_product['name'], 'Mensualidad')  !== false){
+            $error = 'Se seleccionó el producto relacionado a la mensualidad sin especificar el mes';
             break;
+        }
+
+        $monthNumber = intval($_POST["product-month-$i"]);
+        $period = $_POST["product-period-$i"];
+
+        if(in_array($target_product['name'], $searched_product_names)){
+            // Es un concepto relacionado a una mensualidad o un FOC, lo añadimos para validarlo más tarde
+
+            $monthName = $month_translate[$monthNumber];
+
+            if(!isset($cashierIntents[$period]))
+                $cashierIntents[$period] = ['months' => [], 'foc' => 0];
+
+            if(!isset($cashierIntents[$period]['months'][$monthName]))
+                $cashierIntents[$period]['months'][$monthName] = ['paid' => 0, 'debt' => 0, 'partial' => 0, 'remaining' => 0];
+            
+            if($target_product === 'Mensualidad')
+                $cashierIntents[$period]['months'][$monthName]['paid'] = 1;
+
+            if($target_product === 'Diferencia Mensualidad')
+                $cashierIntents[$period]['months'][$monthName]['debt'] = 1;
+
+            if($target_product === 'Abono Mensualidad')
+                $cashierIntents[$period]['months'][$monthName]['partial'] = 1;        
+
+            if($target_product === 'Saldo Mensualidad')
+                $cashierIntents[$period]['months'][$monthName]['remaining'] = 1;
+
+            if($target_product === 'FOC')
+                $cashierIntents[$period]['foc'] = 1;
         }
 
         $to_add = [
             'price' => $_POST["product-baseprice-$i"],
             'history_id' => $target_product['history_id'],
             'month' => $_POST["product-month-$i"] === '' ? 'NULL' : $_POST["product-month-$i"],
+            'period' => $_POST["product-period-$i"] === '' ? 'NULL' : $_POST["product-period-$i"],
         ];
 
         array_push($concepts, $to_add);
@@ -360,6 +409,164 @@ while(true){
 
     break;
 }
+
+if($error === ''){
+    if(count($cashierIntents) > 0){
+        $periods = $siacad->GetPeriodsOfStudent($target_account['cedula']);
+        $debtData = [];
+
+        foreach($periods as $period){
+            $account_state = $invoice_model->GetDebtOfAccountOfPeriod($target_account['cedula'], $period['idperiodo']);
+            $debtData[$period['nombreperiodo']] = $account_state;
+        }
+
+        $debtData = array_reverse($debtData);
+        // Si hay información dentro es que se ha recibido algún producto relacionado con mensualidades o FOC
+        // Por lo tanto ahora debemos contrastar las intenciones del cajero con el estado de cuenta del estudiante
+        // Y así poder comprobar que no esté intentando cobrarle un mes por adelantado o una diferencia mensualidad donde no la hay
+
+        /*
+        if(Object.keys(cashierIntents).length > 0){
+           
+        
+            var myPeriods = availablePeriods.slice().reverse() // Los periodos ordenados del más antiguo al más reciente
+            var youngestReached = false
+            var previousFOCWasPaid = true
+            for(let i = 0; i < myPeriods.length; i++){
+                var period = myPeriods[i]
+        
+                if(period === youngestPayablePeriod)
+                    youngestReached = true
+        
+                // Iteramos hasta que encontremos el periodo pagable más antiguo y empezamos desde ahí
+                if(!youngestReached)
+                    continue
+        
+                if(cashierIntents[period] === undefined){
+                    if(period === youngestPayablePeriod){ // El primer periodo pagable no está entre los productos
+                        error = 'El primer periodo que debería ser facturado es ' + youngestPayablePeriod
+                        break
+                    }
+                    else{                              
+                        continue // El periodo no está entre los productos
+                    }
+                }
+        
+                if(previousFOCWasPaid === false){
+                    // El estudiante NO pagó FOC el periodo anterior
+                        if(cashierIntents[period].foc === 1){ // Se está intentando cobrar un FOC de un periodo adelantado sin pagar el anterior
+                        error = 'Se intentó cobrar el FOC del periodo ' + period + ' sin haber cobrado los FOCs anteriores'
+                        break
+                    }
+                }
+        
+                if(debtData.data[period].foc === 0){
+                    // El estudiante ya pagó el FOC del periodo
+                    if(cashierIntents[period].foc === 1){ // Se está intentando cobrar un FOC cuando el estudiante ya lo pagó
+                        error = 'El estudiante ya pagó FOC en el periodo ' + period
+                        break
+                    }
+                }
+        
+                if(debtData.data[period].foc > 0 && cashierIntents[period].foc === 0){
+                    // El estudiante debe FOC y no se le va a cobrar en esta transacción, por lo tanto, no ha pagado el FOC de este periodo
+                    previousFOCWasPaid = false
+                }
+        
+                var previousMonthWasFullPaid = true
+                var manteinMonthSucession = true
+                for(let month in accountStates.data[period]){
+                    var currentAccountState = accountStates.data[period][month]
+                    var msgTemplate = 'el mes ' + month + ' del ' + period
+        
+                    if(cashierIntents[period].months[month] === undefined){ // El mes no se encuentra entre los conceptos
+                        var monthNumber = GetMonthNumberByName(month)
+                        if(parseInt(monthNumber) === parseInt(youngestPayableMonth[period])){ // Es el primer mes pagable y no hay ninguna intención de cobrarlo
+                            error = 'El primer mes pagable es ' + msgTemplate + '. Pero ese mes no se encuentra entre los conceptos'
+                            break
+                        }
+                        previousMonthWasFullPaid = false
+                        manteinMonthSucession = false
+                        continue
+                    }
+                    else{
+                        if(manteinMonthSucession === false){ // Se está intentando pagar un mes por adelantado
+                            error = 'Se está intentando cobrar ' + msgTemplate + ' por adelantado sin haber pagado los meses anteriores'
+                        }
+                    }
+                    
+                    var currentIntent = cashierIntents[period].months[month]
+        
+                    if(previousMonthWasFullPaid === false){
+                        // El mes anterior no ha sido pagado por completo con una Mensualidad o Saldo Mensualidad
+                        if(currentIntent.paid === 1 || currentIntent.debt === 1 || currentIntent.partial === 1 || currentIntent.remaining === 1){
+                            // Se intentó cobrar una Mensualidad, Saldo Mensualidad, Diferencia Mensualidad, Abono Mensualidad
+                            // Sin que los meses anteriores fuesen pagados por completo
+                            error = 'Se intentó cobrar un concepto de mensualidad para ' + msgTemplate + ' sin haber pagado los meses anteriores'
+                            break
+                        }
+                    }
+        
+                    if(currentAccountState.paid === 1){
+                        if(currentIntent.paid === 1 || currentIntent.debt === 1 || currentIntent.partial === 1 || currentIntent.remaining === 1){
+                            // Se intentó cobrarle una mensualidad, diferencia mensualidad o abono mensualidad a un mes que ya está pagado
+                            error = 'El estudiante ya está solvente en ' + msgTemplate
+                            break
+                        }
+                    }
+        
+                    if(currentAccountState.paid === 0 && currentAccountState.debt === 1){
+                        // El estudiante NO ha pagado el mes y está moroso
+                        if((currentIntent.paid === 1 || currentIntent.remaining === 1) && currentIntent.debt === 0){ // Intentando pagar el mes sin haber pagado la mora
+                            error = 'El estudiante debe pagar la mora antes de poder pagar ' + msgTemplate
+                            break
+                        }
+        
+                        if(currentIntent.partial === 1 && currentIntent.debt === 0){ // Intentando abonar sin haber pagado la mora
+                            error = 'El estudiante debe pagar la mora antes de poder abonar ' + msgTemplate
+                            break
+                        }                           
+                    }
+        
+                    if(currentAccountState.paid === 0 && currentAccountState.debt === 0){
+                        // El estudiante NO ha pagado el mes y NO está moroso
+                        if(currentIntent.debt === 1){ // Intentando cobrarle la mora sin estar moroso
+                            error = 'No puedes cobrarle la mora a un estudiante que no está moroso en ' + msgTemplate
+                            break
+                        }
+                    }
+        
+                    if(currentAccountState.partial === 1){
+                        // El estudiante ha abonado anteriormente al mes
+                        if(currentIntent.paid === 1){ // Intentando cobrarle una Mensualidad cuando en realidad debería ser un Saldo Mensualidad
+                            error = 'El estudiante ha abonado ' + msgTemplate + '. Por lo tanto se debe utilizar el concepto "Saldo Mensualidad" y no "Mensualidad"'
+                            break
+                        }
+                    }
+        
+                    if(currentAccountState.partial === 0){
+                        // El estudiante NO ha abonado anteriormente al mes
+                        if(currentIntent.remaining === 1){ // Intentando cobrarle un Saldo Mensualidad cuando el estudiante no ha abonado nada
+                            error = 'El estudiante ha abonado ' + msgTemplate + '. Por lo tanto se debe utilizar el concepto "Saldo Mensualidad" y no "Mensualidad"'
+                            break
+                        }
+                    }
+        
+                    // Si llega hasta acá es que todas las validaciones de conceptos están bien
+                    if(currentIntent.paid === 0 && currentIntent.remaining === 0){
+                        // No se terminó de pagar el mes, por lo tanto, no se pueden aceptar pagos de meses futuros
+                        previousMonthWasFullPaid = false
+                    }
+                }
+        
+                if(error !== '')
+                    break
+            }
+        }
+        */
+    }
+}
+
 
 if($error === '' && isset($_POST['igtf-price'])){
     $to_add = [
