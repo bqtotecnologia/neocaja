@@ -1,4 +1,20 @@
 <script>    
+    function CheckCedula(e){
+        const isNumeric = (string) => /^[+-]?\d+(\.\d+)?$/.test(string)
+
+        if(e.key === 'Enter'){
+            if(isNumeric(account_input.value)){
+               // Traerte al estudiante del SIGEA, dentro de esa petición verificar si su student_progress existe
+               // Si no existe, creálo de una y traeme su account
+            }
+            else{
+                 Swal.fire({
+                icon: 'error',
+                    title: 'Cédula inválida'
+                })
+            }
+        }
+    }
     async function AccountSelecting(id){
         if(id === '')
             return

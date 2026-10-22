@@ -163,14 +163,17 @@ $latest = $invoice_model->GetLatestNumbers();
                             </div>
 
                             <div class="row m-0 p-0 col-12 col-md-8">
+                                <input id="account-input" type="text" class="col-12 col-lg-6 form-control " placeholder="Cédula">
+                                <!--
                                 <select id="account" name="account" class="form-control col-10 col-md-8 select2" required onchange="AccountSelecting(this.value)">
                                     <option value="">&nbsp;</option>
                                     <?php foreach($accounts as $account) { ?>
-                                        <option value="<?= $account['id'] ?>">
+                                        <option value="<?= $account['cedula'] ?>">
                                             <?= '(' . $account['cedula'] . ') ' . $account['names'] . ' ' . $account['surnames'] ?>
                                         </option>
                                     <?php } ?>
                                 </select>
+                                -->
                             </div>
 
                         </div>

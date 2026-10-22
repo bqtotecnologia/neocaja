@@ -27,6 +27,9 @@ class SiacadModel extends PGSQLModel
         return parent::GetRows("SELECT * FROM periodos WHERE nombreperiodo LIKE '%-%' ORDER BY idperiodo DESC", true);
     }
 
+    /**
+     * Retorna todos los periodos en los que el estudiante ha estudiado
+     */
     public function GetPeriodsOfStudent($cedula){
         $sql = "SELECT
             periodos.idperiodo,

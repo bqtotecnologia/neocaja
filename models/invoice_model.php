@@ -48,7 +48,9 @@ class InvoiceModel extends SQLModel
         $period_id
         )";
 
+        var_dump($sql);
         $created = parent::DoQuery($sql);
+        exit;
         if($created === true)
             $result = $this->GetInvoiceByControlNumber($control_number);
         else
