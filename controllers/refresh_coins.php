@@ -41,7 +41,7 @@ $error = '';
 $message = '';
 $data = [];
 foreach($not_updated_coins as $coin){
-    if($coin['auto_update'] === '0') 
+    if(intval($coin['auto_update']) === 0)
         continue;
 
     $result = Validator::ValidateCoinAPI($coin['url']);

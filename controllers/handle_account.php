@@ -78,7 +78,7 @@ if($error === ''){
 
 if($error === ''){
     $cleanData['is_student'] = isset($_POST['is_student']) ? '1' : '0';
-    if($cleanData['is_student'] === '0' && ($cleanData['scholarship'] !== '' || $cleanData['scholarship_coverage'] !== ''))
+    if(intval($cleanData['is_student']) === 0 && ($cleanData['scholarship'] !== '' || $cleanData['scholarship_coverage'] !== ''))
         $error = 'Solo los estudiantes del iujo pueden tener beca.';
 }
 
@@ -154,7 +154,7 @@ if($error === ''){
             $action .= '. A la dirección ' . $cleanData['address'];
 
         if($is_studentChanged){
-            if($cleanData['is_student'] === '1')
+            if(intval($cleanData['is_student']) === 1)
                 $action .= '. Ahora es un estudiante';
             else
                 $action .= '. Ya no es un estudiante';

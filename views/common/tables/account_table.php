@@ -20,8 +20,8 @@
                 <td class="align-middle text-center"><?php echo $count; $count++; ?></td>
                 <td class="align-middle text-center"><?= $account['cedula'] ?></td>
                 <td class="align-middle text-center"><?= $account['names'] . ' ' . $account['surnames'] ?></td>
-                <td class="align-middle text-center fw-bold text-<?= $account['is_student'] === '1' ? 'success' : 'danger' ?>">
-                    <?= $account['is_student'] === '1' ? 'Sí' : 'No' ?>
+                <td class="align-middle text-center fw-bold text-<?= intval($account['is_student']) === 1 ? 'success' : 'danger' ?>">
+                    <?= intval($account['is_student']) === 1 ? 'Sí' : 'No' ?>
                 </td>
                 <td class="align-middle text-center">
                     <?= $account['scholarship'] === NULL ? '<spann class="text-danger fw-bold">No tiene</span>' : ($account['scholarship'] . ' ' . intval($account['scholarship_coverage']) . '%') ?>

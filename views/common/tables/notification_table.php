@@ -14,7 +14,7 @@
         <?php foreach($notifications as $notification) { ?>
             <tr class="h6" >
                 <td class="align-middle text-center"><?php echo $count; $count++; ?></td>
-                <td class="align-middle text-center <?= $notification['viewed'] === '0' ? 'bg-notification' : '' ?>"><?= $notification['message'] ?></td>
+                <td class="align-middle text-center <?= intval($notification['viewed']) === 0 ? 'bg-notification' : '' ?>"><?= $notification['message'] ?></td>
                 <td class="align-middle text-center"><?= $notification['created_at'] ?></td>
             </tr>
         <?php } ?>

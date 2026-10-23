@@ -88,7 +88,7 @@ if($error === ''){
             $action .= '. Al nombre ' . $cleanData['name'];
 
         if($activeChanged)
-            $action .= '. Al estado activo ' . ($cleanData['active'] === '1' ? 'Si' : 'No');
+            $action .= '. Al estado activo ' . (intval($cleanData['active']) === 1 ? 'Si' : 'No');
 
         if($priceChanged)
             $action .= '. Al rol ' . $target_role['name'];
@@ -98,7 +98,7 @@ if($error === ''){
     }
     else{
         $message = 'Admin creado exitosamente';
-        $action = 'Creo al admin ' . $cleanData['name'] . ' cedula ' . $cleanData['cedula'] . ' rol ' . $target_role['name'] . ' activo ' . ($cleanData['active'] === '1' ? 'Si' : 'No');
+        $action = 'Creo al admin ' . $cleanData['name'] . ' cedula ' . $cleanData['cedula'] . ' rol ' . $target_role['name'] . ' activo ' . (intval($cleanData['active']) === 1 ? 'Si' : 'No');
     }
     
     $admin_model->CreateBinnacle($_SESSION['neocaja_id'], $action);

@@ -95,7 +95,7 @@ if($error === ''){
             $action .= '. Al nombre ' . $cleanData['name'];
 
         if($activeChanged)
-            $action .= '. Al estado activo ' . ($cleanData['active'] === '1' ? 'Si' : 'No');
+            $action .= '. Al estado activo ' . (intval($cleanData['active']) === 1 ? 'Si' : 'No');
 
         if($priceChanged)
             $action .= '. Al precio ' . $cleanData['price'];

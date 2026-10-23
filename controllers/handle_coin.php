@@ -67,7 +67,7 @@ if($error === ''){
 // Checking if the url API works
 if($error === ''){
     $cleanData['auto_update'] = isset($_POST['auto_update']) ? '1' : '0';
-    if($checkAPI && $cleanData['auto_update'] === '1'){
+    if($checkAPI && intval($cleanData['auto_update']) === 1){
         $url = $cleanData['url'];
         $API_result = Validator::ValidateCoinAPI($url);
         if(is_string($API_result))
@@ -134,7 +134,7 @@ if($error === ''){
             $action .= '. Al nombre ' . $cleanData['name'];
 
         if($activeChanged)
-            $action .= '. Al estado activo ' . ($cleanData['active'] === '1' ? 'Si' : 'No');
+            $action .= '. Al estado activo ' . (intval($cleanData['active']) === 1 ? 'Si' : 'No');
 
         if($urlChanged)
             $action .= '. A la url ' . $cleanData['url'];
