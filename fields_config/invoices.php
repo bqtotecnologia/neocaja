@@ -18,7 +18,7 @@ $invoiceFields = [
         'suspicious' => true,
     ],
     [
-        'name' => 'account',
+        'name' => 'cedula',
         'min' => 1,
         'max' => 11,
         'required' => true,

@@ -56,7 +56,7 @@ if($error === ''){
     include_once '../models/account_model.php';
     $account_model = new AccountModel();
 
-    $target_account = $account_model->GetAccount($cleanData['account']);
+    $target_account = $account_model->GetAccountByCedula($cleanData['cedula']);
     if($target_account === false)
         $error = 'Cliente no encontrado';
 }
@@ -79,8 +79,6 @@ if($error === ''){
     else
         $cleanData['observation'] = "'" . $cleanData['obaservation'] . "'";
 
-    var_dump($target_account);
-    exit;
     $cleanData['account'] = $target_account['account_history_id'];
     
     $target_invoice = $invoice_model->CreateInvoice($cleanData, strval($period['idperiodo']));
@@ -149,29 +147,32 @@ if($error === ''){
         if(in_array($target_product['name'], $searched_product_names)){
             // Es un concepto relacionado a una mensualidad o un FOC, lo añadimos para validarlo más tarde
 
-            $monthName = $month_translate[$monthNumber];
-
             if(!isset($cashierIntents[$period]))
                 $cashierIntents[$period] = ['months' => [], 'foc' => 0];
 
-            if(!isset($cashierIntents[$period]['months'][$monthName]))
-                $cashierIntents[$period]['months'][$monthName] = ['paid' => 0, 'debt' => 0, 'partial' => 0, 'remaining' => 0];
-            
-            if($target_product === 'Mensualidad')
-                $cashierIntents[$period]['months'][$monthName]['paid'] = 1;
-
-            if($target_product === 'Diferencia Mensualidad')
-                $cashierIntents[$period]['months'][$monthName]['debt'] = 1;
-
-            if($target_product === 'Abono Mensualidad')
-                $cashierIntents[$period]['months'][$monthName]['partial'] = 1;        
-
-            if($target_product === 'Saldo Mensualidad')
-                $cashierIntents[$period]['months'][$monthName]['remaining'] = 1;
-
-            if($target_product === 'FOC')
+            if($target_product['name'] === 'FOC')
                 $cashierIntents[$period]['foc'] = 1;
+            else{
+                $monthName = $month_translate[$monthNumber];
+
+                if(!isset($cashierIntents[$period]['months'][$monthName]))
+                    $cashierIntents[$period]['months'][$monthName] = ['paid' => 0, 'debt' => 0, 'partial' => 0, 'remaining' => 0];
+                
+                if($target_product['name'] === 'Mensualidad')
+                    $cashierIntents[$period]['months'][$monthName]['paid'] = 1;
+    
+                if($target_product['name'] === 'Diferencia Mensualidad')
+                    $cashierIntents[$period]['months'][$monthName]['debt'] = 1;
+    
+                if($target_product['name'] === 'Abono Mensualidad')
+                    $cashierIntents[$period]['months'][$monthName]['partial'] = 1;        
+    
+                if($target_product['name'] === 'Saldo Mensualidad')
+                    $cashierIntents[$period]['months'][$monthName]['remaining'] = 1;
+            }
         }
+
+        // TODO: acá le está pasando 'period' con el nombre del periodo, hay que transformarlo para que mande el id del periodo
 
         $to_add = [
             'price' => $_POST["product-baseprice-$i"],
@@ -586,8 +587,6 @@ if($error === ''){
     }
 }
 
-var_dump($error);
-exit;
 if($error === '' && isset($_POST['igtf-price'])){
     $to_add = [
         'method' => $target_payment_method['id'],
@@ -653,5 +652,7 @@ else{
     }
 }
 
+var_dump($error);
+exit;
 header('Location: ' . $redirect);
 exit;

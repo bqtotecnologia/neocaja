@@ -44,7 +44,7 @@
     
 
     // INPUTS    
-    const account_input = document.getElementById('account-input')
+    const cedula_input = document.getElementById('cedula')
     const rateDate = document.getElementById('rate-date')
     const igtf_method = document.getElementById('igtf-method')
     const igtf_bank = document.getElementById('igtf-bank')
@@ -105,7 +105,7 @@
 
     // EVENTS
     igtf_method.addEventListener('change', function(e) { IGTFPaymentMethodSelecting(e) })
-    account_input.addEventListener('keyup', function(e) { CheckCedula(e) })
+    cedula_input.addEventListener('keyup', function(e) { CheckCedula(e) })
 </script>
 
 

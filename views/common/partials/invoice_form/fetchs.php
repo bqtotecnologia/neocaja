@@ -11,6 +11,18 @@
         return await TryFetch(url, fetchConfig)
     }
 
+    async function GetAccountByCedula(cedula){
+        var url = '<?= $base_url ?>/api/get_account_by_cedula.php?cedula=' + cedula
+        var fetchConfig = {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+
+        return await TryFetch(url, fetchConfig)
+    }
+
     async function GetAccountData(account){
         var url = '<?= $base_url ?>/api/get_account_data.php?account=' + account
         var fetchConfig = {

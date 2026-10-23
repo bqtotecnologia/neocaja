@@ -48,9 +48,7 @@ class InvoiceModel extends SQLModel
         $period_id
         )";
 
-        var_dump($sql);
         $created = parent::DoQuery($sql);
-        exit;
         if($created === true)
             $result = $this->GetInvoiceByControlNumber($control_number);
         else
@@ -63,20 +61,23 @@ class InvoiceModel extends SQLModel
         $product_history = $concept['history_id'];
         $price = $concept['price'];
         $month = $concept['month'];
+        $period = $concept['period'];
 
         $sql = "INSERT INTO concepts
         (
         product,
         price,
         invoice,
-        month
+        month,
+        period
         )
         VALUES
         (
         $product_history,
         $price,
         $invoice_id,
-        $month
+        $month,
+        $period
         )";
 
         return parent::DoQuery($sql);

@@ -1,15 +1,34 @@
 <script>    
-    function CheckCedula(e){
+    async function CheckCedula(e){
         const isNumeric = (string) => /^[+-]?\d+(\.\d+)?$/.test(string)
 
         if(e.key === 'Enter'){
-            if(isNumeric(account_input.value)){
-               // Traerte al estudiante del SIGEA, dentro de esa petición verificar si su student_progress existe
-               // Si no existe, creálo de una y traeme su account
+            var cedula = cedula_input.value
+            if(isNumeric(cedula)){
+                var account = await GetAccountByCedula(cedula)
+                
+                if(account.status === true)
+                    await AccountSelecting(account.data.id)
+                else{
+                    Swal.fire({
+                        title: "No encontrado",
+                        icon: "error",
+                        html: 'La cédula "' + cedula + '" no existe ¿desea registrarla?',
+                        showCancelButton: true,
+                        confirmButtonText: "Proceder",
+                        denyButtonText: 'Cancelar',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    }).then((result) => {
+                    if (result.isConfirmed)
+                        window.location.href = "<?= $base_url ?>/views/forms/account_form.php?cedula=" + cedula;
+                    })
+                }
+
             }
             else{
-                 Swal.fire({
-                icon: 'error',
+                Swal.fire({
+                    icon: 'error',
                     title: 'Cédula inválida'
                 })
             }

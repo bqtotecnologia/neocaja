@@ -12,7 +12,7 @@ $accountFields = [
         'min' => 7,
         'required' => true,
         'suspicious' => true,
-        'value' => $edit ? $target_account['cedula'] : ''
+        'value' => $edit ? $target_account['cedula'] : (isset($_GET['cedula']) ? $_GET['cedula'] : '')
     ],
     [
         'name' => 'names',

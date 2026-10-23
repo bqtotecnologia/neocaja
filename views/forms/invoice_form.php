@@ -159,21 +159,11 @@ $latest = $invoice_model->GetLatestNumbers();
                     <div class="row m-0 p-0 col-6 justify-content-center align-items-center">
                         <div class="row col-12 justify-content-center align-items-center">
                             <div class="row m-0 h-100 p-0 align-items-center justify-content-center justify-content-md-end col-12 col-md-3">
-                                <label class="h6 m-0 fw-bold px-2 my-auto" for="account">Cliente</label>
+                                <label class="h6 m-0 fw-bold px-2 my-auto" for="cedula">Cliente</label>
                             </div>
 
                             <div class="row m-0 p-0 col-12 col-md-8">
-                                <input id="account-input" type="text" class="col-12 col-lg-6 form-control " placeholder="Cédula">
-                                <!--
-                                <select id="account" name="account" class="form-control col-10 col-md-8 select2" required onchange="AccountSelecting(this.value)">
-                                    <option value="">&nbsp;</option>
-                                    <?php foreach($accounts as $account) { ?>
-                                        <option value="<?= $account['cedula'] ?>">
-                                            <?= '(' . $account['cedula'] . ') ' . $account['names'] . ' ' . $account['surnames'] ?>
-                                        </option>
-                                    <?php } ?>
-                                </select>
-                                -->
+                                <input id="cedula" name="cedula" type="text" class="col-12 col-lg-6 form-control " placeholder="Cédula">
                             </div>
 
                         </div>
