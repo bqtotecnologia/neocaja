@@ -80,7 +80,7 @@ $payment_methods = $invoice_model->GetPaymentMethodsOfInvoice($id);
 $concepts = $invoice_model->GetConceptsOfInvoice($id);
 $coinValues = $coin_model->GetCoinValuesOfDate($target_invoice['rate_date']);
 
-$hasCompany = $target_account['company_id'] !== false;
+$hasCompany = $target_account['company_id'] !== null;
 
 $upper_margin = 45;
 include_once '../../vendors/fpdf/fpdf.php';
@@ -176,49 +176,63 @@ $baseY = 91;
 $rowPosition = 1;
 $productsTotal = 0;
 
+$ordered_products = [];
 
+$periods = $siacad->GetperiodsAsDict(false);
 
 for($i = 0; $i < count($concepts); $i++){
     $currentConcept = $concepts[$i];
-    $originalProductName = $currentConcept['product'];    
-    $productName = $originalProductName;
+    
+    if(!isset($ordered_products[$currentConcept['period']])){
+        $ordered_products[$currentConcept['period']] = [];
+    }
+
+    $to_add = [
+        'head' => $currentConcept['product'],
+        'body' => ($currentConcept['month'] === null ? '' : $month_translate[$currentConcept['month']] . ' '),
+        'tail' => $periods[$currentConcept['period']]['nombreperiodo'],
+        'month' => $currentConcept['month'],
+        'quantity' => 1,
+        'unit_price' => 0,
+        'total_price' => 0
+    ];
+
     $productUnitPrice = $currentConcept['price'] * $coinValues['Dólar'];
     $productQuantity = 1;
 
-    $monthlies = [];
-
-    if(strpos($originalProductName, 'Mensualidad') !== false){
-        array_push($monthlies, $currentConcept);
-
+    if(strpos($currentConcept['product'], 'Mensualidad') !== false){
         while(isset($concepts[$i + 1])){
-            if($concepts[$i + 1]['product'] === $originalProductName){
-                array_push($monthlies, $concepts[$i + 1]);
+            if($concepts[$i + 1]['product'] === $currentConcept['product']){
+                $to_add['body'] .= $month_translate[$concepts[$i + 1]['month']] . ' ';
                 $i++;
                 $productQuantity++;
             }
             else
                 break;
         }
-
-        if(count($monthlies) > 0){
-            $productName = $originalProductName . ' ';
-            foreach($monthlies as $month){
-                $productName .= $month_translate[$month['month']] . ' ';
-            }
-        }
-        
-        $productName .= ' ' . $target_period['nombreperiodo'];
     }
 
-    $productPrice = $coinValues['Dólar'] * $currentConcept['price'];
     $productTotal = $productUnitPrice * $productQuantity;
     $productsTotal += $productTotal;
-    $pdf->SetXY(9, $upper_margin + 32 + $rowPosition);
-    $pdf->Cell(142, 4, $productName, 0, 0, 'L');
-    $pdf->Cell(8, 4, $productQuantity, 0, 0, 'C');
-    $pdf->Cell(24, 4, MyDecode($productUnitPrice), 0, 0, 'R');
-    $pdf->Cell(18, 4, MyDecode($productTotal), 0, 0, 'R');
-    $rowPosition += 3;
+
+    $to_add['quantity'] = $productQuantity;
+    $to_add['unit_price'] = $productUnitPrice;
+    $to_add['total_price'] = $productTotal;
+
+    array_push($ordered_products[$currentConcept['period']], $to_add);
+}
+
+foreach($ordered_products as $period => $products){
+    foreach($products as $product){
+        $finalName = $product['head'] . ': ' . $product['body'] . $product['tail'];
+    
+        $pdf->SetXY(9, $upper_margin + 32 + $rowPosition);
+        $pdf->Cell(142, 4, $finalName, 0, 0, 'L');
+        $pdf->Cell(8, 4, $product['quantity'], 0, 0, 'C');
+        $pdf->Cell(24, 4, MyDecode($product['unit_price']), 0, 0, 'R');
+        $pdf->Cell(18, 4, MyDecode($product['total_price']), 0, 0, 'R');
+        $rowPosition += 3;
+    }
 }
 
 // Payment methods header
@@ -228,14 +242,25 @@ $pdf->SetXY(10, $upper_margin + 25 + $rowPosition);
 $pdf->Cell(138, 4, MyDecode('Métodos de pago'), 'T', 0, 'L');
 
 $rowPosition += 5;
+
+$payment_col_widths = [
+    'type' => 25, 
+    'coin' => 14, 
+    'price' => 17, 
+    'rate' => 14, 
+    'bank' => 34,
+    'document_number' => 20,
+    'bs_price' => 16
+];
+
 $pdf->SetXY(10, $upper_margin + 23 + $rowPosition);
-$pdf->Cell(25, 4, 'Tipo', 0, 0, 'L');
-$pdf->Cell(18, 4, 'Moneda', 0, 0, 'L');
-$pdf->Cell(16, 4, 'Monto', 0, 0, 'L');
-$pdf->Cell(16, 4, 'Tasa', 0, 0, 'L');
-$pdf->Cell(30, 4, 'Banco', 0, 0, 'L');
-$pdf->Cell(18, 4, 'No. Doc.', 0, 0, 'L');
-$pdf->Cell(16, 4, 'Monto Bs.', 0, 0, 'L');
+$pdf->Cell($payment_col_widths['type'], 4, 'Tipo', 0, 0, 'L');
+$pdf->Cell($payment_col_widths['coin'], 4, 'Moneda', 0, 0, 'L');
+$pdf->Cell($payment_col_widths['price'], 4, 'Monto', 0, 0, 'L');
+$pdf->Cell($payment_col_widths['rate'], 4, 'Tasa', 0, 0, 'L');
+$pdf->Cell($payment_col_widths['bank'], 4, 'Banco', 0, 0, 'L');
+$pdf->Cell($payment_col_widths['document_number'], 4, 'No. Doc.', 0, 0, 'L');
+$pdf->Cell($payment_col_widths['bs_price'], 4, 'Monto Bs.', 0, 0, 'L');
 
 $igtf = null;
 $rowPosition += 6;
@@ -247,13 +272,14 @@ foreach($payment_methods as $payment_method){
         continue;
     }
     $pdf->SetXY(10, $upper_margin + 21 + $rowPosition);
-    $pdf->Cell(25, 4, MyDecode($payment_method['payment_method']), 0, 0, 'L');
-    $pdf->Cell(18, 4, MyDecode($payment_method['coin']), 0, 0, 'L');
-    $pdf->Cell(16, 4, MyDecode($payment_method['price']), 0, 0, 'L');
-    $pdf->Cell(16, 4, MyDecode($coinValues[$payment_method['coin']]), 0, 0, 'L');
-    $pdf->Cell(30, 4, MyDecode($payment_method['bank']), 0, 0, 'L');
-    $pdf->Cell(18, 4, $payment_method['document_number'], 0, 0, 'L');
-    $pdf->Cell(16, 4, MyDecode($payment_method['price'] * $coinValues[$payment_method['coin']]), 0, 0, 'R');
+    $pdf->Cell($payment_col_widths['type'], 4, MyDecode($payment_method['payment_method']), 0, 0, 'L');
+    $pdf->Cell($payment_col_widths['coin'], 4, MyDecode($payment_method['coin']), 0, 0, 'L');
+    $pdf->Cell($payment_col_widths['price'], 4, MyDecode($payment_method['price']), 0, 0, 'L');
+    //$pdf->Cell($payment_col_widths['rate'], 4, MyDecode($coinValues[$payment_method['coin']]), 0, 0, 'L');
+    $pdf->Cell($payment_col_widths['rate'], 4, MyDecode('8819.312'), 0, 0, 'L');
+    $pdf->Cell($payment_col_widths['bank'], 4, MyDecode($payment_method['bank']), 0, 0, 'L');
+    $pdf->Cell($payment_col_widths['document_number'], 4, $payment_method['document_number'], 0, 0, 'L');
+    $pdf->Cell($payment_col_widths['bs_price'], 4, MyDecode($payment_method['price'] * $coinValues[$payment_method['coin']]), 0, 0, 'R');
     $rowPosition += 3;
 }
 

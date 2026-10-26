@@ -259,7 +259,8 @@ class InvoiceModel extends SQLModel
         $sql = "SELECT
         products.name as product,
         concepts.price,
-        concepts.month
+        concepts.month,
+        concepts.period
         FROM
         concepts
         INNER JOIN product_history ON product_history.id = concepts.product
@@ -267,7 +268,9 @@ class InvoiceModel extends SQLModel
         WHERE
         concepts.invoice = $id
         ORDER BY 
-        products.name";
+        concepts.period,        
+        products.name,
+        concepts.month";
 
         return parent::GetRows($sql);
     }
@@ -290,11 +293,7 @@ class InvoiceModel extends SQLModel
         $periodMonths = $siacad->GerMonthsOfPeriodo($periodId, true);
         $global_vars = $global_model->GetGlobalVars(true);
 
-        $previousPeriod = false;
-        $current_period = $siacad->GetCurrentPeriodo();
-        $recieved_period = $siacad->GetPeriodoById($periodId);
-        if(intval($recieved_period['ordenperiodo']) < intval($current_period['ordenperiodo']))
-            $previousPeriod = true;
+        $target_period = $siacad->GetPeriodoById($periodId);
         
 
         $sql = "SELECT
@@ -312,7 +311,7 @@ class InvoiceModel extends SQLModel
             INNER JOIN accounts ON accounts.id = account_history.account 
             WHERE
             accounts.cedula = '$cedula' AND
-            invoices.period = $periodId AND
+            concepts.period = $periodId AND
             products.name LIKE '%Mensualidad%'AND
             concepts.month IS NOT NULL AND
             invoices.active = 1
@@ -343,72 +342,65 @@ class InvoiceModel extends SQLModel
         }     
         $result = [];
         $lastMonth = null;
-        $currentYear = intval(date('Y'));
+        $currentYear = intval(date('Y', strtotime($target_period['fechainicio'])));
+        $timezone = new DateTimeZone('America/Caracas');
 
-        //if($concepts !== []){
-            foreach($ordered_concepts as $key => $value){
-                if(!in_array($key, $periodMonths)){
-                    continue;
-                }
+        foreach($ordered_concepts as $key => $value){
+            if(!in_array($key, $periodMonths)){
+                continue;
+            }
 
-                $currentMonthNumber = $this->GetMonthNumberByName($key);
+            $currentMonthNumber = $this->GetMonthNumberByName($key);
 
-                if($lastMonth === 12 && $currentMonthNumber === 1)
-                    $currentYear++;
+            if($lastMonth === 12 && $currentMonthNumber === 1)
+                $currentYear++;
 
-                $lastMonth = $currentMonthNumber;
-                $result[$key] = $value; 
+            $lastMonth = $currentMonthNumber;
+            $result[$key] = $value; 
 
-                if(array_key_exists('Mensualidad', $value['concepts']) || array_key_exists('Saldo Mensualidad', $value['concepts'])){
-                    // El mes está pagado
-                    //echo 'Mes pagado: ' . $key . '<br>';
-                    $result[$key]['paid'] = 1;
-                }
+            if(array_key_exists('Mensualidad', $value['concepts']) || array_key_exists('Saldo Mensualidad', $value['concepts'])){
+                // El mes está pagado
+                //echo 'Mes pagado: ' . $key . '<br>';
+                $result[$key]['paid'] = 1;
+            }
 
-                $may_retard = false;
-                if(array_key_exists('Diferencia Mensualidad', $value['concepts']))
-                    // Pagó la mora, lo que implica que estuvo moroso
-                    $result[$key]['debt'] = 1;
-                else{
-                    if($scholarshipped){
-                        if(intval($global_vars['Becados pagan mora']) === 1)
-                            $may_retard = true;
-                    }
-                    else
+            $may_retard = false;
+            if(array_key_exists('Diferencia Mensualidad', $value['concepts']))
+                // Pagó la mora, lo que implica que estuvo moroso
+                $result[$key]['debt'] = 1;
+            else{
+                if($scholarshipped){
+                    if(intval($global_vars['Becados pagan mora']) === 1)
                         $may_retard = true;
                 }
-                
-                if($may_retard){
-                    if($result[$key]['paid'] === 0 && $result[$key]['debt'] === 0){
-                        // Si no ha pagado y no ha pagado la mora, verificamos si está moroso
-                        //echo 'Mes sin pagar: ' . $key . '<br>';
-                        $timezone = new DateTimeZone('America/Caracas');
-                        $now = new DateTime('now', $timezone);
-                        $now->setTime(0, 0, 0, 0);
-    
-                        $retard_date = "$currentYear-$lastMonth-" . intval($global_vars['Dia tope mora']);
-                        $retard_date = new DateTime($retard_date, $timezone);
-                        
-                        if($now > $retard_date){
-                            //echo 'Mes moroso: ' . $key . '<br>';
-                            $result[$key]['debt'] = 1;
-                        }
-                    }
-                }   
-                
-                if($previousPeriod)
-                    $result[$key]['debt'] = 1;
-    
-                if(array_key_exists('Abono Mensualidad', $value['concepts'])){
-                    // Abonó al mes
-                    //echo 'Mes abonado: ' . $key . '<br>';
-                    $result[$key]['partial'] = 1;
-                }
+                else
+                    $may_retard = true;
             }
-        //}
-        //else{
-            //$result = $ordered_concepts;
-        //}
+            
+            if($may_retard){
+                if($result[$key]['paid'] === 0 && $result[$key]['debt'] === 0){
+                    // Si no ha pagado y no ha pagado la mora, verificamos si está moroso
+                    //echo 'Mes sin pagar: ' . $key . '<br>';
+
+                    $now = new DateTime('now', $timezone);
+                    $now->setTime(0, 0, 0, 0);
+
+                    $retard_date = "$currentYear-$lastMonth-" . intval($global_vars['Dia tope mora']);
+                    $retard_date = new DateTime($retard_date, $timezone);
+                    
+                    if($now > $retard_date){
+                        //echo 'Mes moroso: ' . $key . '<br>';
+                        $result[$key]['debt'] = 1;
+                    }
+                }
+            }   
+            
+            if(array_key_exists('Abono Mensualidad', $value['concepts'])){
+                // Abonó al mes
+                //echo 'Mes abonado: ' . $key . '<br>';
+                $result[$key]['partial'] = 1;
+            }
+        }
         
         return $result;
     }
@@ -585,20 +577,18 @@ class InvoiceModel extends SQLModel
             FROM
             invoices
             INNER JOIN concepts ON concepts.invoice = invoices.id
-            INNER JOIN products ON products.id = concepts.product
+            INNER JOIN product_history ON product_history.id = concepts.product
+            INNER JOIN products ON products.id = product_history.product
             INNER JOIN account_history ON account_history.id = invoices.account 
             INNER JOIN accounts ON accounts.id = account_history.account 
             WHERE
             accounts.cedula = '$cedula' AND
-            invoices.period = $periodId AND
+            concepts.period = $periodId AND
             products.name = 'FOC' AND
             invoices.active = 1";
 
-        $result = parent::GetRow($sql);
-        if($result !== false)
-            $result = true;
-
-        return $result;
+        $result = parent::GetRows($sql, true);
+        return count($result) > 0 ; 
     }
 
     public function AnullInvoice($id){

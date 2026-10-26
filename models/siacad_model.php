@@ -80,6 +80,25 @@ class SiacadModel extends PGSQLModel
     }
 
     /**
+     * Retorna los periodos en un array asociativo, si $nameDict los retorna como 'nombreperiodo' => periodo, sino 'idperiodo' => periodo
+     */
+    public function GetperiodsAsDict($nameDict = true){
+        $sql = "SELECT * FROM periodos";
+        $periods = parent::GetRows($sql);
+        $result = [];
+
+        foreach($periods as $period){
+            if($nameDict)
+                $result[$period['nombreperiodo']] = $period;
+            else
+                $result[$period['idperiodo']] = $period;
+
+        }
+
+        return $result;
+    }
+
+    /**
      * Retorna una lista con los números de los meses que conforman el periodo
      * Si recibe $names = true retorna la lista de meses pero con los nombres en vez de los números
      */

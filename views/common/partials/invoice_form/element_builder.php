@@ -306,9 +306,7 @@
         var monthlyRow = BuildDebtMonthlyRow('Mensualidad', debtData.months)
         var retardRow = BuildDebtMonthlyRow('Mora', debtData.retard)
         var focRow = BuildDebtFOCRow(debtData.foc)
-        var total = debtData.months.total + debtData.retard.total
-        if (!debtData.foc)
-            total += productPrices['FOC']
+        var total = debtData.months.total + debtData.retard.total + debtData.foc
 
         var totalRow = BuildDebtTotalRow(total)
 
@@ -389,7 +387,7 @@
         focCol.innerHTML = 'FOC'
 
         focRow.appendChild(focCol)
-        if(focDebt === true){
+        if(parseInt(focDebt) === 0){
             focVES.classList.add('text-success')  
             focVES.colSpan = 2
             focVES.innerHTML = 'PAGADO'      
@@ -397,11 +395,12 @@
             focRow.appendChild(focVES)
         }
         else{
+            console.log('kkk')
             focVES.classList.add('text-danger')  
             focUSD.classList.add('text-danger')
             
-            focVES.innerHTML = 'Bs. ' + GetPrettyCiphers(productPrices['FOC'] * coinValues['Dólar'])
-            focUSD.innerHTML = productPrices['FOC'] + '$'
+            focVES.innerHTML = 'Bs. ' + GetPrettyCiphers(parseFloat(focDebt) * coinValues['Dólar'])
+            focUSD.innerHTML = focDebt + '$'
             focRow.appendChild(focVES)
             focRow.appendChild(focUSD)
         }        

@@ -46,6 +46,7 @@ $target_account = $account_model->GetAccount($target_invoice['account_id']);
 $payment_methods = $invoice_model->GetPaymentMethodsOfInvoice($id);
 $concepts = $invoice_model->GetConceptsOfInvoice($id);
 $coinValues = $coin_model->GetCoinValuesOfDate($target_invoice['rate_date']);
+$periods = $siacad->GetperiodsAsDict(false);
 $igtf = null;
 
 include '../../views/common/header.php';
@@ -214,6 +215,7 @@ include '../../views/common/header.php';
                             <tr class="text-center">
                                 <th>Producto</th>
                                 <th>Mes</th>
+                                <th>Periodo</th>
                                 <th>Monto ($)</th>
                                 <th>Tasa</th>
                                 <th>Subtotal</th>
@@ -237,14 +239,15 @@ include '../../views/common/header.php';
                                             <?= $month_translate[$concept['month']] ?>
                                         <?php } ?>
                                     </td>
+                                    <td class="text-right"><?= $periods[$concept['period']]['nombreperiodo'] ?></td>
                                     <td class="text-right"><?= $concept['price'] ?></td>
                                     <td class="text-right"><?= $coinValues['Dólar'] ?></td>
                                     <td class="text-right"><?= GetPrettyCiphers($subtotal) ?></td>
                                     <td class="text-right">Bs. <?= GetPrettyCiphers(round($total, 2)) ?></td>
                                 </tr>
                             <?php } ?>
-                            <tr class="fw-bold text-right">
-                                <td colspan="5">Total:</td>
+                            <tr class="fw-bold text-right h5">
+                                <td colspan="6">Total:</td>
                                 <td>Bs. <?= GetPrettyCiphers(round($products_total, 2)) ?></td>
                             </tr>
                         </tbody>

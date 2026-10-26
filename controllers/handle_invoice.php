@@ -87,6 +87,7 @@ if($error === ''){
 }
 
 if($error === ''){
+    $periodDict = $siacad->GetperiodsAsDict();
     $last_product_number = 0;
     $last_payment_method_number = 0;
 
@@ -178,7 +179,7 @@ if($error === ''){
             'price' => $_POST["product-baseprice-$i"],
             'history_id' => $target_product['history_id'],
             'month' => $_POST["product-month-$i"] === '' ? 'NULL' : $_POST["product-month-$i"],
-            'period' => $_POST["product-period-$i"] === '' ? 'NULL' : $_POST["product-period-$i"],
+            'period' => $_POST["product-period-$i"] === '' ? 'NULL' : $periodDict[$_POST["product-period-$i"]]['idperiodo'],
         ];
 
         array_push($concepts, $to_add);
@@ -652,7 +653,5 @@ else{
     }
 }
 
-var_dump($error);
-exit;
 header('Location: ' . $redirect);
 exit;
