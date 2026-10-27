@@ -44,6 +44,7 @@
     
 
     // INPUTS    
+    const periodInput = document.getElementById('invoice-period')
     const cedula_input = document.getElementById('cedula')
     const rateDate = document.getElementById('rate-date')
     const igtf_method = document.getElementById('igtf-method')
@@ -82,6 +83,7 @@
 
     let availableProducts = {}
     let chosenPeriod = ''
+    let invoicePeriod = {}
     let availablePeriods = []
     let coinValues = {}    
     let nextProduct = 1

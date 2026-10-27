@@ -147,7 +147,7 @@ $latest = $invoice_model->GetLatestNumbers();
                             <label class="h6 m-0 fw-bold px-2">Periodo</label>
                         </div>
                        <div class="row col-12 col-md-8 m-0 p-0 justify-content-center justify-content-md-start">
-                            <input disabled class=" form-control col-10 col-md-8"  value="<?= $currentPeriod['nombreperiodo'] ?>" type="text" >
+                            <input readonly id="invoice-period" name="invoice-period" class=" form-control col-10 col-md-8"  value="<?= $currentPeriod['nombreperiodo'] ?>" type="text" >
                         </div>
                     </div>
                     

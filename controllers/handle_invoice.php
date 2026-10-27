@@ -24,6 +24,11 @@ if(is_string($result))
 else
     $cleanData = $result;
 
+if($error === ''){
+    if(Validator::HasSuspiciousCharacters($cleanData['invoice-period'], true))
+        $error = 'El periodo contiene caracteres sospechosos';
+}
+
 
 if($error === ''){
     include_once '../models/invoice_model.php';
@@ -73,6 +78,13 @@ if($error === '' && $_POST['known-income'] !== ''){
 if($error === ''){
     include_once '../models/siacad_model.php';
     $siacad = new SiacadModel();
+    $period = $siacad->GetPeriodoByName($cleanData['invoice-period']);
+    if($period === false)
+        $error = 'Periodo no encontrado';
+}
+
+if($error === ''){
+    
     $period = $siacad->GetCurrentPeriodo();
     if($cleanData['observation'] === '')
         $cleanData['observation'] = 'NULL';
@@ -647,10 +659,10 @@ if($error === ''){
 else{
     if(isset($target_invoice)){
         if($target_invoice !== false){
-            $invoice_model->DeleteInvoice($target_invoice['id']);
-            $redirect = $base_url . '/views/forms/invoice_form.php?error=' . $error;
+            $invoice_model->DeleteInvoice($target_invoice['id']);            
         }
     }
+    $redirect = $base_url . '/views/forms/invoice_form.php?error=' . $error;
 }
 
 header('Location: ' . $redirect);

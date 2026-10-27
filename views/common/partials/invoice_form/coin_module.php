@@ -10,10 +10,12 @@
         var result = await FetchCoinRatesOfDay(date)
             
         if(typeof result !== "string"){
-            coinValues = result['data']
+            coinValues = result.data.coins
+            invoicePeriod = result.data.period
 
             for(let key in coinValues){
                 const targetElement = document.getElementById(key + '-rate')
+                periodInput.value = invoicePeriod.nombreperiodo
                 if(targetElement !== null){
                     targetElement.innerHTML = coinValues[key]
                 }

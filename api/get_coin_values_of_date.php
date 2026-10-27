@@ -31,15 +31,27 @@ if($error === ''){
 if($error === ''){
     include_once '../models/coin_model.php';
     $coin_model = new CoinModel();
-    $ordered_coins = $coin_model->GetCoinValuesOfDate($target_date->format('Y-m-d')) ;
+    $ordered_coins = $coin_model->GetCoinValuesOfDate($target_date->format('Y-m-d'));
     if($ordered_coins === false)
         $error = 'No hay tasas registradas en al fecha dada';
 }
 
 if($error === ''){
+    include_once '../models/siacad_model.php';
+    $siacad = new SiacadModel();
+
+    $target_period = $siacad->GetPeriodOfDate($target_date->format('Y-m-d'));
+    if($target_period === false)
+        $error = 'La fecha seleccionada no corresponde a ningún periodo';
+}
+
+if($error === ''){
     $response = [
         'status' => true,
-        'data' => $ordered_coins
+        'data' => [
+            'coins' => $ordered_coins,
+            'period' => $target_period
+        ]
     ];
 }else{
     $response = [

@@ -98,6 +98,16 @@ class SiacadModel extends PGSQLModel
         return $result;
     }
 
+    public function GetPeriodoByName($name){
+        $sql = "SELECT * FROM periodos WHERE nombreperiodo  = '$name'";
+        return parent::GetRow($sql);
+    }
+
+    public function GetPeriodOfDate($date){
+        $sql = "SELECT * FROM periodos WHERE '$date' BETWEEN fechainicio AND fechafin";
+        return parent::GetRow($sql);
+    }
+
     /**
      * Retorna una lista con los números de los meses que conforman el periodo
      * Si recibe $names = true retorna la lista de meses pero con los nombres en vez de los números

@@ -275,8 +275,7 @@ foreach($payment_methods as $payment_method){
     $pdf->Cell($payment_col_widths['type'], 4, MyDecode($payment_method['payment_method']), 0, 0, 'L');
     $pdf->Cell($payment_col_widths['coin'], 4, MyDecode($payment_method['coin']), 0, 0, 'L');
     $pdf->Cell($payment_col_widths['price'], 4, MyDecode($payment_method['price']), 0, 0, 'L');
-    //$pdf->Cell($payment_col_widths['rate'], 4, MyDecode($coinValues[$payment_method['coin']]), 0, 0, 'L');
-    $pdf->Cell($payment_col_widths['rate'], 4, MyDecode('8819.312'), 0, 0, 'L');
+    $pdf->Cell($payment_col_widths['rate'], 4, MyDecode($coinValues[$payment_method['coin']]), 0, 0, 'L');
     $pdf->Cell($payment_col_widths['bank'], 4, MyDecode($payment_method['bank']), 0, 0, 'L');
     $pdf->Cell($payment_col_widths['document_number'], 4, $payment_method['document_number'], 0, 0, 'L');
     $pdf->Cell($payment_col_widths['bs_price'], 4, MyDecode($payment_method['price'] * $coinValues[$payment_method['coin']]), 0, 0, 'R');
