@@ -113,11 +113,10 @@ $latest = $invoice_model->GetLatestNumbers();
                             class=" form-control col-10 col-md-8" 
                             placeholder="Número de factura" 
                             required 
-                            readonly
+                            disabled
                             value="<?= $latest['invoice_number'] ?>" 
                             type="text" 
                             onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
-                            onclick="ToggleReadOnly(this)"
                             >
                         </div>
                     </div>
@@ -133,11 +132,10 @@ $latest = $invoice_model->GetLatestNumbers();
                             class=" form-control col-10 col-md-8" 
                             placeholder="Número de control" 
                             required 
-                            readonly
+                            disabled
                             value="<?= $latest['control_number'] ?>" 
                             type="text" 
                             onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
-                            onclick="ToggleReadOnly(this)"
                             >
                         </div>
                     </div>

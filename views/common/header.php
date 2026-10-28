@@ -139,6 +139,12 @@
                         </ul>
                       </li>
 
+                      <li><a><i class="fa fa-calendar"></i> Periodos <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li><a href="<?= $base_url ?>/views/tables/search_period_month_range.php">Rango de meses</a></li>
+                        </ul>
+                      </li>
+
                       <li><a><i class="fa fa-fax"></i> Puntos de venta <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>

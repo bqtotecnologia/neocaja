@@ -34,8 +34,9 @@ if($error === ''){
     include_once '../models/invoice_model.php';
     $invoice_model = new InvoiceModel();
 
-    $invoice_number = $cleanData['invoice_number'];
-    $control_number = $cleanData['control_number'];
+    $latestNumbers = $invoice_model->GetLatestNumbers();
+    $invoice_number = $latestNumbers['invoice_number'];
+    $control_number = $latestNumbers['control_number'];
     $allOK = false;
 
     while(true){
@@ -651,6 +652,7 @@ if($error === '' && $_POST['known-income'] !== ''){
 
 
 if($error === ''){
+    $invoice_model->UpdateNumbers();
     $action = "Creó la factura Nº $invoice_number, Numero de control: $control_number. Al cliente " . $target_account['names'] . ' ' . $target_account['surnames'] . ' de cédula ' . $target_account['cedula'];
     $invoice_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
     $message = 'Factura creada correctamente';

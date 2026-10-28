@@ -146,21 +146,64 @@ class InvoiceModel extends SQLModel
     /**
      * Retorna los últimos números de control y de factura
      */
-    public function GetLatestNumbers(){
+    public function GetLatestNumbers(){        
         $sql = "SELECT 
-            (MAX(invoice_number) + 1) as invoice_number, 
-            (MAX(control_number) + 1) as control_number
+            value as invoice_number
             FROM
-            invoices";
+            global_vars
+            INNER JOIN global_vars_history ON (global_vars_history.global_var = global_vars.id AND global_vars_history.current = 1)
+            WHERE
+            global_vars.name = 'Numero de factura'";
         
-        $numbers = parent::GetRow($sql);
-        if($numbers['invoice_number'] === NULL)
-            $numbers['invoice_number'] = 1;
+        $invoice_number = parent::GetRow($sql);
+        if($invoice_number['invoice_number'] === NULL)
+            $invoice_number['invoice_number'] = 1;
 
-        if($numbers['control_number'] === NULL)
-            $numbers['control_number'] = 1;
+        $sql = "SELECT 
+            value as control_number
+            FROM
+            global_vars
+            INNER JOIN global_vars_history ON (global_vars_history.global_var = global_vars.id AND global_vars_history.current = 1)
+            WHERE
+            global_vars.name = 'Numero de control'";
+
+        $control_number = parent::GetRow($sql);        
+
+        if($control_number['control_number'] === NULL)
+            $control_number['control_number'] = 1;
+
+        $numbers = [
+            'invoice_number' => intval($invoice_number['invoice_number']),
+            'control_number' => intval($control_number['control_number'])
+        ];
 
         return $numbers;
+    }
+
+    public function UpdateNumbers(){
+        $sql = "UPDATE 
+            global_vars_history
+            INNER JOIN global_vars ON global_vars.id = global_vars_history.global_var
+            SET global_vars_history.value = global_vars_history.value + 1
+            WHERE
+            global_vars.name = 'Numero de control' AND
+            global_vars_history.current = 1";
+
+        $result = parent::DoQuery($sql);
+        if($result === false)
+            return false;
+
+        $sql = "UPDATE 
+            global_vars_history
+            INNER JOIN global_vars ON global_vars.id = global_vars_history.global_var
+            SET global_vars_history.value = global_vars_history.value + 1
+            WHERE
+            global_vars.name = 'Numero de factura' AND
+            global_vars_history.current = 1";
+
+        $result = parent::DoQuery($sql);
+        if($result === false)
+            return false;
     }
 
     /**
