@@ -59,7 +59,10 @@ class SiacadModel extends PGSQLModel
     /**
      * Retorna los periodos según una lista de ids
      */
-    public function GetPeriodsByIdList($idList){
+    public function GetPeriodsByIdList($idList, $as_dict = false){
+        if(count($idList) === 0)
+            return [];
+        
         $ids = '';
         foreach($idList as $id){
             $ids .= $id . ', ';
@@ -67,7 +70,17 @@ class SiacadModel extends PGSQLModel
 
         $ids = trim($ids, ', ');
         $sql = "SELECT * FROM periodos WHERE idperiodo IN ($ids) ORDER BY fechainicio DESC";
-        return parent::GetRows($sql);
+        $periods = parent::GetRows($sql, true);
+
+        if($as_dict === false)
+            $result = $periods;
+        else{
+            foreach($periods as $period){
+                $result[$period['idperiodo']] = $period;
+            }
+        }
+        
+        return $result;
     }
 
     /**

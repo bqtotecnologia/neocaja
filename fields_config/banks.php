@@ -3,9 +3,9 @@
 $bankFields = [
     [
         'name' => 'name',
+        'id' => 'name',
         'display' => 'Nombre y código',
         'placeholder' => 'Nombre y código del banco',
-        'id' => 'name',
         'type' => 'text',
         'size' => 8,
         'max' => 255,
@@ -16,9 +16,9 @@ $bankFields = [
     ],
     [
         'name' => 'active',
+        'id' => 'active',
         'display' => 'Activo',
         'placeholder' => '',
-        'id' => 'active',
         'type' => 'checkbox',
         'size' => 4,
         'required' => false,

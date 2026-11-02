@@ -141,7 +141,7 @@
 
                       <li><a><i class="fa fa-calendar"></i> Periodos <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/tables/search_period_month_range.php">Rango de meses</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_period_range.php">Rango de meses</a></li>
                         </ul>
                       </li>
 

@@ -3,9 +3,9 @@
 $salePointFields = [
     [
         'name' => 'code',
+        'id' => 'code',
         'display' => 'Código',
         'placeholder' => 'Código del punto de venta',
-        'id' => 'code',
         'type' => 'text',
         'size' => 5,
         'min' => 1,
@@ -16,9 +16,9 @@ $salePointFields = [
     ],    
     [
         'name' => 'bank',
+        'id' => 'bank',
         'display' => 'Banco',
         'placeholder' => '',
-        'id' => 'bank',
         'type' => 'select',
         'size' => 8,
         'required' => true,

@@ -23,6 +23,34 @@ class SiacadModel extends PGSQLModel
         return parent::GetRow($sql);
     }
 
+    public function GetPeriods(){
+        return parent::GetRows("SELECT * FROM periodos WHERE nombreperiodo LIKE '%-%' ORDER BY idperiodo DESC", true);
+    }
+
+    /**
+     * Retorna todos los periodos en los que el estudiante ha estudiado
+     */
+    public function GetPeriodsOfStudent($cedula){
+        $sql = "SELECT
+            periodos.idperiodo,
+            periodos.nombreperiodo,
+            fechainicio,
+            fechafin
+            FROM 
+            participantes
+            INNER JOIN participantescarreras ON participantescarreras.cedula = participantes.cedula
+            INNER JOIN matriculas ON matriculas.idparticipantescarrera = participantescarreras.idparticipantescarrera
+            INNER JOIN periodos ON periodos.idperiodo = matriculas.idperiodo
+            WHERE
+            participantes.cedula = '$cedula'
+            GROUP BY
+            periodos.idperiodo
+            ORDER BY
+            periodos.idperiodo DESC";
+
+        return parent::GetRows($sql);
+    }
+
     public function GetPeriodoById($id){
         $sql = "SELECT * FROM periodos WHERE idperiodo=$id";
         return parent::GetRow($sql);
@@ -31,7 +59,7 @@ class SiacadModel extends PGSQLModel
     /**
      * Retorna los periodos según una lista de ids
      */
-    public function GetPeriodsByIdList($idList){
+    public function GetPeriodsByIdList($idList, $as_dict = false){
         $ids = '';
         foreach($idList as $id){
             $ids .= $id . ', ';
@@ -39,7 +67,55 @@ class SiacadModel extends PGSQLModel
 
         $ids = trim($ids, ', ');
         $sql = "SELECT * FROM periodos WHERE idperiodo IN ($ids) ORDER BY fechainicio DESC";
-        return parent::GetRows($sql);
+        $periods = parent::GetRows($sql, true);
+
+        if($as_dict === false)
+            $result = $periods;
+        else{
+            foreach($periods as $period){
+                $result[$period['idperiodo']] = $period;
+            }
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Recibe un string con una serie de nombres de periodos entre comillas y separados por comas
+     * Los ordena por ordenperiodo
+     */
+    public function GetPeriodsByNames($names){
+        $sql = "SELECT * FROM periodos WHERE nombreperiodo IN ($names) ORDER BY ordenperiodo ASC";
+        return parent::GetRows($sql, true);
+    }
+
+    /**
+     * Retorna los periodos en un array asociativo, si $nameDict los retorna como 'nombreperiodo' => periodo, sino 'idperiodo' => periodo
+     */
+    public function GetperiodsAsDict($nameDict = true){
+        $sql = "SELECT * FROM periodos";
+        $periods = parent::GetRows($sql);
+        $result = [];
+
+        foreach($periods as $period){
+            if($nameDict)
+                $result[$period['nombreperiodo']] = $period;
+            else
+                $result[$period['idperiodo']] = $period;
+
+        }
+
+        return $result;
+    }
+
+    public function GetPeriodoByName($name){
+        $sql = "SELECT * FROM periodos WHERE nombreperiodo  = '$name'";
+        return parent::GetRow($sql);
+    }
+
+    public function GetPeriodOfDate($date){
+        $sql = "SELECT * FROM periodos WHERE '$date' BETWEEN fechainicio AND fechafin";
+        return parent::GetRow($sql);
     }
 
     /**
@@ -81,7 +157,6 @@ class SiacadModel extends PGSQLModel
         include_once 'admin_model.php';
         $admin_model = new AdminModel();
         $admin = $admin_model->GetAdminByCedula($cedula);
-
         if($admin !== false){
             $data = array(
                 'role' => $admin['role'],
@@ -102,7 +177,7 @@ class SiacadModel extends PGSQLModel
             participantes.apellido1,
             participantes.apellido2,
             participantes.direccion,
-            participantes.telefonocontacto
+            participantes.telefonocontacto,
             carreras.nombrecarrera as carrera,
             secciones.nombreseccion as seccion,
             semestres.abreviado as semestre
@@ -118,9 +193,33 @@ class SiacadModel extends PGSQLModel
             INNER JOIN pensums ON pensums.idpensum = semestres.idpensum
             INNER JOIN carreras ON carreras.idcarrera = pensums.idcarrera
             WHERE
-            participantes.cedula = $cedula";
+            participantes.cedula = '$cedula'";
 
         return parent::GetRow($sql);
+    }
+
+        /**
+     * Retorna false si el estudiante no está activo en el periodo actual
+     * De lo contrario retorna el nombre del estudiante
+     */
+    public function StudentIsActive($cedula){
+        $sql = "SELECT
+            participantes.nombre1
+            FROM 
+            participantes
+            INNER JOIN participantescarreras ON participantescarreras.cedula = participantes.cedula
+            INNER JOIN matriculas ON matriculas.idparticipantescarrera = participantescarreras.idparticipantescarrera
+            INNER JOIN inscripciones ON inscripciones.idmatricula = matriculas.idmatricula
+            INNER JOIN secciones ON secciones.idseccion = inscripciones.idseccion
+            INNER JOIN materiasperiodos ON materiasperiodos.idmateriaperiodo = secciones.idmateriaperiodo
+            INNER JOIN periodos ON periodos.idperiodo = materiasperiodos.idperiodo
+            WHERE
+            matriculas.matriculado = 'TRUE' AND
+            inscripciones.inscrita = 'TRUE' AND
+            periodos.actual = 'TRUE' AND
+            participantes.cedula = '$cedula'";
+        
+        return parent::GetRows($sql);
     }
 
     /**
