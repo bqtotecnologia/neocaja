@@ -458,11 +458,13 @@ class InvoiceModel extends SQLModel
         include_once 'global_vars_model.php';
         include_once 'product_model.php';
         include_once 'account_model.php';
+        include_once 'period_range_model.php';
 
         $siacad = new SiacadModel();
         $global_vars_model = new GlobalVarsModel();
         $product_model = new ProductModel();
         $account_model = new AccountModel();
+        $period_range_model = new PeriodRangeModel();
 
         $global_vars = $global_vars_model->GetGlobalVars(true);
         $target_period = $siacad->GetPeriodoById($periodId);
@@ -483,13 +485,65 @@ class InvoiceModel extends SQLModel
         $start_date = new DateTime($target_period['fechainicio'], $timezone);
         $end_date = new DateTime($target_period['fechafin'], $timezone);
 
+        $periodMonths = $period_range_model->GetPeriodRangeOfPeriod($periodId);
+        $start_month = intval($periodMonths['start_month']);
+        $end_month = intval($periodMonths['end_month']);
+
+        $array_months = [];
+        $new_year = $start_month > $end_month;
+        while(true){
+            array_push($array_months, $start_month);
+            $start_month ++;
+            if($start_month > 12){
+                $new_year = false;
+                $start_month = 1;
+            }
+
+            if($start_month > $end_month && $new_year === false){
+                break;
+            }
+        }
+
+        $finalMonths = [];
+        $finalDates = [];
+
+        foreach($array_months as $month){
+            array_push($finalMonths, $this->month_translate[strval($month)]);
+            
+        }
+
+
+        
+        $current_month = intval($start_date->format('m'));
+        $found = false;
+        while(true){
+            if($current_month === $start_month){
+                $found = true;
+            }
+
+            if($found === false)
+                continue;
+
+
+            $date = $start_date->format('Y-m-01');
+            
+            array_push($finalDates, $date);
+
+            $current_month++;
+            $start_date->modify('+1 month');
+
+            if($current_month > 12)
+                $current_month = 1;
+        }
+
+
+
+
         $periodMonths = [];
         $periodDates = [];
         while(true){
             $month = intval($start_date->format('m'));
-            $date = $start_date->format('Y-m-01');
-            array_push($periodMonths, $this->month_translate[strval($month)]);
-            array_push($periodDates, $date);
+
 
             $start_date->modify('+1 month');
             if($start_date > $end_date)

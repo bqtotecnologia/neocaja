@@ -10,8 +10,8 @@ $periodRangeFields = [
         'size' => 8,
         'required' => true,
         'suspicious' => true,
-        'value' => $edit ? $target_period_range['period'] : '',
-        'elements' => $display_periods
+        'value' => $edit && $form ? $target_period_range['period'] : '',
+        'elements' => $form ? $display_periods : []
     ],
     [
         'name' => 'start_month',
@@ -22,8 +22,8 @@ $periodRangeFields = [
         'size' => 8,
         'required' => true,
         'suspicious' => true,
-        'value' => $edit ? $target_period_range['start_month'] : '',
-        'elements' => $display_months
+        'value' => $edit && $form ? $target_period_range['start_month'] : '',
+        'elements' => $form ? $display_months : []
     ],
     [
         'name' => 'end_month',
@@ -34,8 +34,8 @@ $periodRangeFields = [
         'size' => 8,
         'required' => true,
         'suspicious' => true,
-        'value' => $edit ? $target_period_range['end_month'] : '',
-        'elements' => $display_months
+        'value' => $edit && $form ? $target_period_range['end_month'] : '',
+        'elements' => $form ? $display_months : []
     ],
 ];
 

@@ -1,4 +1,4 @@
-<table class="table table-striped col-12 datatable-date-2">
+<table class="table table-striped col-12 generic-datatable">
     <thead class="bg-theme text-white fw-bold h6">
         <tr>
             <th class="text-center" style="padding-right:15px !important;">Nº</th>

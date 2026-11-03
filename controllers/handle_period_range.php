@@ -60,58 +60,61 @@ if($error === ''){
 
 // Creating / updating the period range
 if($error === ''){    
-    $cleanData['active'] = isset($_POST['active']) ? '1' : '0';
-
     if($edit){
-        $updated = $period_range_model->UpdateBank($cleanData['id'], $cleanData);
+        $updated = $period_range_model->UpdatePeriodRange($cleanData['id'], $cleanData);
         if($updated === false)
-            $error = 'Hubo un error al intentar actualizar el banco';
+            $error = 'Hubo un error al intentar actualizar el rango de meses del periodo';
     }
     else{
-        $created = $period_range_model->CreateBank($cleanData);
+        $created = $period_range_model->CreatePeriodRange($cleanData);
         if($created === false)
-            $error = 'Hubo un error al intentar registrar el banco';
+            $error = 'Hubo un error al intentar registrar el rango de meses del periodo';
     }
 }
 
 // Managing feedback message and binnacle
 if($error === ''){
     if($edit){        
-        $message = 'Banco actualizado correctamente';
+        $message = 'Rango de meses actualizado correctamente';
 
-        $activeChanged = $cleanData['active'] !== $target_period_range['active'];
-        $nameChanged = $cleanData['name'] !== $target_period_range['name'];
+        $periodChanged = intval($cleanData['period']) !== intval($target_period_range['period']);
+        $startMonthChanged = intval($cleanData['start_month']) !== intval($target_period_range['start_month']);
+        $endMonthChanged = intval($cleanData['end_month']) !== intval($target_period_range['end_month']);
 
-        $action = 'Actualizó el banco ' . $target_period_range['name'];
-        if($nameChanged)
-            $action .= '. Al nombre ' . $cleanData['name'];
+        $action = 'Actualizó el rango de meses del periodo ' . $target_period['nombreperiodo'];
 
-        if($activeChanged)
-            $action .= '. Al estado activo ' . (intval($cleanData['active']) === 1 ? 'Si' : 'No');
+        if($periodChanged)
+            $action .= '. Al periodo ' . $target_period['nombreperiodo'];
+
+        if($startMonthChanged)
+            $action .= '. Al mes de inicio ' . $cleanData['start_month'];
+
+        if($endMonthChanged)
+            $action .= '. Al mes de fin ' . $cleanData['end_month'];
     }
     else{
-        $created = $period_range_model->GetBankByName($cleanData['name']);
-        $message = 'Banco registrado correctamente';
-        $action = 'Creo el banco ' . $cleanData['name'];
+        $created = $period_range_model->GetPeriodRangeOfPeriod($cleanData['period']);
+        $message = 'Rango de meses registrado correctamente';
+        $action = 'Registró el rango de meses de ' . $cleanData['start_month'] . '-' . $cleanData['end_month'] . ' para el periodo '  . $target_period['nombreperiodo'];
     }
     $period_range_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
 }
 
 if($error === ''){    
     if($edit)
-        header("Location: $base_url/views/forms/bank_form.php?message=$message&id=" . $cleanData['id']);
+        header("Location: $base_url/views/forms/period_range_form.php?message=$message&id=" . $cleanData['id']);
     else
-        header("Location: $base_url/views/forms/bank_form.php?message=$message&id=" . $created['id']);
+        header("Location: $base_url/views/forms/period_range_form.php?message=$message&id=" . $created['id']);
 }
 else{
     if($edit){
         if($target_period_range === false)
-            header("Location: $base_url/views/tables/search_bank.php?error=$error");
+            header("Location: $base_url/views/tables/search_period_range.php?error=$error");
         else
-            header("Location: $base_url/views/forms/bank_form.php?error=$error&id=" . $target_period_range['id']);
+            header("Location: $base_url/views/forms/period_range_form.php?error=$error&id=" . $target_period_range['id']);
     }
     else
-        header("Location: $base_url/views/forms/bank_form.php?error=$error");
+        header("Location: $base_url/views/forms/period_range_form.php?error=$error");
 }
 
 exit;

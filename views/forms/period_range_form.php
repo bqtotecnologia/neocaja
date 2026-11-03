@@ -18,8 +18,8 @@ if($edit){
 if($error === '' && $edit){
     include_once '../../models/period_range_model.php';
     $period_range_model = new PeriodRangeModel();
-    $target_range = $period_range_model->GetPeriodRangeById($id);
-    if($target_range === false){
+    $target_period_range = $period_range_model->GetPeriodRangeById($id);
+    if($target_period_range === false){
         $error = 'No se encontró el rango de meses deseado';
     }
 }

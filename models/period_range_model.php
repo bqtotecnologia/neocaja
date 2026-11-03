@@ -24,7 +24,7 @@ class PeriodRangeModel extends SQLModel
         return parent::GetRow($sql);
     }
 
-    public function GetPeriodRangeOfPeriod($period){
+    public function GetPeriodRangeOfPeriod($id){
         $sql = "SELECT * FROM period_ranges WHERE period = $id";
         return parent::GetRow($sql);
     }
