@@ -29,6 +29,40 @@ class PeriodRangeModel extends SQLModel
         return parent::GetRow($sql);
     }
 
+    /**
+     * Retorna un array con los meses del periodo, si $names es true retorna los nombres, si no los números.
+     * Se debe validar primero que exista el rango del periodo, ya que la función no lo verifica
+     */
+    public function GetMonthsOfPeriod($id, $names = false){
+        $periodMonthRange = $this->GetPeriodRangeOfPeriod($id);
+
+        $start_month = intval($periodMonthRange['start_month']);
+        $end_month = intval($periodMonthRange['end_month']);
+        
+
+        $array_months = [];
+        $new_year = $start_month > $end_month;
+        while(true){    
+            if($names)                    
+                array_push($array_months, $this->month_translate[strval($start_month)]);                
+            else
+                array_push($array_months, $start_month);
+
+            $start_month++;
+
+            if($start_month > $end_month && $new_year === false){              
+                break;                
+            }
+
+            if($start_month > 12){
+                $new_year = false;
+                $start_month = 1;
+            }
+        }
+
+        return $array_months;
+    }
+
     public function UpdatePeriodRange(string $id, array $data){
         $period = $data['period'];
         $start_month = $data['start_month'];

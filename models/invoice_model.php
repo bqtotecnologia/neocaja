@@ -326,14 +326,16 @@ class InvoiceModel extends SQLModel
         include_once 'global_vars_model.php';
         include_once 'account_model.php';
         include_once 'siacad_model.php';
+        include_once 'period_range_model.php';
 
         $global_model = new GlobalVarsModel();
         $siacad = new SiacadModel();
         $account_model = new AccountModel();
+        $period_range_model = new PeriodRangeModel();
 
         $target_account = $account_model->GetAccountByCedula($cedula);
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
-        $periodMonths = $siacad->GerMonthsOfPeriodo($periodId, true);
+        $periodMonths = $period_range_model->GetMonthsOfPeriod($periodId, true);
         $global_vars = $global_model->GetGlobalVars(true);
 
         $target_period = $siacad->GetPeriodoById($periodId);
@@ -479,74 +481,42 @@ class InvoiceModel extends SQLModel
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
         if($scholarshipped){
             $monthlyPrice = $monthlyPrice - ($monthlyPrice * (floatval($target_account['scholarship_coverage']) / 100));
-        }   
+        }          
 
+        $periodMonthRange = $period_range_model->GetPeriodRangeOfPeriod($periodId);
+        if($periodMonthRange === false)
+            return "El periodo " . $target_period['nombreperiodo'] . ' no posee un rango de meses para pagar';
+
+        $array_months = $period_range_model->GetMonthsOfPeriod($periodId, false);
+        
         $timezone = new DateTimeZone('America/Caracas');
         $start_date = new DateTime($target_period['fechainicio'], $timezone);
-        $end_date = new DateTime($target_period['fechafin'], $timezone);
-
-        $periodMonths = $period_range_model->GetPeriodRangeOfPeriod($periodId);
-        $start_month = intval($periodMonths['start_month']);
-        $end_month = intval($periodMonths['end_month']);
-
-        $array_months = [];
-        $new_year = $start_month > $end_month;
-        while(true){
-            array_push($array_months, $start_month);
-            $start_month ++;
-            if($start_month > 12){
-                $new_year = false;
-                $start_month = 1;
-            }
-
-            if($start_month > $end_month && $new_year === false){
-                break;
-            }
-        }
-
         $finalMonths = [];
         $finalDates = [];
-
-        foreach($array_months as $month){
-            array_push($finalMonths, $this->month_translate[strval($month)]);
-            
-        }
-
-
-        
-        $current_month = intval($start_date->format('m'));
         $found = false;
+        $i = 0;
+
         while(true){
-            if($current_month === $start_month){
+            
+            $month = $array_months[$i];
+
+            if(intval($start_date->format('m')) === $month)
                 $found = true;
+
+            if($found === false){
+                $start_date->modify('+1 month');
+                continue;
             }
 
-            if($found === false)
-                continue;
-
-
-            $date = $start_date->format('Y-m-01');
-            
+            $date = $start_date->format('Y-m-01');            
             array_push($finalDates, $date);
-
-            $current_month++;
-            $start_date->modify('+1 month');
-
-            if($current_month > 12)
-                $current_month = 1;
-        }
-
-
-
-
-        $periodMonths = [];
-        $periodDates = [];
-        while(true){
-            $month = intval($start_date->format('m'));
-
+            
+            array_push($finalMonths, $this->month_translate[strval($month)]);
 
             $start_date->modify('+1 month');
-            if($start_date > $end_date)
+            $i++;
+
+            if($i >= count($array_months))
                 break;
         }
 
@@ -567,7 +537,7 @@ class InvoiceModel extends SQLModel
         ];
 
         foreach($accountState as $month => $value){
-            if($value['paid'] === 0 && in_array($month, $periodMonths))
+            if($value['paid'] === 0 && in_array($month, $finalMonths))
                 $cleanState[$month] = $value;
         }
         
@@ -575,7 +545,7 @@ class InvoiceModel extends SQLModel
         $fake_today = new DateTime('now', $timezone);
         $fake_today->setDate($fake_today->format('Y'), $fake_today->format('m'), '1');                
 
-        foreach($periodDates as $periodDate){
+        foreach($finalDates as $periodDate){
             $date = new DateTime($periodDate, $timezone);
 
             if($date > $fake_today)

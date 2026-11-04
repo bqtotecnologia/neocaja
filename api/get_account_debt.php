@@ -28,7 +28,6 @@ if($error === ''){
         $error = 'Cliente no encontrado';
 }
 
-
 if($error === ''){
     include_once '../models/siacad_model.php';
     include_once '../models/invoice_model.php';
@@ -39,11 +38,19 @@ if($error === ''){
     $periods = $siacad->GetPeriodsOfStudent($target_account['cedula']);
     $ordered_data = [];
 
+
     foreach($periods as $period){
         $account_state = $invoice_model->GetDebtOfAccountOfPeriod($target_account['cedula'], $period['idperiodo']);
+
+        if(is_string($account_state)){
+            $error = $account_state;
+            break;
+        }
         $ordered_data[$period['nombreperiodo']] = $account_state;
     }
 }
+
+
 
 if($error === ''){
     $response = [
