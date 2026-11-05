@@ -74,7 +74,7 @@
         </tr>
         <tr>
             <td class="p-1 border border-black bg-theme text-white fw-bold align-middle">TOTAL</td>
-            <?php if($total_debt > 0) { ?>                                
+            <?php if($total_usd_debt > 0) { ?>                                
                 <td class="p-1 border border-black align-middle fw-bold text-danger">Bs. <?= GetPrettyCiphers($total_usd_debt * $usd['price']) ?></td>
                 <td class="p-1 border border-black align-middle fw-bold text-danger"><?= GetPrettyCiphers($total_usd_debt) ?>$</td>
             <?php } else { ?>

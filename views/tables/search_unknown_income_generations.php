@@ -23,7 +23,7 @@ $generations = $unknown_model->GetUnknownIncomesGenerations();
                 <?php include '../common/tables/unknown_incomes_generations_table.php'; ?>
             </div>
         </div>
-    </div>
+    </div>    
 </div>
 
 <?php include '../common/footer.php'; ?>

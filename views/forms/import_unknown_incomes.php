@@ -16,6 +16,10 @@ include_once '../common/header.php';
                 <h1 class="h1 text-center">Importar ingresos no identificados</h1>
             </div>
 
+            <div class="col-12">
+                <h3 class="h3 text-center">Descargue la plantilla <a class="fw-bold" href="<?= $base_url ?>/assets/Plantilla para importar ingresos no identificados.xlsx">aquí</a></h3>
+            </div>
+
             <div class="row col-12 m-0 p-0 mt-5 text-center align-items-center justify-content-center">
                 <label class="h5 align-middle m-0 align-middle col-5 text-right" for="">Subir archivo</label>
                 <input id="fileInput" class="col-7 h5 m-0" type="file" accept=".xlsx, .xls">
@@ -80,13 +84,17 @@ include_once '../common/header.php';
             const worksheet = workbook.Sheets[sheetName];
 
             const rows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+            console.log(String(rows[0]['FECHA']))
 
             const result = rows.map(row => ({
-                    date: String(row['FECHA']) || String(row['Fecha']) || String(row['fecha']) || '',
-                    price: row['MONTO BS.'] || row['Monto Bs.'] || row['monto bs.'] || '',
-                    ref: String(row['REFERENCIA']) || String(row['Referencia']) || String(row['referencia']) || '',
-                    description: row['DESCRIPCIÓN'] || row['Descripción'] || row['descripción'] || row['DESCRIPCION'] || row['Descripcion'] || row['descripcion'] || '',
+                    
+                    date: String(row['FECHA']),
+                    price: row['MONTO BS.'],
+                    ref: String(row['REFERENCIA']),
+                    description: row['DESCRIPCIÓN'],
             }));
+
+            console.log(result[0])
 
             const invalidRows = result.filter(
                 r => !r.date || !r.price || !r.ref || !r.description
@@ -95,7 +103,7 @@ include_once '../common/header.php';
             var error = ''
 
             result.forEach((r) => {
-                if(r.date.length !== 8){
+                if(r.date.length < 7){
                     error = 'Se encontró una fecha inválida: ' + r.date
                     return
                 }

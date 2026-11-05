@@ -124,7 +124,7 @@ if($error === ''){
         $periodNames .= "'" . $period . "', ";
 
         foreach($products as $product){
-            if(strpos($product['name'], 'FOC') !== false){
+            if($product['name'] === 'FOC'){
                 $focCount += 1;
             }
             else{

@@ -180,7 +180,7 @@ include '../../views/common/header.php';
                 <div class="row col-12 m-0 p-0 align-items-center justify-content-center my-2 my-lg-1 px-3 px-lg-0">
                     <label class="fw-bold col-12 col-lg-4 text-center text-lg-right align-middle m-0">Respuesta</label>
                     <label class="col-10 col-lg-6 text-center text-lg-left align-middle m-0 p-0">
-                        <?= $target_payment['response'] ?>
+                        <?= $target_payment['response'] === NULL ? 'Sin respuesta' : $target_payment['response'] ?>
                     </label>
                     <i class="col-1"></i>
                 </div>

@@ -102,8 +102,8 @@ class UnknownIncomesModel extends SQLModel
     }
 
     public function GetUnknownIncomesGenerations(){
-        $sql = $this->GENERATION_SELECT_TEMPLATE . " ORDER BY unknown_incomes_generations.created_at DESC";
-        return parent::GetRows($sql);
+        $sql = $this->GENERATION_SELECT_TEMPLATE . " GROUP BY unknown_incomes_generations.id ORDER BY unknown_incomes_generations.created_at DESC";
+        return parent::GetRows($sql, true);
     }
 
     public function GetUnknownIncomesOfGeneration($id){
@@ -133,18 +133,23 @@ class UnknownIncomesModel extends SQLModel
         return parent::GetRows($sql, true);
     }
 
+    public function GetUnknownIncomesOfGenerationWithRemotePayments($id){
+        $sql = $this->INCOME_SELECT_TEMPLATE . " WHERE unknown_incomes.remote_payment IS NOT NULL AND unknown_incomes_generations.id = $id";
+        return parent::GetRows($sql, true);
+    }
+
     public function UnlinkFromRemotePayment($id){
         $sql = "UPDATE unknown_incomes SET remote_payment = NULL WHERE remote_payment = $id";
         return parent::DoQuery($sql);
     }
 
-    public function DeleteIncomesGeneration($id){
-        $sql = "DELETE FROM unknown_incomes_generation WHERE id = $id";
+    public function AssignIncomeToAccount($id, $account){
+        $sql = "UPDATE unknown_incomes SET account = $account WHERE id = $id";
         return parent::DoQuery($sql);
     }
 
-    public function AssignIncomeToAccount($id, $account){
-        $sql = "UPDATE unknown_incomes SET account = $account WHERE id = $id";
+    public function DeleteIncomesGeneration($id){
+        $sql = "DELETE FROM unknown_incomes_generations WHERE id = $id";
         return parent::DoQuery($sql);
     }
 }

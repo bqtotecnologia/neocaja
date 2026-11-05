@@ -121,7 +121,8 @@
             return
 
         target_payment = found.data
-        $('#account').val(target_payment.payment.account_id).trigger('change')
+        cedula_input.value = target_payment.payment.cedula
+        AccountSelecting(target_payment.payment.account_id)
 
         var remotePaymentLink = document.getElementById('remote-payment-link')
         debtContainer.classList.add('d-none')

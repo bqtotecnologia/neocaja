@@ -33,12 +33,18 @@ if($error === ''){
     for($i = 0; $i < count($post['payments']); $i++){
         $payment = $post['payments'][$i];
 
-        if (!preg_match('/^\d{8}$/', $payment['date']))
-            $error = 'Se recibió una fecha sin exactamente 8 caracteres: ' . $payment['date'];
+        //if (!preg_match('/^\d{8}$/', $payment['date']))
+        if(strlen($payment['date']) < 7){
+            $error = 'Se recibió una fecha con menos de 7 caracteres: ' . $payment['date'];
+        }
 
-        $day   = substr($payment['date'], 0, 2);
-        $month   = substr($payment['date'], 2, 2);
-        $year  = substr($payment['date'], 4, 4);
+        if(strlen($payment['date']) === 8)
+            $day   = substr($payment['date'], 0, 2);
+        else if(strlen($payment['date']) === 7)
+            $day   = substr($payment['date'], 0, 1);
+
+        $month   = substr($payment['date'], strlen($payment['date']) - 6, 2);
+        $year  = substr($payment['date'], strlen($payment['date']) - 4, 4);
 
         $tentative_date = "$year-$month-$day";
 

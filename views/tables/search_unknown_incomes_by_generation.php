@@ -41,6 +41,15 @@ include '../../views/common/header.php';
             </div>
         </div>
     </div>
+
+    <div class="row col-12 m-0 p-0 justify-content-center my-4">
+        <form class="confirm-form" method="POST" action="../../controllers/delete_unknown_incomes.php">
+            <input type="hidden" name="id" value="<?= $target_generation['id'] ?>">
+            <button class="btn btn-danger">
+                Borrar generación de ingresos no identificados
+            </button>
+        </form>
+    </div>
 </div>
 
 <?php include '../common/footer.php'; ?>
