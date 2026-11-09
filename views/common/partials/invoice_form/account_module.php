@@ -74,7 +74,7 @@
             var oldestDebt = false
             for(let period in debtData.data){
                 var current = debtData.data[period]
-                if(current.foc > 0 || current.months > 0 || current.retard > 0)
+                if(current.foc > 0 || current.months.total > 0 || current.retard.total > 0)
                     oldestDebt = period
             }            
             

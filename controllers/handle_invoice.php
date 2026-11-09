@@ -327,7 +327,7 @@ if($error === ''){
             'coin' => $target_coin['history_id'],
             'salepoint' => $target_sale_point['id'] ?? 'NULL',
             'bank' => $target_bank['id'] ?? 'NULL',
-            'document_number' => ("'" . $target_document . "'") ?? 'NULL',
+            'document_number' => $target_document !== null ? ("'" . $target_document . "'") : 'NULL',
             'price' => $target_price,
             'igtf' => '0',
         ];
@@ -607,7 +607,7 @@ if($error === '' && isset($_POST['igtf-price'])){
         'coin' => $target_coin['history_id'],
         'salepoint' => $target_sale_point['id'] ?? 'NULL',
         'bank' => $target_bank['id'] ?? 'NULL',
-        'document_number' => ("'" . $target_document . "'") ?? 'NULL',
+        'document_number' => $target_document !== null ? ("'" . $target_document . "'") : 'NULL',
         'price' => $target_price,
         'igtf' => '1',
     ];

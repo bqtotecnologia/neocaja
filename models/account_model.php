@@ -80,6 +80,7 @@ class AccountModel extends SQLModel
             companies.address,
             scholarships.id as scholarship_id,
             scholarships.name,
+            account_history.id as account_history_id,
             account_history.scholarship_coverage,
             account_history.current,
             account_history.created_at

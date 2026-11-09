@@ -80,7 +80,7 @@ if($error === ''){
         ];
         $updated = $account_model->UpdateAccountHistory($target_account['id'], $data);
         if($updated === false)
-            $error = 'Hubo un error al intentar crear el historial empresa/beda del cliente';
+            $error = 'Hubo un error al intentar crear el historial empresa/beca del cliente';
     }
 }
 

@@ -395,7 +395,6 @@
             focRow.appendChild(focVES)
         }
         else{
-            console.log('kkk')
             focVES.classList.add('text-danger')  
             focUSD.classList.add('text-danger')
             

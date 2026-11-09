@@ -145,7 +145,21 @@ if($error === ''){
             $created = $account_model->CreateAccount($data);
             if($created === false)
                 $error = 'Hubo un error al crear tu cuenta';
+            else{
+                $account = $account_model->GetAccountByCedula($cedula);
+                $data = [
+                    'account' => $account['id'],
+                    'company' => NULL,
+                    'scholarship' => NULL,
+                    'scholarship_coverage' => NULL
+                ];
+                $updated = $account_model->UpdateAccountHistory($account['id'], $data);
+                if($updated === false)
+                    $error = 'Hubo un error al intentar crear su historial empresa/beca del cliente';
+            }
+
         }
+
     }
 }
 

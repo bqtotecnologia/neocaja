@@ -584,8 +584,12 @@ $latest = $invoice_model->GetLatestNumbers();
                             error = 'El primer mes pagable es ' + msgTemplate + '. Pero ese mes no se encuentra entre los conceptos'
                             break
                         }
-                        previousMonthWasFullPaid = false
-                        manteinMonthSucession = false
+
+                        // El estudiante no ha pagado el primer mes pagable
+                        if(currentAccountState.paid === 0){
+                            previousMonthWasFullPaid = false
+                            manteinMonthSucession = false
+                        }
                         continue
                     }
                     else{
