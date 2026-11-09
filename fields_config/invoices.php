@@ -2,22 +2,6 @@
 
 $invoiceFields = [
     [
-        'name' => 'invoice_number',
-        'min' => 1,
-        'max' => 11,
-        'required' => true,
-        'type' => 'integer',
-        'suspicious' => true,
-    ],
-    [
-        'name' => 'control_number',
-        'min' => 1,
-        'max' => 11,
-        'required' => true,
-        'type' => 'integer',
-        'suspicious' => true,
-    ],
-    [
         'name' => 'invoice-period',
         'min' => 1,
         'max' => 15,
