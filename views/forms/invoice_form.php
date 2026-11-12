@@ -41,6 +41,7 @@ $accounts = $account_model->GetAccounts();
 $banks = $bank_model->GetActivebanks();
 $sale_points = $sale_point_model->GetSalePoints();
 $payment_methods = $payment_method_model->GetAllPaymentMethodTypes();
+$payment_blocked_fields = $payment_method_model->GetBlockedFields($payment_methods);
 $coins = $coin_model->GetActiveCoins();
 $coinHistories = $coin_model->GetOrderedCoinHistories();
 $products = $product_model->GetActiveProducts();
@@ -161,7 +162,7 @@ $latest = $invoice_model->GetLatestNumbers();
                             </div>
 
                             <div class="row m-0 p-0 col-12 col-md-8">
-                                <input id="cedula" name="cedula" type="text" class="col-12 col-lg-6 form-control " placeholder="Cédula">
+                                <input id="cedula" name="cedula" type="text" class="col-12 col-lg-6 form-control " placeholder="Cédula" autocomplete="off">
                             </div>
 
                         </div>
@@ -317,8 +318,8 @@ $latest = $invoice_model->GetLatestNumbers();
                             <tr class="bg-theme text-white">
                                 <th class="p-1 align-middle" style="width:11%">Método</th>
                                 <th class="p-1 align-middle px-5" style="width:10%">Moneda</th>
-                                <th class="p-1 align-middle px-5" style="width:13%">Pto de venta</th>
                                 <th class="p-1 align-middle" style="width:17%">Banco</th>
+                                <th class="p-1 align-middle px-5" style="width:13%">Pto de venta</th>
                                 <th class="p-1 align-middle px-5" style="width:13%">Nº Doc.</th>
                                 <th class="p-1 align-middle" style="width:12%">Monto</th>
                                 <th class="p-1 align-middle" style="width:12%">Total</th>
@@ -354,8 +355,8 @@ $latest = $invoice_model->GetLatestNumbers();
                             <tr class="bg-theme text-white">
                                 <th class="p-1 align-middle" style="width:11%">Método</th>
                                 <th class="p-1 align-middle px-5" style="width:10%">Moneda</th>
-                                <th class="p-1 align-middle px-5" style="width:13%">Pto de venta</th>
                                 <th class="p-1 align-middle" style="width:17%">Banco</th>
+                                <th class="p-1 align-middle px-5" style="width:13%">Pto de venta</th>
                                 <th class="p-1 align-middle px-5" style="width:13%">Nº Doc.</th>
                                 <th class="p-1 align-middle" style="width:12%">Monto</th>
                                 <th class="p-1 align-middle" style="width:12%">Total</th>
@@ -382,17 +383,7 @@ $latest = $invoice_model->GetLatestNumbers();
                                             <?php } ?>
                                         </select>
                                     </div>
-                                </td>                               
-                                <td>
-                                    <div class="d-flex justify-content-center m-0">
-                                        <select class="form-control" name="igtf-salepoint" id="igtf-salepoint" disabled onchange="IGTFSalePointSelecting(this.value)">
-                                            <option value=""></option>
-                                            <?php foreach($sale_points as $sale_point) { ?>
-                                                <option value="<?= $sale_point['code'] ?>"><?= $sale_point['code'] ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </div>
-                                </td>
+                                </td>                                                               
                                  <td>
                                     <div class="d-flex justify-content-center m-0">
                                         <select class="select2" name="igtf-bank" id="igtf-bank" disabled>
@@ -403,13 +394,23 @@ $latest = $invoice_model->GetLatestNumbers();
                                         </select>
                                     </div>
                                 </td>
-
                                 <td>
-                                    <input class="col-12 form-control" type="text" name="igtf-document" id="igtf-document" disabled>
+                                    <div class="d-flex justify-content-center m-0">
+                                        <select class="form-control" name="igtf-salepoint" id="igtf-salepoint" disabled onchange="IGTFSalePointSelecting(this.value)">
+                                            <option value=""></option>
+                                            <?php foreach($sale_points as $sale_point) { ?>
+                                                <option value="<?= $sale_point['id'] ?>"><?= $sale_point['code'] ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
                                 </td>
 
                                 <td>
-                                    <input class="col-12 form-control" type="text" name="igtf-price" id="igtf-price" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46)"  disabled>
+                                    <input class="col-12 form-control" type="text" name="igtf-document" id="igtf-document" disabled autocomplete="off" placeholder="Referencia completa">
+                                </td>
+
+                                <td>
+                                    <input class="col-12 form-control" type="text" name="igtf-price" id="igtf-price" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46)"  disabled autocomplete="off">
                                 </td>
 
                                 <td>

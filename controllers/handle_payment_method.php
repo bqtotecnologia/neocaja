@@ -49,7 +49,11 @@ if($error === ''){
 }  
 
 // Creating / updating the payment method
-if($error === ''){    
+if($error === ''){
+    $cleanData['document_number'] = isset($_POST['document_number']) ? 1 : 0;
+    $cleanData['bank'] = isset($_POST['bank']) ? 1 : 0;
+    $cleanData['sale_point'] = isset($_POST['sale_point']) ? 1 : 0;
+
     if($edit){
         $updated = $payment_method_model->UpdatePaymentMethodType($cleanData['id'], $cleanData);
         if($updated === false)
@@ -68,10 +72,23 @@ if($error === ''){
         $message = 'Método de pago actualizado correctamente';
 
         $nameChanged = $cleanData['name'] !== $target_payment_method['name'];
+        $documentNumberChanged = intval($cleanData['document_number']) !== intval($target_payment_method['document_number']);
+        $bankChanged = intval($cleanData['bank']) !== intval($target_payment_method['bank']);
+        $salePointChanged = intval($cleanData['sale_point']) !== intval($target_payment_method['sale_point']);
 
         $action = 'Actualizó el método de pago ' . $target_payment_method['name'];
+
         if($nameChanged)
             $action .= '. Al nombre ' . $cleanData['name'];
+        
+        if($documentNumberChanged)
+            $action .= '. Al número de documento ' . $cleanData['document_number'];
+
+        if($bankChanged)
+            $action .= '. Al banco ' . $cleanData['bank'];
+
+        if($salePointChanged)
+            $action .= '. Al punto de venta ' . $cleanData['sale_point'];        
 
     }
     else{

@@ -3,9 +3,9 @@
 $accountFields = [
     [
         'name' => 'cedula',
+        'id' => 'cedula',
         'display' => 'Cédula',
         'placeholder' => '',
-        'id' => 'cedula',
         'type' => 'integer',
         'size' => 5,
         'max' => 10,
@@ -15,10 +15,24 @@ $accountFields = [
         'value' => $edit ? $target_account['cedula'] : (isset($_GET['cedula']) ? $_GET['cedula'] : '')
     ],
     [
+        'name' => 'cedula_letter',
+        'id' => 'cedula',
+        'display' => 'Letra de la cédula',
+        'placeholder' => '',
+        'type' => 'select',
+        'size' => 5,
+        'max' => 1,
+        'min' => 1,
+        'required' => true,
+        'suspicious' => true,
+        'value' => $edit ? $target_account['cedula_letter'] : 'V',
+        'elements' => [['display' => 'V', 'value' => 'V'], ['display' => 'E', 'value' => 'E']]
+    ],
+    [
         'name' => 'names',
+        'id' => 'names',
         'display' => 'Nombres',
         'placeholder' => 'Ambos nombres',
-        'id' => 'names',
         'type' => 'text',
         'size' => 8,
         'min' => 5,
@@ -29,9 +43,9 @@ $accountFields = [
     ],
     [
         'name' => 'surnames',
+        'id' => 'surnames',
         'display' => 'Apellidos',
         'placeholder' => 'Ambos apellidos',
-        'id' => 'surnames',
         'type' => 'text',
         'size' => 8,
         'min' => 5,
@@ -42,9 +56,9 @@ $accountFields = [
     ],
     [
         'name' => 'phone',
+        'id' => 'phone',
         'display' => 'Teléfono',
         'placeholder' => 'Teléfono',
-        'id' => 'phone',
         'type' => 'text',
         'size' => 8,
         'min' => 11,
@@ -55,9 +69,9 @@ $accountFields = [
     ],
     [
         'name' => 'address',
+        'id' => 'address',
         'display' => 'Dirección',
         'placeholder' => 'Dirección del cliente',
-        'id' => 'address',
         'type' => 'textarea',
         'size' => 8,
         'required' => true,
@@ -66,9 +80,9 @@ $accountFields = [
     ],
     [
         'name' => 'is_student',
+        'id' => 'is_student',
         'display' => 'Es estudiante',
         'placeholder' => '',
-        'id' => 'is_student',
         'type' => 'checkbox',
         'size' => 5,
         'required' => false,
@@ -78,9 +92,9 @@ $accountFields = [
     ],
     [
         'name' => 'scholarship',
+        'id' => 'scholarship',
         'display' => 'Beca',
         'placeholder' => '',
-        'id' => 'scholarship',
         'type' => 'select',
         'size' => 6,
         'required' => false,
@@ -101,9 +115,9 @@ $accountFields = [
     ],
     [
         'name' => 'company',
+        'id' => 'company',
         'display' => 'Empresa',
         'placeholder' => '',
-        'id' => 'company',
         'type' => 'select',
         'size' => 8,
         'required' => false,

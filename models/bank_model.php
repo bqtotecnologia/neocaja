@@ -23,12 +23,19 @@ class BankModel extends SQLModel
     }
 
     public function GetActivebanks(){
-        $sql = "SELECT 
-            *
+        $sql = "SELECT
+            banks.id,
+            banks.name,
+            banks.active,
+            banks.created_at,
+            sale_points.id as sale_point
             FROM
             banks
+            LEFT JOIN sale_points ON sale_points.bank = banks.id
             WHERE
             active = 1
+            GROUP BY
+            banks.id
             ORDER BY
             name";
 

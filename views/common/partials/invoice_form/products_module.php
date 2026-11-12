@@ -163,7 +163,13 @@
     }
 
     function ChangeProductPeriod(position, period){      
-        $('#product-period-' + position).val(String(period)).trigger('change')
+        if(typeof period === 'string'){
+            $('#product-period-' + position).val(String(period)).trigger('change')
+        }
+        else{
+            var periodName = Object.keys(periods).find(key => periods[key] === period) 
+            $('#product-period-' + position).val(String(periodName)).trigger('change')
+        }
     }
 
     function ChangeProduct(position, productId){

@@ -28,12 +28,6 @@
     const scholarship_with_retard = '<?= $global_vars['Becados pagan mora'] ?>' === '1' ? true : false
     const igtf_rate = 0.03
     const payment_method_blockable_fields = ['bank', 'salepoint', 'document']
-    const payment_method_field_block = {
-        'Efectivo': ['bank', 'salepoint', 'document'],
-        'Pago móvil': ['salepoint'],
-        'Transferencia': ['salepoint'],
-        'Tarjeta de débito': [],
-    }
     
     
     // LISTS
@@ -104,13 +98,19 @@
     let nextPaymentMethod = 1
     let scholarshipped = false
     let igtfVisible = false
+    let payment_method_field_block = {}
+    let periods = {}
 
     // EVENTS
     igtf_method.addEventListener('change', function(e) { IGTFPaymentMethodSelecting(e) })
     cedula_input.addEventListener('keyup', function(e) { CheckCedula(e) })
 </script>
 
-
+<?php foreach($periods as $period) { ?>
+    <script>        
+        periods['<?= $period['nombreperiodo'] ?>'] = parseInt('<?= $period['idperiodo'] ?>')
+    </script>
+<?php } ?>
 
 <?php foreach($products as $product) { ?>
     <script>
@@ -151,6 +151,7 @@
         bank = {
             'name': '<?= $bank['name'] ?>',
             'id': '<?= $bank['id'] ?>',
+            'salepoint': '<?= $bank['sale_point'] ?>'
         }
         banks.push(bank)
     </script>
@@ -178,6 +179,18 @@
         }
         payment_methods.push(payment_method)
     </script>
+<?php } ?>
+
+<?php foreach($payment_blocked_fields as $method_name => $blocked_fields) { ?>
+    <script>
+        payment_method_field_block['<?= $method_name ?>'] = []
+    </script>
+
+    <?php foreach($blocked_fields as $field) { ?>
+        <script>
+            payment_method_field_block['<?= $method_name ?>'].push('<?= $field ?>')
+        </script>
+    <?php } ?>
 <?php } ?>
 
 

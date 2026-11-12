@@ -2,6 +2,7 @@
     <thead class="bg-theme text-white fw-bold h6">
         <tr>
             <th class="text-center" style="padding-right:15px !important;">Nº</th>
+            <th class="text-center">Letra de cédula</th>
             <th class="text-center">Cédula</th>
             <th class="text-center">Nombre</th>
             <th class="text-center">Es estudiante</th>
@@ -18,6 +19,7 @@
         <?php foreach($accounts as $account) {  ?>
             <tr class="h6">
                 <td class="align-middle text-center"><?php echo $count; $count++; ?></td>
+                <td class="align-middle text-center"><?= $account['cedula_letter'] ?></td>
                 <td class="align-middle text-center"><?= $account['cedula'] ?></td>
                 <td class="align-middle text-center"><?= $account['names'] . ' ' . $account['surnames'] ?></td>
                 <td class="align-middle text-center fw-bold text-<?= intval($account['is_student']) === 1 ? 'success' : 'danger' ?>">

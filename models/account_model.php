@@ -7,6 +7,7 @@ class AccountModel extends SQLModel
         accounts.id,
         accounts.names,
         accounts.surnames,
+        accounts.cedula_letter,
         accounts.cedula,
         accounts.address,
         accounts.phone,
@@ -32,14 +33,15 @@ class AccountModel extends SQLModel
         $names = $data['names'];
         $surnames = $data['surnames'];
         $cedula = $data['cedula'];
+        $letter = $data['cedula_letter'];
         $address = $data['address'];
         $phone = $data['phone'];
         $is_student = $data['is_student'];
 
         $sql = "INSERT INTO accounts 
-            (names, surnames, cedula, address, phone, is_student)
+            (names, surnames, cedula, cedula_letter, address, phone, is_student)
             VALUES
-            ('$names', '$surnames', '$cedula', '$address', '$phone', $is_student)";
+            ('$names', '$surnames', '$cedula', '$letter', '$address', '$phone', $is_student)";
 
 
         $created = parent::DoQuery($sql);
@@ -122,12 +124,14 @@ class AccountModel extends SQLModel
         $names = $data['names'];
         $surnames = $data['surnames'];
         $cedula = $data['cedula'];
+        $letter = $data['cedula_letter'];
         $address = $data['address'];
         $phone = $data['phone'];
         $is_student = $data['is_student'];
 
         $sql = "UPDATE accounts SET
             cedula = '$cedula',
+            cedula_letter = '$letter',
             names = '$names',
             surnames = '$surnames',
             address = '$address',

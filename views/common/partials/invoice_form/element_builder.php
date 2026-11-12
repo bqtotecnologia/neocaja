@@ -261,7 +261,8 @@
         var name = "product-baseprice-" + productId
         basePriceInput.name = name
         basePriceInput.id = name
-        basePriceInput.type = 'text'                
+        basePriceInput.type = 'text'
+        basePriceInput.autocomplete = 'off'
         basePriceInput.classList.add('form-control')
         basePriceCol.appendChild(basePriceInput)
         basePriceInput.addEventListener('keyup', function(e){ UpdateProductsPrice() })
@@ -459,8 +460,8 @@
         row.id = "payment-row-" + paymentId
         row.appendChild(paymentMethodCol)
         row.appendChild(coinCol)
-        row.appendChild(salePointCol)
         row.appendChild(bankCol)
+        row.appendChild(salePointCol)
         row.appendChild(documentNumberCol)
         row.appendChild(priceCol)
         row.appendChild(totalCol)
@@ -539,6 +540,7 @@
             bankSelect.appendChild(option)
         })
         AddSelect2Style(bankSelect)  
+        bankSelect.addEventListener('change', function(e) { BankSelecting(paymentId, e) })
         bankSelect.classList.remove('col-md-8')
         bankCol.appendChild(bankSelect)
         return bankCol
@@ -562,7 +564,7 @@
             option.value = sale_point['id']
             option.innerHTML = sale_point['code']
             salePointSelect.appendChild(option)
-        })
+        })        
         salePointSelect.addEventListener('change', function(e) { SalePointSelecting(paymentId, e) })
         salePointSelect.classList.add('form-control', 'col-11')
         salePointCol.appendChild(salePointSelect)
@@ -577,6 +579,8 @@
         documentNumberInput.type = 'text'
         documentNumberInput.id = name
         documentNumberInput.name = name
+        documentNumberInput.placeholder = 'Referencia completa'
+        documentNumberInput.autocomplete = 'off'
         documentNumberInput.classList.add('form-control')
         documentNumberCol.appendChild(documentNumberInput)
         documentNumberInput.addEventListener('change', function(e){ UpdatePaymentPrice(paymentId); UpdatePaymentTotal(); })
@@ -590,6 +594,7 @@
         priceInput.type = 'text'
         priceInput.id = name
         priceInput.name = name
+        priceInput.autocomplete = 'off'
         priceInput.classList.add('form-control')
         priceCol.appendChild(priceInput)
         priceInput.addEventListener('keyup', function(e){ UpdatePaymentPrice(paymentId); UpdatePaymentTotal(); })

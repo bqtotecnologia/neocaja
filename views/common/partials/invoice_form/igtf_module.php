@@ -3,6 +3,10 @@
         RefreshIGTF()
     });
 
+    $('#igtf-bank').on('select2:select', async function (e) {
+        IGTFBankSelecting(e.target.value)
+    });
+
     igtf_price.addEventListener('change', function(e) {RefreshIGTF()})
 
     function RefreshIGTF(){
@@ -83,6 +87,37 @@
             $('#igtf-bank').val(targetSalePoint.bank).trigger('change')
         else
             $('#igtf-bank').val('').trigger('change')
+    }
+
+    function IGTFBankSelecting(bankId){
+        const bankSelect = document.getElementById('igtf-bank')
+        console.log(bankId)
+
+        var targetBank = null
+
+        for(let i = 0; i < banks.length; i++){
+            if(parseInt(banks[i].id) === parseInt(bankId)){
+                targetBank = banks[i]
+                break
+            }
+        }               
+
+        const salePointSelect = document.getElementById('igtf-salepoint')
+        if(targetBank !== null){
+            var found = false
+            for (let i = 0; i < salePointSelect.options.length; i++) {
+                if (parseInt(salePointSelect.options[i].value) == parseInt(targetBank.salepoint)) {
+                    salePointSelect.selectedIndex = i;
+                    found = true
+                    break;
+                }
+            }
+
+            if(found === false)
+                salePointSelect.selectedIndex = 0
+        }
+        else
+            salePointSelect.selectedIndex = 0
     }
 
     function DisableIGTF(){

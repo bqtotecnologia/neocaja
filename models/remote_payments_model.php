@@ -118,13 +118,13 @@ class RemotePaymentsModel extends SQLModel
             remote_payment_products
             (product, price, payment, period) 
             VALUES
-            ('$name', '$price', $payment, period)";
+            ('$name', '$price', $payment, $period)";
 
         return parent::DoQuery($sql);
     }    
 
     public function GetPaymentsOfAccount($cedula){
-        $sql = $this->SELECT_TEMPLATE . " WHERE polymorph.cedula = '$cedula' GROUP BY remote_payments.id ORDER BY remote_payments.created_at DESC";
+        $sql = $this->SELECT_TEMPLATE . " WHERE polymorph.cedula = '$cedula' GROUP BY remote_payments.id ORDER BY remote_payments.created_at DESC";        
         return parent::GetRows($sql, true);
     }
 

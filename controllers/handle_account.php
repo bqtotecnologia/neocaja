@@ -131,7 +131,8 @@ if($error === ''){
     if($edit){        
         $message = 'Cliente actualizado correctamente';
 
-        $cedulaChanged = $cleanData['changed'] !== $target_account['changed'];
+        $cedulaChanged = $cleanData['cedula'] !== $target_account['cedula'];
+        $cedulaLetterChanged = $cleanData['cedula_letter'] !== $target_account['cedula_letter'];
         $namesChanged = $cleanData['names'] !== $target_account['names'];
         $surnamesChanged = $cleanData['surnames'] !== $target_account['surnames'];
         $addressChanged = $cleanData['address'] !== $target_account['address'];
@@ -143,6 +144,9 @@ if($error === ''){
 
         if($cedulaChanged)
             $action .= '. A la cédula ' . $cleanData['cedula'];
+
+        if($cedulaLetterChanged)
+            $action .= '. A la letra de cédula ' . $cleanData['cedula_letter'];
 
         if($namesChanged)
             $action .= '. Al nombre ' . $cleanData['names'];

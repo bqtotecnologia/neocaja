@@ -138,6 +138,8 @@
             AddProduct()
             var productName = product.product
             var productPrice = product.price
+            var productPeriod = parseInt(product.period)
+            
             var monthNumber = ''
             if(product.product.includes('Mensualidad')){
                 var month = ''
@@ -147,13 +149,13 @@
                         month = currentMonth
                     }
                 }
-                var monthNumber = GetMonthNumberByName(month)
-                
+                var monthNumber = GetMonthNumberByName(month)                
                 
                 if(product.product.includes('con mora')){
                     ChangeProduct(nextProduct - 1, productIds['Diferencia Mensualidad']) 
                     ChangeMonth(nextProduct - 1, monthNumber)                    
                     ChangeProductPrice(nextProduct - 1, debtData.data[chosenPeriod].retard.detail[month])
+                    ChangeProductPeriod(nextProduct - 1, productPeriod)
                     AddProduct()
 
                     if(product.product.includes('Restante'))
@@ -165,6 +167,7 @@
                     ChangeProduct(nextProduct - 1, productIds['Saldo Mensualidad']) 
                     ChangeMonth(nextProduct - 1, monthNumber)
                     ChangeProductPrice(nextProduct - 1, debtData.data[chosenPeriod].months.detail[month])
+                    ChangeProductPeriod(nextProduct - 1, productPeriod)
                     AddProduct()
                 }
                 else if(product.product === 'Mensualidad ' + month){
@@ -185,6 +188,7 @@
 
             ChangeProduct(nextProduct - 1, productIds[productName])
             ChangeProductPrice(nextProduct - 1, productPrice)
+            ChangeProductPeriod(nextProduct - 1, productPeriod)
         })
 
         UpdateProductsPrice()

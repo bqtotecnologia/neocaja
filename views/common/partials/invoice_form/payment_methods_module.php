@@ -6,6 +6,11 @@
         $(".select2").select2({width:'100%'});
 
         var oldId = nextPaymentMethod
+        $('#payment-bank-' + String(nextPaymentMethod)).on('select2:select', async function (e) {
+            BankSelecting(oldId, e)
+        })
+
+        
         nextPaymentMethod++
     }
 
@@ -65,6 +70,37 @@
             $('#payment-bank-' + oldId).val(targetSalePoint.bank).trigger('change')
         else
             $('#payment-bank-' + oldId).val('').trigger('change')
+    }
+
+    function BankSelecting(oldId, e){
+        const bankSelect = document.getElementById('payment-bank-' + oldId)
+
+        var targetBank = null
+
+        for(let i = 0; i < banks.length; i++){
+            if(parseInt(banks[i].id) === parseInt(e.target.value)){
+                targetBank = banks[i]
+                break
+            }
+        }               
+
+        const salePointSelect = document.getElementById('payment-salepoint-' + oldId)
+        if(targetBank !== null){
+            var found = false
+            for (let i = 0; i < salePointSelect.options.length; i++) {
+                if (parseInt(salePointSelect.options[i].value) == parseInt(targetBank.salepoint)) {
+                    salePointSelect.selectedIndex = i;
+                    found = true
+                    break;
+                }
+            }
+
+            if(found === false)
+                salePointSelect.selectedIndex = 0
+        }
+        else
+            salePointSelect.selectedIndex = 0
+            
     }
 
     function PaymentMethodSelecting(oldId, e){       

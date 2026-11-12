@@ -395,9 +395,9 @@ while(true){
 
             $sale_point_id = $_POST['igtf-salepoint'];
             if($sale_point_id !== ''){
-                $target_sale_point = $sale_point_model->GetSalePointByCode($sale_point_id);
+                $target_sale_point = $sale_point_model->GetSalePoint($sale_point_id);
                 if($target_sale_point === false){
-                    $error = "Punto de venta de código $sale_point_id no encontrado en el IGTF";
+                    $error = "Punto de venta de id $sale_point_id no encontrado en el IGTF";
                     break;
                 }   
             }

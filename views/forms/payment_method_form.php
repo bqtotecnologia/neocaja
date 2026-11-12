@@ -40,6 +40,8 @@ $formBuilder = new FormBuilder(
     $paymentMethodFields
 );
 
+$fordibben_payments = ['Efectivo', 'Pago móvil', 'Transferencia', 'Tarjeta de débito'];
+
 ?>
 
 <div class="row justify-content-center">
@@ -53,11 +55,21 @@ $formBuilder = new FormBuilder(
 </div>
 
 <?php if($edit) { ?>
-    <?php if(in_array($target_payment_method['name'], ['Efectivo', 'Pago móvil', 'Transferencia', 'Tarjeta de débito'])) { ?>
+    <?php if(in_array($target_payment_method['name'], $fordibben_payments)) { ?>
         <script>
             document.getElementById('name').readOnly = true
         </script>
+    <?php } else{ ?>
+        <form action="../../controllers/delete_payment_method.php" method="POST" class="item form-group row justify-content-center col-12 text-center confirm-form mt-5">
+            <div class="col-6 text-center">
+                <button type="submit" class="btn btn-danger">
+                    Borrar método de pago
+                </button>
+            </div>
+            <input type="hidden" name="id" required value="<?= $target_payment_method['id'] ?>">
+        </form>
     <?php } ?>
+
 <?php } ?>
 
 <?php include_once '../common/footer.php'; ?>

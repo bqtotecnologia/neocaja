@@ -145,7 +145,16 @@ include '../../views/common/header.php';
                         Fecha:
                     </label>
                     <span class="">
-                        <?= date('d/m/Y', strtotime($target_payment['created_at'])) ?>
+                        <?= date('d/m/Y', strtotime($target_payment['date'])) ?>
+                    </span>
+                </div>
+
+                <div class="row col-10 justify-content-start align-items-middle">
+                    <label class="fw-bold mx-2">
+                        Fecha de registro:
+                    </label>
+                    <span class="">
+                        <?= date('d/m/Y H:i:s', strtotime($target_payment['created_at'])) ?>
                     </span>
                 </div>
 
