@@ -46,7 +46,7 @@ class AccountModel extends SQLModel
 
         $created = parent::DoQuery($sql);
         if($created === true)
-            $result = $this->GetAccountByCedula($cedula);
+            $result = $this->GetAccountByCedula($cedula, $letter);
         else
             $result = false;
 
@@ -68,8 +68,8 @@ class AccountModel extends SQLModel
         return parent::GetRows($sql, true);
     }
 
-    public function GetAccountByCedula($cedula){
-        $sql =  $this->SELECT_TEMPLATE . " WHERE accounts.cedula = '$cedula'";
+    public function GetAccountByCedula($cedula, $letter){
+        $sql =  $this->SELECT_TEMPLATE . " WHERE accounts.cedula = '$cedula' AND accounts.cedula_letter = '$letter'";
         return parent::GetRow($sql);
     }
 

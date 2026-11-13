@@ -114,8 +114,7 @@ if($error === ''){
 if($error === ''){
     if($user_role === 'Estudiante'){
         // Si es un estudiante, vamos a verificar que tenga cuenta, si no la tiene, la creamos        
-    
-        $account = $account_model->GetAccountByCedula($cedula);
+        $account = $account_model->GetAccountByCedula($cedula, $my_user['data']['nacionalidad']);
         if($account === false){
             $student = $my_user['data'];
 
@@ -134,6 +133,7 @@ if($error === ''){
                 'names' => $student['nombres'],
                 'surnames' => $student['apellidos'],
                 'cedula' => $cedula,
+                'cedula_letter' => $student['nacionalidad'],
                 'address' => $student['direccion'],
                 'is_student' => 1,
                 'phone' => $phone,
@@ -170,6 +170,9 @@ if($error === ''){
     $_SESSION['neocaja_fullname'] = $_SESSION['neocaja_name'] . ' ' . $_SESSION['neocaja_surname'];
     $_SESSION['neocaja_rol'] = $user_role;
     $_SESSION['neocaja_cedula'] = $cedula;
+
+    if(isset($user_role['data']['nacionalidad']))
+        $_SESSION['neocaja_cedula_letter'] = $user_role['data']['nacionalidad'];
 
     if($user_role !== 'Estudiante'){
         if(isset($my_user['data']['admin_id']))

@@ -333,7 +333,7 @@ class InvoiceModel extends SQLModel
         $account_model = new AccountModel();
         $period_range_model = new PeriodRangeModel();
 
-        $target_account = $account_model->GetAccountByCedula($cedula);
+        $target_account = $account_model->GetAccountByCedula($cedula, 'V');
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
         $periodMonths = $period_range_model->GetMonthsOfPeriod($periodId, true);
         $global_vars = $global_model->GetGlobalVars(true);
@@ -477,7 +477,7 @@ class InvoiceModel extends SQLModel
         $monthlyPrice = floatval($monthly['price']);
         $focPrice = floatval($foc['price']);
 
-        $target_account = $account_model->GetAccountByCedula($cedula);
+        $target_account = $account_model->GetAccountByCedula($cedula, 'V');
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
         if($scholarshipped){
             $monthlyPrice = $monthlyPrice - ($monthlyPrice * (floatval($target_account['scholarship_coverage']) / 100));

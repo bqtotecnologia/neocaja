@@ -170,6 +170,7 @@ class SiacadModel extends PGSQLModel
     {
         $sql = "SELECT
             participantes.cedula,
+            participantes.nacionalidad,
             participantes.nombre1,
             participantes.nombre2,
             CONCAT(nombre1, ' ', nombre2) as nombres,

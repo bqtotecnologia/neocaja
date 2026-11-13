@@ -60,7 +60,7 @@ include_once 'common/header.php';
         $usdUpdated = strtotime($today) === strtotime($coin_date);
         //$total_debt = $debtState['months']['total'] + $debtState['retard']['total'];
 
-        $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula']);
+        $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula'], 'V');
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
 
         $total_debt = 0;

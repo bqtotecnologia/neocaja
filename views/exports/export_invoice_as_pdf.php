@@ -118,7 +118,7 @@ if($hasCompany){
     $pdf->Cell(135, 6, MyDecode($target_account['company']), 0, 0, 'L');
 }
 else{
-    $pdf->Cell(52, 4, $target_account['cedula'], 1, 0, 'C');
+    $pdf->Cell(52, 4, $target_account['cedula_letter'] . '-' . $target_account['cedula'], 1, 0, 'C');
     $pdf->SetXY(8, $upper_margin + 12);
     $pdf->Cell(135, 6, MyDecode($target_account['surnames'] . ' ' . $target_account['names']), 0, 0, 'L');
 }
