@@ -146,7 +146,7 @@ if($error === ''){
             if($created === false)
                 $error = 'Hubo un error al crear tu cuenta';
             else{
-                $account = $account_model->GetAccountByCedula($cedula);
+                $account = $created;
                 $data = [
                     'account' => $account['id'],
                     'company' => NULL,

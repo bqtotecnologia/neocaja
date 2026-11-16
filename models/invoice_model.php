@@ -322,7 +322,7 @@ class InvoiceModel extends SQLModel
      * Retorna el estado de cuenta de un cliente de un periodo específico
      * Especifica si cada mes fue pagado, es o estuvo moroso y si abonó
      */
-    public function GetAccountState($cedula, $periodId){
+    public function GetAccountState($cedula, $cedula_letter, $periodId){
         include_once 'global_vars_model.php';
         include_once 'account_model.php';
         include_once 'siacad_model.php';

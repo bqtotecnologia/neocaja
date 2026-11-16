@@ -4,16 +4,18 @@
 
         if(e.key === 'Enter'){
             var cedula = cedula_input.value
+            var letter = cedula_letter_select.value
+            console.log(letter)
             if(isNumeric(cedula)){
-                var account = await GetAccountByCedula(cedula)
+                var account = await GetAccountByCedula(cedula, letter)
                 
                 if(account.status === true)
                     await AccountSelecting(account.data.id)
                 else{
                     Swal.fire({
-                        title: "No encontrado",
+                        title: account,
                         icon: "error",
-                        html: 'La cédula "' + cedula + '" no existe ¿desea registrarla?',
+                        html: '¿Desea registrar al cliente manualmente?',
                         showCancelButton: true,
                         confirmButtonText: "Proceder",
                         denyButtonText: 'Cancelar',

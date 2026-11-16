@@ -10,6 +10,7 @@ if(Auth::UserLevelIn($admitted_user_types) === false)
 if($error === ''){
     if(
         !isset($_POST['cedula']) || 
+        !isset($_POST['cedula_letter']) || 
         !isset($_POST['period'])
     ){
         $error = 'Campos necesarios no recibidos';
@@ -36,9 +37,15 @@ if($error === ''){
 }
 
 if($error === ''){
+    $letter = $_POST['letter'];
+    if(in_array($letter, ['V', 'E']) === false)
+        $error = 'Letra de la cédula inválida (' . $letter . ')';
+}
+
+if($error === ''){
     include_once '../models/account_model.php';
     $account_model = new AccountModel();
-    $target_account = $account_model->GetAccountByCedula($cedula);
+    $target_account = $account_model->GetAccountByCedula($cedula, $letter);
     if($target_account === false)
         $error = 'Cuenta no encontrada';
 }
@@ -52,7 +59,7 @@ if($error === ''){
 if($error === ''){
     include_once '../models/product_model.php';
     $product_model = new ProductModel();
-    $prducts = $product_model->GetAllAvailableProductsOfStudent($cedula, $periodId);
+    $prducts = $product_model->GetAllAvailableProductsOfStudent($cedula, $letter);
     if($prducts === false)
         $error = 'Ocurrió un error al intentar obtener los productos disponibles';
 }

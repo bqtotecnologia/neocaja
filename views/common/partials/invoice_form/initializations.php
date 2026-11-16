@@ -40,6 +40,7 @@
     // INPUTS    
     const periodInput = document.getElementById('invoice-period')
     const cedula_input = document.getElementById('cedula')
+    const cedula_letter_select = document.getElementById('cedula_letter')
     const rateDate = document.getElementById('rate-date')
     const igtf_method = document.getElementById('igtf-method')
     const igtf_bank = document.getElementById('igtf-bank')

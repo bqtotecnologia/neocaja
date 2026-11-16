@@ -162,7 +162,12 @@ $latest = $invoice_model->GetLatestNumbers();
                             </div>
 
                             <div class="row m-0 p-0 col-12 col-md-8">
-                                <input id="cedula" name="cedula" type="text" class="col-12 col-lg-6 form-control " placeholder="Cédula" autocomplete="off">
+                                <select class="form-control col-4 col-lg-2" name="cedula_letter" id="cedula_letter">
+                                    <option value="V" selected>V</option>
+                                    <option value="E">E</option>
+                                </select>
+
+                                <input id="cedula" name="cedula" type="text" class="col-8 col-lg-6 form-control " placeholder="Cédula" autocomplete="off">
                             </div>
 
                         </div>

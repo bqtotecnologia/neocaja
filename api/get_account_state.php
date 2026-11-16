@@ -39,6 +39,8 @@ if($error === ''){
     $ordered_data = [];
 
     foreach($periods as $period){
+        // TODO: Hacer que GetAccountState trabaje recibiendo el id de la cuenta directamente en vez de la cédula.
+        // Seguir resolviendo las incidencias en GetAccountByCedula
         $account_state = $invoice_model->GetAccountState($target_account['cedula'], $period['idperiodo']);
         $ordered_data[$period['nombreperiodo']] = $account_state;
     }

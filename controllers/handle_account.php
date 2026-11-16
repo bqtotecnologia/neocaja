@@ -64,7 +64,7 @@ if($error === ''){
 }
 
 if($error === ''){
-    $exists = $account_model->GetAccountByCedula($cleanData['cedula']);
+    $exists = $account_model->GetAccountByCedula($cleanData['cedula'], $cleanData['cedula_letter']);
     if($exists !== false){
         if($edit){
             if(intval($exists['id']) !== intval($id))

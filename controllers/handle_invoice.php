@@ -29,6 +29,12 @@ if($error === ''){
         $error = 'El periodo contiene caracteres sospechosos';
 }
 
+if($error === ''){
+    $letter = $cleanData['cedula_letter'];
+    if(in_array($letter, ['V', 'E']) === false)
+        $error = 'Letra de la cédula inválida (' . $letter . ')';
+}
+
 
 if($error === ''){
     include_once '../models/invoice_model.php';
@@ -62,7 +68,7 @@ if($error === ''){
     include_once '../models/account_model.php';
     $account_model = new AccountModel();
 
-    $target_account = $account_model->GetAccountByCedula($cleanData['cedula']);
+    $target_account = $account_model->GetAccountByCedula($cleanData['cedula'], $letter);
     if($target_account === false)
         $error = 'Cliente no encontrado';
 }

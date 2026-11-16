@@ -21,10 +21,16 @@ if($error === ''){
 }
 
 if($error === ''){
+    $letter = $_GET['letter'];
+    if(in_array($letter, ['V', 'E']) === false)
+        $error = 'Letra de la cédula inválida (' . $letter . ')';
+}
+
+if($error === ''){
     include_once '../models/account_model.php';
     $account_model = new AccountModel();
 
-    $target_account = $account_model->GetAccountByCedula($cedula);
+    $target_account = $account_model->GetAccountByCedula($cedula, $letter);
     $requireUpdateHistory = false;
 
     if($target_account === false){
@@ -51,6 +57,7 @@ if($error === ''){
                 'names' => $student['nombres'],
                 'surnames' => $student['apellidos'],
                 'cedula' => $cedula,
+                'cedula_letter' => $letter,
                 'address' => $student['direccion'],
                 'is_student' => 1,
                 'phone' => $phone,
@@ -64,7 +71,7 @@ if($error === ''){
                 $error = 'Hubo un error al crear la cuenta del estudiante';
             else{
                 $requireUpdateHistory = true;
-                $target_account = $account_model->GetAccountByCedula($cedula);
+                $target_account = $account_model->GetAccountByCedula($cedula, $letter);
             }
         }
     }

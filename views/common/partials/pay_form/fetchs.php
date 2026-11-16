@@ -4,31 +4,8 @@
 
         const dataToSend = {
             'cedula': '<?= $_SESSION['neocaja_cedula'] ?>',
+            'cedula': '<?= $_SESSION['neocaja_cedula_letter'] ?>',
             'codes': codes
-        }
-
-        var fetchConfig = {
-            method: 'POST', 
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(dataToSend)
-        }
-
-        return await TryFetch(url, fetchConfig)
-    }
-
-    async function FetchPayment(data){
-        var url = '<?= $base_url ?>/api/register_payment.php'
-
-        const dataToSend = {
-            'cedula': data['cedula'],
-            'codes': data['codes'],
-            'document': data['document'],
-            'ref': data['ref'],
-            'price': data['price'],
-            'payment_method_type': data['payment_method_type'],
-            'payment_method': data['payment_method'],
         }
 
         var fetchConfig = {

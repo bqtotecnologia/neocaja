@@ -124,7 +124,7 @@ class ProductModel extends SQLModel
     /**
      * Retorna los productos que el estudiante aún no ha pagado, los retorna por periodos
     */
-    public function GetAllAvailableProductsOfStudent($cedula){
+    public function GetAllAvailableProductsOfStudent($cedula, $letter){
         include_once 'siacad_model.php';
         include_once 'global_vars_model.php';
 
@@ -136,7 +136,7 @@ class ProductModel extends SQLModel
         $result = [];
 
         foreach($periods as $period){
-            $products = $this->GetAvailableProductsOfStudent($cedula, $period, $global_vars);
+            $products = $this->GetAvailableProductsOfStudent($cedula, $letter, $period, $global_vars);
 
             if($products !== [])
                 $result[$period['nombreperiodo']] = $products;
@@ -145,7 +145,7 @@ class ProductModel extends SQLModel
         return $result;
     }
 
-    public function GetAvailableProductsOfStudent($cedula, $period, $global_vars){
+    public function GetAvailableProductsOfStudent($cedula, $letter, $period, $global_vars){
         include_once 'invoice_model.php';
         include_once 'account_model.php';
 
@@ -159,7 +159,7 @@ class ProductModel extends SQLModel
         $monthlyPrice = floatval($monthly['price']);
         $foc = $this->GetProductByNameBeforeDate('FOC', $period['fechafin']);
 
-        $target_account = $account_model->GetAccountByCedula($cedula);
+        $target_account = $account_model->GetAccountByCedula($cedula, $letter);
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
         if($scholarshipped){
             $monthlyPrice = $monthlyPrice - ($monthlyPrice * (floatval($target_account['scholarship_coverage']) / 100));

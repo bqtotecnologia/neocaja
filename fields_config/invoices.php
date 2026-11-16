@@ -18,6 +18,14 @@ $invoiceFields = [
         'suspicious' => true,
     ],
     [
+        'name' => 'cedula_letter',
+        'min' => 1,
+        'max' => 1,
+        'required' => true,
+        'type' => 'string',
+        'suspicious' => true,
+    ],
+    [
         'name' => 'rate-date',
         'min' => 8,
         'max' => 10,

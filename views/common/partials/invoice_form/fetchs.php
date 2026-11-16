@@ -11,8 +11,8 @@
         return await TryFetch(url, fetchConfig)
     }
 
-    async function GetAccountByCedula(cedula){
-        var url = '<?= $base_url ?>/api/get_account_by_cedula.php?cedula=' + cedula
+    async function GetAccountByCedula(cedula, letter){
+        var url = '<?= $base_url ?>/api/get_account_by_cedula.php?cedula=' + cedula + '&letter=' + letter
         var fetchConfig = {
             method: 'GET', 
             headers: {

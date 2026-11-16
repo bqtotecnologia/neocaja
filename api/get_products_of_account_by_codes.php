@@ -19,6 +19,7 @@ if($error === ''){
 if($error === ''){
     if(
         !isset($post['cedula']) || 
+        !isset($post['cedula_letter']) || 
         !isset($post['codes'])
     ){
         $error = 'Campos necesarios no recibidos';
@@ -47,9 +48,15 @@ if($error === ''){
 }
 
 if($error === ''){
+    $letter = $post['cedula_letter'];
+    if(in_array($letter, ['V', 'E']) === false)
+        $error = 'Letra de la cédula inválida (' . $letter . ')';
+}
+
+if($error === ''){
     include_once '../models/account_model.php';
     $account_model = new AccountModel();
-    $target_account = $account_model->GetAccountByCedula($cedula);
+    $target_account = $account_model->GetAccountByCedula($cedula, $letter);
     if($target_account === false)
         $error = 'Cuenta no encontrada';
 }
@@ -62,7 +69,7 @@ if($error === ''){
 if($error === ''){
     include_once '../models/product_model.php';
     $product_model = new ProductModel();
-    $periodProducts = $product_model->GetAllAvailableProductsOfStudent($cedula);
+    $periodProducts = $product_model->GetAllAvailableProductsOfStudent($cedula, $letter);
     if($periodProducts === [])
         $error = 'Ocurrió un error al intentar obtener los productos disponibles';
 }
