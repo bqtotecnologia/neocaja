@@ -1,4 +1,4 @@
-<?= $total_usd_debt = 0; ?>
+<?php $total_usd_debt = 0; ?>
 <table class="col-12 col-md-10 table table-bordered border border-black text-center h6">
     <thead>
         <tr class="bg-theme text-white fw-bold">
@@ -63,8 +63,9 @@
                 </div>
             </td>
         </tr>
+        
         <tr>
-        <td class="p-1 border border-black bg-theme text-white fw-bold align-middle">FOC</td>
+            <td class="p-1 border border-black bg-theme text-white fw-bold align-middle">FOC</td>
             <?php if($debtState['foc'] === 0) { ?> 
                 <td class="p-1 border border-black align-middle text-success align-middle" colspan="2">SIN DEUDA</td>
             <?php } else { $total_usd_debt += $debtState['foc']; ?>

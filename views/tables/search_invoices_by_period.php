@@ -9,7 +9,7 @@ $student = $_SESSION['neocaja_rol'] === 'Estudiante';
 
 $error = '';
 if($student){
-    $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula']);
+    $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula'], $_SESSION['neocaja_cedula_letter']);
     
     if($target_account === false){
         $error = 'Cuenta no encontrada';

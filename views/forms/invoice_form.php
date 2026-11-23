@@ -52,7 +52,7 @@ $currentPeriod = $siacad->GetCurrentPeriodo();
 $periodId = $currentPeriod['idperiodo'];
 $payments = $remote_payments_model->GetAccountPaymentsWihtoutInvoice($currentPeriod['fechainicio'], $currentPeriod['fechafin']);
 
-$latest = $invoice_model->GetLatestNumbers();
+$latest = $invoice_model->GetLatestInvoiceNumbers();
 
 ?>
 

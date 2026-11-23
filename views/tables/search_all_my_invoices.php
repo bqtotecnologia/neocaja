@@ -10,7 +10,7 @@ if(Validator::HasSuspiciousCharacters($_SESSION['neocaja_cedula']))
 if($error === ''){
     include_once '../../models/account_model.php';
     $account_model = new AccountModel();
-    $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula']);
+    $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula'], $_SESSION['neocaja_cedula_letter']);
     if($target_account === false)
         $error = 'Cuenta no encontrada';
 }

@@ -6,6 +6,7 @@ include_once '../../utils/months_data.php';
 
 $id = Validator::ValidateRecievedId();
 $error = '';
+$target_credit_note = false;
 
 if(is_string($id)){
     $error = $id;    
@@ -18,6 +19,12 @@ if($error === ''){
     $target_invoice = $invoice_model->GetInvoice($id);
     if($target_invoice === false){
         $error = 'Factura no encontrada';
+    }
+}
+
+if($error === ''){
+    if(isset($_GET['credit_note']) && $target_invoice['invoice_state'] === 'Reversada'){
+        $target_credit_note = $invoice_model->GetCreditNoteOfInvoice($id);
     }
 }
 
@@ -91,17 +98,36 @@ $pdf->SetFont('Times', '', 9);
 
 // Invoice header
 $pdf->SetXY(8, $upper_margin);
-$pdf->Cell(22, 4, 'Lugar', 1, 0, 'C');
-$pdf->Cell(20, 4, 'Fecha', 1, 0, 'C');
-$pdf->SetXY(8, $upper_margin + 4);
-$pdf->Cell(22, 4, $self_data['city'], 1, 0, 'C');
-$pdf->Cell(20, 4, date('d/m/Y'), 1, 0, 'C');
-$pdf->Cell(83, 4, MyDecode($self_data['fullname']), 0, 0, 'C');
-$pdf->SetXY(150, $upper_margin);
-$pdf->Cell(22, 4, '"Contribuyente Formal"', 0, 0, 'C');
-$pdf->SetXY(150, $upper_margin + 4);
-$pdf->SetFont('Times', 'B', 9);
-$pdf->Cell(22, 4, MyDecode('FACTURA Nº: ' . $target_invoice['invoice_number']), 0, 0, 'C');
+if($target_credit_note === false){
+    $pdf->Cell(22, 4, 'Lugar', 1, 0, 'C');
+    $pdf->Cell(20, 4, 'Fecha', 1, 0, 'C');
+    $pdf->SetXY(8, $upper_margin + 4);
+    $pdf->Cell(22, 4, $self_data['city'], 1, 0, 'C');
+    $pdf->Cell(20, 4, date('d/m/Y'), 1, 0, 'C');
+    $pdf->Cell(83, 4, MyDecode($self_data['fullname']), 0, 0, 'C');
+
+    $pdf->SetFont('Times', 'B', 9);
+    $pdf->Cell(22, 4, MyDecode('FACTURA Nº: ' . $target_invoice['invoice_number']), 0, 0, 'C');
+    $pdf->SetXY(150, $upper_margin);
+    $pdf->Cell(22, 4, '"Contribuyente Formal"', 0, 0, 'C');
+}
+else{
+    $pdf->SetXY(50, $upper_margin - 4);
+    $pdf->Cell($pdf->GetStringWidth($self_data['fullname']) + 10, 4, MyDecode($self_data['fullname']), 0, 0, 'L');
+
+    $pdf->Cell(42, 4, '"Contribuyente Formal"', 0, 0, 'R');
+
+    $pdf->SetXY(7, $upper_margin);
+    $pdf->Cell(22, 4, MyDecode('Factura afectada Nº:    ') . $target_invoice['invoice_number'], 0, 0, 'L');
+    $pdf->SetXY(7, $upper_margin + 4);
+    $pdf->Cell(22, 4, 'Fecha de factura afectada: ' . date('d/m/Y', strtotime($target_invoice['rate_date'])) , 0, 0, 'L');
+    
+    $pdf->SetXY(150, $upper_margin);
+    $pdf->Cell(22, 4, MyDecode('Nota de crédito Nº:    ') . $target_credit_note['credit_note_number'], 0, 0, 'L');
+    $pdf->SetXY(150, $upper_margin + 4);
+    $pdf->Cell(22, 4, MyDecode('Fecha de emisión: ') . date('d/m/Y', strtotime($target_credit_note['created_at'])) , 0, 0, 'L');
+}
+
 
 // Name and Cedula/Rif
 $pdf->SetXY(8, $upper_margin + 9);
@@ -167,9 +193,14 @@ $pdf->Cell(18, 46, '', 1, 0, 'C');
 // Observation box
 $pdf->SetXY(8, $upper_margin + 79);
 $pdf->Cell(194, 6, MyDecode('Observación:'), 1, 0, 'L');
+$pdf->SetXY($pdf->GetStringWidth('Observación:') + 8, $upper_margin + 79);
 $pdf->SetFont('Times', '', 9);
-$pdf->SetXY(15, $upper_margin + 79);
-$pdf->Cell(194, 6, MyDecode($target_invoice['observation']), 0, 0, 'L');
+if($target_credit_note === false)
+    $observation = $target_invoice['observation'];
+else
+    $observation = $target_credit_note['credit_note_reason'];
+
+$pdf->Cell(194, 6, MyDecode($observation), 0, 0, 'L');
 
 // Listing products
 $baseY = 91;

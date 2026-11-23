@@ -40,25 +40,9 @@ if($error === ''){
     include_once '../models/invoice_model.php';
     $invoice_model = new InvoiceModel();
 
-    $latestNumbers = $invoice_model->GetLatestNumbers();
+    $latestNumbers = $invoice_model->GetLatestInvoiceNumbers();
     $invoice_number = $latestNumbers['invoice_number'];
     $control_number = $latestNumbers['control_number'];
-    $allOK = false;
-
-    while(true){
-        $invoice_number_exists = $invoice_model->GetInvoiceByInvoiceNumber($invoice_number);
-        $control_number_exists = $invoice_model->GetInvoiceByControlNumber($control_number);
-
-        if($invoice_number_exists !== false)
-            $invoice_number++;
-
-        if($control_number_exists !== false)
-            $control_number++;
-    
-        if([$invoice_number_exists, $control_number_exists] === [false, false]){
-            break;
-        }        
-    }
 }
 
 if($error === ''){
@@ -446,8 +430,8 @@ if($error === ''){
 
         // Guardamos su estado de cuenta en $debtData
         foreach($periods as $period){
-            $account_state = $invoice_model->GetAccountState($target_account['cedula'], $period['idperiodo']);
-            $debt = $invoice_model->GetDebtOfAccountOfPeriod($target_account['cedula'], $period['idperiodo']);
+            $account_state = $invoice_model->GetAccountState($target_account['id'], $period['idperiodo']);
+            $debt = $invoice_model->GetDebtOfAccountOfPeriod($target_account['id'], $period['idperiodo']);
 
             $debtData[$period['nombreperiodo']] = $debt;
             $accountStates[$period['nombreperiodo']] = $account_state;
@@ -658,7 +642,7 @@ if($error === '' && $_POST['known-income'] !== ''){
 
 
 if($error === ''){
-    $invoice_model->UpdateNumbers();
+    $invoice_model->UpdateInvoiceNumbers();
     $action = "Creó la factura Nº $invoice_number, Numero de control: $control_number. Al cliente " . $target_account['names'] . ' ' . $target_account['surnames'] . ' de cédula ' . $target_account['cedula'];
     $invoice_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
     $message = 'Factura creada correctamente';

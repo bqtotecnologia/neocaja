@@ -16,7 +16,7 @@ if($error === ''){
     include_once '../../models/product_model.php';
     $product_model = new ProductModel();
 
-    $periodProducts = $product_model->GetAllAvailableProductsOfStudent($_SESSION['neocaja_cedula']);
+    $periodProducts = $product_model->GetAllAvailableProductsOfStudent($_SESSION['neocaja_cedula'], $_SESSION['neocaja_cedula_letter']);
 
     if($periodProducts === [])
         $error = 'Usted no tiene ningún pago pendiente';
@@ -29,14 +29,12 @@ if($error !== ''){
 
 include_once '../common/header.php';
 
-include_once '../../models/shop_model.php';
 include_once '../../models/global_vars_model.php';
 include_once '../../models/transfers_model.php';
 include_once '../../models/mobile_payments_model.php';
 include_once '../../models/coin_model.php';
 
 
-$shop_model = new ShopModel();
 $global_vars_model = new GlobalVarsModel();
 $transfers_model = new TransfersModel();
 $mobile_payments_model = new MobilePaymentsModel();

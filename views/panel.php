@@ -39,6 +39,8 @@ include_once 'common/header.php';
         $coin_model = new CoinModel();
         $account_model = new AccountModel();
 
+        $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula'], $_SESSION['neocaja_cedula_letter']);
+
         $global_vars = $global_vars_model->GetGlobalVars(true);
         $periods = $siacad->GetPeriodsOfStudent($_SESSION['neocaja_cedula']);
         $currentPeriod = $periods[0];
@@ -50,8 +52,8 @@ include_once 'common/header.php';
 
         for($i = count($periods); $i--; $i === -1){
             $period = $periods[$i];
-            $monthStates[$period['nombreperiodo']] = $invoice_model->GetAccountState($_SESSION['neocaja_cedula'], $period['idperiodo']);
-            $debtStates[$period['nombreperiodo']] = $invoice_model->GetDebtOfAccountOfPeriod($_SESSION['neocaja_cedula'], $period['idperiodo']);
+            $monthStates[$period['nombreperiodo']] = $invoice_model->GetAccountState($target_account['id'], $period['idperiodo']);
+            $debtStates[$period['nombreperiodo']] = $invoice_model->GetDebtOfAccountOfPeriod($target_account['id'], $period['idperiodo']);
         }
         
         $usd = $coin_model->GetCoinByName('Dólar');
@@ -60,7 +62,7 @@ include_once 'common/header.php';
         $usdUpdated = strtotime($today) === strtotime($coin_date);
         //$total_debt = $debtState['months']['total'] + $debtState['retard']['total'];
 
-        $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula'], 'V');
+
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
 
         $total_debt = 0;
@@ -131,7 +133,7 @@ include_once 'common/header.php';
 
                         <div class="row col-12 col-lg-6 m-0 p-0">                            
                             <div class="d-flex justify-content-center table-responsive">
-                                <?php include 'common/tables/account_debt_table.php'; ?>                    
+                                <?php include 'common/tables/account_debt_table.php'; ?>
                             </div>
                         </div>
     

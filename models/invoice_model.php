@@ -10,7 +10,7 @@ class InvoiceModel extends SQLModel
         invoices.invoice_number,
         invoices.created_at,
         invoices.period,
-        invoices.active,
+        invoices.invoice_state,
         invoices.observation,
         invoices.rate_date,
         CONCAT(accounts.names, ' ', accounts.surnames) as account_fullname,
@@ -20,6 +20,30 @@ class InvoiceModel extends SQLModel
         invoices
         INNER JOIN account_history ON account_history.id = invoices.account 
         INNER JOIN accounts ON accounts.id = account_history.account 
+    ";
+
+    public $CREDIT_NOTE_INVOICE_TEMPLATE = "SELECT
+        invoices.id as invoice_id,
+        invoices.control_number as invoice_control_number,
+        invoices.invoice_number,
+        invoices.created_at as invoice_created_at,
+        invoices.period,
+        invoices.invoice_state,
+        invoices.observation as invoice_observation,
+        invoices.rate_date,
+        CONCAT(accounts.names, ' ', accounts.surnames) as account_fullname,
+        accounts.cedula,
+        accounts.id as account_id,
+        credit_notes.id,
+        credit_notes.reason as credit_note_reason,
+        credit_notes.credit_note_number,
+        credit_notes.control_number as credit_note_control_number,
+        credit_notes.created_at
+        FROM
+        invoices
+        INNER JOIN account_history ON account_history.id = invoices.account 
+        INNER JOIN accounts ON accounts.id = account_history.account 
+        INNER JOIN credit_notes ON credit_notes.invoice = invoices.id
     ";
 
     public function CreateInvoice(array $data, string $period_id){
@@ -146,7 +170,7 @@ class InvoiceModel extends SQLModel
     /**
      * Retorna los últimos números de control y de factura
      */
-    public function GetLatestNumbers(){        
+    public function GetLatestInvoiceNumbers(){        
         $sql = "SELECT 
             value as invoice_number
             FROM
@@ -180,30 +204,48 @@ class InvoiceModel extends SQLModel
         return $numbers;
     }
 
-    public function UpdateNumbers(){
-        $sql = "UPDATE 
-            global_vars_history
-            INNER JOIN global_vars ON global_vars.id = global_vars_history.global_var
-            SET global_vars_history.value = global_vars_history.value + 1
+    public function GetCreditNote($id){
+        $sql = $this->CREDIT_NOTE_INVOICE_TEMPLATE . " WHERE credit_notes.id = $id";
+        return parent::GetRow($sql);
+    }
+
+    public function GetCreditNoteOfInvoice($id){
+        $sql = $this->CREDIT_NOTE_INVOICE_TEMPLATE . " WHERE invoices.id = $id";
+        return parent::GetRow($sql);
+    }
+
+    public function GetLatestCreditNoteNumbers(){
+        $sql = "SELECT 
+            value as credit_note_number
+            FROM
+            global_vars
+            INNER JOIN global_vars_history ON (global_vars_history.global_var = global_vars.id AND global_vars_history.current = 1)
             WHERE
-            global_vars.name = 'Numero de control' AND
-            global_vars_history.current = 1";
+            global_vars.name = 'Numero de nota de credito'";
+        
+        $credit_note_number = parent::GetRow($sql);
+        if($credit_note_number['credit_note_number'] === NULL)
+            $credit_note_number['credit_note_number'] = 1;
 
-        $result = parent::DoQuery($sql);
-        if($result === false)
-            return false;
-
-        $sql = "UPDATE 
-            global_vars_history
-            INNER JOIN global_vars ON global_vars.id = global_vars_history.global_var
-            SET global_vars_history.value = global_vars_history.value + 1
+        $sql = "SELECT 
+            value as control_number
+            FROM
+            global_vars
+            INNER JOIN global_vars_history ON (global_vars_history.global_var = global_vars.id AND global_vars_history.current = 1)
             WHERE
-            global_vars.name = 'Numero de factura' AND
-            global_vars_history.current = 1";
+            global_vars.name = 'Numero de control'";
 
-        $result = parent::DoQuery($sql);
-        if($result === false)
-            return false;
+        $control_number = parent::GetRow($sql);        
+
+        if($control_number['control_number'] === NULL)
+            $control_number['control_number'] = 1;
+
+        $numbers = [
+            'credit_note_number' => intval($credit_note_number['credit_note_number']),
+            'control_number' => intval($control_number['control_number'])
+        ];
+
+        return $numbers;
     }
 
     /**
@@ -237,7 +279,7 @@ class InvoiceModel extends SQLModel
             WHERE 
             accounts.id = $account AND 
             inv.period = $period AND
-            inv.active = 1
+            inv.invoice_state = 'Activa'
             GROUP BY
             inv.id
             ORDER BY
@@ -266,7 +308,7 @@ class InvoiceModel extends SQLModel
             INNER JOIN accounts ON accounts.id = account_history.account 
             WHERE 
             accounts.id = $account AND
-            inv.active = 1
+            inv.invoice_state = 'Activa'
             GROUP BY
             inv.id
             ORDER BY
@@ -322,7 +364,7 @@ class InvoiceModel extends SQLModel
      * Retorna el estado de cuenta de un cliente de un periodo específico
      * Especifica si cada mes fue pagado, es o estuvo moroso y si abonó
      */
-    public function GetAccountState($cedula, $cedula_letter, $periodId){
+    public function GetAccountState($id, $periodId){
         include_once 'global_vars_model.php';
         include_once 'account_model.php';
         include_once 'siacad_model.php';
@@ -333,7 +375,7 @@ class InvoiceModel extends SQLModel
         $account_model = new AccountModel();
         $period_range_model = new PeriodRangeModel();
 
-        $target_account = $account_model->GetAccountByCedula($cedula, 'V');
+        $target_account = $account_model->GetAccount($id);
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
         $periodMonths = $period_range_model->GetMonthsOfPeriod($periodId, true);
         $global_vars = $global_model->GetGlobalVars(true);
@@ -355,11 +397,11 @@ class InvoiceModel extends SQLModel
             INNER JOIN account_history ON account_history.id = invoices.account 
             INNER JOIN accounts ON accounts.id = account_history.account 
             WHERE
-            accounts.cedula = '$cedula' AND
+            accounts.id = '$id' AND
             concepts.period = $periodId AND
             products.name LIKE '%Mensualidad%'AND
             concepts.month IS NOT NULL AND
-            invoices.active = 1
+            invoices.invoice_state = 'Activa'
             ORDER BY
             concepts.month";
 
@@ -451,11 +493,11 @@ class InvoiceModel extends SQLModel
     }
 
     /**
-     * Obtiene la deuda de un cliente en este periodo.
+     * Obtiener la deuda de un cliente en este periodo.
      * Especifica los meses que debe incluyendo el actual.
      * También verifica que el estudiante haya pagado FOC.
      */
-    public function GetDebtOfAccountOfPeriod($cedula, $periodId){
+    public function GetDebtOfAccountOfPeriod($id, $periodId){
         include_once 'siacad_model.php';
         include_once 'global_vars_model.php';
         include_once 'product_model.php';
@@ -477,7 +519,7 @@ class InvoiceModel extends SQLModel
         $monthlyPrice = floatval($monthly['price']);
         $focPrice = floatval($foc['price']);
 
-        $target_account = $account_model->GetAccountByCedula($cedula, 'V');
+        $target_account = $account_model->GetAccount($id);
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
         if($scholarshipped){
             $monthlyPrice = $monthlyPrice - ($monthlyPrice * (floatval($target_account['scholarship_coverage']) / 100));
@@ -520,7 +562,7 @@ class InvoiceModel extends SQLModel
                 break;
         }
 
-        $accountState = $this->GetAccountState($cedula, $periodId);
+        $accountState = $this->GetAccountState($target_account['id'], $periodId);
         $cleanState = [];
 
         $debt_data = [
@@ -599,7 +641,7 @@ class InvoiceModel extends SQLModel
             }
         }
 
-        if($this->AccountPaidFOCOnPeriod($cedula, $periodId) === false)
+        if($this->AccountPaidFOCOnPeriod($target_account['id'], $periodId) === false)
             $debt_data['foc'] = $focPrice;
 
         return $debt_data;
@@ -622,7 +664,7 @@ class InvoiceModel extends SQLModel
             invoices.period = $period AND
             products.name = 'Abono Mensualidad' AND
             concepts.month = $monthNumber AND
-            invoices.active = 1";
+            invoices.invoice_state = 'Activa'";
 
         $paid = 0;
         $prices = parent::GetRows($sql);
@@ -638,7 +680,7 @@ class InvoiceModel extends SQLModel
     /**
      * Returna true o false dependiendo de si el estudiante pagó FOC
      */
-    public function AccountPaidFOCOnPeriod($cedula, $periodId){
+    public function AccountPaidFOCOnPeriod($id, $periodId){
         $sql = "SELECT
             invoices.id as invoice
             FROM
@@ -649,17 +691,86 @@ class InvoiceModel extends SQLModel
             INNER JOIN account_history ON account_history.id = invoices.account 
             INNER JOIN accounts ON accounts.id = account_history.account 
             WHERE
-            accounts.cedula = '$cedula' AND
+            accounts.id = '$id' AND
             concepts.period = $periodId AND
             products.name = 'FOC' AND
-            invoices.active = 1";
+            invoices.invoice_state = 'Activa";
 
         $result = parent::GetRows($sql, true);
         return count($result) > 0 ; 
     }
 
+    public function UpdateInvoiceNumbers(){
+        $sql = "UPDATE 
+            global_vars_history
+            INNER JOIN global_vars ON global_vars.id = global_vars_history.global_var
+            SET global_vars_history.value = global_vars_history.value + 1
+            WHERE
+            global_vars.name = 'Numero de factura' AND
+            global_vars_history.current = 1";
+
+        $result = parent::DoQuery($sql);
+        if($result === false)
+            return false;
+
+        $sql = "UPDATE 
+            global_vars_history
+            INNER JOIN global_vars ON global_vars.id = global_vars_history.global_var
+            SET global_vars_history.value = global_vars_history.value + 1
+            WHERE
+            global_vars.name = 'Numero de control' AND
+            global_vars_history.current = 1";
+
+        $result = parent::DoQuery($sql);
+        if($result === false)
+            return false;
+    }
+
+    public function UpdateCreditNoteNumbers(){
+        $sql = "UPDATE 
+            global_vars_history
+            INNER JOIN global_vars ON global_vars.id = global_vars_history.global_var
+            SET global_vars_history.value = global_vars_history.value + 1
+            WHERE
+            global_vars.name = 'Numero de nota de credito' AND
+            global_vars_history.current = 1";
+
+        $result = parent::DoQuery($sql);
+        if($result === false)
+            return false;
+
+        $sql = "UPDATE 
+            global_vars_history
+            INNER JOIN global_vars ON global_vars.id = global_vars_history.global_var
+            SET global_vars_history.value = global_vars_history.value + 1
+            WHERE
+            global_vars.name = 'Numero de control' AND
+            global_vars_history.current = 1";
+
+        $result = parent::DoQuery($sql);
+        if($result === false)
+            return false;
+    }
+
+    public function RevertInvoice($data){
+        $invoice = $data['invoice'];
+        $reason = $data['reason'];
+
+        $latestNumbers = $this->GetLatestCreditNoteNumbers();
+        $credit_note_number = $latestNumbers['credit_note_number'];
+        $control_number = $latestNumbers['control_number'];
+
+        $sql = "INSERT INTO credit_notes (invoice, reason, credit_note_number, control_number) VALUES ($invoice, '$reason', $credit_note_number, $control_number)";
+        $reverted = parent::DoQuery($sql);
+        if($reverted === false)
+            return false;
+
+        $sql = "UPDATE invoices SET invoice_state = 'Reversada' WHERE id = $invoice";
+        return parent::DoQuery($sql);
+    }
+
     public function AnullInvoice($id){
-        return parent::DoQuery("UPDATE invoices SET active = 0 WHERE id = $id");
+        return parent::DoQuery("UPDATE invoices SET invoice_state = 'Anulada' WHERE id = $id");
     }
 
     /**

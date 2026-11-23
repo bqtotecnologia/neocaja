@@ -50,7 +50,7 @@
                     <?php if(Auth::UserLevelIn(['Estudiante'])){ ?>
                       <?php 
                         include_once $_SERVER['DOCUMENT_ROOT'] . '/neocaja/models/notification_model.php';
-                        $pendingNotifications = $notification_model->GetPendingNotifications($_SESSION['neocaja_cedula']);
+                        $pendingNotifications = $notification_model->GetPendingNotifications($_SESSION['neocaja_cedula'], $_SESSION['neocaja_cedula_letter']);
                         ?>
                       <li><a><i class="fa fa-bell"></i> Notificaciones 
                         <?php if(count($pendingNotifications) > 0) { ?>

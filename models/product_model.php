@@ -165,10 +165,10 @@ class ProductModel extends SQLModel
             $monthlyPrice = $monthlyPrice - ($monthlyPrice * (floatval($target_account['scholarship_coverage']) / 100));
         }
         
-        $monthStates = $invoice_model->GetAccountState($cedula, $period_id);
+        $monthStates = $invoice_model->GetAccountState($target_account['id'], $period_id);
         
         $nonPaid = [];
-        if($invoice_model->AccountPaidFOCOnPeriod($cedula, $period_id) === false){
+        if($invoice_model->AccountPaidFOCOnPeriod($target_account['id'], $period_id) === false){
             $to_add = [
                 'name' => $periodName . ' FOC',
                 'price' => floatval($foc['price']),

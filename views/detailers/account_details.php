@@ -38,8 +38,8 @@ $coin_model = new CoinModel();
 
 $currentPeriod = $siacad->GetCurrentPeriodo();
 $focProduct = $product_model->GetProductByName('FOC');
-$monthStates = $invoice_model->GetAccountState($target_account['cedula'], $currentPeriod['idperiodo']);
-$debtState = $invoice_model->GetDebtOfAccountOfPeriod($target_account['cedula'], $currentPeriod['idperiodo']);
+$monthStates = $invoice_model->GetAccountState($target_account['id'], $currentPeriod['idperiodo']);
+$debtState = $invoice_model->GetDebtOfAccountOfPeriod($target_account['id'], $currentPeriod['idperiodo']);
 
 $usd = $coin_model->GetCoinByName('Dólar');
 $coin_date = date('Y-m-d', strtotime($usd['price_created_at']));

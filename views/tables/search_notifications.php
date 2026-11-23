@@ -5,9 +5,9 @@ include_once '../../utils/validate_user_type.php';
 include '../../views/common/header.php';
 
 include_once '../../models/notification_model.php';
-$notifications = $notification_model->GetNotificationsByCedula($_SESSION['neocaja_cedula']);
+$notifications = $notification_model->GetNotificationsByCedula($_SESSION['neocaja_cedula'], $_SESSION['neocaja_cedula_letter']);
 
-$notification_model->SeeAllNotifications($_SESSION['neocaja_cedula']);
+$notification_model->SeeAllNotifications($_SESSION['neocaja_cedula'], $_SESSION['neocaja_cedula_letter']);
 ?>
 
 <div class="row justify-content-center">

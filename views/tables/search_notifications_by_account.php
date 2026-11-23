@@ -90,7 +90,7 @@ include '../common/header.php';
         <?php 
             include_once '../../models/notification_model.php';
             $notificacion_model = new NotificationModel();    
-            $notifications = $notificacion_model->GetNotificationsByCedula($target_student['cedula']);
+            $notifications = $notificacion_model->GetNotificationsByCedula($target_student['cedula'], $target_student['cedula_letter']);
         ?>
     
         <div class="x_panel row col-12 my-3 p-0">

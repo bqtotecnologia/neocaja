@@ -40,7 +40,7 @@ if($error === ''){
 
 
     foreach($periods as $period){
-        $account_state = $invoice_model->GetDebtOfAccountOfPeriod($target_account['cedula'], $period['idperiodo']);
+        $account_state = $invoice_model->GetDebtOfAccountOfPeriod($target_account['id'], $period['idperiodo']);
 
         if(is_string($account_state)){
             $error = $account_state;

@@ -35,6 +35,18 @@ Array.from(confirm_forms).forEach(function(form){
 
 $(document).ready(function () {
     $(".select2").select2({width:'100%'});
+
+    const deleteForms = document.getElementsByName('delete-form')
+    deleteForms.forEach((form) => {
+        form.addEventListener('submit', ((e) => {
+            e.preventDefault()
+            var message = 'Para confirmar la acción, se requiere que escriba en el siguiente campo "' + form.title + '" respetando las mayúsculas'
+            var result = prompt(message)
+
+            if (result === form.title)
+                form.submit()
+        }))
+    })      
 });
 
   

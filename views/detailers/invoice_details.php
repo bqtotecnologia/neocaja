@@ -42,6 +42,7 @@ if($error !== ''){
 }
 
 $target_period = $siacad->GetPeriodoById($target_invoice['period']);
+$target_credit_note = $invoice_model->GetCreditNoteOfInvoice($target_invoice['id']);
 $target_account = $account_model->GetAccount($target_invoice['account_id']);
 $payment_methods = $invoice_model->GetPaymentMethodsOfInvoice($id);
 $concepts = $invoice_model->GetConceptsOfInvoice($id);
@@ -70,7 +71,7 @@ include '../../views/common/header.php';
         <div class="row col-12 mb-5 justify-content-around">
             <a class="mx-3" target="_blank" href="<?= $base_url . '/views/exports/export_invoice_as_pdf.php?id=' . $target_invoice['id'] ?>">
                 <button class="btn btn-success">
-                    Imprimir
+                    Imprimir factura
                 </button>
             </a>            
         </div>
@@ -190,14 +191,16 @@ include '../../views/common/header.php';
                 </div>
 
                 <div class="row col-10 justify-content-start align-items-middle">
-                    <label class="fw-bold mx-2">
+                    <label class="fw-bold mx-2 mb-0 align-middle">
                         Estado:
                     </label>
-                    <?php if(intval($target_invoice['active']) === 1) { ?>
-                        <span class="text-success fw-bold">VÁLIDA
-                    <?php } else { ?>
-                        <span class="text-danger fw-bold">ANULADA
-                    <?php } ?>
+                    <span class="fw-bold align-middle text-<?= $target_invoice['invoice_state'] === 'Activa' ? 'success' : 'danger' ?>">
+                        <?= $target_invoice['invoice_state'] ?>
+                        <?php if($target_invoice['invoice_state'] === 'Reversada') { ?>
+                            <a href="<?= $base_url ?>/views/exports/export_invoice_as_pdf.php?id=<?= $target_invoice['id'] ?>&credit_note=1" target="_blank" class="mx-2 text-decoration-underline" title="<?= $target_credit_note['credit_note_reason'] ?>">
+                                Ver nota de crédito
+                            </a>                            
+                        <?php } ?>
                     </span>
                 </div>
             </div>
@@ -387,12 +390,24 @@ include '../../views/common/header.php';
     </div>
 
     <?php if(!in_array($_SESSION['neocaja_rol'], ['Estudiante', 'SENIAT']) ) { ?>
-        <?php if(intval($target_invoice['active']) === 1) { ?>
-            <div class="row col-12 justify-content-center my-5">
-                <button class="btn btn-danger" onclick="ConfirmCancelInvoice()">
-                    Anular factura
-                </button>
-            </div>
+        <?php if($target_invoice['invoice_state'] === 'Activa') { ?>
+            <?php if(($target_invoice['rate_date']) === date('Y-m-d')) { ?>
+                <div class="row col-12 justify-content-center my-5">
+                    <button class="btn btn-danger" onclick="ConfirmCancelInvoice()">
+                        Anular factura
+                    </button>
+                </div>
+            <?php } else { ?>
+                 <div class="row col-12 m-0 p-0 justify-content-center my-4">
+                    <form method="POST" action="../../controllers/revert_invoice.php" class="col-12 col-lg-6 text-center border p-2 shadowed" name="delete-form" title="REVERSAR FACTURA">
+                        <input type="hidden" name="id" value="<?= $target_invoice['id'] ?>">
+                        <textarea class="form-control mb-3" name="reason" id="reason" placeholder="Motivo o descripción de la reversión" required></textarea>
+                        <button class="btn btn-danger">
+                            Reversar factura con nota de crédito
+                        </button>
+                    </form>
+                </div>
+            <?php } ?>
         <?php } ?>
     <?php } ?>
 </div>

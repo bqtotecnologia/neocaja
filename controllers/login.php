@@ -171,8 +171,11 @@ if($error === ''){
     $_SESSION['neocaja_rol'] = $user_role;
     $_SESSION['neocaja_cedula'] = $cedula;
 
-    if(isset($user_role['data']['nacionalidad']))
-        $_SESSION['neocaja_cedula_letter'] = $user_role['data']['nacionalidad'];
+    if(isset($account))
+        $_SESSION['neocaja_cedula_letter'] = $account['cedula_letter'];
+
+    if(isset($student))
+        $_SESSION['neocaja_cedula_letter'] = $student['nacionalidad'];
 
     if($user_role !== 'Estudiante'){
         if(isset($my_user['data']['admin_id']))

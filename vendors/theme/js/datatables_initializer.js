@@ -131,6 +131,28 @@ $('.datatable-date-4-datetime-7').DataTable({
     responsive: true,
 }); 
 
+$('.datatable-date-5-datetime-8').DataTable({    
+    language: spanish,
+    dom: "Blfrtip",
+        buttons: [
+            {
+                extend: "excel",
+                className: "btn-sm"
+            },
+        ],
+    columnDefs: [
+      {
+        targets: [8],
+        render: $.fn.dataTable.render.moment('YYYY-MM-DD HH:mm:ss', 'DD/MM/YYYY HH:mm:ss')
+      },
+      {
+        targets: [5],
+        render: $.fn.dataTable.render.moment('YYYY-MM-DD', 'DD/MM/YYYY')
+      }
+    ],
+    responsive: true,
+}); 
+
 $('.datatable-date-5').DataTable({    
     language: spanish,
     dom: "Blfrtip",
@@ -157,6 +179,23 @@ $('.datatable-date-6').DataTable({
         ],
     columnDefs: [{
         targets: [6],
+        render: $.fn.dataTable.render.moment('YYYY-MM-DD HH:mm:ss', 'DD/MM/YYYY HH:mm:ss')
+      }],
+    responsive: true
+    
+}); 
+
+$('.datatable-date-7').DataTable({    
+    language: spanish,
+    dom: "Blfrtip",
+        buttons: [
+            {
+                extend: "excel",
+                className: "btn-sm"
+            },
+        ],
+    columnDefs: [{
+        targets: [7],
         render: $.fn.dataTable.render.moment('YYYY-MM-DD HH:mm:ss', 'DD/MM/YYYY HH:mm:ss')
       }],
     responsive: true

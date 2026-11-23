@@ -6,6 +6,7 @@ class RemotePaymentsModel extends SQLModel
     public $SELECT_TEMPLATE = "SELECT
         polymorph.fullname,
         polymorph.cedula,
+        polymorph.cedula_letter,
         polymorph.account_id,
         polymorph.invoice_id,
         polymorph.invoice_number,
@@ -29,6 +30,7 @@ class RemotePaymentsModel extends SQLModel
             SELECT 
             CONCAT(accounts.surnames, ' ', accounts.names) as fullname,
             accounts.cedula,
+            accounts.cedula_letter,
             accounts.id as account_id,
             invoices.id as invoice_id,
             invoices.invoice_number

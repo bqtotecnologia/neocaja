@@ -124,7 +124,8 @@ if($error === ''){
     $notification .= ' fue actualizado al estado "' . $cleanData['state'] . '"' . '. Respuesta: ' . $cleanData['response'];
     $data = [
         'message' => $notification,
-        'cedula' => $target_payment['cedula']
+        'cedula' => $target_payment['cedula'],
+        'letter' => $target_payment['cedula_letter']
     ];
 
     $notification_model->CreateNotification($data);    
