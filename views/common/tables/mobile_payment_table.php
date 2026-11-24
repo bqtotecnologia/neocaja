@@ -28,9 +28,9 @@
                     <?= intval($mobile_payment['active']) === 1 ? 'Sí' : 'No' ?>
                 </td>
                 <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
-                    <td class="">
+                    <td class="align-middle">
                         <div class="row justify-content-around">
-                            <div class="col-3 text-center">
+                            <div class="col px-1 text-center">
                                 <a href="<?= $base_url ?>/views/forms/mobile_payment_form.php?id=<?= $mobile_payment['id'] ?>" class="btn btn-success" title="Editar">
                                     <i class="fa fa-pencil"></i>
                                 </a>

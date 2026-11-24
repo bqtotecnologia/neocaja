@@ -38,9 +38,9 @@
                 <td class="align-middle text-center"><?= GetPrettyCiphers($payment['price']) ?></td>
                 <td class="align-middle text-center"><?= $payment['created_at'] ?></td>
                 <td class="align-middle text-center fw-bold <?= $payment['state'] ?>"><?= $payment['state'] ?></td>
-                <td class="align-middle text-center">
-                    <div class="row justify-content-around">
-                        <div class="col text-center">
+                <td class="align-middle">
+                    <div class="d-flex justify-content-around align-items-center">
+                        <div class="col px-1 text-center">
                             <?php 
                                 if(in_array($_SESSION['neocaja_rol'], ['Cajero', 'Super'])) {
                                     $url = $base_url . '/views/forms/update_remote_payment.php'; 
@@ -54,7 +54,7 @@
                             </a>
                         </div>
 
-                        <div class="col text-center">
+                        <div class="col px-1 text-center">
                             <button class="btn btn-info" title="Ver comprobante de pago" onclick="ZoomInImage('<?= $base_url ?>/images/payments_captures/<?= $payment['capture'] ?>')">
                                 <i class="fa fa-image"></i>
                             </button>

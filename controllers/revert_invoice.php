@@ -56,7 +56,6 @@ if($error === ''){
 // Managing feedback message and binnacle
 if($error === ''){
     $invoice_model->UpdateCreditNoteNumbers();
-    $target_credit_note = $invoice_model->GetCreditNoteOfInvoice($target_invoice['id']);
     
     $action = 'Creó la nota de crédito para la factura de número ' . $target_invoice['invoice_number'];
     $invoice_model->CreateBinnacle($_SESSION['neocaja_id'], $action);

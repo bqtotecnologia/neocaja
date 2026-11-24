@@ -19,9 +19,9 @@
                 <td class="align-middle text-center"><?= $periods[$period_range['period']]['nombreperiodo'] ?></td>
                 <td class="align-middle text-center"><?= $month_translate[$period_range['start_month']] ?></td>
                 <td class="align-middle text-center"><?= $month_translate[$period_range['end_month']] ?></td>                
-                <td class="align-middle text-center">
-                    <div class="row justify-content-around">
-                        <div class="col-3 text-center">
+                <td class="align-middle">
+                    <div class="d-flex justify-content-around align-items-center">
+                        <div class="col px-1 text-center">
                             <a href="<?= $base_url ?>/views/forms/period_range_form.php?id=<?= $period_range['id'] ?>" class="btn btn-success" title="Editar">
                                 <i class="fa fa-pencil"></i>
                             </a>

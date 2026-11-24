@@ -17,9 +17,9 @@
                 <td class="align-middle text-center"><?php echo $count; $count++; ?></td>
                 <td class="align-middle text-center"><?= $generation['created'] ?></td>
                 <td class="align-middle text-center"><?= $generation['created_at'] ?></td>
-                <td class="">
-                    <div class="row justify-content-around">
-                        <div class="col-6 text-center">
+                <td class="align-middle">
+                    <div class="d-flex justify-content-around align-items-center">
+                        <div class="col px-1 text-center">
                             <a href="<?= $base_url ?>/views/tables/search_unknown_incomes_by_generation.php?id=<?= $generation['id'] ?>" class="btn btn-success" title="Ver registros">
                                 <i class="fa fa-eye"></i>
                             </a>

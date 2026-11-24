@@ -91,7 +91,6 @@
 
     function IGTFBankSelecting(bankId){
         const bankSelect = document.getElementById('igtf-bank')
-        console.log(bankId)
 
         var targetBank = null
 

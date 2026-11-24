@@ -30,9 +30,9 @@
                         echo $display;
                     ?></td>
                 <td class="align-middle text-center"><?= $income['created_at'] ?></td>
-                <td class="">
-                    <div class="row justify-content-around">
-                        <div class="col-6 text-center">
+                <td class="align-middle">
+                    <div class="d-flex justify-content-around align-items-center">
+                        <div class="col px-1 text-center">
                             <a href="<?= $base_url ?>/views/forms/unknown_income_form.php?id=<?= $income['id'] ?>" class="btn btn-success" title="Editar">
                                 <i class="fa fa-pencil"></i>
                             </a>

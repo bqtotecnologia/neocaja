@@ -12,6 +12,7 @@ class InvoiceModel extends SQLModel
         invoices.period,
         invoices.invoice_state,
         invoices.observation,
+        invoices.anull_reason,
         invoices.rate_date,
         CONCAT(accounts.names, ' ', accounts.surnames) as account_fullname,
         accounts.cedula,
@@ -204,6 +205,11 @@ class InvoiceModel extends SQLModel
         return $numbers;
     }
 
+    public function GetCreditNotes(){
+        $sql = $this->CREDIT_NOTE_INVOICE_TEMPLATE . " GROUP BY credit_notes.id ORDER BY credit_notes.created_at DESC";
+        return parent::GetRows($sql, true);
+    }
+
     public function GetCreditNote($id){
         $sql = $this->CREDIT_NOTE_INVOICE_TEMPLATE . " WHERE credit_notes.id = $id";
         return parent::GetRow($sql);
@@ -212,6 +218,20 @@ class InvoiceModel extends SQLModel
     public function GetCreditNoteOfInvoice($id){
         $sql = $this->CREDIT_NOTE_INVOICE_TEMPLATE . " WHERE invoices.id = $id";
         return parent::GetRow($sql);
+    }
+
+    public function GetCreditNotesBetweenDates($start_date, $end_date){
+        $sql = $this->CREDIT_NOTE_INVOICE_TEMPLATE . " 
+            WHERE 
+            (invoices.rate_date BETWEEN '$start_date' AND '$end_date')
+            OR
+            (credit_notes.created_at BETWEEN '$start_date' AND '$end_date')
+            GROUP BY 
+            credit_notes.id
+            ORDER BY
+            credit_notes.created_at DESC";
+
+        return parent::GetRows($sql, true);
     }
 
     public function GetLatestCreditNoteNumbers(){
@@ -769,8 +789,11 @@ class InvoiceModel extends SQLModel
         return parent::DoQuery($sql);
     }
 
-    public function AnullInvoice($id){
-        return parent::DoQuery("UPDATE invoices SET invoice_state = 'Anulada' WHERE id = $id");
+    public function AnullInvoice($data){
+        $invoice = $data['invoice'];
+        $reason = $data['reason'];
+
+        return parent::DoQuery("UPDATE invoices SET invoice_state = 'Anulada', anull_reason = '$reason' WHERE id = $invoice");
     }
 
     /**

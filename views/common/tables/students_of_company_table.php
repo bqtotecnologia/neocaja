@@ -25,15 +25,15 @@
                 <td class="align-middle text-center">
                     <i class="fa fa-circle text-<?= $product['active'] ? 'success' : 'danger' ?>"></i>                    
                 </td>
-                <td class="">
-                    <div class="row justify-content-around">
-                        <div class="col-3 text-center">
+                <td class="align-middle">
+                    <div class="d-flex justify-content-around align-items-center">
+                        <div class="col px-1 text-center">
                             <a href="<?= $base_url ?>/views/forms/product_form.php?id=<?= $product['id'] ?>" class="btn btn-success" title="Editar">
                                 <i class="fa fa-pencil"></i>
                             </a>
                         </div>
 
-                        <div class="col-3 text-center">
+                        <div class="col px-1 text-center">
                             <a href="<?= $base_url ?>/views/tables/product_history.php?id=<?= $product['id'] ?>" class="btn btn-info" title="Ver historial de precios">
                                 <i class="fa fa-list"></i>
                             </a>

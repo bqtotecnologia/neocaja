@@ -23,16 +23,16 @@
                 <td class="align-middle text-center fw-bold text-<?= $coin['active'] ? 'success' : 'danger' ?>">
                     <?= $coin['active'] ? 'Sí' : 'No' ?>
                 </td>
-                <td class="">
-                    <div class="row justify-content-around">
+                <td class="align-middle">
+                    <div class="d-flex justify-content-around align-items-center">
                         <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
-                            <div class="col text-center">
+                            <div class="col px-1 text-center">
                                 <a href="<?= $base_url ?>/views/forms/coin_form.php?id=<?= $coin['id'] ?>" class="btn btn-success" title="Editar">
                                     <i class="fa fa-pencil"></i>
                                 </a>
                             </div>
                             
-                            <div class="col text-center">
+                            <div class="col px-1 text-center">
                                 <a href="<?= $base_url ?>/views/forms/update_coin_price.php?id=<?= $coin['id'] ?>" class="btn btn-warning" title="Cambiar tasa manualmente">
                                     <i class="fa fa-refresh"></i>
                                 </a>
@@ -40,7 +40,7 @@
                         <?php } ?>
 
 
-                        <div class="col text-center">
+                        <div class="col px-1 text-center">
                             <a href="<?= $base_url ?>/views/tables/coin_history.php?id=<?= $coin['id'] ?>" class="btn btn-info" title="Ver historial de tasas">
                                 <i class="fa fa-list"></i>
                             </a>

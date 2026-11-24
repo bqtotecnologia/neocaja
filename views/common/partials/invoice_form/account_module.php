@@ -5,7 +5,7 @@
         if(e.key === 'Enter'){
             var cedula = cedula_input.value
             var letter = cedula_letter_select.value
-            console.log(letter)
+            
             if(isNumeric(cedula)){
                 var account = await GetAccountByCedula(cedula, letter)
                 
@@ -47,6 +47,7 @@
         CleanProducts()
         var error = false
         targetAccount = await GetAccountData(id)
+        
         if(targetAccount.status !== false){
             targetAccount = targetAccount.data
             scholarshipped = !(targetAccount['scholarship_coverage'] === null && targetAccount['scholarship_coverage'] === null)

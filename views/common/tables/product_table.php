@@ -25,17 +25,17 @@
                 <td class="align-middle text-center fw-bold text-<?= $product['active'] ? 'success' : 'danger' ?>">
                     <?= $product['active'] ? 'Sí' : 'No' ?>
                 </td>
-                <td class="">
-                    <div class="row justify-content-around">
+                <td class="align-middle">
+                    <div class="d-flex justify-content-around align-items-center">
                         <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
-                            <div class="col text-center">
+                            <div class="col px-1 text-center">
                                 <a href="<?= $base_url ?>/views/forms/product_form.php?id=<?= $product['id'] ?>" class="btn btn-success" title="Editar">
                                     <i class="fa fa-pencil"></i>
                                 </a>
                             </div>
                         <?php } ?>
 
-                        <div class="col text-center">
+                        <div class="col px-1 text-center">
                             <a href="<?= $base_url ?>/views/tables/product_history.php?id=<?= $product['id'] ?>" class="btn btn-info" title="Ver historial de precios">
                                 <i class="fa fa-list"></i>
                             </a>

@@ -190,7 +190,7 @@ include '../../views/common/header.php';
                     </span>
                 </div>
 
-                <div class="row col-10 justify-content-start align-items-middle">
+                <div class="row col-10 justify-content-start align-items-middle mt-3">
                     <label class="fw-bold mx-2 mb-0 align-middle">
                         Estado:
                     </label>
@@ -203,6 +203,28 @@ include '../../views/common/header.php';
                         <?php } ?>
                     </span>
                 </div>
+
+                <?php if($target_invoice['invoice_state'] === 'Anulada') { ?>
+                    <div class="row col-10 justify-content-start align-items-middle">
+                        <label class="fw-bold mx-2 mb-0 align-middle">
+                            Motivo de anulación:
+                        </label>
+                        <span class="align-middle">
+                            <?= $target_invoice['anull_reason'] ?>
+                        </span>
+                    </div>
+                <?php } ?>
+
+                <?php if($target_invoice['invoice_state'] === 'Reversada') { ?>
+                    <div class="row col-10 justify-content-start align-items-middle">
+                        <label class="fw-bold mx-2 mb-0 align-middle">
+                            Motivo de reverso:
+                        </label>
+                        <span class="align-middle">
+                            <?= $target_credit_note['credit_note_reason'] ?>
+                        </span>
+                    </div>
+                <?php } ?>
             </div>
         </section>
 
@@ -392,10 +414,14 @@ include '../../views/common/header.php';
     <?php if(!in_array($_SESSION['neocaja_rol'], ['Estudiante', 'SENIAT']) ) { ?>
         <?php if($target_invoice['invoice_state'] === 'Activa') { ?>
             <?php if(($target_invoice['rate_date']) === date('Y-m-d')) { ?>
-                <div class="row col-12 justify-content-center my-5">
-                    <button class="btn btn-danger" onclick="ConfirmCancelInvoice()">
-                        Anular factura
-                    </button>
+                <div class="row col-12 m-0 p-0 justify-content-center my-4">
+                    <form method="POST" action="../../controllers/anull_invoice.php" class="col-12 col-lg-6 text-center border p-2 shadowed" name="delete-form" title="ANULAR FACTURA">
+                        <input type="hidden" name="id" value="<?= $target_invoice['id'] ?>">
+                        <textarea class="form-control mb-3" name="reason" id="reason" placeholder="Motivo de la anulación" required></textarea>
+                        <button class="btn btn-danger">
+                            Anular factura
+                        </button>
+                    </form>
                 </div>
             <?php } else { ?>
                  <div class="row col-12 m-0 p-0 justify-content-center my-4">
@@ -411,13 +437,5 @@ include '../../views/common/header.php';
         <?php } ?>
     <?php } ?>
 </div>
-
-<script>
-    function ConfirmCancelInvoice(){
-        var confirm = ForceUserToConfirmWritting('ANULAR FACTURA <?= $target_invoice['invoice_number'] ?>')
-        if(confirm)
-            window.location.href = "<?= $base_url ?>/controllers/cancel_invoice.php?id=<?= $target_invoice['id'] ?>";
-    }
-</script>
 
 <?php include '../common/footer.php'; ?>

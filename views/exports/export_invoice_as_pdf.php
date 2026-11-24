@@ -115,7 +115,9 @@ else{
     $pdf->SetXY(50, $upper_margin - 4);
     $pdf->Cell($pdf->GetStringWidth($self_data['fullname']) + 10, 4, MyDecode($self_data['fullname']), 0, 0, 'L');
 
+    $pdf->SetFont('Times', 'B', 9);
     $pdf->Cell(42, 4, '"Contribuyente Formal"', 0, 0, 'R');
+    $pdf->SetFont('Times', '', 9);
 
     $pdf->SetXY(7, $upper_margin);
     $pdf->Cell(22, 4, MyDecode('Factura afectada Nº:    ') . $target_invoice['invoice_number'], 0, 0, 'L');
@@ -130,6 +132,7 @@ else{
 
 
 // Name and Cedula/Rif
+$pdf->SetFont('Times', 'B', 9);
 $pdf->SetXY(8, $upper_margin + 9);
 $pdf->Cell(142, 8, '', 1, 0, 'T');
 $pdf->SetXY(8, $upper_margin + 9);

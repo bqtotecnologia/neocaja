@@ -27,18 +27,16 @@
                 <td class="align-middle text-center"><?= $invoice['cedula'] ?></td>
                 <td class="align-middle text-center"><?= $invoice['rate_date'] ?></td>
                 <td class="align-middle text-center fw-bold text-<?= $invoice['invoice_state'] === 'Activa' ? 'success' : 'danger' ?>">
-
                     <?= $invoice['invoice_state'] ?>
                 </td>
                 <td class="align-middle text-center"><?= $invoice['observation'] ?></td>
                 <td class="align-middle text-center"><?= $invoice['created_at'] ?></td>
-                <td class="">                    
-                    <div class="row justify-content-around">
-                        <div class="m-0 p-2 mx-2">
-                                <a href="<?= $base_url ?>/views/detailers/invoice_details.php?id=<?= $invoice['id'] ?>" class="text-white btn btn-success m-0" title="Ver detalles">
-                                    <i class="fa fa-search table-icon"></i>
-                                </a>
-                            </div>
+                <td class="align-middle">
+                    <div class="d-flex justify-content-around align-items-center">
+                        <div class="col px-1 text-center">
+                            <a href="<?= $base_url ?>/views/detailers/invoice_details.php?id=<?= $invoice['id'] ?>" class="text-white btn btn-success m-0" title="Ver detalles">
+                                <i class="fa fa-search table-icon"></i>
+                            </a>
                         </div>  
                     </div>
                 </td>

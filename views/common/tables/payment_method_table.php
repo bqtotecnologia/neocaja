@@ -32,9 +32,9 @@
                 </td>
                 <td class="align-middle text-center"><?= $payment_method_type['created_at'] ?></td>
                 <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
-                    <td class="">
-                        <div class="row justify-content-around">
-                            <div class="col text-center">
+                    <td class="align-middle">
+                        <div class="d-flex justify-content-around align-items-center">
+                            <div class="col px-1 text-center">
                                 <a href="<?= $base_url ?>/views/forms/payment_method_form.php?id=<?= $payment_method_type['id'] ?>" class="btn btn-success" title="Editar">
                                     <i class="fa fa-pencil"></i>
                                 </a>

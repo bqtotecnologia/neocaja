@@ -28,9 +28,9 @@
                     <?= intval($transfer['active']) === 1 ? 'Sí' : 'No' ?>
                 </td>
                 <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
-                    <td class="">
-                        <div class="row justify-content-around">
-                            <div class="col-6 text-center">
+                    <td class="align-middle">
+                        <div class="d-flex justify-content-around align-items-center">
+                            <div class="col px-1 text-center">
                                 <a href="<?= $base_url ?>/views/forms/transfer_form.php?id=<?= $transfer['id'] ?>" class="btn btn-success" title="Editar">
                                     <i class="fa fa-pencil"></i>
                                 </a>

@@ -88,6 +88,7 @@
                           <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_invoices_of_today.php">Facturas de hoy</a></li>
                           <li><a href="<?= $base_url ?>/views/tables/search_invoices_by_period.php">Buscar por periodo</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_credit_notes.php">Notas de crédito</a></li>                          
                         </ul>
                       </li>
 

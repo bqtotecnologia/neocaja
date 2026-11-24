@@ -24,9 +24,9 @@
                 <td class="align-middle text-center"><?= $company['address'] ?></td>
                 <td class="align-middle text-center"><?= $company['created_at'] ?></td>
                 <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
-                    <td class="">
-                        <div class="row justify-content-around">
-                            <div class="col-3 text-center">
+                    <td class="align-middle">
+                        <div class="d-flex justify-content-around align-items-center">
+                            <div class="col px-1 text-center">
                                 <a href="<?= $base_url ?>/views/forms/company_form.php?id=<?= $company['id'] ?>" class="btn btn-success" title="Editar">
                                     <i class="fa fa-pencil"></i>
                                 </a>

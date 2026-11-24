@@ -31,17 +31,17 @@
                 <td class="align-middle text-center">
                     <?= $account['company'] === NULL ? '<spann class="text-danger fw-bold">No tiene</span>' : $account['company'] ?>
                 </td>
-                <td class="">
-                    <div class="row justify-content-around align-items-center">
+                <td class="align-middle">
+                    <div class="d-flex justify-content-around align-items-center">
                         <?php if($_SESSION['neocaja_rol'] !== 'SENIAT') { ?>
-                            <div class=" text-center">
+                            <div class="col px-1 text-center">
                                 <a href="<?= $base_url ?>/views/forms/account_form.php?id=<?= $account['id'] ?>" class="btn btn-success m-0" title="Editar">
                                     <i class="fa fa-pencil"></i>
                                 </a>
                             </div>
                         <?php } ?>
 
-                        <div class=" text-center">
+                        <div class="col px-1 text-center">
                             <a href="<?= $base_url ?>/views/detailers/account_details.php?id=<?= $account['id'] ?>" class="btn btn-info m-0" title="Ver detalles">
                                 <i class="fa fa-search"></i>
                             </a>
