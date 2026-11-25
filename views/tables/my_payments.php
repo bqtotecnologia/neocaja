@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Estudiante', 'Super'];
+$admitted_user_types = ['Estudiante', 'Super', 'Administrador'];
 include_once '../../utils/validate_user_type.php';
 
 include_once '../../utils/prettyCiphers.php';

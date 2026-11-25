@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Cajero', 'Supervisor', 'Estudiante', 'Super', 'Tecnologia', 'SENIAT'];
+$admitted_user_types = ['Cajero', 'Supervisor', 'Estudiante', 'Super', 'SENIAT', 'Administrador'];
 include_once '../utils/validate_user_type.php';
 include_once '../utils/Auth.php';
 
@@ -22,58 +22,53 @@ include_once 'common/header.php';
 
 ?>
 
-<?php if($_SESSION['neocaja_rol'] === 'Estudiante'){ ?>
-    <?php 
-        include_once '../models/account_model.php';
-        include_once '../models/siacad_model.php';
-        include_once '../models/global_vars_model.php';
-        include_once '../models/product_model.php';
-        include_once '../models/coin_model.php';
-        include_once '../models/invoice_model.php';
-        include_once '../utils/prettyCiphers.php';
+<?php if($_SESSION['neocaja_rol'] === 'Estudiante'){
+    include_once '../models/account_model.php';
+    include_once '../models/siacad_model.php';
+    include_once '../models/global_vars_model.php';
+    include_once '../models/product_model.php';
+    include_once '../models/coin_model.php';
+    include_once '../models/invoice_model.php';
+    include_once '../utils/prettyCiphers.php';
 
-        $global_vars_model = new GlobalVarsModel();
-        $siacad = new SiacadModel();
-        $product_model = new ProductModel();
-        $invoice_model = new InvoiceModel();
-        $coin_model = new CoinModel();
-        $account_model = new AccountModel();
+    $global_vars_model = new GlobalVarsModel();
+    $siacad = new SiacadModel();
+    $product_model = new ProductModel();
+    $invoice_model = new InvoiceModel();
+    $coin_model = new CoinModel();
+    $account_model = new AccountModel();
 
-        $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula'], $_SESSION['neocaja_cedula_letter']);
+    $target_account = $account_model->GetAccountByCedula($_SESSION['neocaja_cedula'], $_SESSION['neocaja_cedula_letter']);
 
-        $global_vars = $global_vars_model->GetGlobalVars(true);
-        $periods = $siacad->GetPeriodsOfStudent($_SESSION['neocaja_cedula']);
-        $currentPeriod = $periods[0];
-        $periods = array_reverse($periods);
+    $global_vars = $global_vars_model->GetGlobalVars(true);
+    $periods = $siacad->GetPeriodsOfStudent($_SESSION['neocaja_cedula']);
+    $currentPeriod = $periods[0];
+    $periods = array_reverse($periods);
 
-        $focProduct = $product_model->GetProductByName('FOC');
-        $monthStates = [];
-        $debtStates = [];
+    $focProduct = $product_model->GetProductByName('FOC');
+    $monthStates = [];
+    $debtStates = [];
 
-        for($i = count($periods); $i--; $i === -1){
-            $period = $periods[$i];
-            $monthStates[$period['nombreperiodo']] = $invoice_model->GetAccountState($target_account['id'], $period['idperiodo']);
-            $debtStates[$period['nombreperiodo']] = $invoice_model->GetDebtOfAccountOfPeriod($target_account['id'], $period['idperiodo']);
-        }
-        
-        $usd = $coin_model->GetCoinByName('Dólar');
-        $coin_date = date('Y-m-d', strtotime($usd['price_created_at']));
-        $today = date('Y-m-d');
-        $usdUpdated = strtotime($today) === strtotime($coin_date);
-        //$total_debt = $debtState['months']['total'] + $debtState['retard']['total'];
+    for($i = count($periods); $i--; $i === -1){
+        $period = $periods[$i];
+        $monthStates[$period['nombreperiodo']] = $invoice_model->GetAccountState($target_account['id'], $period['idperiodo']);
+        $debtStates[$period['nombreperiodo']] = $invoice_model->GetDebtOfAccountOfPeriod($target_account['id'], $period['idperiodo']);
+    }
+    
+    $usd = $coin_model->GetCoinByName('Dólar');
+    $coin_date = date('Y-m-d', strtotime($usd['price_created_at']));
+    $today = date('Y-m-d');
+    $usdUpdated = strtotime($today) === strtotime($coin_date);
 
+    $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
 
-        $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
-
-        $total_debt = 0;
-        //if($debtState['foc'] === false)
-            //$total_debt += $focProduct['price'];
-    ?>
+    $total_debt = 0;
+?>
     <div class="x_panel row col-12 m-0 p-0 justify-content-center align-items-center pt-2">              
         <div class="row col-12 p-0 m-0 my-2 justify-content-center align-items-center">
             <div class="col-12 col-md-6">
                 <?php if($usdUpdated) { ?>
-                    <h2 class="h2 text-center w-100">Tasas del día de hoy <?php date('d/m/Y') ?></h2>
+                    <h2 class="h2 text-center w-100">Tasas del día de hoy <?= date('d/m/Y') ?></h2>
                     <div class="row p-0 m-0 col-12 justify-content-center">
                         <table class="table table-bordered col-6 h5 text-center">
                             <tr>

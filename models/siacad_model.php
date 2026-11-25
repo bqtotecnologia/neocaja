@@ -48,7 +48,7 @@ class SiacadModel extends PGSQLModel
             ORDER BY
             periodos.idperiodo DESC";
 
-        return parent::GetRows($sql);
+        return parent::GetRows($sql, true);
     }
 
     public function GetPeriodoById($id){

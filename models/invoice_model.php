@@ -168,6 +168,36 @@ class InvoiceModel extends SQLModel
         return parent::GetRow($sql);
     }
 
+    public function GetInviocesOfState($state){
+        $sql = $this->SINGLE_SELECT_TEMPLATE . " 
+            WHERE 
+            invoices.invoice_state = '$state'
+            GROUP BY 
+            invoices.id
+            ORDER BY
+            invoices.created_at DESC";
+
+        return parent::GetRows($sql, true);
+    }
+
+    public function GetInviocesOfStateBetweenDates($state, $start_date, $end_date){
+        $sql = $this->SINGLE_SELECT_TEMPLATE . " 
+            WHERE 
+            (
+                (invoices.rate_date BETWEEN '$start_date' AND '$end_date')
+                OR
+                (invoices.created_at BETWEEN '$start_date' AND '$end_date')
+            )
+            AND
+            invoices.invoice_state = '$state'
+            GROUP BY 
+            invoices.id
+            ORDER BY
+            invoices.created_at DESC";
+
+        return parent::GetRows($sql, true);
+    }
+
     /**
      * Retorna los últimos números de control y de factura
      */
@@ -314,25 +344,13 @@ class InvoiceModel extends SQLModel
     }
 
     public function GetInvoicesOfAccount($account){
-        $sql = "SELECT 
-            inv.id,
-            inv.invoice_number,
-            inv.control_number,
-            inv.created_at,
-            CONCAT(accounts.surnames, ' ', accounts.names, ' ') as account_fullname,
-            accounts.cedula,
-            inv.observation
-            FROM
-            invoices inv
-            INNER JOIN account_history ON account_history.id = inv.account 
-            INNER JOIN accounts ON accounts.id = account_history.account 
+        $sql = $this->SINGLE_SELECT_TEMPLATE . "
             WHERE 
-            accounts.id = $account AND
-            inv.invoice_state = 'Activa'
+            accounts.id = $account
             GROUP BY
-            inv.id
+            invoices.id
             ORDER BY
-            inv.created_at DESC";
+            invoices.created_at DESC";
 
 
         return parent::GetRows($sql, true);
@@ -714,7 +732,7 @@ class InvoiceModel extends SQLModel
             accounts.id = '$id' AND
             concepts.period = $periodId AND
             products.name = 'FOC' AND
-            invoices.invoice_state = 'Activa";
+            invoices.invoice_state = 'Activa'";
 
         $result = parent::GetRows($sql, true);
         return count($result) > 0 ; 

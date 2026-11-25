@@ -46,7 +46,7 @@
         CleanPeriodButtons()
         CleanProducts()
         var error = false
-        targetAccount = await GetAccountData(id)
+        targetAccount = await GetAccountData(id)        
         
         if(targetAccount.status !== false){
             targetAccount = targetAccount.data
@@ -62,8 +62,9 @@
             debtContainer.classList.add('d-none')
             invoiceContainer.classList.add('d-none')           
 
-            accountStates = await GetAccountState(id)            
+            accountStates = await GetAccountState(id)
             debtData = await GetDebtOfAccount(id)
+            console.log(id)      
 
             for(let period in accountStates.data){
                 availablePeriods.push(period)

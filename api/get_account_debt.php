@@ -1,5 +1,5 @@
 <?php
-$admitted_user_types = ['Cajero', 'Super'];
+$admitted_user_types = ['Cajero', 'Super', 'Administrador'];
 include_once '../utils/Auth.php';
 session_start();
 
@@ -38,7 +38,6 @@ if($error === ''){
     $periods = $siacad->GetPeriodsOfStudent($target_account['cedula']);
     $ordered_data = [];
 
-
     foreach($periods as $period){
         $account_state = $invoice_model->GetDebtOfAccountOfPeriod($target_account['id'], $period['idperiodo']);
 
@@ -49,8 +48,6 @@ if($error === ''){
         $ordered_data[$period['nombreperiodo']] = $account_state;
     }
 }
-
-
 
 if($error === ''){
     $response = [

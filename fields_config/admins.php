@@ -3,9 +3,9 @@
 $adminFields = [
     [
         'name' => 'cedula',
+        'id' => 'cedula',
         'display' => 'Cedula',
         'placeholder' => 'Cédula del administrador',
-        'id' => 'cedula',
         'type' => 'text',
         'size' => 5,
         'max' => 11,
@@ -16,9 +16,9 @@ $adminFields = [
     ],
     [
         'name' => 'name',
+        'id' => 'name',
         'display' => 'Nombre',
         'placeholder' => 'Nombre del administrador',
-        'id' => 'name',
         'type' => 'text',
         'size' => 8,
         'max' => 50,
@@ -29,11 +29,11 @@ $adminFields = [
     ],
     [
         'name' => 'role',
+        'id' => 'role',
         'display' => 'Rol',
         'placeholder' => '',
-        'id' => 'role',
         'type' => 'select',
-        'size' => 3,
+        'size' => 5,
         'required' => true,
         'suspicious' => true,
         'value' => $edit ? $target_admin['role_id'] : '',
@@ -41,15 +41,51 @@ $adminFields = [
     ],
     [
         'name' => 'active',
+        'id' => 'active',
         'display' => 'Activo',
         'placeholder' => '',
-        'id' => 'active',
         'type' => 'checkbox',
         'size' => 4,
         'required' => false,
         'suspicious' => true,
         'value' => $edit ? [$target_admin['active']] : ['1'],
         'elements' => [['display' => 'Activo','value' => '1']]
+    ],
+    [
+        'name' => 'allow_credit_note',
+        'id' => 'allow_credit_note',
+        'display' => 'Permitir crear nota de crédito',
+        'placeholder' => '',
+        'type' => 'checkbox',
+        'size' => 4,
+        'required' => false,
+        'suspicious' => true,
+        'value' => $edit ? [$target_admin['allow_credit_note']] : ['1'],
+        'elements' => [['display' => 'Permitir','value' => '1']]
+    ],
+    [
+        'name' => 'allow_annull_invoice',
+        'id' => 'allow_annull_invoice',
+        'display' => 'Permitir anular factura',
+        'placeholder' => '',
+        'type' => 'checkbox',
+        'size' => 4,
+        'required' => false,
+        'suspicious' => true,
+        'value' => $edit ? [$target_admin['allow_annull_invoice']] : ['1'],
+        'elements' => [['display' => 'Permitir','value' => '1']]
+    ],
+    [
+        'name' => 'allow_solvent_student',
+        'id' => 'allow_solvent_student',
+        'display' => 'Permitir modificar solvencia',
+        'placeholder' => '',
+        'type' => 'checkbox',
+        'size' => 4,
+        'required' => false,
+        'suspicious' => true,
+        'value' => $edit ? [$target_admin['allow_solvent_student']] : ['1'],
+        'elements' => [['display' => 'Permitir','value' => '1']]
     ],
 ];
 

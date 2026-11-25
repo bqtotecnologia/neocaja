@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Estudiante', 'Cajero', 'Super', 'SENIAT'];
+$admitted_user_types = ['Estudiante', 'Cajero', 'Super', 'SENIAT', 'Administrador'];
 include_once '../../utils/validate_user_type.php';
 
 $target_date = false;

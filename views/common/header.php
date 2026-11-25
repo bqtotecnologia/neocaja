@@ -80,15 +80,16 @@
                     <?php } ?>
 
                     <!-- Cashier -->
-                    <?php if(Auth::UserLevelIn(['Cajero', 'Super', 'SENIAT'])){ ?>
+                    <?php if(Auth::UserLevelIn(['Cajero', 'Super', 'SENIAT', 'Administrador'])){ ?>
                       <li><a><i class="fa fa-book"></i> Facturas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
                             <li><a href="<?= $base_url ?>/views/forms/invoice_form.php">Crear factura</a></li>
                           <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_invoices_of_today.php">Facturas de hoy</a></li>
-                          <li><a href="<?= $base_url ?>/views/tables/search_invoices_by_period.php">Buscar por periodo</a></li>
-                          <li><a href="<?= $base_url ?>/views/tables/search_credit_notes.php">Notas de crédito</a></li>                          
+                          <li><a href="<?= $base_url ?>/views/tables/search_invoices_by_period.php">Facturas por periodo</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_credit_notes.php">Notas de crédito</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_annulled_invoices.php">Facturas anuladas</a></li>
                         </ul>
                       </li>
 
@@ -124,7 +125,7 @@
 
                       <li><a><i class="fa fa-cubes"></i> Productos <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super', 'Administrador'])){ ?>
                             <li><a href="<?= $base_url ?>/views/forms/product_form.php">Crear producto</a></li>
                           <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_product.php">Ver productos</a></li>
@@ -133,7 +134,7 @@
 
                       <li><a><i class="fa fa-building"></i> Empresas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super', 'Administrador'])){ ?>
                             <li><a href="<?= $base_url ?>/views/forms/company_form.php">Crear empresa</a></li>
                           <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_company.php">Ver empresas</a></li>
@@ -148,7 +149,7 @@
 
                       <li><a><i class="fa fa-fax"></i> Puntos de venta <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super', 'Administrador'])){ ?>
                             <li><a href="<?= $base_url ?>/views/forms/sale_point_form.php">Crear punto de venta</a></li>
                           <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_sale_point.php">Ver puntos de venta</a></li>
@@ -163,7 +164,7 @@
 
                       <li><a><i class="fa fa-sitemap"></i> Métodos de pago <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super', 'Administrador'])){ ?>
                             <li><a href="<?= $base_url ?>/views/forms/payment_method_form.php">Crear método de pago</a></li>
                           <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_payment_method.php">Ver métodos de pago</a></li>
@@ -179,7 +180,7 @@
 
                       <li><a><i class="fa fa-bank"></i> Bancos <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super', 'Administrador'])){ ?>
                             <li><a href="<?= $base_url ?>/views/forms/bank_form.php">Crear banco</a></li>
                           <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_bank.php">Ver bancos</a></li>
@@ -188,7 +189,7 @@
 
                       <li><a><i class="fa fa-leaf"></i> Becas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super', 'Administrador'])){ ?>
                             <li><a href="<?= $base_url ?>/views/forms/scholarship_form.php">Crear beca</a></li>
                           <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_scholarship.php">Ver becas</a></li>
@@ -197,7 +198,7 @@
                     <?php } ?>
 
                     <!-- Tecnología -->
-                    <?php if(Auth::UserLevelIn(['Tecnologia', 'Super', 'Cajero', 'SENIAT'])){ ?>
+                    <?php if(Auth::UserLevelIn(['Super', 'Cajero', 'SENIAT'])){ ?>
                     <li><a><i class="fa fa-bell"></i> Notificaciones 
                         <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
@@ -215,7 +216,7 @@
 
                       <li><a><i class="fa fa-usd"></i> Monedas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                          <?php if(Auth::UserLevelIn(['Tecnologia', 'Super'])){ ?>
+                          <?php if(Auth::UserLevelIn(['Super'])){ ?>
                             <li><a href="<?= $base_url ?>/views/forms/coin_form.php">Crear moneda</a></li>
                           <?php } ?>
 
@@ -227,7 +228,7 @@
                           <li><a href="<?= $base_url ?>/views/forms/refresh_coins.php">Consultar API</a></li> 
                           -->
                           
-                          <?php if(Auth::UserLevelIn(['Cajero', 'Super'])){ ?>
+                          <?php if(Auth::UserLevelIn(['Cajero', 'Super', 'Administrador'])){ ?>
                             <li><a href="<?= $base_url ?>/views/forms/update_coin_price.php">Cambiar tasa manualmente</a></li>
                           <?php } ?>
                         </ul>
@@ -235,13 +236,13 @@
                     <?php } ?>
 
                     <!-- Super Admin -->
-                    <?php if(Auth::UserLevelIn(['Super', 'SENIAT'])){ ?>
-                      <li><a><i class="fa fa-user"></i> Admins <span class="fa fa-chevron-down"></span></a>
+                    <?php if(Auth::UserLevelIn(['Super', 'SENIAT', 'Administrador'])){ ?>
+                      <li><a><i class="fa fa-user"></i> Usuarios <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                           <?php if(Auth::UserLevelIn(['Super'])){ ?>
                             <li><a href="<?= $base_url ?>/views/forms/admin_form.php">Agragar admin</a></li>
                           <?php } ?>
-                          <li><a href="<?= $base_url ?>/views/tables/search_admin.php">Ver admins</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_admin.php">Ver usuarios</a></li>
                         </ul>
                       </li>
                     <?php } ?>

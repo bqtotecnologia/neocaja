@@ -1,9 +1,9 @@
 <?php
 $edit = isset($_GET['id']);
 if($edit)
-    $admitted_user_types = ['Super', 'Cajero'];
+    $admitted_user_types = ['Super', 'Cajero', 'Administrador'];
 else
-    $admitted_user_types = ['Super', 'Tecnologia'];
+    $admitted_user_types = ['Super', 'Administrador'];
 
 include_once '../../utils/validate_user_type.php';
 

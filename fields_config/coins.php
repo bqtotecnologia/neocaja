@@ -39,7 +39,7 @@ $coinFields = [
     ],
 ];
 
-if($edit && Auth::UserLevelIn(['Tecnologia', 'Super']) || Auth::UserLevelIn(['Super'])){
+if($edit && Auth::UserLevelIn(['Super']) || Auth::UserLevelIn(['Super'])){
     array_push($coinFields, 
     // URL de la API que se consulta automáticamente para la tasa
     [

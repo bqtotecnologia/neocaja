@@ -1,5 +1,5 @@
 <?php
-$admitted_user_types = ['Super'];
+$admitted_user_types = ['Super', 'Administrador'];
 include_once '../utils/validate_user_type.php';
 include_once '../utils/Validator.php';
 
@@ -55,6 +55,9 @@ if($error === ''){
 // Creating the admin
 if($error === ''){
     $cleanData['active'] = isset($_POST['active']) ? '1' : '0';
+    $cleanData['allow_credit_note'] = isset($_POST['allow_credit_note']) ? '1' : '0';
+    $cleanData['allow_annull_invoice'] = isset($_POST['active']) ? '1' : '0';
+    $cleanData['allow_solvent_student'] = isset($_POST['active']) ? '1' : '0';
 
     if($edit){
         $nameChanged = false;

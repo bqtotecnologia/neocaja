@@ -1,5 +1,5 @@
 <?php 
-$admitted_user_types = ['Cajero', 'Super', 'Estudiante', 'SENIAT'];
+$admitted_user_types = ['Cajero', 'Super', 'Estudiante', 'SENIAT', 'Administrador'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/Validator.php';
 include_once '../../utils/months_data.php';
@@ -342,7 +342,7 @@ include '../../views/common/header.php';
                                     <td class="text-right">Bs. <?= GetPrettyCiphers($total) ?></td>
                                 </tr>
                             <?php } ?>
-                            <tr class="fw-bold text-right">
+                            <tr class="fw-bold text-right h5">
                                 <td colspan="7">Total:</td>
                                 <td>Bs. <?= GetPrettyCiphers($payments_total) ?></td>
                             </tr>
@@ -415,7 +415,7 @@ include '../../views/common/header.php';
         <?php if($target_invoice['invoice_state'] === 'Activa') { ?>
             <?php if(($target_invoice['rate_date']) === date('Y-m-d')) { ?>
                 <div class="row col-12 m-0 p-0 justify-content-center my-4">
-                    <form method="POST" action="../../controllers/anull_invoice.php" class="col-12 col-lg-6 text-center border p-2 shadowed" name="delete-form" title="ANULAR FACTURA">
+                    <form method="POST" action="../../controllers/anull_invoice.php" class="col-12 col-lg-6 text-center border p-2 shadowed" name="delete-form" title="ANULAR FACTURA <?= $target_invoice['invoice_number'] ?>">
                         <input type="hidden" name="id" value="<?= $target_invoice['id'] ?>">
                         <textarea class="form-control mb-3" name="reason" id="reason" placeholder="Motivo de la anulación" required></textarea>
                         <button class="btn btn-danger">
@@ -425,7 +425,7 @@ include '../../views/common/header.php';
                 </div>
             <?php } else { ?>
                  <div class="row col-12 m-0 p-0 justify-content-center my-4">
-                    <form method="POST" action="../../controllers/revert_invoice.php" class="col-12 col-lg-6 text-center border p-2 shadowed" name="delete-form" title="REVERSAR FACTURA">
+                    <form method="POST" action="../../controllers/revert_invoice.php" class="col-12 col-lg-6 text-center border p-2 shadowed" name="delete-form" title="REVERSAR FACTURA <?= $target_invoice['invoice_number'] ?>">
                         <input type="hidden" name="id" value="<?= $target_invoice['id'] ?>">
                         <textarea class="form-control mb-3" name="reason" id="reason" placeholder="Motivo o descripción de la reversión" required></textarea>
                         <button class="btn btn-danger">

@@ -1,5 +1,5 @@
 <?php
-$admitted_user_types = ['Super', 'Cajero'];
+$admitted_user_types = ['Super', 'Cajero', 'Administrador'];
 include_once '../../utils/validate_user_type.php';
 
 $edit = isset($_GET['id']);

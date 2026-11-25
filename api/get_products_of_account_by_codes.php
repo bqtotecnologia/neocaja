@@ -1,5 +1,5 @@
 <?php
-$admitted_user_types = ['Estudiante', 'Super'];
+$admitted_user_types = ['Estudiante', 'Super', 'Administrador'];
 include_once '../utils/Auth.php';
 session_start();
 

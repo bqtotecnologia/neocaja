@@ -112,6 +112,12 @@ if($error === ''){
 }
 
 if($error === ''){
+    if(isset($my_user['data']['active']))
+    if(intval($my_user['data']['active']) !== 1)
+        $error = 'Su usuario no está activo';
+}
+
+if($error === ''){
     if($user_role === 'Estudiante'){
         // Si es un estudiante, vamos a verificar que tenga cuenta, si no la tiene, la creamos        
         $account = $account_model->GetAccountByCedula($cedula, $my_user['data']['nacionalidad']);

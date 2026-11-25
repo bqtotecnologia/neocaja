@@ -5,7 +5,7 @@
  * The 'success' are True or False
  * The 'value' if 'success' is True, will be the coin price, otherwise will be a string error message
  */
-$admitted_user_types = ['Tecnologia', 'Super', 'Cajero'];
+$admitted_user_types = ['Super', 'Cajero', 'Administrador'];
 include_once '../utils/validate_user_type.php';
 include_once '../utils/Validator.php';
 

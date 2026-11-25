@@ -1,5 +1,5 @@
 <?php
-$admitted_user_types = ['Super', 'Tecnologia', 'Cajero', 'SENIAT'];
+$admitted_user_types = ['Super', 'Cajero', 'SENIAT', 'Administrador'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/Validator.php';
 include_once '../../utils/Auth.php';

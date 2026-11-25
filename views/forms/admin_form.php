@@ -1,5 +1,5 @@
 <?php
-$admitted_user_types = ['Super'];
+$admitted_user_types = ['Super', 'Administrador'];
 include_once '../../utils/validate_user_type.php';
 include_once '../../utils/Validator.php';
 
@@ -35,7 +35,7 @@ include_once '../common/header.php';
 include_once '../../utils/FormBuilder.php';
 
 
-$roles = $admin_model->GetRoles();
+$roles = $admin_model->GetFriendlyRoles();
 $display_roles = [];
 foreach($roles as $role){
     array_push($display_roles, ['display' => $role['name'], 'value' => $role['id']]);

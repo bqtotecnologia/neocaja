@@ -1,5 +1,5 @@
 <?php
-$admitted_user_types = ['Cajero', 'Super'];
+$admitted_user_types = ['Cajero', 'Super', 'Administrador'];
 include_once '../utils/validate_user_type.php';
 include_once '../utils/Validator.php';
 
@@ -60,6 +60,7 @@ if($error === ''){
 }
 
 if($error === ''){    
+    $message = 'Factura anulada correctamente';
     header("Location: $base_url/views/detailers/invoice_details.php?message=$message&id=" . $target_invoice['id']);
 }
 else{

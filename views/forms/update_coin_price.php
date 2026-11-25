@@ -1,5 +1,5 @@
 <?php
-$admitted_user_types = ['Cajero', 'Super'];
+$admitted_user_types = ['Cajero', 'Super', 'Administrador'];
 include_once '../../utils/validate_user_type.php';
 
 include_once '../../models/coin_model.php';
