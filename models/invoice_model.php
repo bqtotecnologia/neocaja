@@ -413,13 +413,27 @@ class InvoiceModel extends SQLModel
         $account_model = new AccountModel();
         $period_range_model = new PeriodRangeModel();
 
+        $target_period = $siacad->GetPeriodoById($periodId);
         $target_account = $account_model->GetAccount($id);
         $scholarshipped = !($target_account['scholarship'] === NULL && $target_account['scholarship_coverage'] === NULL);
-        $periodMonths = $period_range_model->GetMonthsOfPeriod($periodId, true);
         $global_vars = $global_model->GetGlobalVars(true);
+        $periodMonthRange = $period_range_model->GetPeriodRangeOfPeriod($periodId);
+        $periodMonths = $period_range_model->GetMonthsOfPeriod($periodId, true);
 
-        $target_period = $siacad->GetPeriodoById($periodId);
-        
+        if(intval($periodMonthRange['first_semester_extra_month']) === 1){
+            $add_extra_month = $siacad->StudentRequireExtraMonth($target_account['cedula'], $target_period);
+
+            if($add_extra_month){
+                // Le añadimos un mes adicional (el mes anterior del primero)
+                $firstMonthName = $periodMonths[0];
+                $newMonthNumber = intval($this->GetMonthNumberByName($firstMonthName)) - 1;
+                if($newMonthNumber <= 0)
+                    $newMonthNumber = 12;
+
+                $newMonthName = $this->month_translate[strval($newMonthNumber)];
+                array_unshift($periodMonths, $newMonthName);
+            }
+        }      
 
         $sql = "SELECT
             products.name as product,
@@ -568,6 +582,20 @@ class InvoiceModel extends SQLModel
             return "El periodo " . $target_period['nombreperiodo'] . ' no posee un rango de meses para pagar';
 
         $array_months = $period_range_model->GetMonthsOfPeriod($periodId, false);
+
+        if(intval($periodMonthRange['first_semester_extra_month']) === 1){
+            $add_extra_month = $siacad->StudentRequireExtraMonth($target_account['cedula'], $target_period);
+    
+            if($add_extra_month){
+                // Le añadimos un mes adicional (el mes anterior del primero)
+                $firstMonth = $array_months[0];
+                $firstMonth --;
+                if($firstMonth <= 0)
+                    $firstMonth = 12;
+    
+                array_unshift($array_months, $firstMonth);
+            }
+        }
         
         $timezone = new DateTimeZone('America/Caracas');
         $start_date = new DateTime($target_period['fechainicio'], $timezone);

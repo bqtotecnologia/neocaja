@@ -44,6 +44,20 @@ if($error === ''){
 }
 
 if($error === ''){
+    include_once '../models/admin_model.php';
+    $admin_model = new AdminModel();
+
+    $target_admin = $admin_model->GetAdminByCedula($_SESSION['neocaja_cedula']);
+    if(isset($target_admin['allow_annull_invoice'])){
+        if(intval($target_admin['allow_annull_invoice']) !== 1){
+            $error = 'Usted no posee autorización para anular una factura. Solicite a su administrador';
+            $action = 'Intentó anular una factura sin autorización';
+            $admin_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
+        }
+    }
+}
+
+if($error === ''){
     $data = [
         'invoice' => $target_invoice['id'],
         'reason' => $reason

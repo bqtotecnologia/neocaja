@@ -256,4 +256,69 @@ class SiacadModel extends PGSQLModel
 
         return parent::GetRows($sql, true);
     }
+
+    /**
+     * Recibe la cédula de un estudiante y un periodo con sus datos, retorna si este merece que le cobren un mes adicional.
+     * En ocasiones a los estudiantes regulares se les cobra los meses normales pero a los nuevo ingreso les cobran uno adicional (el que va antes del primer mes)
+     * Lo mismo vale para los estudiantes de reincorporación en dicho periodo
+     * Retorna true si cualquiera de las condiciones se cumple.
+     */
+    public function StudentRequireExtraMonth($cedula, $target_period){
+        $add_extra_month = false;
+
+        $student_is_new = $this->StudentIsNewOnPeriod($target_period, $cedula);
+        if($student_is_new){
+            // El estudiante es nuevo ingreso
+            $add_extra_month = true;
+        }
+
+        return $add_extra_month;        
+    }
+
+    /**
+     * Recibe un periodo de la base de datos y una cédula para saber si el estudiante es nuevo ingreso o no
+     */
+    public function StudentIsNewOnPeriod($period, $cedula){
+        $period_id = $period['idperiodo'];
+        $order = $period['ordenperiodo'];
+        $sql = "SELECT 
+            cedula
+            FROM (
+                SELECT 
+                participantes.cedula
+                FROM
+                pensums, 
+                participantes, 
+                participantescarreras, 
+                matriculas, 
+                periodos
+                WHERE 
+                pensums.idpensum=participantescarreras.idpensum AND 
+                participantes.cedula=participantescarreras.cedula AND 
+                participantescarreras.idparticipantescarrera=matriculas.idparticipantescarrera AND 
+                periodos.idperiodo=matriculas.idperiodo AND 
+                periodos.idperiodo = $period_id AND 
+                participantes.cedula = '$cedula' AND
+                participantescarreras.idparticipantescarrera NOT IN 
+                (
+                    SELECT 
+                    participantescarreras.idparticipantescarrera 
+                    FROM 
+                    pensums, 
+                    participantes, 
+                    participantescarreras, 
+                    matriculas, 
+                    periodos
+                    WHERE 
+                    pensums.idpensum=participantescarreras.idpensum AND 
+                    participantes.cedula=participantescarreras.cedula AND 
+                    participantescarreras.idparticipantescarrera=matriculas.idparticipantescarrera AND 
+                    periodos.idperiodo=matriculas.idperiodo AND 
+                    ordenperiodo < $order
+                )
+            ) AS sbcnlt";
+
+        $exists = parent::GetRow($sql, true);
+        return $exists !== false;
+    }
 }

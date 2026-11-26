@@ -37,6 +37,18 @@ $periodRangeFields = [
         'value' => $edit && $form ? $target_period_range['end_month'] : '',
         'elements' => $form ? $display_months : []
     ],
+    [
+        'name' => 'first_semester_extra_month',
+        'id' => 'first_semester_extra_month',
+        'display' => 'Nuevo ingreso pagan el mes anterior',
+        'placeholder' => '',
+        'type' => 'checkbox',
+        'size' => 4,
+        'required' => false,
+        'suspicious' => true,
+        'value' => $edit && $form ? [$target_period_range['first_semester_extra_month']] : ['0'],
+        'elements' => [['display' => 'Sí','value' => '1']]
+    ],
 ];
 
 if($edit && $form){

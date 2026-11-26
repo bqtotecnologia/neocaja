@@ -63,6 +63,7 @@
             invoiceContainer.classList.add('d-none')           
 
             accountStates = await GetAccountState(id)
+            console.log(accountStates)
             debtData = await GetDebtOfAccount(id)
             console.log(id)      
 

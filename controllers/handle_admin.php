@@ -38,7 +38,7 @@ if($error === ''){
     $exists = $admin_model->GetAdminByCedula($cleanData['cedula']);
     if($exists !== false){
         if($edit){
-            if(intval($exists['id']) !== intval($id))
+            if(intval($exists['admin_id']) !== intval($id))
                 $error = 'La cédula ya está registrada';
         }    
         else
@@ -52,18 +52,23 @@ if($error === ''){
         $error = 'Rol no encontrado';
 }
 
-// Creating the admin
 if($error === ''){
     $cleanData['active'] = isset($_POST['active']) ? '1' : '0';
     $cleanData['allow_credit_note'] = isset($_POST['allow_credit_note']) ? '1' : '0';
-    $cleanData['allow_annull_invoice'] = isset($_POST['active']) ? '1' : '0';
-    $cleanData['allow_solvent_student'] = isset($_POST['active']) ? '1' : '0';
+    $cleanData['allow_annull_invoice'] = isset($_POST['allow_annull_invoice']) ? '1' : '0';
 
+    if(!in_array($_SESSION['neocaja_rol'], ['Super', 'Administrador'])){
+        if(
+            intval($cleanData['allow_credit_note']) === 1 ||
+            intval($cleanData['allow_annull_invoice']) == 1
+        )
+            $error = 'No se pueden otorgar permisos si no eres un administrador';
+    }
+}
+
+// Creating the admin
+if($error === ''){   
     if($edit){
-        $nameChanged = false;
-        $activeChanged = false;
-        $roleChanged = false;
-
         $updated = $admin_model->UpdateAdmin($cleanData['id'], $cleanData);
         if($updated === false)
             $error = 'Hubo un error al intentar actualizar el admin';
@@ -79,13 +84,14 @@ if($error === ''){
 if($error === ''){
     if($edit){
         $message = 'Admin modificado exitosamente';  
-        $action = 'Modificó al admin ' . $target_admin['name'];
-        
+        $action = 'Modificó al admin ' . $target_admin['name'];        
 
         $nameChanged = $cleanData['name'] !== $target_admin['name'];
         $activeChanged = $cleanData['active'] !== $target_admin['active'];
         $roleChanged = $cleanData['role'] !== $target_admin['role_id'];
         $cedulaChanged = $cleanData['cedula'] !== $target_admin['cedula'];
+        $allowCreditNoteChanged = intval($cleanData['allow_credit_note']) !== $target_admin['allow_credit_note'];
+        $allowAnullInvoiceChanged = intval($cleanData['allow_annull_invoice']) !== $target_admin['allow_annull_invoice'];
         
         if($nameChanged)
             $action .= '. Al nombre ' . $cleanData['name'];
@@ -98,6 +104,13 @@ if($error === ''){
 
         if($cedulaChanged)
             $action .= '. A la cédula ' . $cleanData['cedula'];
+
+        if($allowCreditNoteChanged)
+            $action .= '. Permitiéndole crear una note de crédito';
+
+        if($allowAnullInvoiceChanged)
+            $action .= '. Permitiéndole anular una factura';
+        
     }
     else{
         $message = 'Admin creado exitosamente';

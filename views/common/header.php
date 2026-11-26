@@ -99,6 +99,8 @@
                             <li><a href="<?= $base_url ?>/views/forms/account_form.php">Crear cliente</a></li>
                           <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_account.php">Ver clientes</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_acquitted_accounts.php">Clientes absueltos</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_acquitted_accounts_by_period.php">Clientes absueltos por periodo</a></li>
                         </ul>
                       </li>
 
@@ -141,11 +143,13 @@
                         </ul>
                       </li>
 
-                      <li><a><i class="fa fa-calendar"></i> Periodos <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/tables/search_period_range.php">Rango de meses</a></li>
-                        </ul>
-                      </li>
+                      <?php if(Auth::UserLevelIn(['Super', 'SENIAT', 'Administrador'])){ ?>
+                        <li><a><i class="fa fa-calendar"></i> Periodos <span class="fa fa-chevron-down"></span></a>
+                          <ul class="nav child_menu">
+                            <li><a href="<?= $base_url ?>/views/tables/search_period_range.php">Rango de meses</a></li>
+                          </ul>
+                        </li>
+                      <?php } ?>
 
                       <li><a><i class="fa fa-fax"></i> Puntos de venta <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
@@ -198,7 +202,7 @@
                     <?php } ?>
 
                     <!-- Tecnología -->
-                    <?php if(Auth::UserLevelIn(['Super', 'Cajero', 'SENIAT'])){ ?>
+                    <?php if(Auth::UserLevelIn(['Super', 'Cajero', 'SENIAT', 'Administrador'])){ ?>
                     <li><a><i class="fa fa-bell"></i> Notificaciones 
                         <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
@@ -206,13 +210,15 @@
                         </ul>
                       </li>
 
-                      <li><a><i class="fa fa-code"></i> Bitácora <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                          <li><a href="<?= $base_url ?>/views/tables/search_binnacle_by_date_range.php">Buscar por rango de fechas</a></li>
-                          <li><a href="<?= $base_url ?>/views/tables/search_binnacle_by_admin.php">Buscar por usuario</a></li>
-                          <li><a href="<?= $base_url ?>/views/tables/search_binnacle_manual_changes.php">Buscar registros manuales</a></li>
-                        </ul>
-                      </li>
+                      <?php if(Auth::UserLevelIn(['Super', 'SENIAT', 'Administrador'])){ ?>
+                        <li><a><i class="fa fa-code"></i> Bitácora <span class="fa fa-chevron-down"></span></a>
+                          <ul class="nav child_menu">
+                            <li><a href="<?= $base_url ?>/views/tables/search_binnacle_by_date_range.php">Buscar por rango de fechas</a></li>
+                            <li><a href="<?= $base_url ?>/views/tables/search_binnacle_by_admin.php">Buscar por usuario</a></li>
+                            <li><a href="<?= $base_url ?>/views/tables/search_binnacle_manual_changes.php">Buscar registros manuales</a></li>
+                          </ul>
+                        </li>
+                      <?php } ?>
 
                       <li><a><i class="fa fa-usd"></i> Monedas <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">

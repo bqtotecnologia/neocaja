@@ -44,6 +44,20 @@ if($error === ''){
 }
 
 if($error === ''){
+    include_once '../models/admin_model.php';
+    $admin_model = new AdminModel();
+
+    $target_admin = $admin_model->GetAdminByCedula($_SESSION['neocaja_cedula']);
+    if(isset($target_admin['allow_credit_note'])){
+        if(intval($target_admin['allow_credit_note']) !== 1){
+            $error = 'Usted no posee autorización para crear la nota de crédito. Solicite a su administrador';
+            $action = 'Intentó crear una nota de crédito sin autorización';
+            $admin_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
+        }
+    }
+}
+
+if($error === ''){
     $data = [
         'invoice' => $target_invoice['id'],
         'reason' => $reason
@@ -56,12 +70,12 @@ if($error === ''){
 // Managing feedback message and binnacle
 if($error === ''){
     $invoice_model->UpdateCreditNoteNumbers();
-    
     $action = 'Creó la nota de crédito para la factura de número ' . $target_invoice['invoice_number'];
     $invoice_model->CreateBinnacle($_SESSION['neocaja_id'], $action);
 }
 
 if($error === ''){    
+    $message = 'Nota de crédito creada correctamente';
     header("Location: $base_url/views/detailers/invoice_details.php?message=$message&id=" . $target_invoice['id']);
 }
 else{

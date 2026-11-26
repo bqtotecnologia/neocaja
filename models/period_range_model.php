@@ -8,8 +8,12 @@ class PeriodRangeModel extends SQLModel
         $period = $data['period'];
         $start_month = $data['start_month'];
         $end_month = $data['end_month'];
+        $extra_month = $data['first_semester_extra_month'];
 
-        $sql = "INSERT INTO period_ranges (period, start_month, end_month) VALUES ($period, $start_month, $end_month)";
+        $sql = "INSERT INTO period_ranges 
+            (period, start_month, end_month, first_semester_extra_month) 
+            VALUES 
+            ($period, $start_month, $end_month, $extra_month)";
         return parent::DoQuery($sql);
     }
 
@@ -67,8 +71,15 @@ class PeriodRangeModel extends SQLModel
         $period = $data['period'];
         $start_month = $data['start_month'];
         $end_month = $data['end_month'];
+        $extra_month = $data['first_semester_extra_month'];
 
-        $sql = "UPDATE period_ranges SET period = '$period', start_month = $start_month, end_month = $end_month WHERE id = $id";
+        $sql = "UPDATE period_ranges SET 
+            period = '$period', 
+            start_month = $start_month, 
+            end_month = $end_month,
+            first_semester_extra_month = $extra_month
+            WHERE 
+            id = $id";
         return parent::DoQuery($sql);
     }
 }

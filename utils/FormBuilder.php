@@ -27,8 +27,8 @@ class FormBuilder
     const LABEL_CLASS = " h6 m-0 fw-bold px-2 ";
     const INPUT_CONTAINER_CLASS = " row col-12 col-lg-8 m-0 p-0 justify-content-center justify-content-lg-start ";
     const INPUT_CLASS = " form-control ";
-    const MULTI_INPUT_CONTAINER_CLASS = "row col-12 m-0 p-0 mx-2";
-    const MULTI_LABEL_CLASS = " text-left mx-2 h6 ";
+    const MULTI_INPUT_CONTAINER_CLASS = "row col-12 m-0 p-0 mx-2 align-items-center";
+    const MULTI_LABEL_CLASS = " text-left mx-2 my-0 h6 ";
     const SUBMIT_CONTAINER_CLASS = "";
     const SUBMIT_CLASS = "";
 
@@ -38,7 +38,7 @@ class FormBuilder
         'integer' => '',
         'decimal' => '',
         'select' => ' select2 ',
-        'checkbox' => ' flat ',
+        'checkbox' => ' flat align-middle ',
         'radio' => ' flat  ',
         'date' => '',
         'password' => '',

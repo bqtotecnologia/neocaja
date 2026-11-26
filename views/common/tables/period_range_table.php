@@ -5,6 +5,7 @@
             <th class="text-center">Nombre</th>
             <th class="text-center">Desde</th>
             <th class="text-center">Hasta</th>
+            <th class="text-center">Nuevo ingreso paga el mes anterior</th>
             <th class="text-center">Acción</th>
         </tr>
     </thead>
@@ -18,7 +19,10 @@
                 <td class="align-middle text-center"><?php echo $count; $count++; ?></td>
                 <td class="align-middle text-center"><?= $periods[$period_range['period']]['nombreperiodo'] ?></td>
                 <td class="align-middle text-center"><?= $month_translate[$period_range['start_month']] ?></td>
-                <td class="align-middle text-center"><?= $month_translate[$period_range['end_month']] ?></td>                
+                <td class="align-middle text-center"><?= $month_translate[$period_range['end_month']] ?></td>       
+                <td class="align-middle text-center fw-bold text-<?= intval($period_range['first_semester_extra_month']) === 1 ? 'success' : 'danger' ?>">
+                    <?= intval($period_range['first_semester_extra_month']) === 1 ? 'SÍ' : 'NO' ?>
+                </td>
                 <td class="align-middle">
                     <div class="d-flex justify-content-around align-items-center">
                         <div class="col px-1 text-center">

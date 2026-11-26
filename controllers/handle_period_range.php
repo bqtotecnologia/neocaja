@@ -60,6 +60,8 @@ if($error === ''){
 
 // Creating / updating the period range
 if($error === ''){    
+    $cleanData['first_semester_extra_month'] = isset($_POST['first_semester_extra_month']) ? 1 : 0;
+
     if($edit){
         $updated = $period_range_model->UpdatePeriodRange($cleanData['id'], $cleanData);
         if($updated === false)
@@ -80,6 +82,7 @@ if($error === ''){
         $periodChanged = intval($cleanData['period']) !== intval($target_period_range['period']);
         $startMonthChanged = intval($cleanData['start_month']) !== intval($target_period_range['start_month']);
         $endMonthChanged = intval($cleanData['end_month']) !== intval($target_period_range['end_month']);
+        $extraMonthChanged = intval($cleanData['first_semester_extra_month']) !== intval($target_period_range['first_semester_extra_month']);
 
         $action = 'Actualizó el rango de meses del periodo ' . $target_period['nombreperiodo'];
 
@@ -91,6 +94,9 @@ if($error === ''){
 
         if($endMonthChanged)
             $action .= '. Al mes de fin ' . $cleanData['end_month'];
+
+        if($extraMonthChanged)
+            $action .= '. Nuevo ingreso paga el primer mes: ' . intval($cleanData['first_semester_extra_month']) === 1 ? 'Sí' : 'No';
     }
     else{
         $created = $period_range_model->GetPeriodRangeOfPeriod($cleanData['period']);

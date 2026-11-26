@@ -60,7 +60,7 @@ $adminFields = [
         'size' => 4,
         'required' => false,
         'suspicious' => true,
-        'value' => $edit ? [$target_admin['allow_credit_note']] : ['1'],
+        'value' => $edit ? [$target_admin['allow_credit_note']] : ['0'],
         'elements' => [['display' => 'Permitir','value' => '1']]
     ],
     [
@@ -72,21 +72,9 @@ $adminFields = [
         'size' => 4,
         'required' => false,
         'suspicious' => true,
-        'value' => $edit ? [$target_admin['allow_annull_invoice']] : ['1'],
+        'value' => $edit ? [$target_admin['allow_annull_invoice']] : ['0'],
         'elements' => [['display' => 'Permitir','value' => '1']]
-    ],
-    [
-        'name' => 'allow_solvent_student',
-        'id' => 'allow_solvent_student',
-        'display' => 'Permitir modificar solvencia',
-        'placeholder' => '',
-        'type' => 'checkbox',
-        'size' => 4,
-        'required' => false,
-        'suspicious' => true,
-        'value' => $edit ? [$target_admin['allow_solvent_student']] : ['1'],
-        'elements' => [['display' => 'Permitir','value' => '1']]
-    ],
+    ]
 ];
 
 if($edit && $form){
