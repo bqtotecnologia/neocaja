@@ -99,8 +99,8 @@
                             <li><a href="<?= $base_url ?>/views/forms/account_form.php">Crear cliente</a></li>
                           <?php } ?>
                           <li><a href="<?= $base_url ?>/views/tables/search_account.php">Ver clientes</a></li>
-                          <li><a href="<?= $base_url ?>/views/tables/search_acquitted_accounts.php">Clientes absueltos</a></li>
-                          <li><a href="<?= $base_url ?>/views/tables/search_acquitted_accounts_by_period.php">Clientes absueltos por periodo</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_absolutions.php">Clientes absueltos</a></li>
+                          <li><a href="<?= $base_url ?>/views/tables/search_absolutions_by_period.php">Clientes absueltos por periodo</a></li>
                         </ul>
                       </li>
 
